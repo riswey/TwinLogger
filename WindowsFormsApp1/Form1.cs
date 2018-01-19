@@ -14,8 +14,9 @@ namespace WindowsFormsApp1
 
     public partial class Form1 : Form
     {
-        Caio aio = new Caio();
-        short id;               //stores open device id
+        public Caio aio = new Caio();
+
+        public short id;               //stores open device id
 
         void log(String msg, int flag = 0)
         {
@@ -64,5 +65,12 @@ namespace WindowsFormsApp1
             aio.Exit(id);
         }
 
+        private void channelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Channels fm = new Channels();
+            fm.id = this.id;
+            fm.aio = this.aio;
+            fm.Show();
+        }
     }
 }
