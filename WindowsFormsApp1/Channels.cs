@@ -40,7 +40,7 @@ namespace WindowsFormsApp1
         {
             channels = 60,
             interval = 1000,
-            range = (int)CaioConst.PM125,
+            range = (short)CaioConst.PM125,
             number = 1200
         };
 
@@ -322,6 +322,8 @@ namespace WindowsFormsApp1
             {
                 case 0x1002:
                     {
+                        int call_id = (Int16) m.WParam;
+
                         textBox1.Text += "End" + m.LParam;
                         textBox1.Invalidate();
 
@@ -355,7 +357,7 @@ namespace WindowsFormsApp1
                         {
                             toolStripStatusLabel1.Text = "Data not saved";
                         }
-                        textBox1.Text = "Finished";
+                        textBox1.Text = "Finished " + call_id;
 
                         textBox1.Invalidate();
                     }                    
