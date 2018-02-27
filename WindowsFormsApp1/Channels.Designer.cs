@@ -28,20 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.cbClips = new System.Windows.Forms.CheckBox();
+            this.nudChannel = new System.Windows.Forms.NumericUpDown();
+            this.nudDuration = new System.Windows.Forms.NumericUpDown();
+            this.nudInterval = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.tbFreq = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudInterval)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(44, 12);
+            this.button1.Location = new System.Drawing.Point(45, 278);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -52,24 +63,12 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(169, 12);
+            this.textBox1.Location = new System.Drawing.Point(254, 12);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox1.Size = new System.Drawing.Size(370, 391);
             this.textBox1.TabIndex = 1;
-            // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(564, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(274, 391);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
             // 
             // statusStrip1
             // 
@@ -87,20 +86,157 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
+            // cbClips
+            // 
+            this.cbClips.AutoSize = true;
+            this.cbClips.Location = new System.Drawing.Point(45, 94);
+            this.cbClips.Name = "cbClips";
+            this.cbClips.Size = new System.Drawing.Size(80, 17);
+            this.cbClips.TabIndex = 5;
+            this.cbClips.Text = "checkBox1";
+            this.cbClips.UseVisualStyleBackColor = true;
+            // 
+            // nudChannel
+            // 
+            this.nudChannel.Location = new System.Drawing.Point(45, 137);
+            this.nudChannel.Name = "nudChannel";
+            this.nudChannel.Size = new System.Drawing.Size(120, 20);
+            this.nudChannel.TabIndex = 6;
+            this.nudChannel.Value = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            // 
+            // nudDuration
+            // 
+            this.nudDuration.Location = new System.Drawing.Point(45, 186);
+            this.nudDuration.Name = "nudDuration";
+            this.nudDuration.Size = new System.Drawing.Size(120, 20);
+            this.nudDuration.TabIndex = 7;
+            this.nudDuration.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // nudInterval
+            // 
+            this.nudInterval.Location = new System.Drawing.Point(45, 238);
+            this.nudInterval.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudInterval.Name = "nudInterval";
+            this.nudInterval.Size = new System.Drawing.Size(120, 20);
+            this.nudInterval.TabIndex = 8;
+            this.nudInterval.Value = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(45, 32);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(79, 13);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Frequency (Hz)";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(45, 78);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(46, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Clips On";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(42, 121);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(51, 13);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Channels";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(45, 170);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(73, 13);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Duration (sec)";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(45, 222);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(99, 13);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "Sample interval (us)";
+            // 
+            // tbFreq
+            // 
+            this.tbFreq.Location = new System.Drawing.Point(48, 49);
+            this.tbFreq.Name = "tbFreq";
+            this.tbFreq.Size = new System.Drawing.Size(100, 20);
+            this.tbFreq.TabIndex = 14;
+            this.tbFreq.Text = "60.1";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(138, 278);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 15;
+            this.button2.Text = "Stop";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(48, 328);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 16;
+            this.button3.Text = "Monitor";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Channels
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(869, 415);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.tbFreq);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.nudInterval);
+            this.Controls.Add(this.nudDuration);
+            this.Controls.Add(this.nudChannel);
+            this.Controls.Add(this.cbClips);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
             this.Name = "Channels";
             this.Text = "Channels";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudInterval)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -110,9 +246,19 @@
 
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.CheckBox cbClips;
+        private System.Windows.Forms.NumericUpDown nudChannel;
+        private System.Windows.Forms.NumericUpDown nudDuration;
+        private System.Windows.Forms.NumericUpDown nudInterval;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox tbFreq;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }

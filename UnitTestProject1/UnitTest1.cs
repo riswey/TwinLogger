@@ -11,7 +11,7 @@ namespace UnitTestProject1
         [TestMethod]
         public void IsFindingDevices()
         {
-            List<MyAIO> devices = MyAIO.getDeviceList();
+            List<MyAIO> devices = MyAIO.GetDeviceList();
 
             Assert.IsTrue(devices.Count > 0);
 

@@ -68,8 +68,8 @@ namespace WindowsFormsApp1
         private void channelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Channels fm = new Channels();
-            fm.id = this.id;
-            fm.aio = this.aio;
+            fm.devices[0].id = this.id;
+            fm.devices[0].aio = this.aio;
             fm.Show();
         }
     }

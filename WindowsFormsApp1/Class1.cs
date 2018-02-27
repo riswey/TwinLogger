@@ -16,20 +16,23 @@ namespace WindowsFormsApp1
     {
         static string device_root = "Aio00";
 
-        Caio aio = new Caio();
-        short id = 0;
+        //just for testing
+        public Caio aio = new Caio();
+
+
+        public short id = 0;
 
         private int device_number { get; set; }
         bool bound = false;         //check that bound to a device
 
-        public short n_channels { get; set; }
-        public short timer_interval { get; set; }
-        public short range { get; set; }
-        public short n_samples { get; set; }
+        short n_channels { get; set; }
+        short timer_interval { get; set; }
+        short range { get; set; }
+        short n_samples { get; set; }
 
         //External parameters
         public float frequency { get; set; }
-        public bool clipson { get; set; }
+        public bool clipsOn { get; set; }
 
 
         static public List<MyAIO> GetDeviceList()
@@ -62,6 +65,19 @@ namespace WindowsFormsApp1
             }
         }
 
+        static public MyAIO findDevice(List<MyAIO> devices, int id)
+        {
+            for(int i=0; i<devices.Count;i++)
+            {
+                if (devices[i].id == id)
+                {
+                    return devices[i];
+                }
+            }
+            return null;
+        }
+
+
         public MyAIO(int number)
         {
             device_number = number;
@@ -78,7 +94,13 @@ namespace WindowsFormsApp1
             aio.Exit(id);
         }
 
-        public int setTimedSample(short n_channels, short timer_interval, short n_samples, CaioConst range)
+        public void SetupExternalParameters(double frequency, bool clipsOn)
+        {
+            this.frequency = (float)frequency;
+            this.clipsOn = clipsOn;
+        }
+
+        public int SetupTimedSample(short n_channels, short timer_interval, short n_samples, CaioConst range)
         {
             this.n_channels = n_channels;
             this.timer_interval = timer_interval;
@@ -98,7 +120,7 @@ namespace WindowsFormsApp1
             return ret;
         }
 
-        public int start(uint HandleMsgLoop)
+        public int Start(uint HandleMsgLoop)
         {
             int ret;
             ret = aio.SetAiEvent(id, HandleMsgLoop, (int)(CaioConst.AIE_END | CaioConst.AIE_DATA_NUM));
@@ -106,22 +128,36 @@ namespace WindowsFormsApp1
             return ret;
         }
 
-        public bool save()
+        public void Stop()
         {
-            int sampling_times = n_samples;
+            aio.StopAi(id);
+            aio.ResetAiMemory(id);
+        }
+
+
+        public string Save(int num_samples)
+        {
+
+            if (num_samples != this.n_samples)
+            {
+                throw new Exception("Sampling not complete.");
+            }
+
+            int sampling_times = num_samples;
             int[] data = new int[this.n_channels * this.n_samples];
             int ret = aio.GetAiSamplingData(id, ref sampling_times, ref data);
 
-            string header = "Device," + device_number + "\nChannels," + n_channels + "\nInterval," + timer_interval + "us\nSamples," + n_samples;
+            string header = "Device," + device_number + "\nChannels," + n_channels + "\nInterval (us)," + timer_interval + "\nSamples," + n_samples;
 
             string path = "";
-            string filename = (new DateTime()).ToShortDateString() + this.device_number + this.frequency + (this.clipson?"ON":"OFF") + n_channels + n_samples + ".csv";
+            long time = DateTimeOffset.Now.ToUnixTimeSeconds();
+            string filename = this.frequency + "hz-" + (this.clipsOn?"ON-":"OFF-") + n_channels + "ch-" + (n_samples/timer_interval) + "sec-#" + this.device_number + ".csv";
 
             string str;
             try
             {
                 using (System.IO.StreamWriter file =
-                    new System.IO.StreamWriter(path + filename))
+                    new System.IO.StreamWriter(filename))
                 {
                     file.WriteLine(header);
 
@@ -135,12 +171,12 @@ namespace WindowsFormsApp1
                         file.WriteLine(str);
                     }
                     file.Close();
-                    return true;
+                    return path + filename;
                 }
             }
             catch
             {
-                return false;
+                throw;
             }
 
         }
