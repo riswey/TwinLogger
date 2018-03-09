@@ -106,6 +106,8 @@ namespace MultiDeviceAIO
                 ret += aio.SetAiStopTrigger(id, 0);                 //0 means by time
                 ret += aio.SetAiStopTimes(id, settings.n_samples);
                 ret += aio.ResetAiMemory(id);
+                ret += aio.SetAiEventSamplingTimes(id, 100);        //#samples until asks data retrieve
+
             }
             return ret;
         }
@@ -115,7 +117,8 @@ namespace MultiDeviceAIO
             int ret = 0;
             foreach (DEVICEID id in devices)
             {
-                ret += aio.SetAiEvent(id, HandleMsgLoop, (int)(CaioConst.AIE_END | CaioConst.AIE_DATA_NUM));
+                //End, 500, set num events
+                ret += aio.SetAiEvent(id, HandleMsgLoop, (int)(CaioConst.AIE_END | CaioConst.AIE_DATA_NUM | CaioConst.AIE_DATA_TSF));
             }
 
             foreach (DEVICEID id in devices)
@@ -146,12 +149,8 @@ namespace MultiDeviceAIO
 
             if (ret == 0) {
                 //store data
-                data[device_id] = data1;
-
-                data[0] = data1;
+                data[device_id] = data1;   
             }
-
-
             return ret;
         }
 
@@ -165,12 +164,12 @@ namespace MultiDeviceAIO
             int num = 0;
             foreach (DEVICEID id in devices)
             {
-                num += GetLineId_Num(id, line_number++, ref visitor, delimiter);
+                num += GetLineId_Num(id, line_number, ref visitor, delimiter);
             }
             return num;
         }
 
-        private int GetLineId_Num(DEVICEID id, int line_number, ref string visitor, string delimiter)
+        public int GetLineId_Num(DEVICEID id, int line_number, ref string visitor, string delimiter)
         {
             if (line_number < settings.n_samples)
             {
@@ -185,7 +184,7 @@ namespace MultiDeviceAIO
 
                 //Add to existing
                 List<string> str = new List<string>();
-                for (int i = start + 1; i < end; i++)
+                for (int i = start; i < end; i++)
                 {
                     str.Add(data[id][i].ToString());
                 }

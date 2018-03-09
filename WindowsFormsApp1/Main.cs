@@ -96,34 +96,36 @@ namespace MultiDeviceAIO
                         short device_id = (short) m.WParam;
                         int num_samples = (int) m.LParam;
 
-                        if (device_id == 1)
+                        print("Finished " + device_id + "(" + num_samples + ")");
+                        String fn = "";
+
+                        try {
+                            int ret = myaio.RetrieveData(device_id, num_samples);
+                            print("Retrieved " + device_id + "(" + ret + ")");
+                            string visitor = "";
+                            myaio.GetLineId_Num(device_id, 0, ref visitor, ",");
+                            print( visitor );
+                            fn = myaio.SaveData();
+                        }
+                        catch (Exception e)
                         {
+                            setStatus("Not Saved: " + e.Message);
+                        }
 
-                            print("Finished " + device_id + "(" + num_samples + ")");
-                            String fn = "";
+                        if (fn != null)
+                        {
+                            setStatus("Saved: " + fn);
+                            print("Saved: " + fn);
 
-                            try
-                            {
-                                int ret = myaio.RetrieveData(device_id, num_samples);
-                                print("Retrieved " + device_id + "(" + ret + ")");
-                                fn = myaio.SaveData();
-                            }
-                            catch (Exception e)
-                            {
-                                setStatus("Not Saved: " + e.Message);
-                            }
-
-                            if (fn != null)
-                            {
-                                setStatus("Saved: " + fn);
-                                print("Saved: " + fn);
-                            }
                         }
                     }
                     break;
                 case 0x1003:
                     {
+                        short device_id = (short)m.WParam;
+                        int num_samples = (int)m.LParam;
                         print("Processed... " + m.LParam);
+
                     }
                     break;
             }
@@ -165,6 +167,11 @@ namespace MultiDeviceAIO
             IntPtr hinstLib = LoadLibrary(fileName);
             FreeLibrary(hinstLib);
             return hinstLib != IntPtr.Zero;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+
         }
     }
 
