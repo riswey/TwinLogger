@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApp1
+﻿namespace MultiDeviceAIO
 {
     partial class Monitor
     {
@@ -38,7 +38,7 @@
             // 
             this.pictureBox1.Location = new System.Drawing.Point(41, 12);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(429, 420);
+            this.pictureBox1.Size = new System.Drawing.Size(331, 420);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
@@ -50,7 +50,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(638, 444);
+            this.ClientSize = new System.Drawing.Size(407, 440);
             this.Controls.Add(this.pictureBox1);
             this.Name = "Monitor";
             this.Text = "Monitor";

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CaioCs;
 
-namespace WindowsFormsApp1
+namespace MultiDeviceAIO
 {
     public partial class Monitor : Form
     {
@@ -50,6 +50,7 @@ namespace WindowsFormsApp1
         {
                     { "Black", new SolidBrush(Color.Black) },
                     { "White", new SolidBrush(Color.White) },
+                    { "Transparent", new SolidBrush(Color.Transparent) },
                     { "Grey", new SolidBrush(Color.Gray) },
                     { "Red", new SolidBrush(Color.Red) },
                     { "Amber", new SolidBrush(Color.Orange) },
@@ -88,9 +89,9 @@ namespace WindowsFormsApp1
         void drawMeter(Graphics g, int cell_x, int cell_y, int width, int height, double volt, double volt_min, double volt_max)
         {
             Pen pen = pens["LightGrey"];
-            Brush brush1 = brushes["White"];
-            Brush brush2 = brushes["White"];
-            Brush brush3 = brushes["White"];
+            Brush brush1 = brushes["Transparent"];
+            Brush brush2 = brushes["Transparent"];
+            Brush brush3 = brushes["Transparent"];
 
             double normvolt = rnd.NextDouble(); //(volt - volt_min) / volt_max;
 
@@ -108,14 +109,14 @@ namespace WindowsFormsApp1
             }
 
             int rad = 12;
-            int x = OFFSET_X + cell_x * width;
+            int x = 40 + OFFSET_X + cell_x * width;
             int y = OFFSET_Y + cell_y * height;
 
             g.FillEllipse(brush1, x, y + HEIGHT / 2, rad, rad);
             g.FillEllipse(brush2, x + rad + 1, y + HEIGHT / 2, rad, rad);
             g.FillEllipse(brush3, x + 2 * rad + 2, y + HEIGHT / 2, rad, rad);
             Font f = new Font(FontFamily.GenericMonospace, 10);
-            //g.DrawString( Math.Round(normvolt,2).ToString() , f, brushes["Black"], x, y+10);
+            g.DrawString( Math.Round(normvolt,2).ToString() , f, brushes["Grey"], x-40, y+4);
         }
 
         private void drawGrid(Graphics g, Pen p, int offset_x, int offset_y, int width, int height)
@@ -141,20 +142,19 @@ namespace WindowsFormsApp1
             drawGrid(g, pens["LightGrey"], OFFSET_X, OFFSET_Y, WIDTH, HEIGHT);
 
             //get channel list
-            int[] aidata = new int[nChannel];
-            long ret = aio.MultiAi(id, nChannel, aidata);
+            float[] aidata = new float[nChannel];
+            long ret = aio.MultiAiEx(id, nChannel, aidata);
 
             String str = "Channel Voltages" + "\r\n" + "================\r\n";
             for (int ch = 0; ch < aidata.Length; ch++)
             {
-
                 if (nChannelMapping[ch] < 0) continue;
-
 
                 //System Channel is actually channel map cm
                 int cm = nChannelMapping[ch];
 
-                double volt = Math.Round((aidata[ch] - maxbytes / 2) / maxbytes * 20, 3);
+                double volt = aidata[ch];
+                //double volt = Math.Round((aidata[ch] - maxbytes / 2) / maxbytes * 20, 3);
                 volt = 1.6;
 
                 if (volt < 1.35) volt = 1.35;
@@ -168,8 +168,7 @@ namespace WindowsFormsApp1
 
                 str += volt.ToString() + "\t";
 
-
-                drawMeter(g, cm % 3, (int)Math.Floor((double)cm / 3), 50, 20, volt, 1.35, 2.05);
+                drawMeter(g, cm % 3, (int)Math.Floor((double)cm / 3), 100, 20, volt, 1.35, 2.05);
                 /*
                 if (volt > 1.79)
                 {

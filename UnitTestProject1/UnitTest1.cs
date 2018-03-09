@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WindowsFormsApp1;
+using MultiDeviceAIO;
 using System.Collections.Generic;
 
 namespace UnitTestProject1

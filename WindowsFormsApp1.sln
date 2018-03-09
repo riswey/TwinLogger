@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp1", "WindowsFormsApp1\WindowsFormsApp1.csproj", "{6596B364-87FC-453E-8662-D3D81169596C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiDeviceAIO", "WindowsFormsApp1\MultiDeviceAIO.csproj", "{6596B364-87FC-453E-8662-D3D81169596C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{237DE931-A6A8-4987-9E95-973BEC5550B7}"
 EndProject

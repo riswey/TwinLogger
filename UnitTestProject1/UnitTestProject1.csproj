@@ -55,9 +55,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WindowsFormsApp1\WindowsFormsApp1.csproj">
+    <ProjectReference Include="..\WindowsFormsApp1\MultiDeviceAIO.csproj">
       <Project>{6596b364-87fc-453e-8662-d3d81169596c}</Project>
-      <Name>WindowsFormsApp1</Name>
+      <Name>MultiDeviceAIO</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

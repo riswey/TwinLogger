@@ -1,0 +1,4 @@
+﻿(1)Test whether just need run id number on func in a single Caio obj, or need multiple obj
+(2)	Change front end to match all the settings
+(3) Bind the settings from settings class
+

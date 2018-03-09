@@ -3,21 +3,43 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace WindowsFormsApp1
-{
-    public partial class Channels : Form
-    {
-        public List<MyAIO> devices;
+//Dllimport
+using System.Runtime.InteropServices;
+using System.Threading;
 
-        public Channels()
+namespace MultiDeviceAIO
+{
+    public partial class Main : Form
+    {
+        MyMultiAIO devices = new MyMultiAIO();
+
+        public Main()
         {
             InitializeComponent();
-            devices = MyAIO.GetDeviceList();
+
+            if (!CheckLibrary("caio.dll"))
+            {
+                new Thread(new ThreadStart(delegate
+                {
+                    MessageBox.Show
+                    (
+                      "Caio.dll not found\nPlease install drivers that came with the device",
+                      "Driver error",
+                      MessageBoxButtons.OK,
+                      MessageBoxIcon.Error
+                    );
+                })).Start();
+
+                Application.Exit();
+
+            }
+
+            devices.Init("Aio00");
         }
 
-        ~Channels()
+        ~Main()
         {
-            MyAIO.CloseDeviceList(devices);
+            devices.Close();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -44,13 +66,13 @@ namespace WindowsFormsApp1
                         */
             var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
 
-            devices[0].SetupTimedSample((short)nudChannel.Value, (short)nudInterval.Value,(short)num_samples, CaioConst.P1);
+            devices.SetupTimedSample((short)nudChannel.Value, (short)nudInterval.Value,(short)num_samples, CaioConst.P1);
 
-            devices[0].SetupExternalParameters(Double.Parse(tbFreq.Text), cbClips.Checked);
+            devices.SetupExternalParameters(Double.Parse(tbFreq.Text), cbClips.Checked);
 
             print("START");
 
-            devices[0].Start( (uint)this.Handle.ToInt32() );
+            devices.Start( (uint)this.Handle.ToInt32() );
 
             setStatus("Sampling...");
             print("Sampling...");
@@ -59,7 +81,7 @@ namespace WindowsFormsApp1
 
         private void button2_Click(object sender, EventArgs e)
         {
-            devices[0].Stop();
+            devices.Stop();
             setStatus("Run stopped");
         }
 
@@ -71,13 +93,14 @@ namespace WindowsFormsApp1
             {
                 case 0x1002:
                     {
-                        int call_id = (Int16) m.WParam;
+                        int device_id = (Int16) m.WParam;
                         int num_samples = (int) m.LParam;
 
                         try {
-                            string path = MyAIO.findDevice(devices, call_id).Save(num_samples);
-                            setStatus("Saved: " + path);
-                            print("Saved to: " + path);
+
+                            devices.PrepareData(device_id, num_samples);
+                            setStatus("Saved: " + device_id);
+                            devices.SaveData();
                         }
                         catch (Exception e)
                         {
@@ -110,6 +133,25 @@ namespace WindowsFormsApp1
             Monitor m = new Monitor();
             m.device_name = "Aio001";
             m.Show();
+        }
+
+
+        /*
+         * Check the dll exists
+         */
+
+        [DllImport("kernel32", SetLastError = true)]
+        static extern IntPtr LoadLibrary(string lpFileName);
+
+        [DllImport("kernel32", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool FreeLibrary(IntPtr hModule);
+
+        static bool CheckLibrary(string fileName)
+        {
+            IntPtr hinstLib = LoadLibrary(fileName);
+            FreeLibrary(hinstLib);
+            return hinstLib != IntPtr.Zero;
         }
     }
 
