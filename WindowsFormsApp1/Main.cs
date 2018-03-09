@@ -11,7 +11,7 @@ namespace MultiDeviceAIO
 {
     public partial class Main : Form
     {
-        MyMultiAIO devices = new MyMultiAIO();
+        MyMultiAIO myaio = new MyMultiAIO();
 
         public Main()
         {
@@ -34,12 +34,12 @@ namespace MultiDeviceAIO
 
             }
 
-            devices.Init("Aio00");
+            myaio.DiscoverDevices("Aio00");
         }
 
         ~Main()
         {
-            devices.Close();
+            myaio.Close();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -66,13 +66,13 @@ namespace MultiDeviceAIO
                         */
             var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
 
-            devices.SetupTimedSample((short)nudChannel.Value, (short)nudInterval.Value,(short)num_samples, CaioConst.P1);
+            myaio.SetupTimedSample((short)nudChannel.Value, (short)nudInterval.Value,(short)num_samples, CaioConst.P1);
 
-            devices.SetupExternalParameters(Double.Parse(tbFreq.Text), cbClips.Checked);
+            myaio.SetupExternalParameters(Double.Parse(tbFreq.Text), cbClips.Checked);
 
             print("START");
 
-            devices.Start( (uint)this.Handle.ToInt32() );
+            myaio.Start( (uint)this.Handle.ToInt32() );
 
             setStatus("Sampling...");
             print("Sampling...");
@@ -81,7 +81,7 @@ namespace MultiDeviceAIO
 
         private void button2_Click(object sender, EventArgs e)
         {
-            devices.Stop();
+            myaio.Stop();
             setStatus("Run stopped");
         }
 
@@ -93,20 +93,33 @@ namespace MultiDeviceAIO
             {
                 case 0x1002:
                     {
-                        int device_id = (Int16) m.WParam;
+                        short device_id = (short) m.WParam;
                         int num_samples = (int) m.LParam;
 
-                        try {
-
-                            devices.PrepareData(device_id, num_samples);
-                            setStatus("Saved: " + device_id);
-                            devices.SaveData();
-                        }
-                        catch (Exception e)
+                        if (device_id == 1)
                         {
-                            setStatus("Not Saved: " + e.Message);
+
+                            print("Finished " + device_id + "(" + num_samples + ")");
+                            String fn = "";
+
+                            try
+                            {
+                                int ret = myaio.RetrieveData(device_id, num_samples);
+                                print("Retrieved " + device_id + "(" + ret + ")");
+                                fn = myaio.SaveData();
+                            }
+                            catch (Exception e)
+                            {
+                                setStatus("Not Saved: " + e.Message);
+                            }
+
+                            if (fn != null)
+                            {
+                                setStatus("Saved: " + fn);
+                                print("Saved: " + fn);
+                            }
                         }
-                    }                    
+                    }
                     break;
                 case 0x1003:
                     {
@@ -131,7 +144,7 @@ namespace MultiDeviceAIO
         private void button3_Click(object sender, EventArgs e)
         {
             Monitor m = new Monitor();
-            m.device_name = "Aio001";
+            m.device_name = myaio.devicenames[1];
             m.Show();
         }
 

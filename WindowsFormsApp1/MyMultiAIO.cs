@@ -16,33 +16,39 @@ using CaioCs;
 
 namespace MultiDeviceAIO
 {
-    class MyMultiAIO : I_MyAIO
+    using DEVICEID = System.Int16;
+
+    class MyMultiAIO
     {
+
         //static string device_root = "Aio00";
+        const string LINEEND = "\r\n";
 
-        List<MyAIO> devices = new List<MyAIO>();
+        //TODO: this will crash if not installed. Check
+        Caio aio = new Caio();
 
-        int data_ready = 0;
+        ProcessingSettings settings = new ProcessingSettings();
 
-        public void Init(string device_name)        //add devices
+        List<DEVICEID> devices = new List<DEVICEID>();
+        public Dictionary<DEVICEID, string> devicenames = new Dictionary<DEVICEID, string>();
+
+        public Dictionary<DEVICEID, int[]> data = new Dictionary<DEVICEID, int[]>();
+
+        public void DiscoverDevices(string device_root)        //add devices
         {
-            Caio aio = new Caio();
-
             long ret = 1;
-            short id1 = 0;
+            DEVICEID id = 0;
             string full_device_name;
             for (int i = 0; i < 10; i++)
             {
-                full_device_name = device_name + i;
-                ret = aio.Init(full_device_name, out id1);
+                full_device_name = device_root + i;
+                ret = aio.Init(full_device_name, out id);
                 if (ret == 0)
                 {
-                    MyAIO myaio = new MyAIO();
-                    myaio.Init(full_device_name);
-                    devices.Add( myaio );
+                    devices.Add(id);
+                    devicenames[id] = full_device_name;
                 }
             }
-            aio = null;
         }
 
         ~MyMultiAIO()
@@ -52,40 +58,30 @@ namespace MultiDeviceAIO
 
         public void Close()
         {
-            foreach (MyAIO myaio in devices)
+            foreach (DEVICEID id in devices)
             {
-                myaio.Close();
+                aio.Exit(id);
             }
-
             devices.Clear();
         }
 
+
         public void Reset()
         {
-            data_ready = 0;
-            foreach (MyAIO myaio in devices)
+            data.Clear();
+            foreach (DEVICEID id in devices)
             {
-                myaio.Reset();
+                aio.ResetAiMemory(id);
             }
-        }
-
-        private MyAIO findDevice(int id)
-        {
-            foreach(MyAIO myaio in devices)
-            {
-                if (myaio.id == id)
-                {
-                    return myaio;
-                }
-            }
-            return null;
         }
 
         public void SetupExternalParameters(double frequency, bool clipsOn)
         {
-            foreach (MyAIO myaio in devices)
+            foreach (DEVICEID id in devices)
             {
-                myaio.SetupExternalParameters(frequency, clipsOn);
+                
+                settings.frequency = (float)frequency;
+                settings.clipsOn = clipsOn;
             }
 
         }
@@ -93,9 +89,23 @@ namespace MultiDeviceAIO
         public int SetupTimedSample(short n_channels, short timer_interval, short n_samples, CaioConst range)
         {
             int ret = 0;
-            foreach (MyAIO myaio in devices)
+            foreach (DEVICEID id in devices)
             {
-                ret += myaio.SetupTimedSample(n_channels, timer_interval, n_samples, range);
+                settings.n_channels = n_channels;
+                settings.timer_interval = timer_interval;
+                settings.n_samples = n_samples;
+                settings.range = (short)range;
+
+                ret = aio.SetAiChannels(id, settings.n_channels);
+                ret += aio.SetAiTransferMode(id, 0);                //Device buffered 1=sent to user memory
+                ret += aio.SetAiMemoryType(id, 0);                  //FIFO 1=Ring
+                ret += aio.SetAiClockType(id, 0);                   //internal
+                ret += aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
+                ret += aio.SetAiRangeAll(id, settings.range);
+                ret += aio.SetAiStartTrigger(id, 0);                //0 means by software
+                ret += aio.SetAiStopTrigger(id, 0);                 //0 means by time
+                ret += aio.SetAiStopTimes(id, settings.n_samples);
+                ret += aio.ResetAiMemory(id);
             }
             return ret;
         }
@@ -103,75 +113,119 @@ namespace MultiDeviceAIO
         public int Start(uint HandleMsgLoop)
         {
             int ret = 0;
-            foreach (MyAIO myaio in devices)
+            foreach (DEVICEID id in devices)
             {
-                ret += myaio.Start(HandleMsgLoop);
+                ret += aio.SetAiEvent(id, HandleMsgLoop, (int)(CaioConst.AIE_END | CaioConst.AIE_DATA_NUM));
+            }
+
+            foreach (DEVICEID id in devices)
+            {
+                ret += aio.StartAi(id);
             }
             return ret;
         }
 
         public void Stop()
         {
-            foreach (MyAIO myaio in devices)
+            foreach (DEVICEID id in devices)
             {
-                myaio.Stop();
+                aio.StopAi(id);
             }
+
+            Reset();
         }
 
-        public void PrepareData(int device_id, int num_samples)
+        public int RetrieveData(DEVICEID device_id, int num_samples)
         {
-            try
-            {
-                findDevice(device_id).PrepareData(device_id, num_samples);
-                data_ready++;
+            int sampling_times = num_samples;
+            int[] data1 = new int[settings.n_channels * settings.n_samples];
+
+            int ret = aio.GetAiSamplingData(device_id, ref sampling_times, ref data1);
+
+            //if sampling times changes then sampling cut short
+
+            if (ret == 0) {
+                //store data
+                data[device_id] = data1;
+
+                data[0] = data1;
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
+
+
+            return ret;
         }
 
         public string GetHeader(string delimiter)
         {
-            return "";
+            return "Header";
         }
 
-        public void Print(string delimiter, ref string visitor)
+        public int GetLine_Num(int line_number, ref string visitor, string delimiter = ",")
         {
-            List<string> str = new List<string>();
-            foreach (MyAIO myaio in devices)
+            int num = 0;
+            foreach (DEVICEID id in devices)
             {
-                myaio.Print(delimiter, ref visitor);
+                num += GetLineId_Num(id, line_number++, ref visitor, delimiter);
             }
+            return num;
+        }
+
+        private int GetLineId_Num(DEVICEID id, int line_number, ref string visitor, string delimiter)
+        {
+            if (line_number < settings.n_samples)
+            {
+                int start = line_number * settings.n_channels;
+                int end = start + settings.n_channels;
+
+                //Separate new data from existing data
+                if (visitor.Length != 0)
+                {
+                    visitor += delimiter;
+                }
+
+                //Add to existing
+                List<string> str = new List<string>();
+                for (int i = start + 1; i < end; i++)
+                {
+                    str.Add(data[id][i].ToString());
+                }
+                visitor += string.Join(delimiter, str);
+                return 1;
+            }
+
+            return 0;
         }
 
         public string SaveData()
         {
-            if (data_ready != devices.Count)
+            if (data.Count != devices.Count)
             {
                 //still waiting for devices to return
                 return null;
             }
 
-            //All the devices have data ready. Save the whole data set.
-
             string header = "";// "Device," + device_number + "\nChannels," + n_channels + "\nInterval (us)," + timer_interval + "\nSamples," + n_samples;
 
             string path = "";
             //long time = DateTimeOffset.Now.ToUnixTimeSeconds();
-            string filename = "";// this.frequency + "hz-" + (this.clipsOn ? "ON-" : "OFF-") + n_channels + "ch-" + (n_samples / timer_interval) + "sec-#" + this.device_number + ".csv";
+            string filename = settings.frequency + "hz-" + (settings.clipsOn ? "ON-" : "OFF-") + settings.n_channels + "ch-" + (settings.n_samples / settings.timer_interval) + "sec-#" + devices.Count + ".csv";
             try
             {
                 using (System.IO.StreamWriter file =
                     new System.IO.StreamWriter(filename))
                 {
+                    int line_number = 0;
+                    string str = "";
+
                     file.WriteLine(header);
-                    string str;
-                    while (true)
+
+                    while(true)
                     {
                         str = "";
-                        Print(",", ref str);
-                        if (str == null) break;
+                        if (this.GetLine_Num(line_number++, ref str, ",") == 0)
+                        {
+                            break;
+                        }
                         file.WriteLine(str);
                     };
 

@@ -13,11 +13,19 @@ namespace MultiDeviceAIO
 
     class ProcessingSettings
     {
-        public int nchannels { get; set; }
+        public short n_channels { get; set; }
+        public short timer_interval { get; set; }
+        public short range { get; set; }
+        public short n_samples { get; set; }
+
+        //External parameters
+        public float frequency { get; set; }
+        public bool clipsOn { get; set; }
+
+        //Original parameters
         public string path { get; set; }
         public bool modified { get; set; }
         public bool[] channels { get; set; }
-        public int range { get; set; }
         public int duration { get; set; }
         public int parameter { get; set; }
         public int window { get; set; }
@@ -28,7 +36,9 @@ namespace MultiDeviceAIO
         static string default_xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><ProcessingSettings xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><nchannels>16</nchannels><nticks>50</nticks><path>(default)</path><modified>false</modified><channels><boolean>true</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean><boolean>false</boolean></channels><range>0</range><duration>1</duration><parameter>1</parameter><window>0</window></ProcessingSettings>";
 
         public ProcessingSettings settings { get; set; }
-            
+
+        Settings() { }
+
         Settings(string path)
         {
             Load(path);

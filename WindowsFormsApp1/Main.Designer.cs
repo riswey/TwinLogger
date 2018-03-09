@@ -102,7 +102,7 @@
             this.nudChannel.Size = new System.Drawing.Size(120, 20);
             this.nudChannel.TabIndex = 6;
             this.nudChannel.Value = new decimal(new int[] {
-            16,
+            4,
             0,
             0,
             0});
@@ -114,7 +114,7 @@
             this.nudDuration.Size = new System.Drawing.Size(120, 20);
             this.nudDuration.TabIndex = 7;
             this.nudDuration.Value = new decimal(new int[] {
-            5,
+            1,
             0,
             0,
             0});
@@ -200,7 +200,7 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // Channels
+            // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -219,7 +219,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
-            this.Name = "Channels";
+            this.Name = "Main";
             this.Text = "Main";
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
