@@ -11,7 +11,7 @@ namespace MultiDeviceAIO
 {
     public partial class Main : Form
     {
-        MyMultiAIO myaio = new MyMultiAIO();
+        MyAIO myaio = new MyAIO();
 
         public Main()
         {
@@ -35,56 +35,17 @@ namespace MultiDeviceAIO
             }
 
             myaio.DiscoverDevices("Aio00");
+
+            cbMass.SelectedIndex = 1;
+            cbPad.SelectedIndex = 1;
+            cbShaker.SelectedIndex = 1;
+
         }
 
         ~Main()
         {
             myaio.Close();
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            int ret;
-
-            /*
-                        //resolution (works)
-                        aio.GetAiResolution(id, out AiResolution);
-                        maxbytes = Math.Pow(2, AiResolution);
-
-                        //Doesn't work (reads 1)
-                        short nC1;
-                        aio.GetAiChannels(id, out nC1);
-
-                        //is this a mapping?
-                        string map = "";
-                        AiChannelSeq = new short[nChannel];
-                        for (short i = 0; i < nChannel; i++)
-                        {
-                            aio.GetAiChannelSequence(id, i, out AiChannelSeq[i]);
-                            map += AiChannelSeq[i].ToString() + ",";
-                        }
-                        */
-            var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
-
-            myaio.SetupTimedSample((short)nudChannel.Value, (short)nudInterval.Value,(short)num_samples, CaioConst.P1);
-
-            myaio.SetupExternalParameters(Double.Parse(tbFreq.Text), cbClips.Checked);
-
-            print("START");
-
-            myaio.Start( (uint)this.Handle.ToInt32() );
-
-            setStatus("Sampling...");
-            print("Sampling...");
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            myaio.Stop();
-            setStatus("Run stopped");
-        }
-
 
         [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m)
@@ -93,6 +54,8 @@ namespace MultiDeviceAIO
             {
                 case 0x1002:
                     {
+                        myaio.DeviceFinished();
+
                         short device_id = (short) m.WParam;
                         int num_samples = (int) m.LParam;
 
@@ -102,7 +65,22 @@ namespace MultiDeviceAIO
                         try {
                             int ret = myaio.RetrieveData(device_id, num_samples);
                             print("Retrieved " + device_id + "(" + ret + ")");
-                            fn = myaio.SaveData();
+
+                            if (myaio.TestFinished())
+                            {
+                                GetFreq testDialog = new GetFreq();
+
+                                // Show testDialog as a modal dialog and determine if DialogResult = OK.
+                                if (testDialog.ShowDialog(this) == DialogResult.OK)
+                                {
+                                    myaio.settings.frequency = Int32.Parse(testDialog.textBox1.Text);
+                                }
+
+                                testDialog.Dispose();
+
+                                fn = myaio.SaveData();
+                            }
+
                         }
                         catch (Exception e)
                         {
@@ -140,14 +118,6 @@ namespace MultiDeviceAIO
             textBox1.Text += msg + "\r\n";
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            Monitor m = new Monitor();
-            m.device_name = myaio.devicenames[1];
-            m.Show();
-        }
-
-
         /*
          * Check the dll exists
          */
@@ -166,10 +136,61 @@ namespace MultiDeviceAIO
             return hinstLib != IntPtr.Zero;
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void monitorChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Monitor m = new Monitor();
+            m.aio = myaio;
+            m.Show();
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void startToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int ret;
+
+            /*
+                        //resolution (works)
+                        aio.GetAiResolution(id, out AiResolution);
+                        maxbytes = Math.Pow(2, AiResolution);
+
+                        //Doesn't work (reads 1)
+                        short nC1;
+                        aio.GetAiChannels(id, out nC1);
+
+                        //is this a mapping?
+                        string map = "";
+                        AiChannelSeq = new short[nChannel];
+                        for (short i = 0; i < nChannel; i++)
+                        {
+                            aio.GetAiChannelSequence(id, i, out AiChannelSeq[i]);
+                            map += AiChannelSeq[i].ToString() + ",";
+                        }
+                        */
+            var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
+
+            myaio.SetupTimedSample((short)nudChannel.Value, (short)nudInterval.Value, (short)num_samples, CaioConst.P1);
+
+            myaio.SetupExternalParameters(Double.Parse(tbFreq.Text), cbClips.Checked);
+
+            print("START");
+
+            myaio.Start((uint)this.Handle.ToInt32());
+
+            setStatus("Sampling...");
+            print("Sampling...");
 
         }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myaio.Stop();
+            setStatus("Run stopped");
+        }
+
     }
 
 }

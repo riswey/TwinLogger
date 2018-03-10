@@ -11,7 +11,7 @@ using System.Xml;
 namespace MultiDeviceAIO
 {
 
-    class ProcessingSettings
+    public class ProcessingSettings
     {
         public short n_channels { get; set; }
         public short timer_interval { get; set; }

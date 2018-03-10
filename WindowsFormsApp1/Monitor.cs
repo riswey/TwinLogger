@@ -13,16 +13,18 @@ namespace MultiDeviceAIO
 {
     public partial class Monitor : Form
     {
-        public string device_name;
+        //public string device_name;
 
-        Caio aio = new Caio();
-        short id;
+        public MyAIO aio;
+        
+        //Caio aio = new Caio();
+        //short id;
 
         const int WIDTH = 25;
         const int HEIGHT = 12;
         const int OFFSET_X = 25;
         const int OFFSET_Y = 0;
-        Random rnd = new Random();
+        //Random rnd = new Random();
 
         short nChannel = 62;
         int[] nChannelMapping = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, -1, -1, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59 };
@@ -65,7 +67,7 @@ namespace MultiDeviceAIO
         {
             InitializeComponent();
 
-            int ret = aio.Init(device_name, out id);
+            //int ret = aio.Init(device_name, out id);
 
             chVolt = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
             pictureBox1.Image = chVolt;
@@ -93,7 +95,7 @@ namespace MultiDeviceAIO
             Brush brush2 = brushes["Transparent"];
             Brush brush3 = brushes["Transparent"];
 
-            double normvolt = rnd.NextDouble(); //(volt - volt_min) / volt_max;
+            double normvolt = (volt - volt_min) / volt_max;
 
             if (normvolt < 0.33)
             {
@@ -142,8 +144,8 @@ namespace MultiDeviceAIO
             drawGrid(g, pens["LightGrey"], OFFSET_X, OFFSET_Y, WIDTH, HEIGHT);
 
             //get channel list
-            float[] aidata = new float[nChannel];
-            long ret = aio.MultiAiEx(id, nChannel, aidata);
+            float[] aidata = aio.SnapShot(0);
+            //long ret = 0;// aio.MultiAiEx(id, nChannel, aidata);
 
             String str = "Channel Voltages" + "\r\n" + "================\r\n";
             for (int ch = 0; ch < aidata.Length; ch++)
