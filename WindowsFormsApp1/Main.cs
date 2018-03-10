@@ -102,9 +102,6 @@ namespace MultiDeviceAIO
                         try {
                             int ret = myaio.RetrieveData(device_id, num_samples);
                             print("Retrieved " + device_id + "(" + ret + ")");
-                            string visitor = "";
-                            myaio.GetLineId_Num(device_id, 0, ref visitor, ",");
-                            print( visitor );
                             fn = myaio.SaveData();
                         }
                         catch (Exception e)
@@ -124,8 +121,8 @@ namespace MultiDeviceAIO
                     {
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
+                        int ret = myaio.RetrieveData(device_id, num_samples);
                         print("Processed... " + m.LParam);
-
                     }
                     break;
             }

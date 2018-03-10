@@ -31,8 +31,14 @@ namespace MultiDeviceAIO
 
         List<DEVICEID> devices = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames = new Dictionary<DEVICEID, string>();
+        public Dictionary<DEVICEID, List<int[]>> data = new Dictionary<DEVICEID, List<int[]> >();
 
-        public Dictionary<DEVICEID, int[]> data = new Dictionary<DEVICEID, int[]>();
+        int finished_count = 0;
+
+        ~MyMultiAIO()
+        {
+            Close();
+        }
 
         public void DiscoverDevices(string device_root)        //add devices
         {
@@ -47,13 +53,9 @@ namespace MultiDeviceAIO
                 {
                     devices.Add(id);
                     devicenames[id] = full_device_name;
+                    data[id] = new List<int[]>();
                 }
             }
-        }
-
-        ~MyMultiAIO()
-        {
-            Close();
         }
 
         public void Close()
@@ -69,6 +71,11 @@ namespace MultiDeviceAIO
         public void Reset()
         {
             data.Clear();
+            foreach(DEVICEID id in devices)
+            {
+                data[id] = new List<int[]>();
+            }
+
             foreach (DEVICEID id in devices)
             {
                 aio.ResetAiMemory(id);
@@ -114,6 +121,8 @@ namespace MultiDeviceAIO
 
         public int Start(uint HandleMsgLoop)
         {
+            finished_count = 0;
+
             int ret = 0;
             foreach (DEVICEID id in devices)
             {
@@ -141,7 +150,7 @@ namespace MultiDeviceAIO
         public int RetrieveData(DEVICEID device_id, int num_samples)
         {
             int sampling_times = num_samples;
-            int[] data1 = new int[settings.n_channels * settings.n_samples];
+            int[] data1 = new int[settings.n_channels * num_samples];
 
             int ret = aio.GetAiSamplingData(device_id, ref sampling_times, ref data1);
 
@@ -149,7 +158,7 @@ namespace MultiDeviceAIO
 
             if (ret == 0) {
                 //store data
-                data[device_id] = data1;   
+                data[device_id].Add( data1 );   
             }
             return ret;
         }
@@ -159,17 +168,17 @@ namespace MultiDeviceAIO
             return "Header";
         }
 
-        public int GetLine_Num(int line_number, ref string visitor, string delimiter = ",")
+        private int GetLine_Num(Dictionary<DEVICEID, List<int>> data, int line_number, ref string visitor, string delimiter = ",")
         {
             int num = 0;
             foreach (DEVICEID id in devices)
             {
-                num += GetLineId_Num(id, line_number, ref visitor, delimiter);
+                num += GetLineId_Num(data[id], line_number, ref visitor, delimiter);
             }
             return num;
         }
 
-        public int GetLineId_Num(DEVICEID id, int line_number, ref string visitor, string delimiter)
+        private int GetLineId_Num(List<int> data, int line_number, ref string visitor, string delimiter)
         {
             if (line_number < settings.n_samples)
             {
@@ -186,7 +195,7 @@ namespace MultiDeviceAIO
                 List<string> str = new List<string>();
                 for (int i = start; i < end; i++)
                 {
-                    str.Add(data[id][i].ToString());
+                    str.Add(data[i].ToString());
                 }
                 visitor += string.Join(delimiter, str);
                 return 1;
@@ -197,10 +206,21 @@ namespace MultiDeviceAIO
 
         public string SaveData()
         {
-            if (data.Count != devices.Count)
+            if (++finished_count < devices.Count)
             {
                 //still waiting for devices to return
                 return null;
+            }
+
+            //Concat data
+            Dictionary<DEVICEID, List<int>> data_concat = new Dictionary<DEVICEID, List<int>>();
+            foreach(DEVICEID id in devices)
+            {
+                data_concat[id] = new List<int>();
+                foreach (int[] bundle in data[id])
+                {
+                    data_concat[id].AddRange(bundle);
+                }
             }
 
             string header = "";// "Device," + device_number + "\nChannels," + n_channels + "\nInterval (us)," + timer_interval + "\nSamples," + n_samples;
@@ -221,7 +241,7 @@ namespace MultiDeviceAIO
                     while(true)
                     {
                         str = "";
-                        if (this.GetLine_Num(line_number++, ref str, ",") == 0)
+                        if (this.GetLine_Num(data_concat, line_number++, ref str, ",") == 0)
                         {
                             break;
                         }

@@ -1,4 +1,18 @@
-﻿(1)Test whether just need run id number on func in a single Caio obj, or need multiple obj
+﻿
+>100ms to get data and store. Must do in memory. Don't risk disk.
+
+
 (2)	Change front end to match all the settings
 (3) Bind the settings from settings class
 
+
+
+m1-m8
+clip status
+load
+pads (3)
+mass radius
+shaker type (3 types) 
+
+set freq at end
+excitation freq (achieved)
