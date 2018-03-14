@@ -27,13 +27,21 @@ namespace MultiDeviceAIO
         //TODO: this will crash if not installed. Check
         Caio aio = new Caio();
 
-        public ProcessingSettings settings = new ProcessingSettings();
+        I_TestSettings settings;
+
+        //public Settings settings = new Settings();
 
         List<DEVICEID> devices = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames = new Dictionary<DEVICEID, string>();
         public Dictionary<DEVICEID, List<int[]>> data = new Dictionary<DEVICEID, List<int[]> >();
 
         private int finished_count = 0;
+
+        //TODO: test whether this object reflects the object in ProcessSettings!!!!
+        public MyAIO(I_TestSettings settings)
+        {
+            this.settings = settings;
+        }
 
         ~MyAIO()
         {
@@ -82,17 +90,6 @@ namespace MultiDeviceAIO
             }
         }
 
-        public void SetupExternalParameters(double frequency, bool clipsOn)
-        {
-            foreach (DEVICEID id in devices)
-            {
-                
-                settings.frequency = (float)frequency;
-                settings.clipsOn = clipsOn;
-            }
-
-        }
-
         public int SetupTimedSample(short n_channels, short timer_interval, short n_samples, CaioConst range)
         {
             int ret = 0;
@@ -101,14 +98,12 @@ namespace MultiDeviceAIO
                 settings.n_channels = n_channels;
                 settings.timer_interval = timer_interval;
                 settings.n_samples = n_samples;
-                settings.range = (short)range;
 
                 ret = aio.SetAiChannels(id, settings.n_channels);
                 ret += aio.SetAiTransferMode(id, 0);                //Device buffered 1=sent to user memory
                 ret += aio.SetAiMemoryType(id, 0);                  //FIFO 1=Ring
                 ret += aio.SetAiClockType(id, 0);                   //internal
                 ret += aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
-                ret += aio.SetAiRangeAll(id, settings.range);
                 ret += aio.SetAiStartTrigger(id, 0);                //0 means by software
                 ret += aio.SetAiStopTrigger(id, 0);                 //0 means by time
                 ret += aio.SetAiStopTimes(id, settings.n_samples);
@@ -214,6 +209,11 @@ namespace MultiDeviceAIO
             return finished_count == devices.Count;
         }
 
+        private string GetFilename()
+        {
+            return settings.frequency + "hz-M" + (settings.mass+1) + "-" + settings.load + "kN-" + (settings.clipsOn ? "ON-" : "OFF-") + settings.n_channels + "ch-" + (settings.n_samples / settings.timer_interval) + "sec-#" + devices.Count + ".csv";
+        }
+
         public string SaveData()
         {
             if (!TestFinished()) return null;
@@ -232,8 +232,8 @@ namespace MultiDeviceAIO
             string header = "";// "Device," + device_number + "\nChannels," + n_channels + "\nInterval (us)," + timer_interval + "\nSamples," + n_samples;
 
             string path = "";
-            //long time = DateTimeOffset.Now.ToUnixTimeSeconds();
-            string filename = settings.frequency + "hz-" + (settings.clipsOn ? "ON-" : "OFF-") + settings.n_channels + "ch-" + (settings.n_samples / settings.timer_interval) + "sec-#" + devices.Count + ".csv";
+            //long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+            string filename = GetFilename();
             try
             {
                 using (System.IO.StreamWriter file =

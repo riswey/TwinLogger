@@ -22,5 +22,28 @@ namespace MultiDeviceAIO.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string processing_settings_current {
+            get {
+                return ((string)(this["processing_settings_current"]));
+            }
+            set {
+                this["processing_settings_current"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection processing_settings_prev {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["processing_settings_prev"]));
+            }
+            set {
+                this["processing_settings_prev"] = value;
+            }
+        }
     }
 }

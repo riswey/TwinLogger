@@ -35,11 +35,9 @@
             this.nudChannel = new System.Windows.Forms.NumericUpDown();
             this.nudDuration = new System.Windows.Forms.NumericUpDown();
             this.nudInterval = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.tbFreq = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,7 +49,9 @@
             this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.monitorChannelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cbMass = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tbLoad = new System.Windows.Forms.TextBox();
@@ -60,6 +60,8 @@
             this.cbShaker = new System.Windows.Forms.ComboBox();
             this.cbPad = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).BeginInit();
@@ -70,11 +72,11 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(487, 27);
+            this.textBox1.Location = new System.Drawing.Point(379, 54);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(370, 363);
+            this.textBox1.Size = new System.Drawing.Size(478, 336);
             this.textBox1.TabIndex = 1;
             // 
             // statusStrip1
@@ -96,7 +98,7 @@
             // cbClips
             // 
             this.cbClips.AutoSize = true;
-            this.cbClips.Location = new System.Drawing.Point(53, 98);
+            this.cbClips.Location = new System.Drawing.Point(53, 92);
             this.cbClips.Name = "cbClips";
             this.cbClips.Size = new System.Drawing.Size(65, 17);
             this.cbClips.TabIndex = 5;
@@ -144,15 +146,6 @@
             0,
             0});
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(234, 54);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(79, 13);
-            this.label1.TabIndex = 9;
-            this.label1.Text = "Frequency (Hz)";
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -179,14 +172,6 @@
             this.label5.Size = new System.Drawing.Size(99, 13);
             this.label5.TabIndex = 13;
             this.label5.Text = "Sample interval (us)";
-            // 
-            // tbFreq
-            // 
-            this.tbFreq.Location = new System.Drawing.Point(237, 71);
-            this.tbFreq.Name = "tbFreq";
-            this.tbFreq.Size = new System.Drawing.Size(100, 20);
-            this.tbFreq.TabIndex = 14;
-            this.tbFreq.Text = "60.1";
             // 
             // menuStrip1
             // 
@@ -263,7 +248,8 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.monitorChannelsToolStripMenuItem});
+            this.monitorChannelsToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -271,15 +257,29 @@
             // monitorChannelsToolStripMenuItem
             // 
             this.monitorChannelsToolStripMenuItem.Name = "monitorChannelsToolStripMenuItem";
-            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.monitorChannelsToolStripMenuItem.Text = "Monitor Channels...";
+            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.monitorChannelsToolStripMenuItem.Text = "Monitor";
             this.monitorChannelsToolStripMenuItem.Click += new System.EventHandler(this.monitorChannelsToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
             // 
             // helpToolStripMenuItem
             // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Text = "About";
             // 
             // cbMass
             // 
@@ -293,7 +293,7 @@
             "M6",
             "M7",
             "M8"});
-            this.cbMass.Location = new System.Drawing.Point(52, 71);
+            this.cbMass.Location = new System.Drawing.Point(52, 65);
             this.cbMass.Name = "cbMass";
             this.cbMass.Size = new System.Drawing.Size(121, 21);
             this.cbMass.TabIndex = 18;
@@ -301,7 +301,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(49, 55);
+            this.label2.Location = new System.Drawing.Point(49, 49);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(32, 13);
             this.label2.TabIndex = 19;
@@ -309,7 +309,7 @@
             // 
             // tbLoad
             // 
-            this.tbLoad.Location = new System.Drawing.Point(49, 138);
+            this.tbLoad.Location = new System.Drawing.Point(49, 132);
             this.tbLoad.Name = "tbLoad";
             this.tbLoad.Size = new System.Drawing.Size(100, 20);
             this.tbLoad.TabIndex = 20;
@@ -318,7 +318,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(49, 122);
+            this.label6.Location = new System.Drawing.Point(49, 116);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(48, 13);
             this.label6.TabIndex = 21;
@@ -327,7 +327,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(208, 215);
+            this.label7.Location = new System.Drawing.Point(208, 216);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(129, 13);
             this.label7.TabIndex = 22;
@@ -365,11 +365,33 @@
             this.label8.TabIndex = 25;
             this.label8.Text = "Pad Type";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(202, 54);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(126, 41);
+            this.button1.TabIndex = 26;
+            this.button1.Text = "Start";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(202, 114);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(126, 39);
+            this.button2.TabIndex = 27;
+            this.button2.Text = "Stop";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(869, 415);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.cbPad);
             this.Controls.Add(this.cbShaker);
@@ -378,11 +400,9 @@
             this.Controls.Add(this.tbLoad);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cbMass);
-            this.Controls.Add(this.tbFreq);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.nudInterval);
             this.Controls.Add(this.nudDuration);
             this.Controls.Add(this.nudChannel);
@@ -413,11 +433,9 @@
         private System.Windows.Forms.NumericUpDown nudChannel;
         private System.Windows.Forms.NumericUpDown nudDuration;
         private System.Windows.Forms.NumericUpDown nudInterval;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox tbFreq;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
@@ -438,5 +456,9 @@
         private System.Windows.Forms.ComboBox cbShaker;
         private System.Windows.Forms.ComboBox cbPad;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }

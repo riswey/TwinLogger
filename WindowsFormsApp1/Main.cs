@@ -7,11 +7,14 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
 
+using System.Diagnostics;
+
 namespace MultiDeviceAIO
 {
     public partial class Main : Form
     {
-        MyAIO myaio = new MyAIO();
+        MyAIO myaio;
+        AIOSettings settings = new AIOSettings();
 
         public Main()
         {
@@ -31,20 +34,61 @@ namespace MultiDeviceAIO
                 })).Start();
 
                 Application.Exit();
-
             }
 
-            myaio.DiscoverDevices("Aio00");
+            //Load settings from app state
+            if (Properties.Settings.Default.processing_settings_current == "")
+            {
+                Properties.Settings.Default.processing_settings_current = SettingData.default_xml;
+            }
 
-            cbMass.SelectedIndex = 1;
-            cbPad.SelectedIndex = 1;
-            cbShaker.SelectedIndex = 1;
+            settings.ImportXML(Properties.Settings.Default.processing_settings_current);
+
+            loadBindData();
+
+            //Init AIO
+            myaio = new MyAIO(settings.data);
+            myaio.DiscoverDevices("Aio00");
 
         }
 
-        ~Main()
+        void loadBindData()
         {
+            cbMass.DataBindings.Clear();
+            cbMass.DataBindings.Add("SelectedIndex", settings.data, "mass");
+
+            cbClips.DataBindings.Clear();
+            cbClips.DataBindings.Add("Checked", settings.data, "clipsOn");
+
+            tbLoad.DataBindings.Clear();
+            tbLoad.DataBindings.Add("Text", settings.data, "load");
+
+            nudChannel.DataBindings.Clear();
+            nudChannel.DataBindings.Add("Value", settings.data, "n_channels");
+
+            nudDuration.DataBindings.Clear();
+            nudDuration.DataBindings.Add("Value", settings.data, "duration");
+
+            cbShaker.DataBindings.Clear();
+            cbShaker.DataBindings.Add("SelectedIndex", settings.data, "shakertype");
+
+            cbPad.DataBindings.Clear();
+            cbPad.DataBindings.Add("SelectedIndex", settings.data, "paddtype");
+
+            nudInterval.DataBindings.Clear();
+            nudInterval.DataBindings.Add("Value", settings.data, "timer_interval");
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            //Give chance to close
             myaio.Close();
+
+            //Commit final settings to app state 
+            string current_xml = settings.ExportXML();
+            Properties.Settings.Default.processing_settings_current = current_xml;
+            Properties.Settings.Default.Save();
+            base.OnFormClosing(e);
         }
 
         [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
@@ -73,7 +117,7 @@ namespace MultiDeviceAIO
                                 // Show testDialog as a modal dialog and determine if DialogResult = OK.
                                 if (testDialog.ShowDialog(this) == DialogResult.OK)
                                 {
-                                    myaio.settings.frequency = Int32.Parse(testDialog.textBox1.Text);
+                                    settings.data.frequency = Int32.Parse(testDialog.textBox1.Text);
                                 }
 
                                 testDialog.Dispose();
@@ -100,7 +144,7 @@ namespace MultiDeviceAIO
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
                         int ret = myaio.RetrieveData(device_id, num_samples);
-                        print("Processed... " + m.LParam);
+                        print(".", false);
                     }
                     break;
             }
@@ -108,14 +152,18 @@ namespace MultiDeviceAIO
             base.WndProc(ref m);
         }
 
+
+
         void setStatus(string msg)
         {
             toolStripStatusLabel1.Text = msg;
         }
 
-        void print(string msg)
+        void print(string msg, bool linebreak = true)
         {
-            textBox1.Text += msg + "\r\n";
+            textBox1.Text += msg + (linebreak?"\r\n":"");
+            textBox1.SelectionStart = textBox1.Text.Length;
+            textBox1.ScrollToCaret();
         }
 
         /*
@@ -150,6 +198,14 @@ namespace MultiDeviceAIO
 
         private void startToolStripMenuItem_Click(object sender, EventArgs e)
         {
+        }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
             int ret;
 
             /*
@@ -174,21 +230,121 @@ namespace MultiDeviceAIO
 
             myaio.SetupTimedSample((short)nudChannel.Value, (short)nudInterval.Value, (short)num_samples, CaioConst.P1);
 
-            myaio.SetupExternalParameters(Double.Parse(tbFreq.Text), cbClips.Checked);
-
             print("START");
 
             myaio.Start((uint)this.Handle.ToInt32());
 
             setStatus("Sampling...");
-            print("Sampling...");
+            print("Sampling", false);
 
         }
 
-        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             myaio.Stop();
+            print("STOP");
             setStatus("Run stopped");
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        // CODE FROM SETTINGS
+        ////////////////////////////////////////////////////////////////////////////////////
+
+        //Flag to stop initial databinding setting everything dirty
+        bool has_loaded = false;
+
+        void loadSettings()
+        {
+            //Load
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "config files|*.xml";
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    has_loaded = false;
+
+                    string filename = openFileDialog1.FileName;
+
+                    settings.Load(filename);
+
+                    loadBindData();
+
+                    displayPath(filename, settings.data.modified);
+
+                    //So can reset
+                    settings.data.path = filename;
+
+                    has_loaded = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+            }
+        }
+
+        void saveSettings()
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            saveFileDialog1.Filter = "conf files |*.xml";
+            saveFileDialog1.RestoreDirectory = true;
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string filename = saveFileDialog1.FileName;
+                    settings.Save(filename);
+                    displayPath(filename);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. " + ex.Message);
+                }
+            }
+        }
+
+        void resetSettings()
+        {
+            //Reset to base
+            has_loaded = false;
+            
+            settings.Reload();
+
+            loadBindData();
+
+            displayPath(settings.data.path);
+
+            has_loaded = true;
+
+        }
+
+        static string getFileName(string path)
+        {
+            char divider = '\\';
+            if (path.IndexOf('/') > 0) divider = '/';
+
+            string[] paths = path.Split(divider);
+
+            return paths[paths.Length - 1];
+        }
+
+        void displayPath(string path, bool modified = false)
+        {
+
+            string fn = getFileName(path);
+            string fn1 = fn + ((modified) ? " (modified)" : "");
+
+            toolStripStatusLabel1.Text = "Current config: " + fn1;
+
+            //System.Collections.Specialized.StringCollection sc = Properties.Settings.Default.processing_settings_prev;
+
         }
 
     }
