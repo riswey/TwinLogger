@@ -9,26 +9,22 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CaioCs;
 
+using System.Diagnostics;
+
 namespace MultiDeviceAIO
 {
     public partial class Monitor : Form
     {
-        //public string device_name;
-
         public MyAIO aio;
-        
-        //Caio aio = new Caio();
-        //short id;
+
+        float volt_min = 10f;
+        float volt_max = -10f;
 
         const int WIDTH = 25;
         const int HEIGHT = 12;
         const int OFFSET_X = 25;
         const int OFFSET_Y = 0;
-        //Random rnd = new Random();
-
-        short nChannel = 62;
-        int[] nChannelMapping = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, -1, -1, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59 };
-        double maxbytes;
+        const int PANEL_OFFSET = 350;
 
         Bitmap chVolt;
         Graphics g;
@@ -50,16 +46,16 @@ namespace MultiDeviceAIO
         private static readonly Dictionary<string, Brush> brushes
         = new Dictionary<string, Brush>
         {
-                    { "Black", new SolidBrush(Color.Black) },
-                    { "White", new SolidBrush(Color.White) },
-                    { "Transparent", new SolidBrush(Color.Transparent) },
-                    { "Grey", new SolidBrush(Color.Gray) },
-                    { "Red", new SolidBrush(Color.Red) },
-                    { "Amber", new SolidBrush(Color.Orange) },
-                    { "Green", new SolidBrush(Color.Green) },
-                    { "DarkRed", new SolidBrush(Color.DarkRed) },
-                    { "DarkAmber", new SolidBrush(Color.DarkGoldenrod) },
-                    { "DarkGreen", new SolidBrush(Color.DarkGreen) }
+                { "Black", new SolidBrush(Color.Black) },
+                { "White", new SolidBrush(Color.White) },
+                { "Transparent", new SolidBrush(Color.Transparent) },
+                { "Grey", new SolidBrush(Color.Gray) },
+                { "Red", new SolidBrush(Color.Red) },
+                { "Amber", new SolidBrush(Color.Orange) },
+                { "Green", new SolidBrush(Color.Green) },
+                { "DarkRed", new SolidBrush(Color.DarkRed) },
+                { "DarkAmber", new SolidBrush(Color.DarkGoldenrod) },
+                { "DarkGreen", new SolidBrush(Color.DarkGreen) }
         };
 
 
@@ -67,16 +63,12 @@ namespace MultiDeviceAIO
         {
             InitializeComponent();
 
-            //int ret = aio.Init(device_name, out id);
-
             chVolt = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
             pictureBox1.Image = chVolt;
 
             g = Graphics.FromImage(chVolt);
 
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-            drawGrid(g, pens["LightGrey"], OFFSET_X, OFFSET_Y, WIDTH, HEIGHT);
 
             timer1.Start();
 
@@ -88,20 +80,60 @@ namespace MultiDeviceAIO
             g.Dispose();
         }
 
-        void drawMeter(Graphics g, int cell_x, int cell_y, int width, int height, double volt, double volt_min, double volt_max)
+        protected override void OnShown(EventArgs e)
         {
-            Pen pen = pens["LightGrey"];
+            //Caller has set the aio object now
+            base.OnShown(e);
+
+            textBox1.Text = aio.devicenames[0];
+            textBox2.Text = aio.devicenames[1];
+        }
+
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+            g.Clear(Color.Transparent);
+
+            List<float[]> snapshot = aio.ChannelsSnapShot();
+
+            DrawDeviceChannels(0, snapshot[0]);
+            DrawDeviceChannels(1, snapshot[1]);
+
+            pictureBox1.Image = chVolt;
+        }
+
+        void DrawDeviceChannels(int device, float[] data)
+        {
+            for (int ch = 0; ch < data.Length; ch++)
+            {
+                int cm = ch;
+
+                float volt = data[ch];
+
+                if (volt < volt_min) volt_min = volt;
+                if (volt > volt_max) volt_max = volt;
+
+                float difference = volt_max - volt_min;
+                int normvolt = (difference == 0)?0:(int)Math.Round(100*(volt - volt_min) / difference);
+
+                string text = Math.Round((double)volt, 2).ToString();
+                drawMeter(g, device, cm % 3, (int)Math.Floor((double)cm / 3), 100, 20, normvolt, text);
+            }
+        }
+
+        void drawMeter(Graphics g, int device, int cell_x, int cell_y, int width, int height, double normvolt, string text)
+        {
+            Pen pen = pens["Grey"];
             Brush brush1 = brushes["Transparent"];
             Brush brush2 = brushes["Transparent"];
             Brush brush3 = brushes["Transparent"];
 
-            double normvolt = (volt - volt_min) / volt_max;
+            int offset = device * PANEL_OFFSET;
 
-            if (normvolt < 0.33)
+            if (normvolt < 33)
             {
                 brush1 = brushes["Green"];
             }
-            else if (normvolt > 0.67)
+            else if (normvolt > 67)
             {
                 brush3 = brushes["Red"];
             }
@@ -111,97 +143,22 @@ namespace MultiDeviceAIO
             }
 
             int rad = 12;
-            int x = 40 + OFFSET_X + cell_x * width;
+            int x = offset + 40 + OFFSET_X + cell_x * width;
             int y = OFFSET_Y + cell_y * height;
 
             g.FillEllipse(brush1, x, y + HEIGHT / 2, rad, rad);
             g.FillEllipse(brush2, x + rad + 1, y + HEIGHT / 2, rad, rad);
             g.FillEllipse(brush3, x + 2 * rad + 2, y + HEIGHT / 2, rad, rad);
+
+            g.DrawEllipse(pen, x, y + HEIGHT / 2, rad, rad);
+            g.DrawEllipse(pen, x + rad + 1, y + HEIGHT / 2, rad, rad);
+            g.DrawEllipse(pen, x + 2 * rad + 2, y + HEIGHT / 2, rad, rad);
+
             Font f = new Font(FontFamily.GenericMonospace, 10);
-            g.DrawString( Math.Round(normvolt,2).ToString() , f, brushes["Grey"], x-40, y+4);
+            g.DrawString(text, f, brushes["Black"], x - 45, y + 4);
+
         }
 
-        private void drawGrid(Graphics g, Pen p, int offset_x, int offset_y, int width, int height)
-        {
-            /*
-            float y;
-            for (int i = 0; i < 21; i++)
-            {
-                y = i * height + offset_y;
-                g.DrawLine(p, 0, y, 180, y);
-                //g.DrawString(i,)
-            }
-            //g.DrawLine(gypen, 0, y, 180, y);
-            //g.DrawLine(gypen, 0, y, 180, y);
-            */
-        }
 
-        private void timer1_Tick_1(object sender, EventArgs e)
-        {
-            //all return ret == 0/7(fromstandby) is ok > 10000 prob
-            g.Clear(Color.Transparent);
-
-            drawGrid(g, pens["LightGrey"], OFFSET_X, OFFSET_Y, WIDTH, HEIGHT);
-
-            //get channel list
-            float[] aidata = aio.SnapShot(0);
-            //long ret = 0;// aio.MultiAiEx(id, nChannel, aidata);
-
-            String str = "Channel Voltages" + "\r\n" + "================\r\n";
-            for (int ch = 0; ch < aidata.Length; ch++)
-            {
-                if (nChannelMapping[ch] < 0) continue;
-
-                //System Channel is actually channel map cm
-                int cm = nChannelMapping[ch];
-
-                double volt = aidata[ch];
-                //double volt = Math.Round((aidata[ch] - maxbytes / 2) / maxbytes * 20, 3);
-                volt = 1.6;
-
-                if (volt < 1.35) volt = 1.35;
-                if (volt > 2.05) volt = 2.05;
-                int normvolt = (int)Math.Round((volt - 1.35) / 2.05);
-
-                if (cm % 3 == 0)
-                {
-                    str += "\r\n" + ch + ":" + "\t";
-                }
-
-                str += volt.ToString() + "\t";
-
-                drawMeter(g, cm % 3, (int)Math.Floor((double)cm / 3), 100, 20, volt, 1.35, 2.05);
-                /*
-                if (volt > 1.79)
-                {
-                    g.FillEllipse(rdbsh,
-                        25 + (cm % 3) * 50 - rad / 2,
-                        20 + (int)Math.Floor((double)cm / 3) * 17 - rad / 2,
-                        rad,
-                        rad
-                    );
-                } else
-                {
-                    g.FillEllipse(gnbsh,
-                        25 + (cm % 3) * 50 - rad / 2,
-                        20 + (int)Math.Floor((double)cm / 3) * 17 - rad / 2,
-                        rad,
-                        rad
-                    );
-
-                }
-
-                g.DrawEllipse(gypen,
-                    20 + (ch % 3) * 50,
-                    15 + (int)Math.Floor((double)cm / 3) * 17,
-                    11,
-                    11
-                );
-                */
-            }
-
-            //this.textBox1.Text = str;
-            pictureBox1.Image = chVolt;
-        }
     }
 }

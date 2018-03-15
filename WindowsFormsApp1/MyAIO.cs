@@ -158,11 +158,6 @@ namespace MultiDeviceAIO
             return ret;
         }
 
-        public string GetHeader(string delimiter)
-        {
-            return "Header";
-        }
-
         private int GetLine_Num(Dictionary<DEVICEID, List<int>> data, int line_number, ref string visitor, string delimiter = ",")
         {
             int num = 0;
@@ -214,6 +209,18 @@ namespace MultiDeviceAIO
             return settings.frequency + "hz-M" + (settings.mass+1) + "-" + settings.load + "kN-" + (settings.clipsOn ? "ON-" : "OFF-") + settings.n_channels + "ch-" + (settings.n_samples / settings.timer_interval) + "sec-#" + devices.Count + ".csv";
         }
 
+        private string GetHeader()
+        {
+            string header = settings.n_samples + ",";
+            header += devices.Count + ",";
+            header += settings.frequency + ",";
+            header += (settings.mass + 1) +",";
+            header += settings.load + ",";
+            header += (settings.clipsOn ? 1 : 0) + ",";
+            header += settings.n_channels;
+            return header;
+        }
+
         public string SaveData()
         {
             if (!TestFinished()) return null;
@@ -229,11 +236,9 @@ namespace MultiDeviceAIO
                 }
             }
 
-            string header = "";// "Device," + device_number + "\nChannels," + n_channels + "\nInterval (us)," + timer_interval + "\nSamples," + n_samples;
-
-            string path = "";
+            string path = settings.testpath + "\\";
             //long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-            string filename = GetFilename();
+            string filename = path + GetFilename();
             try
             {
                 using (System.IO.StreamWriter file =
@@ -242,7 +247,7 @@ namespace MultiDeviceAIO
                     int line_number = 0;
                     string str = "";
 
-                    file.WriteLine(header);
+                    file.WriteLine( GetHeader() );
 
                     while(true)
                     {
@@ -255,7 +260,7 @@ namespace MultiDeviceAIO
                     };
 
                     file.Close();
-                    return path + filename;
+                    return filename;
                 }
             }
             catch
@@ -264,12 +269,16 @@ namespace MultiDeviceAIO
             }
         }
 
-        public float[] SnapShot(DEVICEID id)
+        public List<float[]> ChannelsSnapShot()
         {
-            //TODO Hard wiired chan = 10
-            float[] aidata = new float[10];
-            long ret = aio.MultiAiEx(devices[0], 10, aidata);
-            return aidata;
+            List<float[]> snapshot = new List<float[]>();
+            foreach (DEVICEID id in devices)
+            {
+                float[] aidata = new float[settings.n_channels];
+                long ret = aio.MultiAiEx(devices[id], settings.n_channels, aidata);
+                snapshot.Add(aidata);
+            }
+            return snapshot;
         }
 
     }

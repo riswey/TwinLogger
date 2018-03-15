@@ -40,6 +40,24 @@ namespace UnitTestProject1
 
         }
 
+        [TestMethod]
+        public void SnapShot()
+        {
+            AIOSettings s = new AIOSettings();
+
+            s.ImportXML(SettingData.default_xml);
+
+            MyAIO aio = new MyAIO(s.data);
+            aio.DiscoverDevices("Aio00");
+
+            List<float[]> ss = aio.ChannelsSnapShot();
+
+            Debug.Write("####################################################################");
+            Debug.Write(ss[0][0] + "," + ss[0][1] + "," + ss[0][2] + "," + ss[0][3] + "," + ss[0][4]);
+            Debug.Write(ss[1][0] + "," + ss[1][1] + "," + ss[1][2] + "," + ss[1][3] + "," + ss[1][4]);
+
+        }
+
 
         [TestMethod]
         public void TestSettingsImportExport()

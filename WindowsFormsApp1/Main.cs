@@ -6,8 +6,10 @@ using System.Windows.Forms;
 //Dllimport
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Media;
 
 using System.Diagnostics;
+using System.IO;
 
 namespace MultiDeviceAIO
 {
@@ -52,6 +54,11 @@ namespace MultiDeviceAIO
 
         }
 
+        ~Main()
+        {
+            myaio.Close();
+        }
+
         void loadBindData()
         {
             cbMass.DataBindings.Clear();
@@ -77,6 +84,9 @@ namespace MultiDeviceAIO
 
             nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", settings.data, "timer_interval");
+
+            tbDirectory.DataBindings.Clear();
+            tbDirectory.DataBindings.Add("Text", settings.data, "testpath");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -235,15 +245,45 @@ namespace MultiDeviceAIO
             myaio.Start((uint)this.Handle.ToInt32());
 
             setStatus("Sampling...");
+
             print("Sampling", false);
 
         }
+
 
         private void button2_Click(object sender, EventArgs e)
         {
             myaio.Stop();
             print("STOP");
             setStatus("Run stopped");
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            loadSettings();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveSettings();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (settings.data.path != "")
+                settings.Save(settings.data.path);
+            else
+                saveSettings();
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            settings.Reload();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SelectDirectory();
         }
 
 
@@ -345,6 +385,27 @@ namespace MultiDeviceAIO
 
             //System.Collections.Specialized.StringCollection sc = Properties.Settings.Default.processing_settings_prev;
 
+        }
+
+        private void selectDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SelectDirectory();
+        }
+
+        private void SelectDirectory()
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+
+                    settings.data.testpath = fbd.SelectedPath;
+                    loadBindData();
+
+                }
+            }
         }
 
     }
