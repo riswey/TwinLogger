@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using CaioCs;
 
+using System.Threading;
+
+
 
 namespace UnitTestProject1
 {
@@ -47,10 +50,10 @@ namespace UnitTestProject1
 
             s.ImportXML(SettingData.default_xml);
 
-            MyAIO aio = new MyAIO(s.data);
+            MyAIO aio = new MyAIO();
             aio.DiscoverDevices("Aio00");
 
-            List<float[]> ss = aio.ChannelsSnapShot();
+            List<float[]> ss = aio.ChannelsSnapShot(s.data.n_channels);
 
             Debug.Write("####################################################################");
             Debug.Write(ss[0][0] + "," + ss[0][1] + "," + ss[0][2] + "," + ss[0][3] + "," + ss[0][4]);
@@ -97,8 +100,6 @@ namespace UnitTestProject1
             Assert.IsTrue(t.data.n_channels == 32);
 
         }
-
-
 
     }
 }

@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>MultiDeviceAIO</RootNamespace>
     <AssemblyName>MultiDeviceAIO</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -35,6 +35,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DemoControl">
+      <HintPath>..\..\..\DemoControl\DemoControl\bin\Debug\DemoControl.dll</HintPath>
+    </Reference>
+    <Reference Include="NPlot">
+      <HintPath>..\..\..\..\..\Desktop\c#lib\NPlot.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,12 +55,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaioCs.cs" />
-    <Compile Include="GetFreq.cs">
+    <Compile Include="Calibration.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GetFreq.Designer.cs">
-      <DependentUpon>GetFreq.cs</DependentUpon>
+    <Compile Include="Calibration.Designer.cs">
+      <DependentUpon>Calibration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Scope.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Scope.Designer.cs">
+      <DependentUpon>Scope.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="UserCompleteTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserCompleteTest.Designer.cs">
+      <DependentUpon>UserCompleteTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IO.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,8 +92,20 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingData.cs" />
     <Compile Include="Settings.cs" />
-    <EmbeddedResource Include="GetFreq.resx">
-      <DependentUpon>GetFreq.cs</DependentUpon>
+    <Compile Include="TEST.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TEST.Designer.cs">
+      <DependentUpon>TEST.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Calibration.resx">
+      <DependentUpon>Calibration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scope.resx">
+      <DependentUpon>Scope.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserCompleteTest.resx">
+      <DependentUpon>UserCompleteTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
@@ -91,6 +123,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="TEST.resx">
+      <DependentUpon>TEST.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

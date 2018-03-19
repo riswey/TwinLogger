@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CaioCs;
 
@@ -16,6 +15,8 @@ namespace MultiDeviceAIO
     public partial class Monitor : Form
     {
         public MyAIO aio;
+
+        short n_channels;
 
         float volt_min = 10f;
         float volt_max = -10f;
@@ -58,10 +59,14 @@ namespace MultiDeviceAIO
                 { "DarkGreen", new SolidBrush(Color.DarkGreen) }
         };
 
+        static Font f = new Font(FontFamily.GenericMonospace, 10);
 
-        public Monitor()
+        public Monitor(MyAIO aio, short n_channels)
         {
             InitializeComponent();
+
+            this.aio = aio;
+            this.n_channels = n_channels;
 
             chVolt = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
             pictureBox1.Image = chVolt;
@@ -85,29 +90,40 @@ namespace MultiDeviceAIO
             //Caller has set the aio object now
             base.OnShown(e);
 
-            textBox1.Text = aio.devicenames[0];
-            textBox2.Text = aio.devicenames[1];
+            if (aio.devicenames.Count > 0) textBox1.Text = aio.devicenames[0];
+            if (aio.devicenames.Count > 1) textBox2.Text = aio.devicenames[1];
         }
 
         private void timer1_Tick_1(object sender, EventArgs e)
         {
             g.Clear(Color.Transparent);
 
-            List<float[]> snapshot = aio.ChannelsSnapShot();
+            DrawGrid(g);
 
-            DrawDeviceChannels(0, snapshot[0]);
-            DrawDeviceChannels(1, snapshot[1]);
+            List<float[]> snapshot = aio.ChannelsSnapShot(n_channels);
+
+            if (aio.devicenames.Count > 0) DrawDeviceChannels(0, snapshot[0]);
+            if (aio.devicenames.Count > 1) DrawDeviceChannels(1, snapshot[1]);
 
             pictureBox1.Image = chVolt;
         }
 
         void DrawDeviceChannels(int device, float[] data)
         {
-            for (int ch = 0; ch < data.Length; ch++)
+            int cm = 0;
+            float volt;
+            for (int ch = 0; ch < data.Length - 2; ch++)
             {
-                int cm = ch;
+                if (ch == 30 || ch == 31) continue;
 
-                float volt = data[ch];
+                if (device == 1 && ch >= 35 && ch <=37 ) continue;
+
+                if (ch < 30)
+                    cm = ch;
+                else
+                    cm = ch - 2;
+
+                volt = data[ch];
 
                 if (volt < volt_min) volt_min = volt;
                 if (volt > volt_max) volt_max = volt;
@@ -119,6 +135,18 @@ namespace MultiDeviceAIO
                 drawMeter(g, device, cm % 3, (int)Math.Floor((double)cm / 3), 100, 20, normvolt, text);
             }
         }
+
+        void DrawGrid(Graphics g)
+        {
+            g.DrawLine(pens["Grey"], 20, 0, 20, 400);
+            g.DrawLine(pens["Grey"], 370, 0, 370, 400);
+
+            for (int i=1;i<21;i++) {
+                g.DrawString(i.ToString(), f, brushes["Grey"], 0, i * 20 - 16);
+                g.DrawString((20+i).ToString(), f, brushes["Grey"], 350, i * 20 - 16);
+            }
+        }
+
 
         void drawMeter(Graphics g, int device, int cell_x, int cell_y, int width, int height, double normvolt, string text)
         {
@@ -154,7 +182,6 @@ namespace MultiDeviceAIO
             g.DrawEllipse(pen, x + rad + 1, y + HEIGHT / 2, rad, rad);
             g.DrawEllipse(pen, x + 2 * rad + 2, y + HEIGHT / 2, rad, rad);
 
-            Font f = new Font(FontFamily.GenericMonospace, 10);
             g.DrawString(text, f, brushes["Black"], x - 45, y + 4);
 
         }

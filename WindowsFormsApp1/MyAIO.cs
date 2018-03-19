@@ -4,12 +4,16 @@ using System.Linq;
 using System.Text;
 using CaioCs;
 
+using System.Diagnostics;
+
 /*
  *  devices need to be reset
  * 
  * assume all devices data gets prepared.
  * 
  * when last id gets called call the save data
+ * 
+ * NOTE: am using a counter on async returns! Possible fail point!
  * 
  */
 
@@ -21,38 +25,34 @@ namespace MultiDeviceAIO
     public class MyAIO
     {
 
+        const int DATA_RECEIVE_EVENT = 50;
+
         //static string device_root = "Aio00";
         const string LINEEND = "\r\n";
 
         //TODO: this will crash if not installed. Check
         Caio aio = new Caio();
 
-        I_TestSettings settings;
-
-        //public Settings settings = new Settings();
-
-        List<DEVICEID> devices = new List<DEVICEID>();
-        public Dictionary<DEVICEID, string> devicenames = new Dictionary<DEVICEID, string>();
-        public Dictionary<DEVICEID, List<int[]>> data = new Dictionary<DEVICEID, List<int[]> >();
+        public List<DEVICEID> devices { get; } = new List<DEVICEID>();
+        public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
+        public Dictionary<DEVICEID, List<int[]>> data { get; } = new Dictionary<DEVICEID, List<int[]>>();
 
         private int finished_count = 0;
-
-        //TODO: test whether this object reflects the object in ProcessSettings!!!!
-        public MyAIO(I_TestSettings settings)
-        {
-            this.settings = settings;
-        }
 
         ~MyAIO()
         {
             Close();
         }
 
-        public void DiscoverDevices(string device_root)        //add devices
+        public int DiscoverDevices(string device_root)        //add devices
         {
             long ret = 1;
             DEVICEID id = 0;
             string full_device_name;
+
+            devices.Clear();
+            devicenames.Clear();
+
             for (int i = 0; i < 10; i++)
             {
                 full_device_name = device_root + i;
@@ -64,10 +64,12 @@ namespace MultiDeviceAIO
                     data[id] = new List<int[]>();
                 }
             }
+
+            return devices.Count();
         }
 
         public void Close()
-        {
+            {
             foreach (DEVICEID id in devices)
             {
                 aio.Exit(id);
@@ -75,41 +77,96 @@ namespace MultiDeviceAIO
             devices.Clear();
         }
 
-
         public void Reset()
         {
+            //Reset internal data store
             data.Clear();
             foreach(DEVICEID id in devices)
             {
                 data[id] = new List<int[]>();
             }
-
+            //Reset External Buffers
             foreach (DEVICEID id in devices)
             {
                 aio.ResetAiMemory(id);
             }
         }
 
-        public int SetupTimedSample(short n_channels, short timer_interval, short n_samples, CaioConst range)
+        public bool DeviceCheck(short n_channels, out List<int> failed)
         {
-            int ret = 0;
+            failed = new List<int>();
+
+            List<float[]> snapshot = ChannelsSnapShot(n_channels);
+
+            float[] sum = new float[snapshot.Count];
+
+            for(int i=0; i<snapshot.Count; i++)
+            {
+                sum[i] = 0;
+                foreach (float f in snapshot[i])
+                {
+                    sum[i] += f * f;
+                }
+            }
+
+            for(int i=0; i < sum.Length; i++)
+            {
+                if (sum[i] == 0)
+                {
+                    failed.Add(i);
+                }
+            }
+
+            return failed.Count == 0;
+        }
+
+        public void ResetDevices()
+        {
+            //Resets Devices and Drivers
             foreach (DEVICEID id in devices)
             {
-                settings.n_channels = n_channels;
-                settings.timer_interval = timer_interval;
-                settings.n_samples = n_samples;
+                aio.ResetDevice(id);
+            }
+        }
 
-                ret = aio.SetAiChannels(id, settings.n_channels);
+        public int SetupTimedSample(I_TestSettings settings)
+        {
+            /*
+            //resolution (works) (12/16bit)
+            aio.GetAiResolution(id, out AiResolution);
+            maxbytes = Math.Pow(2, AiResolution);
+
+            //Doesn't work on 1664LAX
+            aio.SetAiRangeAll(1,CaioConst.P025)
+            
+            //Doesn't work (reads 1)
+            short nC1;
+            aio.GetAiChannels(id, out nC1);
+
+            //is this a mapping?
+            string map = "";
+            AiChannelSeq = new short[nChannel];
+            for (short i = 0; i < nChannel; i++)
+            {
+                aio.GetAiChannelSequence(id, i, out AiChannelSeq[i]);
+                map += AiChannelSeq[i].ToString() + ",";
+            }
+            */
+
+            int ret = 0;
+            //Setting the 
+            foreach (DEVICEID id in devices)
+            {
+                ret += aio.SetAiChannels(id, settings.n_channels);
+                ret += aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
+                ret += aio.SetAiStopTimes(id, settings.n_samples);
+                ret += aio.SetAiEventSamplingTimes(id, DATA_RECEIVE_EVENT);        //#samples until data retrieve event
+
                 ret += aio.SetAiTransferMode(id, 0);                //Device buffered 1=sent to user memory
                 ret += aio.SetAiMemoryType(id, 0);                  //FIFO 1=Ring
                 ret += aio.SetAiClockType(id, 0);                   //internal
-                ret += aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
                 ret += aio.SetAiStartTrigger(id, 0);                //0 means by software
                 ret += aio.SetAiStopTrigger(id, 0);                 //0 means by time
-                ret += aio.SetAiStopTimes(id, settings.n_samples);
-                ret += aio.ResetAiMemory(id);
-                ret += aio.SetAiEventSamplingTimes(id, 100);        //#samples until asks data retrieve
-
             }
             return ret;
         }
@@ -119,9 +176,10 @@ namespace MultiDeviceAIO
             finished_count = 0;
 
             int ret = 0;
+
             foreach (DEVICEID id in devices)
             {
-                //End, 500, set num events
+               //End, 500, set num events
                 ret += aio.SetAiEvent(id, HandleMsgLoop, (int)(CaioConst.AIE_END | CaioConst.AIE_DATA_NUM | CaioConst.AIE_DATA_TSF));
             }
 
@@ -132,20 +190,23 @@ namespace MultiDeviceAIO
             return ret;
         }
 
-        public void Stop()
+        public int RetrieveData(DEVICEID device_id, int num_samples, int n_channels)
         {
-            foreach (DEVICEID id in devices)
-            {
-                aio.StopAi(id);
-            }
+            /* Testing
+             * =======
+             * 
+             * Confirmed that data size is correct: n_samples x n_channels 
+             * 
+             * Confirmed that data is zeroed before loading
+             * e.g. inc. data array and unfilled data is 0
+             * 
+             * You cannot get false data reading.
+             */
 
-            Reset();
-        }
 
-        public int RetrieveData(DEVICEID device_id, int num_samples)
-        {
             int sampling_times = num_samples;
-            int[] data1 = new int[settings.n_channels * num_samples];
+
+            int[] data1 = new int[n_channels * num_samples];
 
             int ret = aio.GetAiSamplingData(device_id, ref sampling_times, ref data1);
 
@@ -158,128 +219,83 @@ namespace MultiDeviceAIO
             return ret;
         }
 
-        private int GetLine_Num(Dictionary<DEVICEID, List<int>> data, int line_number, ref string visitor, string delimiter = ",")
-        {
-            int num = 0;
-            foreach (DEVICEID id in devices)
-            {
-                num += GetLineId_Num(data[id], line_number, ref visitor, delimiter);
-            }
-            return num;
-        }
-
-        private int GetLineId_Num(List<int> data, int line_number, ref string visitor, string delimiter)
-        {
-            if (line_number < settings.n_samples)
-            {
-                int start = line_number * settings.n_channels;
-                int end = start + settings.n_channels;
-
-                //Separate new data from existing data
-                if (visitor.Length != 0)
-                {
-                    visitor += delimiter;
-                }
-
-                //Add to existing
-                List<string> str = new List<string>();
-                for (int i = start; i < end; i++)
-                {
-                    str.Add(data[i].ToString());
-                }
-                visitor += string.Join(delimiter, str);
-                return 1;
-            }
-
-            return 0;
-        }
-
-        public void DeviceFinished()
+        public int DeviceFinished(short device_id, int num_samples, int n_channels)
         {
             finished_count++;
+            return RetrieveData(device_id, num_samples, n_channels);
         }
 
-        public bool TestFinished()
+        public bool IsTestFinished()
         {
             return finished_count == devices.Count;
         }
 
-        private string GetFilename()
+        public bool GetData(out List<List<int>> concatdata)
         {
-            return settings.frequency + "hz-M" + (settings.mass+1) + "-" + settings.load + "kN-" + (settings.clipsOn ? "ON-" : "OFF-") + settings.n_channels + "ch-" + (settings.n_samples / settings.timer_interval) + "sec-#" + devices.Count + ".csv";
-        }
+            concatdata = new List<List<int>>();
 
-        private string GetHeader()
-        {
-            string header = settings.n_samples + ",";
-            header += devices.Count + ",";
-            header += settings.frequency + ",";
-            header += (settings.mass + 1) +",";
-            header += settings.load + ",";
-            header += (settings.clipsOn ? 1 : 0) + ",";
-            header += settings.n_channels;
-            return header;
-        }
-
-        public string SaveData()
-        {
-            if (!TestFinished()) return null;
-
+            if (!IsTestFinished()) return false;
             //Concat data
-            Dictionary<DEVICEID, List<int>> data_concat = new Dictionary<DEVICEID, List<int>>();
-            foreach(DEVICEID id in devices)
+            foreach (DEVICEID id in devices)
             {
-                data_concat[id] = new List<int>();
+                List<int> device_data = new List<int>();
                 foreach (int[] bundle in data[id])
                 {
-                    data_concat[id].AddRange(bundle);
+                    device_data.AddRange(bundle);
                 }
+                concatdata.Add(device_data);
             }
 
-            string path = settings.testpath + "\\";
-            //long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-            string filename = path + GetFilename();
-            try
-            {
-                using (System.IO.StreamWriter file =
-                    new System.IO.StreamWriter(filename))
-                {
-                    int line_number = 0;
-                    string str = "";
-
-                    file.WriteLine( GetHeader() );
-
-                    while(true)
-                    {
-                        str = "";
-                        if (this.GetLine_Num(data_concat, line_number++, ref str, ",") == 0)
-                        {
-                            break;
-                        }
-                        file.WriteLine(str);
-                    };
-
-                    file.Close();
-                    return filename;
-                }
-            }
-            catch
-            {
-                throw;
-            }
+            return true;
         }
 
-        public List<float[]> ChannelsSnapShot()
+        public List<float[]> ChannelsSnapShot(short n_channels)
         {
             List<float[]> snapshot = new List<float[]>();
             foreach (DEVICEID id in devices)
             {
-                float[] aidata = new float[settings.n_channels];
-                long ret = aio.MultiAiEx(devices[id], settings.n_channels, aidata);
+                float[] aidata = new float[n_channels];
+                long ret = aio.MultiAiEx(devices[id], n_channels, aidata);
                 snapshot.Add(aidata);
             }
             return snapshot;
         }
+        /*
+        public Tuple<bool, string, string> SmartCalibration(short n_channels)
+        {
+            //TODO: 
+
+            //Get snapshot
+            List<float[]> ss = ChannelsSnapShot(n_channels);
+
+            //Examine.
+            foreach (float[] chss in ss)
+            {
+                foreach(float volt in chss)
+                {
+                    //Find orientation
+                    //lowest/highest + 2 "similar"
+                    //otherwise failed
+                    //Genaret report
+                }
+            }
+
+
+            //if OK
+            //sample
+            //save
+            
+            
+            //return report
+
+            return new Tuple<bool, string, string>(false, "ok", "ok");
+        }
+        */
+        public static float I2V(int bits)
+        {
+            return (float)bits / 65535 * 20 - 10;
+        }
 
     }
+
 }
