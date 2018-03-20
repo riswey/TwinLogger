@@ -19,6 +19,25 @@ namespace MultiDeviceAIO
         MyAIO myaio;
         AIOSettings settings = new AIOSettings();
 
+        /*
+         * Check the dll exists
+        */
+
+        [DllImport("kernel32", SetLastError = true)]
+        static extern IntPtr LoadLibrary(string lpFileName);
+
+        [DllImport("kernel32", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool FreeLibrary(IntPtr hModule);
+
+        static bool CheckLibrary(string fileName)
+        {
+            IntPtr hinstLib = LoadLibrary(fileName);
+            FreeLibrary(hinstLib);
+            return hinstLib != IntPtr.Zero;
+        }
+
+
         public Main()
         {
             InitializeComponent();
@@ -68,8 +87,8 @@ namespace MultiDeviceAIO
             cbMass.DataBindings.Clear();
             cbMass.DataBindings.Add("SelectedIndex", settings.data, "mass");
 
-            cbClips.DataBindings.Clear();
-            cbClips.DataBindings.Add("Checked", settings.data, "clipsOn");
+            chkClips.DataBindings.Clear();
+            chkClips.DataBindings.Add("Checked", settings.data, "clipsOn");
 
             tbLoad.DataBindings.Clear();
             tbLoad.DataBindings.Add("Text", settings.data, "load");
@@ -91,6 +110,9 @@ namespace MultiDeviceAIO
 
             tbDirectory.DataBindings.Clear();
             tbDirectory.DataBindings.Add("Text", settings.data, "testpath");
+
+            chkExternalTrigger.DataBindings.Clear();
+            chkExternalTrigger.DataBindings.Add("Checked", settings.data, "external_trigger");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -105,6 +127,10 @@ namespace MultiDeviceAIO
             base.OnFormClosing(e);
         }
 
+        //////////////////////////////////////////////////////////////////////
+        // MESSAGE LOOP
+        //////////////////////////////////////////////////////////////////////
+
         [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m)
         {
@@ -115,29 +141,12 @@ namespace MultiDeviceAIO
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
 
-                        int ret = myaio.DeviceFinished(device_id, num_samples, settings.data.n_channels);
+                        long ret = myaio.DeviceFinished(device_id, num_samples, settings.data.n_channels);
+                        ProcessReturnValues(ret);
 
                         if (myaio.IsTestFinished())
                         {
-                            PrintLn("END");
-                            try
-                            {
-                                string fn = CompletedSampling(device_id, num_samples);
-                                if (fn == null)
-                                {
-                                    SetStatus("Not Saved");
-                                }
-                                else
-                                {
-                                    PrintLn("Saved: " + fn);
-                                    SetStatus("Ready");
-                                }
-                            }
-                            catch (IOException ex)
-                            {
-                                PrintLn("IO Error: " + ex.Message);
-                                SetStatus("IO Error: " + ex.Message);
-                            }
+                            TestFinished(device_id, num_samples);
                         }
                     }
                     break;
@@ -145,7 +154,9 @@ namespace MultiDeviceAIO
                     {
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
-                        int ret = myaio.RetrieveData(device_id, num_samples, settings.data.n_channels);
+                        long ret = myaio.RetrieveData(device_id, num_samples, settings.data.n_channels);
+                        ProcessReturnValues(ret);
+
                         PrintLn(device_id, false);
                     }
                     break;
@@ -153,11 +164,64 @@ namespace MultiDeviceAIO
 
             base.WndProc(ref m);
         }
-
-        string CompletedSampling(short device_id, int num_samples)
+        /// <summary>
+        /// Secure data to disk
+        /// Get User input (freq, filename)
+        /// Cancel or
+        /// Header + Data to newfile
+        /// Cleanup
+        /// </summary>
+        /// <param name="device_id"></param>
+        /// <param name="num_samples"></param>
+        void TestFinished(short device_id, int num_samples)
         {
-            //Throws IOExceptions!
+            List<List<int>> concatdata;
+            myaio.GetData(out concatdata);
 
+            string filepath = IO.GetFilePathTemp(settings.data);
+
+            IO.SaveArray(settings.data, filepath, concatdata);
+
+            PrintLn("END");
+
+            //Generate User reports to see what happened
+
+            PrintLn("+---Report-----------------------------------------");
+            for (int i = 0; i < concatdata.Count; i++)
+            {
+                PrintLn("| Device: " + myaio.devicenames[myaio.GetID(i)] + " (" + concatdata[i].Count + ")");
+                PrintLn(GenerateDataReport(concatdata[i]));
+            }
+            PrintLn("+--------------------------------------------------");
+
+            //SAVE LOG
+            File.WriteAllText(settings.data.testpath + @"\log.txt", textBox1.Text);
+
+            //Produce scope
+            (new Scope(concatdata, settings.data.n_channels)).Show();
+
+            SetStatus("Awaiting User Input...");
+
+            //Now ask user input to save
+            //Provide a freq -> complete header. Save header
+            string fn = UserInputAfterSampling();
+            RenameTempFile(fn);
+
+            SetStatus("Ready");
+        }
+
+        void ProcessReturnValues(long ret)
+        {
+            if (ret != 0)
+            {
+                //There are errors to log
+                foreach(string msg in myaio.error_log)
+                    PrintLn(msg);
+            }
+        }
+
+        string UserInputAfterSampling()
+        {
             string filepath;
             //get default filename
             if (checkBox1.Checked)
@@ -168,43 +232,48 @@ namespace MultiDeviceAIO
             {
                 filepath = IO.GetFilePathTest(settings.data);
             }
-
+            
+            //User decides:
+            //freq
+            //filename
             using (UserCompleteTest testDialog = new UserCompleteTest(filepath))
             {
                 if (testDialog.ShowDialog(this) == DialogResult.OK)
                 {
                     settings.data.frequency = (float)testDialog.nudFreq.Value;
                     filepath = testDialog.tbFilename.Text;
+                    PrintLn("Frequency: \t" + settings.data.frequency);
                 }
                 else
                 {
                     //Abort
-                    return null;
+                    filepath = null;
                 }
             }
 
-            PrintLn("Frequency: \t" + settings.data.frequency);
-
-            string header = IO.GetHeader(settings.data);
-            List<List<int>> concatdata;
-            myaio.GetData(out concatdata);
-
-            IO.SaveArray(settings.data, filepath, header, concatdata);
-
-            PrintLn("+---Report-----------------------------------------");
-            for (int i=0; i< concatdata.Count; i++)
-            {
-                PrintLn("| Device: " + myaio.devicenames[myaio.devices[i]] + " (" + concatdata[i].Count + ")");
-                PrintLn(GenerateDataReport(concatdata[i]));
-            }
-            PrintLn("+--------------------------------------------------");
-
-            //SAVE LOG
-            File.WriteAllText(settings.data.testpath + @"\log.txt", textBox1.Text);
-
-            (new Scope(concatdata[0], settings.data.n_channels)).Show();
-
             return filepath;
+        }
+
+        void RenameTempFile(string fn)
+        {
+            if (fn == null)
+            {
+                PrintLn("Saving aborted.");
+                SetStatus("Ready");
+            }
+            else
+            {
+                try
+                {
+                    IO.MoveTempFile(settings, fn);
+                    PrintLn("Saved: " + fn);
+                }
+                catch (IOException ex)
+                {
+                    PrintLn("Not Saved: " + ex.Message);
+                    SetStatus("Error:" + ex.Message);
+                }
+            }
         }
 
         string GenerateDataReport(List<int> data)
@@ -223,7 +292,7 @@ namespace MultiDeviceAIO
 
             int end = data.Count;
 
-            report += "\r\n| A" + end + ": " + MyAIO.I2V(data[end-3]) + "," + MyAIO.I2V(data[end-2]) + "," + MyAIO.I2V(data[end-1]);
+            report += "\r\n| A" + end + ": " + MyAIO.I2V(data[end - 3]) + "," + MyAIO.I2V(data[end - 2]) + "," + MyAIO.I2V(data[end - 1]);
 
             return report;
         }
@@ -240,23 +309,73 @@ namespace MultiDeviceAIO
             textBox1.ScrollToCaret();
         }
 
-        /*
-         * Check the dll exists
-         */
-
-        [DllImport("kernel32", SetLastError = true)]
-        static extern IntPtr LoadLibrary(string lpFileName);
-
-        [DllImport("kernel32", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool FreeLibrary(IntPtr hModule);
-
-        static bool CheckLibrary(string fileName)
+        void StartSampling()
         {
-            IntPtr hinstLib = LoadLibrary(fileName);
-            FreeLibrary(hinstLib);
-            return hinstLib != IntPtr.Zero;
+            if (settings.data.n_devices == 0)
+            {
+                SetStatus("Warning: No Devices connected. Reset");
+                return;
+            }
+            
+            List<int> failedID;
+            if (!myaio.DeviceCheck(settings.data.n_channels, out failedID))
+            {
+                string status = "Error: Devices not responding. Device(s) ";
+                foreach (short f in failedID)
+                {
+                    status += myaio.devicenames[f] + " ";
+                }
+
+                status += "failed.";
+
+                SetStatus(status);
+                return;
+            }
+
+            ////////////////////////////////////////////////////////////////////
+            // RESET DATA HERE
+            ////////////////////////////////////////////////////////////////////
+            long ret;
+            ret = myaio.ResetTest();
+            ProcessReturnValues(ret);
+
+            var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
+
+            PrintLn("----------------------------------------------------\r\nApplied Settings");
+            PrintLn(settings.ToString());
+
+            ret = myaio.SetupTimedSample(settings.data);
+            ProcessReturnValues(ret);
+
+
+            ret = myaio.Start((uint)this.Handle.ToInt32());
+            ProcessReturnValues(ret);
+
+            SetStatus("Sampling...");
+            PrintLn("Sampling...", false);
         }
+
+        private void SelectDirectory()
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !fbd.SelectedPath.IsNullOrWhiteSpace())
+                {
+                    settings.data.testpath = fbd.SelectedPath;
+                    loadBindData();
+                }
+            }
+        }
+
+
+
+
+
+        /////////////////////////////////////////////////////////////////////////
+        // GUI EVENTS
+        /////////////////////////////////////////////////////////////////////////
 
         private void monitorChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -278,69 +397,10 @@ namespace MultiDeviceAIO
             StartSampling();
         }
 
-        void StartSampling() {
-            if (settings.data.n_devices == 0)
-            {
-                SetStatus("Warning: No Devices connected. Reset");
-                return;
-            }
-
-            List<int> failed;
-            if (!myaio.DeviceCheck(settings.data.n_channels, out failed))
-            {
-                string status = "Error: Devices not responding. Device(s) ";
-                foreach (int f in failed)
-                {
-                    status += myaio.devicenames[myaio.devices[f]] + " ";
-                }
-
-                status += "failed.";
-
-                SetStatus(status);
-                return;
-            }
-
-            int ret;
-
-            ////////////////////////////////////////////////////////////////////
-            // RESET DATA HERE
-            ////////////////////////////////////////////////////////////////////
-            myaio.Reset();
-
-            var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
-
-            PrintLn("----------------------------------------------------\r\nApplied Settings");
-            PrintLn(settings.ToString());
-
-            myaio.SetupTimedSample(settings.data);
-
-            myaio.Start((uint)this.Handle.ToInt32());
-
-            SetStatus("Sampling...");
-            PrintLn("Sampling...", false);
-        }
-
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            loadSettings();
-        }
-
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveSettings();
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (settings.data.path != "")
-                settings.Save(settings.data.path);
-            else
-                saveSettings();
-        }
-
-        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            settings.Reload();
+            string fn = UserInputAfterSampling();
+            RenameTempFile(fn);
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -348,6 +408,58 @@ namespace MultiDeviceAIO
             SelectDirectory();
         }
 
+        private void selectDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SelectDirectory();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                this.BackColor = Color.Orchid;
+            }
+            else
+            {
+                this.BackColor = SystemColors.Control;
+            }
+        }
+
+        private void resetDevicesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            long ret = myaio.ResetDevices();
+            ProcessReturnValues(ret);
+
+            settings.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
+
+            SetStatus(settings.data.n_devices + " Devices Connected");
+
+        }
+
+        //Toolstrip Settings events
+
+        private void loadToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            loadSettings();
+        }
+
+        private void saveAsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            saveSettings();
+        }
+
+        private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (settings.data.path != "")
+                settings.Save(settings.data.path);
+            else
+                saveSettings();
+        }
+
+        private void resetToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            settings.Reload();
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////
         // SETTINGS
@@ -434,46 +546,5 @@ namespace MultiDeviceAIO
 
         }
 
-        private void selectDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SelectDirectory();
-        }
-
-        private void SelectDirectory()
-        {
-            using (var fbd = new FolderBrowserDialog())
-            {
-                DialogResult result = fbd.ShowDialog();
-
-                if (result == DialogResult.OK && !fbd.SelectedPath.IsNullOrWhiteSpace() )
-                {
-                    settings.data.testpath = fbd.SelectedPath;
-                    loadBindData();
-                }
-            }
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox1.Checked)
-            {
-                this.BackColor = Color.Orchid;
-            }
-            else
-            {
-                this.BackColor = SystemColors.Control;
-            }
-        }
-
-        private void resetDevicesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            myaio.ResetDevices();
-
-            settings.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
-
-            SetStatus(settings.data.n_devices + " Devices Connected");
-
-        }
     }
-
 }

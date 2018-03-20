@@ -10,24 +10,69 @@ namespace MultiDeviceAIO
         //Display
         NPlot.LinePlot npplot;
 
+        List<List<int>> dataY1;
+        int n_channels;
+        int size;
+
         //Data
         float[] dataX;
         float[] dataY;
 
-        public Scope(List<int> dataY1, int n_channels)
+        public Scope(List<List<int>> dataY1, int n_channels)
         {
-            int size = dataY1.Count / n_channels;
+            this.dataY1 = dataY1;
+            this.n_channels = n_channels;
+            //assume both devices same size
+            this.size = dataY1[0].Count / n_channels;
 
+            InitializeComponent();
+
+            npplot = new LinePlot();
+            dataX = new float[size];
             dataY = new float[size];
+
+            //Combo items
+            List<string> options = new List<string>();
+            for (int i = 0; i < n_channels; i++)
+            {
+                options.Add("Channel " + (i + 1));
+            }
+            comboBox1.DataSource = options;
+            comboBox1.SelectedIndex = 0;
+
+            List<string> devices = new List<string>();
+            for (int i = 0; i < dataY1.Count; i++)
+            {
+                devices.Add("Device " + (i + 1));
+            }
+            comboBox2.DataSource = devices;
+            comboBox2.SelectedIndex = 0;
+
+            //Add event handler here to stop being called before initialised
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
+
+            //X values
+            for (int i = 0; i < size; i++)
+            {
+                dataX[i] = i;
+            }
+
+            SetChannel(0, 0);
+
+        }
+
+        void SetChannel(int device, int channel)
+        {
             float min = 10;
             float max = -10;
 
             int c = 0;
-            for (int i=0;i<dataY1.Count; i++)
+            for (int i = 0; i < dataY1[device].Count; i++)
             {
-                if (i % n_channels == 0)
+                if (i % n_channels == channel)
                 {
-                    dataY[c] = (float)dataY1[i] / 65535 * 20 - 10;
+                    dataY[c] = (float)dataY1[device][i] / 65535 * 20 - 10;
                     if (dataY[c] > max) max = dataY[c];
                     if (dataY[c] < min) min = dataY[c];
                     c++;
@@ -37,26 +82,13 @@ namespace MultiDeviceAIO
             max *= 1.2f;
             min *= 1.2f;
             //check range for zero
-            if ((max - min) < 1) {
+            if ((max - min) < 1)
+            {
                 min -= .5f;
                 max += .5f;
             }
 
-            InitializeComponent();
-            initData();
             CreateLineGraph(min, max);
-        }
-
-        private void initData()     //for testing
-        {
-            npplot = new LinePlot();
-
-            dataX = new float[dataY.Length];
-
-            for (int i = 0; i < dataY.Length; i++)
-            {
-                dataX[i] = i;
-            }
         }
 
         private void CreateLineGraph(float min, float max)
@@ -108,5 +140,18 @@ namespace MultiDeviceAIO
 
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            SetChannel(comboBox2.SelectedIndex, comboBox1.SelectedIndex);
+
+            npSurface.Refresh();
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            SetChannel(comboBox2.SelectedIndex, comboBox1.SelectedIndex);
+
+            npSurface.Refresh();
+        }
     }
 }

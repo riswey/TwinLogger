@@ -31,21 +31,22 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.cbClips = new System.Windows.Forms.CheckBox();
+            this.chkClips = new System.Windows.Forms.CheckBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.monitorChannelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cbMass = new System.Windows.Forms.ComboBox();
@@ -71,6 +72,7 @@
             this.nudChannel = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -107,15 +109,15 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(39, 17);
             this.toolStripStatusLabel1.Text = "Ready";
             // 
-            // cbClips
+            // chkClips
             // 
-            this.cbClips.AutoSize = true;
-            this.cbClips.Location = new System.Drawing.Point(17, 118);
-            this.cbClips.Name = "cbClips";
-            this.cbClips.Size = new System.Drawing.Size(65, 17);
-            this.cbClips.TabIndex = 5;
-            this.cbClips.Text = "Clips On";
-            this.cbClips.UseVisualStyleBackColor = true;
+            this.chkClips.AutoSize = true;
+            this.chkClips.Location = new System.Drawing.Point(17, 118);
+            this.chkClips.Name = "chkClips";
+            this.chkClips.Size = new System.Drawing.Size(65, 17);
+            this.chkClips.TabIndex = 5;
+            this.chkClips.Text = "Clips On";
+            this.chkClips.UseVisualStyleBackColor = true;
             // 
             // menuStrip1
             // 
@@ -123,6 +125,7 @@
             this.fileToolStripMenuItem,
             this.testsToolStripMenuItem,
             this.toolsToolStripMenuItem,
+            this.settingsToolStripMenuItem1,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -133,47 +136,23 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadToolStripMenuItem,
-            this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
-            this.resetToolStripMenuItem,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // loadToolStripMenuItem
-            // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
-            this.loadToolStripMenuItem.Text = "Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
-            // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
-            // 
-            // resetToolStripMenuItem
-            // 
-            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
-            this.resetToolStripMenuItem.Text = "Reset";
-            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -204,7 +183,6 @@
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.monitorChannelsToolStripMenuItem,
-            this.settingsToolStripMenuItem,
             this.resetDevicesToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
@@ -217,18 +195,51 @@
             this.monitorChannelsToolStripMenuItem.Text = "Monitor";
             this.monitorChannelsToolStripMenuItem.Click += new System.EventHandler(this.monitorChannelsToolStripMenuItem_Click);
             // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            // 
             // resetDevicesToolStripMenuItem
             // 
             this.resetDevicesToolStripMenuItem.Name = "resetDevicesToolStripMenuItem";
             this.resetDevicesToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.resetDevicesToolStripMenuItem.Text = "Reset Devices";
             this.resetDevicesToolStripMenuItem.Click += new System.EventHandler(this.resetDevicesToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem1
+            // 
+            this.settingsToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resetToolStripMenuItem1,
+            this.loadToolStripMenuItem1,
+            this.saveToolStripMenuItem1,
+            this.saveAsToolStripMenuItem1});
+            this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
+            this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem1.Text = "Settings";
+            // 
+            // resetToolStripMenuItem1
+            // 
+            this.resetToolStripMenuItem1.Name = "resetToolStripMenuItem1";
+            this.resetToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.resetToolStripMenuItem1.Text = "Reset";
+            this.resetToolStripMenuItem1.Click += new System.EventHandler(this.resetToolStripMenuItem1_Click);
+            // 
+            // loadToolStripMenuItem1
+            // 
+            this.loadToolStripMenuItem1.Name = "loadToolStripMenuItem1";
+            this.loadToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.loadToolStripMenuItem1.Text = "Load";
+            this.loadToolStripMenuItem1.Click += new System.EventHandler(this.loadToolStripMenuItem1_Click);
+            // 
+            // saveToolStripMenuItem1
+            // 
+            this.saveToolStripMenuItem1.Name = "saveToolStripMenuItem1";
+            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.saveToolStripMenuItem1.Text = "Save";
+            this.saveToolStripMenuItem1.Click += new System.EventHandler(this.saveToolStripMenuItem1_Click);
+            // 
+            // saveAsToolStripMenuItem1
+            // 
+            this.saveAsToolStripMenuItem1.Name = "saveAsToolStripMenuItem1";
+            this.saveAsToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.saveAsToolStripMenuItem1.Text = "Save As...";
+            this.saveAsToolStripMenuItem1.Click += new System.EventHandler(this.saveAsToolStripMenuItem1_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -290,7 +301,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(172, 21);
+            this.label7.Location = new System.Drawing.Point(177, 21);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(129, 13);
             this.label7.TabIndex = 22;
@@ -303,7 +314,7 @@
             "Pancake (80mm)",
             "Vertical (53mm)",
             "Electromagnetic"});
-            this.cbShaker.Location = new System.Drawing.Point(171, 37);
+            this.cbShaker.Location = new System.Drawing.Point(180, 37);
             this.cbShaker.Name = "cbShaker";
             this.cbShaker.Size = new System.Drawing.Size(121, 21);
             this.cbShaker.TabIndex = 23;
@@ -315,7 +326,7 @@
             "Hard",
             "Medium",
             "Soft"});
-            this.cbPad.Location = new System.Drawing.Point(171, 86);
+            this.cbPad.Location = new System.Drawing.Point(180, 86);
             this.cbPad.Name = "cbPad";
             this.cbPad.Size = new System.Drawing.Size(121, 21);
             this.cbPad.TabIndex = 24;
@@ -379,17 +390,19 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.cbMass);
-            this.groupBox2.Controls.Add(this.cbClips);
+            this.groupBox2.Controls.Add(this.chkClips);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.tbLoad);
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.tbDirectory);
+            this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.cbShaker);
             this.groupBox2.Controls.Add(this.cbPad);
             this.groupBox2.Location = new System.Drawing.Point(24, 31);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(323, 141);
+            this.groupBox2.Size = new System.Drawing.Size(323, 178);
             this.groupBox2.TabIndex = 34;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Test Settings";
@@ -397,7 +410,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(13, 160);
+            this.label5.Location = new System.Drawing.Point(13, 123);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(99, 13);
             this.label5.TabIndex = 13;
@@ -406,7 +419,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(13, 108);
+            this.label4.Location = new System.Drawing.Point(13, 71);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(73, 13);
             this.label4.TabIndex = 12;
@@ -415,7 +428,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 59);
+            this.label3.Location = new System.Drawing.Point(13, 22);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(61, 13);
             this.label3.TabIndex = 11;
@@ -423,14 +436,14 @@
             // 
             // tbDirectory
             // 
-            this.tbDirectory.Location = new System.Drawing.Point(69, 29);
+            this.tbDirectory.Location = new System.Drawing.Point(69, 141);
             this.tbDirectory.Name = "tbDirectory";
-            this.tbDirectory.Size = new System.Drawing.Size(223, 20);
+            this.tbDirectory.Size = new System.Drawing.Size(232, 20);
             this.tbDirectory.TabIndex = 28;
             // 
             // nudInterval
             // 
-            this.nudInterval.Location = new System.Drawing.Point(13, 176);
+            this.nudInterval.Location = new System.Drawing.Point(13, 139);
             this.nudInterval.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -447,7 +460,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(13, 27);
+            this.button3.Location = new System.Drawing.Point(13, 139);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(59, 23);
             this.button3.TabIndex = 30;
@@ -457,7 +470,7 @@
             // 
             // nudDuration
             // 
-            this.nudDuration.Location = new System.Drawing.Point(13, 124);
+            this.nudDuration.Location = new System.Drawing.Point(13, 87);
             this.nudDuration.Name = "nudDuration";
             this.nudDuration.Size = new System.Drawing.Size(120, 20);
             this.nudDuration.TabIndex = 7;
@@ -469,7 +482,7 @@
             // 
             // nudChannel
             // 
-            this.nudChannel.Location = new System.Drawing.Point(13, 75);
+            this.nudChannel.Location = new System.Drawing.Point(13, 38);
             this.nudChannel.Maximum = new decimal(new int[] {
             64,
             0,
@@ -479,14 +492,14 @@
             this.nudChannel.Size = new System.Drawing.Size(120, 20);
             this.nudChannel.TabIndex = 6;
             this.nudChannel.Value = new decimal(new int[] {
-            4,
+            64,
             0,
             0,
             0});
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(159, 75);
+            this.button1.Location = new System.Drawing.Point(163, 26);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(133, 70);
             this.button1.TabIndex = 26;
@@ -496,21 +509,30 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chkExternalTrigger);
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.button1);
             this.groupBox3.Controls.Add(this.label4);
             this.groupBox3.Controls.Add(this.nudChannel);
             this.groupBox3.Controls.Add(this.nudDuration);
             this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.tbDirectory);
-            this.groupBox3.Controls.Add(this.button3);
             this.groupBox3.Controls.Add(this.nudInterval);
-            this.groupBox3.Location = new System.Drawing.Point(24, 179);
+            this.groupBox3.Location = new System.Drawing.Point(24, 215);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(323, 216);
+            this.groupBox3.Size = new System.Drawing.Size(323, 180);
             this.groupBox3.TabIndex = 35;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Sample Control";
+            this.groupBox3.Text = "Device Control";
+            // 
+            // chkExternalTrigger
+            // 
+            this.chkExternalTrigger.AutoSize = true;
+            this.chkExternalTrigger.Location = new System.Drawing.Point(163, 139);
+            this.chkExternalTrigger.Name = "chkExternalTrigger";
+            this.chkExternalTrigger.Size = new System.Drawing.Size(133, 17);
+            this.chkExternalTrigger.TabIndex = 27;
+            this.chkExternalTrigger.Text = "External Clock+Trigger";
+            this.chkExternalTrigger.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -548,15 +570,13 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.CheckBox cbClips;
+        private System.Windows.Forms.CheckBox chkClips;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem monitorChannelsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startToolStripMenuItem;
@@ -568,9 +588,7 @@
         private System.Windows.Forms.ComboBox cbShaker;
         private System.Windows.Forms.ComboBox cbPad;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectDirectoryToolStripMenuItem;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.ComboBox cbOrientation;
@@ -588,5 +606,11 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ToolStripMenuItem resetDevicesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem1;
+        private System.Windows.Forms.CheckBox chkExternalTrigger;
     }
 }

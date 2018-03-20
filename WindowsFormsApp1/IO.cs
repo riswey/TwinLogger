@@ -10,32 +10,23 @@ namespace MultiDeviceAIO
     {
         public static string[] cal_enum = new string[] { "XP.cal", "XN.cal", "YP.cal", "YN.cal", "ZP.cal", "ZN,.cal" };
 
-        public static string GetFilePathCal(I_TestSettings settings, int idx)
+        public static string GetFilePathCal(SettingData settings, int idx)
         {
             return settings.testpath + @"\" + cal_enum[idx] + ".cal";
         }
 
-        public static string GetFilePathTest(I_TestSettings settings)
+        public static string GetFilePathTest(SettingData settings)
         {
             return settings.testpath + @"\" + settings.load + (settings.clipsOn ? "A" : "B") + @"\M" + (settings.mass + 1) + ".csv";
             //return settings.frequency + "hz-M" + (settings.mass + 1) + "-" + settings.load + "kN-" + (settings.clipsOn ? "ON-" : "OFF-") + settings.n_channels + "ch-" + (settings.n_samples / settings.timer_interval) + "sec-#" + devices.Count + ".csv";
         }
 
-        public static string GetHeader(I_TestSettings settings)
+        public static string GetFilePathTemp(SettingData settings)
         {
-            String header = settings.n_devices + ",";
-            header += settings.n_channels + ",";
-            header += settings.duration + ",";
-            header += settings.timer_interval + ",";
-            header += settings.n_samples + ",";
-
-            header += settings.frequency + ",";
-            header += (settings.mass + 1) + ",";
-            header += settings.load + ",";
-            header += (settings.clipsOn ? 1 : 0) + ",";
-            header += settings.shakertype + ",";
-            header += settings.paddtype;
-            return header;
+            string timestamp = Environment.TickCount.ToString();
+            string path = settings.testpath + @"\temp" + timestamp;
+            settings.temp_filename = path;
+            return path;
         }
 
         public static string getFileName(string path)
@@ -49,7 +40,7 @@ namespace MultiDeviceAIO
         }
 
         //FILE SAVING
-        static public void SaveArray(I_TestSettings settings, string filepath, string header, List<List<int>> concatdata)
+        static public void SaveArray(SettingData settings, string filepath, List<List<int>> concatdata)
         {
             try
             {
@@ -58,8 +49,6 @@ namespace MultiDeviceAIO
 
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(filepath))
                 {
-                    file.WriteLine(header);
-
                     int line_number = 0;
                     string str;
                     while (true)
@@ -82,7 +71,19 @@ namespace MultiDeviceAIO
 
         }
 
-        public static int GetLine_Num(I_TestSettings settings, List<List<int>> concatdata, int line_number, ref string visitor, string delimiter = ",")
+        public static void MoveTempFile(AIOSettings settings, string filepath)
+        {
+            string data = File.ReadAllText(settings.data.temp_filename);
+            string header = settings.GetHeader();
+
+            File.WriteAllText(filepath, header + "\r\n" + data);
+            //Clean up
+            File.Delete(settings.data.temp_filename);
+            
+            settings.data.temp_filename = null;
+        }
+
+        public static int GetLine_Num(SettingData settings, List<List<int>> concatdata, int line_number, ref string visitor, string delimiter = ",")
         {
             int num = 0;
             foreach (List<int> device_data in concatdata)
@@ -92,7 +93,7 @@ namespace MultiDeviceAIO
             return num;
         }
 
-        public static int GetLineId_Num(I_TestSettings settings, List<int> data, int line_number, ref string visitor, string delimiter)
+        public static int GetLineId_Num(SettingData settings, List<int> data, int line_number, ref string visitor, string delimiter)
         {
             if (line_number < settings.n_samples)
             {

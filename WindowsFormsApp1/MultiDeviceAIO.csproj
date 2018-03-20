@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIODeviceException.cs" />
     <Compile Include="CaioCs.cs" />
     <Compile Include="Calibration.cs">
       <SubType>Form</SubType>

@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.npSurface = new NPlot.Windows.PlotSurface2D();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // npSurface
@@ -39,11 +43,11 @@
             this.npSurface.DateTimeToolTip = false;
             this.npSurface.Legend = null;
             this.npSurface.LegendZOrder = -1;
-            this.npSurface.Location = new System.Drawing.Point(-1, 1);
+            this.npSurface.Location = new System.Drawing.Point(-1, 25);
             this.npSurface.Name = "npSurface";
             this.npSurface.RightMenu = null;
             this.npSurface.ShowCoordinates = true;
-            this.npSurface.Size = new System.Drawing.Size(606, 335);
+            this.npSurface.Size = new System.Drawing.Size(606, 311);
             this.npSurface.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
             this.npSurface.TabIndex = 34;
             this.npSurface.Text = "plotSurface2D1";
@@ -54,20 +58,63 @@
             this.npSurface.YAxis1 = null;
             this.npSurface.YAxis2 = null;
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(369, 1);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(199, 21);
+            this.comboBox1.TabIndex = 35;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(317, 4);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(46, 13);
+            this.label1.TabIndex = 36;
+            this.label1.Text = "Channel";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 4);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(41, 13);
+            this.label2.TabIndex = 37;
+            this.label2.Text = "Device";
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(69, 1);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(150, 21);
+            this.comboBox2.TabIndex = 38;
+            // 
             // Scope
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(604, 336);
+            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.npSurface);
             this.Name = "Scope";
             this.Text = "Scope";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private NPlot.Windows.PlotSurface2D npSurface;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox comboBox2;
     }
 }

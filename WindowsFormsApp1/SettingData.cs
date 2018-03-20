@@ -5,33 +5,14 @@ using System.Text;
 
 namespace MultiDeviceAIO
 {
-    public interface I_TestSettings
-    {
-        int n_devices { get; set; }
-
-        //Settings critical to AIO Sampling
-        short n_channels { get; set; }
-        short n_samples { get; }
-        short timer_interval { get; set; }
-        int duration { get; set; }
-
-        string testpath { get; set; }
-
-        //To create file label
-        float frequency { get; set; }
-        bool clipsOn { get; set; }
-        int mass { get; set; }
-        double load { get; set; }
-        int shakertype { get; set; }
-        int paddtype { get; set; }
-    }
 
     //Class to be reference type!
-    public class SettingData : I_TestSettings
+    public class SettingData
     {
         public static string default_xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><SettingData xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><n_channels>64</n_channels><duration>5</duration><n_samples>5000</n_samples><timer_interval>1000</timer_interval>./<testpath></testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>1</mass><load>0</load><shakertype>1</shakertype><paddtype>1</paddtype><path>current.xml</path><modified>false</modified></SettingData>";
 
-        public string testpath { get; set; }
+        public string testpath { get; set; }        //Path to test data
+        public string temp_filename { get; set; }   //last temp filename (recover)
 
         //Test parameters
         public float frequency { get; set; }
@@ -53,11 +34,11 @@ namespace MultiDeviceAIO
                 return (short)(duration * timer_interval);
             }
         }
+        public bool external_trigger { get; set; }
 
         //Internal parameters
         public string path { get; set; }
         public bool modified { get; set; }
-
     }
 
     public class AIOSettings : Settings<SettingData>
@@ -98,5 +79,25 @@ namespace MultiDeviceAIO
 
 
         }
+
+        public string GetHeader()
+        {
+            String header = "";
+            header += data.n_samples + ",";
+            header += data.n_devices + ",";
+            header += data.frequency + ",";
+            header += (data.mass + 1) + ",";
+            header += data.load + ",";
+            header += (data.clipsOn ? 1 : 0) + ",";
+            header += data.n_channels + ",";
+
+            header += data.shakertype + ",";
+            header += data.paddtype + ",";
+            header += data.duration + ",";
+            header += data.timer_interval;
+
+            return header;
+        }
+
     }
 }
