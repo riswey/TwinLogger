@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-
-//Dllimport
-using System.Runtime.InteropServices;
-using System.Threading;
+using System.IO;
 
 using System.Diagnostics;
-using System.IO;
+using System.Threading;
 
 namespace MultiDeviceAIO
 {
@@ -17,69 +14,77 @@ namespace MultiDeviceAIO
         static string DEVICE_ROOT = "Aio00";
 
         MyAIO myaio;
-        AIOSettings settings = new AIOSettings();
-
-        /*
-         * Check the dll exists
-        */
-
-        [DllImport("kernel32", SetLastError = true)]
-        static extern IntPtr LoadLibrary(string lpFileName);
-
-        [DllImport("kernel32", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool FreeLibrary(IntPtr hModule);
-
-        static bool CheckLibrary(string fileName)
-        {
-            IntPtr hinstLib = LoadLibrary(fileName);
-            FreeLibrary(hinstLib);
-            return hinstLib != IntPtr.Zero;
-        }
-
+        AIOSettings settings;
 
         public Main()
         {
+            if (!Sys.CheckLibrary("caio.dll"))
+            {
+                Sys.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
+            }
+
             InitializeComponent();
 
-            if (!CheckLibrary("caio.dll"))
-            {
-                new Thread(new ThreadStart(delegate
-                {
-                    MessageBox.Show
-                    (
-                      "Caio.dll not found\nPlease install drivers that came with the device",
-                      "Driver error",
-                      MessageBoxButtons.OK,
-                      MessageBoxIcon.Error
-                    );
-                })).Start();
-
-                Application.Exit();
-            }
-
-            //Load settings from app state
-            if (Properties.Settings.Default.processing_settings_current == "")
-            {
-                Properties.Settings.Default.processing_settings_current = SettingData.default_xml;
-            }
-
-            settings.ImportXML(Properties.Settings.Default.processing_settings_current);
-
-            loadBindData();
-
-            //Init AIO
+            //AIO
             myaio = new MyAIO();
-            settings.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
+            int devices_count = myaio.DiscoverDevices(DEVICE_ROOT);
+            
+            //Settings
+            settings = new AIOSettings();
+            bool result = settings.ImportXML(Properties.Settings.Default.processing_settings_current);
+            if (!result)
+            {
+                string msg = "No valid settings were found. Set to zero.";
+                PrintLn(msg);
+                SetStatus(msg);
+            }
 
+            settings.data.n_devices = devices_count;
 
             SetStatus(settings.data.n_devices + " Devices Connected");
-
+            
+            //Bindings
+            loadBindData();
         }
 
         ~Main()
         {
-            myaio.Close();
+            if (myaio != null)
+            {
+                myaio.Close();
+            }
+        }
+
+        /// <summary>
+        /// Central handler for Device Exceptions
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns>
+        /// false   - return/abort current operation
+        /// </returns>
+        bool ProcessError(AIODeviceException ex)
+        {
+            if (ex.code == 7)
+            {
+                myaio.ResetDevices();
+                PrintLn("Device recovered from standby mode. Please try again.");
+                SetStatus("Device recovered from standby mode. Please try again.");
+                return false;
+            }
+            else
+            {
+                string msg = "Device Error: " + ex.code + ": " + ex.Message;
+
+                PrintLn(msg);
+
+                SaveLogFile();
+
+                if (MessageBox.Show(msg, "Application Error", MessageBoxButtons.OK) == DialogResult.OK)
+                {
+                    Application.Exit();
+                }
+            }
+            return false;
         }
 
         void loadBindData()
@@ -118,12 +123,19 @@ namespace MultiDeviceAIO
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             //Give chance to close
-            myaio.Close();
+            if (myaio != null)
+            {
+                myaio.Close();
+            }
 
             //Commit final settings to app state 
-            string current_xml = settings.ExportXML();
-            Properties.Settings.Default.processing_settings_current = current_xml;
-            Properties.Settings.Default.Save();
+            string current_xml;
+            if (settings != null && settings.ExportXML(out current_xml))
+            {
+                //failed to get XML
+                Properties.Settings.Default.processing_settings_current = current_xml;
+                Properties.Settings.Default.Save();
+            }
             base.OnFormClosing(e);
         }
 
@@ -141,8 +153,14 @@ namespace MultiDeviceAIO
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
 
-                        long ret = myaio.DeviceFinished(device_id, num_samples, settings.data.n_channels);
-                        ProcessReturnValues(ret);
+                        try
+                        {
+                            myaio.DeviceFinished(device_id, num_samples, settings.data.n_channels);
+                        } catch (AIODeviceException ex)
+                        {
+                            ProcessError(ex);
+                            return;
+                        }
 
                         if (myaio.IsTestFinished())
                         {
@@ -154,8 +172,13 @@ namespace MultiDeviceAIO
                     {
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
-                        long ret = myaio.RetrieveData(device_id, num_samples, settings.data.n_channels);
-                        ProcessReturnValues(ret);
+                        try {
+                            myaio.RetrieveData(device_id, num_samples, settings.data.n_channels);
+                        }
+                        catch (AIODeviceException ex)
+                        {
+                            ProcessError(ex);
+                        }
 
                         PrintLn(device_id, false);
                     }
@@ -178,6 +201,12 @@ namespace MultiDeviceAIO
             List<List<int>> concatdata;
             myaio.GetData(out concatdata);
 
+            //Delete existing temp file
+            if (settings.data.temp_filename != null)
+            {
+                File.Delete(settings.data.temp_filename);
+            }
+            //Get new temp and add update settings
             string filepath = IO.GetFilePathTemp(settings.data);
 
             IO.SaveArray(settings.data, filepath, concatdata);
@@ -195,7 +224,7 @@ namespace MultiDeviceAIO
             PrintLn("+--------------------------------------------------");
 
             //SAVE LOG
-            File.WriteAllText(settings.data.testpath + @"\log.txt", textBox1.Text);
+            SaveLogFile();
 
             //Produce scope
             (new Scope(concatdata, settings.data.n_channels)).Show();
@@ -208,16 +237,6 @@ namespace MultiDeviceAIO
             RenameTempFile(fn);
 
             SetStatus("Ready");
-        }
-
-        void ProcessReturnValues(long ret)
-        {
-            if (ret != 0)
-            {
-                //There are errors to log
-                foreach(string msg in myaio.error_log)
-                    PrintLn(msg);
-            }
         }
 
         string UserInputAfterSampling()
@@ -265,8 +284,8 @@ namespace MultiDeviceAIO
             {
                 try
                 {
-                    IO.MoveTempFile(settings, fn);
-                    PrintLn("Saved: " + fn);
+                    if (IO.MoveTempFile(settings, fn)) { PrintLn("Saved: " + fn); }
+                    else { SetStatus("No data to save"); }
                 }
                 catch (IOException ex)
                 {
@@ -309,6 +328,11 @@ namespace MultiDeviceAIO
             textBox1.ScrollToCaret();
         }
 
+        void SaveLogFile()
+        {
+            File.WriteAllText(settings.data.testpath + @"\log.txt", textBox1.Text);
+        }
+
         void StartSampling()
         {
             if (settings.data.n_devices == 0)
@@ -335,21 +359,34 @@ namespace MultiDeviceAIO
             ////////////////////////////////////////////////////////////////////
             // RESET DATA HERE
             ////////////////////////////////////////////////////////////////////
-            long ret;
-            ret = myaio.ResetTest();
-            ProcessReturnValues(ret);
+            try {
+                myaio.ResetTest();
+            }
+            catch (AIODeviceException ex)
+            {
+                ProcessError(ex);
+            }
 
             var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
 
             PrintLn("----------------------------------------------------\r\nApplied Settings");
             PrintLn(settings.ToString());
 
-            ret = myaio.SetupTimedSample(settings.data);
-            ProcessReturnValues(ret);
+            try {
+                myaio.SetupTimedSample(settings.data);
+            }
+            catch (AIODeviceException ex)
+            {
+                ProcessError(ex);
+            }
 
-
-            ret = myaio.Start((uint)this.Handle.ToInt32());
-            ProcessReturnValues(ret);
+            try {
+                myaio.Start((uint)this.Handle.ToInt32());
+            }
+            catch (AIODeviceException ex)
+            {
+                ProcessError(ex);
+            }
 
             SetStatus("Sampling...");
             PrintLn("Sampling...", false);
@@ -427,8 +464,13 @@ namespace MultiDeviceAIO
 
         private void resetDevicesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            long ret = myaio.ResetDevices();
-            ProcessReturnValues(ret);
+            try {
+                myaio.ResetDevices();
+            }
+            catch (AIODeviceException ex)
+            {
+                ProcessError(ex);
+            }
 
             settings.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
 
@@ -459,6 +501,8 @@ namespace MultiDeviceAIO
         private void resetToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             settings.Reload();
+            loadBindData();
+            displayPath(settings.data.path, settings.data.modified);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -546,5 +590,9 @@ namespace MultiDeviceAIO
 
         }
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutBox1().Show();
+        }
     }
 }

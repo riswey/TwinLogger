@@ -62,12 +62,12 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.tbDirectory = new System.Windows.Forms.TextBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.tbDirectory = new System.Windows.Forms.TextBox();
             this.nudInterval = new System.Windows.Forms.NumericUpDown();
-            this.button3 = new System.Windows.Forms.Button();
             this.nudDuration = new System.Windows.Forms.NumericUpDown();
             this.nudChannel = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
@@ -145,14 +145,14 @@
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -252,8 +252,9 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // cbMass
             // 
@@ -407,6 +408,23 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Test Settings";
             // 
+            // tbDirectory
+            // 
+            this.tbDirectory.Location = new System.Drawing.Point(69, 141);
+            this.tbDirectory.Name = "tbDirectory";
+            this.tbDirectory.Size = new System.Drawing.Size(232, 20);
+            this.tbDirectory.TabIndex = 28;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(13, 139);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(59, 23);
+            this.button3.TabIndex = 30;
+            this.button3.Text = "Directory";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -434,13 +452,6 @@
             this.label3.TabIndex = 11;
             this.label3.Text = "# Channels";
             // 
-            // tbDirectory
-            // 
-            this.tbDirectory.Location = new System.Drawing.Point(69, 141);
-            this.tbDirectory.Name = "tbDirectory";
-            this.tbDirectory.Size = new System.Drawing.Size(232, 20);
-            this.tbDirectory.TabIndex = 28;
-            // 
             // nudInterval
             // 
             this.nudInterval.Location = new System.Drawing.Point(13, 139);
@@ -457,16 +468,6 @@
             0,
             0,
             0});
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(13, 139);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(59, 23);
-            this.button3.TabIndex = 30;
-            this.button3.Text = "Directory";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // nudDuration
             // 

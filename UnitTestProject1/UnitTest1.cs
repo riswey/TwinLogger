@@ -67,14 +67,23 @@ namespace UnitTestProject1
         {
             //Import/export XML
 
+
+            string testXMLfault = @"<?xmlversion=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop\Control Tests Device 2</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
             string testXML = SettingData.default_xml;
 
             Settings<SettingData> s = new Settings<SettingData>();
 
-            s.ImportXML( testXML );
+            //How robust to exceptions
+            bool res = s.ImportXML(testXMLfault);
+            Assert.IsFalse(res);
+
+            //On good xml
+            res = s.ImportXML( testXML );
+            Assert.IsTrue( res );
             Assert.IsTrue(s.data.n_channels == 64);
 
-            string getXML = s.ExportXML();
+            string getXML;
+            s.ExportXML(out getXML);
 
             Debug.WriteLine(testXML);
             Debug.WriteLine(getXML);
@@ -82,6 +91,27 @@ namespace UnitTestProject1
             Assert.IsTrue(testXML == getXML);
 
         }
+
+        [TestMethod]
+        public void TestAIOSettingsImportExport()
+        {
+            string testXMLfault = @"<?xmlversion=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop\Control Tests Device 2</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
+            string testXML = SettingData.default_xml;
+
+            AIOSettings aios = new AIOSettings();
+
+            bool res;
+            //if comment out the default_xml line in code
+            //res = aios.ImportXML(testXMLfault);
+            //Assert.IsFalse(res);
+            //Assert.IsTrue(aios.data.n_channels == 0);
+
+            res = aios.ImportXML(testXML);
+            Assert.IsTrue(res);
+            Assert.IsTrue(aios.data.n_channels == 64);
+
+        }
+
 
         [TestMethod]
         public void TestSettingsFiling()

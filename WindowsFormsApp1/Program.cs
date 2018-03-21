@@ -16,7 +16,13 @@ namespace MultiDeviceAIO
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.Run(new Main());
+            try
+            {
+                Application.Run(new Main());
+            } catch (Exception ex)
+            {
+                Sys.FailApplication("Game Over", "Problem encountered. App needs to close.\n\n" + ex.Message + "\n" + ex.GetType());
+            }
         }
     }
 }

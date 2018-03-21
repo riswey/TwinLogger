@@ -71,16 +71,23 @@ namespace MultiDeviceAIO
 
         }
 
-        public static void MoveTempFile(AIOSettings settings, string filepath)
+        public static bool MoveTempFile(AIOSettings settings, string filepath)
         {
-            string data = File.ReadAllText(settings.data.temp_filename);
+            string filename = settings.data.temp_filename;
+            if (filename == null)
+                return false;
+
+            string data = File.ReadAllText(filename);
             string header = settings.GetHeader();
+
+            CheckPath(filepath);
 
             File.WriteAllText(filepath, header + "\r\n" + data);
             //Clean up
-            File.Delete(settings.data.temp_filename);
-            
-            settings.data.temp_filename = null;
+            //shifted to just before get new temp file
+            //File.Delete(settings.data.temp_filename);
+            //settings.data.temp_filename = null;
+            return true;
         }
 
         public static int GetLine_Num(SettingData settings, List<List<int>> concatdata, int line_number, ref string visitor, string delimiter = ",")

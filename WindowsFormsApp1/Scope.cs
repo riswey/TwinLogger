@@ -18,7 +18,7 @@ namespace MultiDeviceAIO
         float[] dataX;
         float[] dataY;
 
-        public Scope(List<List<int>> dataY1, int n_channels)
+        public Scope(List<List<int>> dataY1, int n_channels, int duration)
         {
             this.dataY1 = dataY1;
             this.n_channels = n_channels;
@@ -53,9 +53,10 @@ namespace MultiDeviceAIO
             comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
 
             //X values
+            float scale = (float)duration / (float)size;
             for (int i = 0; i < size; i++)
             {
-                dataX[i] = i;
+                dataX[i] = i * scale;
             }
 
             SetChannel(0, 0);

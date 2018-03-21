@@ -9,7 +9,7 @@ namespace MultiDeviceAIO
     //Class to be reference type!
     public class SettingData
     {
-        public static string default_xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><SettingData xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><n_channels>64</n_channels><duration>5</duration><n_samples>5000</n_samples><timer_interval>1000</timer_interval>./<testpath></testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>1</mass><load>0</load><shakertype>1</shakertype><paddtype>1</paddtype><path>current.xml</path><modified>false</modified></SettingData>";
+        public static string default_xml = @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
 
         public string testpath { get; set; }        //Path to test data
         public string temp_filename { get; set; }   //last temp filename (recover)
@@ -43,19 +43,39 @@ namespace MultiDeviceAIO
 
     public class AIOSettings : Settings<SettingData>
     {
-
-        public new void Load(string path)
+        public new bool Load(string path)
         {
-            base.Load(path);
-            data.path = path;
-            data.modified = false;
+            if (base.Load(path))
+            {
+                data.path = path;
+                data.modified = false;
+                return true;
+            } else
+            {
+                return false;
+            }
         }
 
-        public new void Save(string path)
+        public new bool Save(string path)
         {
             data.path = path;
             data.modified = false;
-            base.Save(path);
+            return base.Save(path);
+        }
+
+        public new bool ImportXML(string xml)
+        {
+            if (!base.ImportXML(xml))
+            {
+                //fault in given xml
+                if (!base.ImportXML(SettingData.default_xml))
+                {
+                    //fault in default xml
+                    this.data = new SettingData();
+                    return false;
+                }
+            }
+            return true;
         }
 
         public void Reload()

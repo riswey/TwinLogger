@@ -18,55 +18,83 @@ using System.Diagnostics;
  * 
  */
 
-
 namespace MultiDeviceAIO
 {
+    /// <summary>
+    /// Wrap a generic data class with disk persistance
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class Settings<T>
     {
         public T data { get; set; }
 
-        //Load from external XML
-        public void ImportXML(string xml)
+        /// <summary>
+        /// Load from external XML
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns>
+        /// false if fails
+        /// </returns>
+        public bool ImportXML(string xml)
         {
-            this.data = deserialise(xml);
+            try
+            {
+                this.data = Deserialise(xml);
+                return true;
+            }
+            catch (InvalidOperationException) { return false; }
+            catch (XmlException) { return false; }
         }
 
-        //Generate XML for external
-        public string ExportXML()
+        /// <summary>
+        /// Generate XML for external
+        /// </summary>
+        /// <param name="xml">initialise to xml</param>
+        /// <returns>
+        /// false if fails
+        /// </returns>
+        public bool ExportXML(out string xml)
         {
-            return serialise(this.data);
+            try
+            {
+                xml = Serialise(this.data);
+                return true;
+            }
+            catch (InvalidOperationException) { xml = null; return false; }
+            catch (XmlException) { xml = null; return false; }
         }
 
         //Load external path
-        public void Load(string path)
+        public bool Load(string path)
         {
+            string xml;
             try
             {
-                string xml = File.ReadAllText(path);
-                this.data = deserialise(xml);
+                xml = File.ReadAllText(path);
+                this.data = Deserialise(xml);
+                return true;
             }
-            catch
-            {
-                throw;
-            }
+            catch (XmlException ex) { return false; }
+            catch (IOException) { return false; }
+            catch (Exception) { throw; }
         }
 
         //Save to path in settings
-        public void Save(string path)
+        public bool Save(string path)
         {
-            string xml = serialise(this.data);
-
+            string xml;
             try
             {
+                xml = Serialise(this.data);
                 File.WriteAllText(path, xml);
+                return true;
             }
-            catch
-            {
-                throw;
-            }
+            catch (XmlException ex) { return false; }
+            catch (IOException) { return false; }
+            catch (Exception) { throw; }
         }
 
-        private string serialise(T ps1)
+        private string Serialise(T ps1)     //throws XmlException
         {
             //Save
             XmlSerializer xsSubmit = new XmlSerializer(typeof(T));
@@ -80,10 +108,9 @@ namespace MultiDeviceAIO
                     return sww.ToString();
                 }
             }
-            throw new Exception("Serialisation failed");
         }
 
-        private T deserialise(string xml)
+        private T Deserialise(string xml)       //throws XmlException
         {
             XmlSerializer xsSubmit = new XmlSerializer(typeof(T));
 
@@ -94,7 +121,6 @@ namespace MultiDeviceAIO
                     return (T) xsSubmit.Deserialize(reader);
                 }
             }
-            throw new Exception("Deserialisation failed");
         }
 
     }

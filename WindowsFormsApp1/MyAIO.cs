@@ -31,33 +31,11 @@ namespace MultiDeviceAIO
         const string LINEEND = "\r\n";
 
         //TODO: this will crash if not installed. Check
-        Caio aio = new Caio();
+        Caio aio;
 
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
         public Dictionary<DEVICEID, List<int[]>> data { get; } = new Dictionary<DEVICEID, List<int[]>>();
-
-        //Handling device return values
-        const long CLEAR_ERROR_LOG = -1;
-        public List<string> error_log = new List<string>();
-        private long elog
-        {
-            get
-            {
-                return error_log.Count;
-            }
-            set
-            {
-                Debug.WriteLine(AIOERRORCODES(value));
-
-                if (value == CLEAR_ERROR_LOG)                                //set to -1 to clear log
-                    error_log.Clear();
-                else if (value == 0)
-                    return;
-                else
-                    error_log.Add(AIOERRORCODES( value ) );
-            }
-        }
 
         public DEVICEID GetID(int idx)
         {
@@ -70,9 +48,25 @@ namespace MultiDeviceAIO
 
         private int finished_count = 0;
 
+        public MyAIO()
+        {
+            aio = new Caio();
+        }
+
         ~MyAIO()
         {
             Close();
+        }
+
+        long HANDLE_RETURN_VALUES
+        {
+            set
+            {
+                if (value != 0)
+                {
+                    throw new AIODeviceException(value);
+                }
+            }
         }
 
         public int DiscoverDevices(string device_root)        //add devices
@@ -109,7 +103,7 @@ namespace MultiDeviceAIO
             devices.Clear();
         }
 
-        public long ResetTest()
+        public void ResetTest()
         {
             //Reset internal data store
             data.Clear();
@@ -117,14 +111,12 @@ namespace MultiDeviceAIO
             {
                 data[id] = new List<int[]>();
             }
-            elog = CLEAR_ERROR_LOG;
 
             //Reset External Buffers
             foreach (DEVICEID id in devices)
             {
-                elog = aio.ResetAiMemory(id);
+                HANDLE_RETURN_VALUES = aio.ResetAiMemory(id);
             }
-            return elog;
         }
 
         public bool DeviceCheck(short n_channels, out List<int> failedID)
@@ -156,18 +148,16 @@ namespace MultiDeviceAIO
             return failedID.Count == 0;
         }
 
-        public long ResetDevices()
+        public void ResetDevices()
         {
-            elog = CLEAR_ERROR_LOG;
             //Resets Devices and Drivers
             foreach (DEVICEID id in devices)
             {
-                elog = aio.ResetDevice(id);
+                HANDLE_RETURN_VALUES = aio.ResetDevice(id);
             }
-            return elog;
         }
 
-        public long SetupTimedSample(SettingData settings)
+        public void SetupTimedSample(SettingData settings)
         {
             /*
             //resolution (works) (12/16bit)
@@ -190,56 +180,50 @@ namespace MultiDeviceAIO
                 map += AiChannelSeq[i].ToString() + ",";
             }
             */
-            elog = CLEAR_ERROR_LOG;
 
             //Setting the 
             foreach (DEVICEID id in devices)
             {
-                elog = aio.SetAiChannels(id, settings.n_channels);
-                elog = aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
-                elog = aio.SetAiStopTimes(id, settings.n_samples);
-                elog = aio.SetAiEventSamplingTimes(id, DATA_RECEIVE_EVENT);        //#samples until data retrieve event
+                HANDLE_RETURN_VALUES = aio.SetAiChannels(id, settings.n_channels);
+                HANDLE_RETURN_VALUES = aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
+                HANDLE_RETURN_VALUES = aio.SetAiStopTimes(id, settings.n_samples);
+                HANDLE_RETURN_VALUES = aio.SetAiEventSamplingTimes(id, DATA_RECEIVE_EVENT);        //#samples until data retrieve event
 
-                elog = aio.SetAiTransferMode(id, 0);                //Device buffered 1=sent to user memory
-                elog = aio.SetAiMemoryType(id, 0);                  //FIFO 1=Ring
+                HANDLE_RETURN_VALUES = aio.SetAiTransferMode(id, 0);                //Device buffered 1=sent to user memory
+                HANDLE_RETURN_VALUES = aio.SetAiMemoryType(id, 0);                  //FIFO 1=Ring
 
                 if (settings.external_trigger)
                 {
-                    elog = aio.SetAiClockType(id, 1);                   //external
-                    elog = aio.SetAiStartTrigger(id, 1);                //1 by External trigger rising edge
+                    HANDLE_RETURN_VALUES = aio.SetAiClockType(id, 1);                   //external
+                    HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(id, 1);                //1 by External trigger rising edge
                 }
                 else
                 {
-                    elog = aio.SetAiClockType(id, 0);                   //internal
-                    elog = aio.SetAiStartTrigger(id, 0);                //0 by Software
+                    HANDLE_RETURN_VALUES = aio.SetAiClockType(id, 0);                   //internal
+                    HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(id, 0);                //0 by Software
                 }
 
-                elog = aio.SetAiStopTrigger(id, 0);                 //0 means by time
+                HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(id, 0);                 //0 means by time
             }
-
-            return elog;
         }
 
-        public long Start(uint HandleMsgLoop)
+        public void Start(uint HandleMsgLoop)
         {
             finished_count = 0;
 
-            elog = CLEAR_ERROR_LOG;
-
             foreach (DEVICEID id in devices)
             {
-               //End, 500, set num events
-                elog = aio.SetAiEvent(id, HandleMsgLoop, (int)(CaioConst.AIE_END | CaioConst.AIE_DATA_NUM | CaioConst.AIE_DATA_TSF));
+                //End, 500, set num events
+                HANDLE_RETURN_VALUES = aio.SetAiEvent(id, HandleMsgLoop, (int)(CaioConst.AIE_END | CaioConst.AIE_DATA_NUM | CaioConst.AIE_DATA_TSF));
             }
 
             foreach (DEVICEID id in devices)
             {
-                elog = aio.StartAi(id);
+                HANDLE_RETURN_VALUES = aio.StartAi(id);
             }
-            return elog;
         }
 
-        public long RetrieveData(DEVICEID device_id, int num_samples, int n_channels)
+        public void RetrieveData(DEVICEID device_id, int num_samples, int n_channels)
         {
             /* Testing
              * =======
@@ -252,32 +236,23 @@ namespace MultiDeviceAIO
              * You cannot get false data reading.
              */
 
-            elog = CLEAR_ERROR_LOG;
-
             int sampling_times = num_samples;
 
             int[] data1 = new int[n_channels * num_samples];
 
-            elog = aio.GetAiSamplingData(device_id, ref sampling_times, ref data1);
+            HANDLE_RETURN_VALUES = aio.GetAiSamplingData(device_id, ref sampling_times, ref data1);
 
-            //if sampling times changes then sampling cut short
+            //NOTE: if sampling times changes then sampling cut short
 
-            if (elog == 0) {
-                //store data
-                data[device_id].Add( data1 );   
-            }
-            return elog;
+            //store data
+            data[device_id].Add( data1 );   
         }
 
-        public long DeviceFinished(short device_id, int num_samples, int n_channels)
+        public void DeviceFinished(short device_id, int num_samples, int n_channels)
         {
             finished_count++;
 
-            elog = CLEAR_ERROR_LOG;
-
-            elog = RetrieveData(device_id, num_samples, n_channels);
-
-            return elog;
+            RetrieveData(device_id, num_samples, n_channels);
         }
 
         public bool IsTestFinished()

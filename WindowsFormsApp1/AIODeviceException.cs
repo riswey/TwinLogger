@@ -7,33 +7,33 @@ namespace MultiDeviceAIO
 {
     public class AIODeviceException : Exception
     {
-        public AIODeviceException()
-        {
-        }
+        public long code { get; } = 0;
 
-        public AIODeviceException(string message) : base(message)
-        {
-        }
-
-        public AIODeviceException(string message, Exception inner) : base(message, inner)
-        {
-        }
+        public AIODeviceException(string message) : base(message) {}
 
         public AIODeviceException(long code) : base(AIOERRORCODES(code))
         {
+            this.code = code;
         }
+
+        /* Handleable Errors:
+         * 
+         * 7: reset devices
+         * 
+         */
 
         private static string AIOERRORCODES(long code)
         {
             switch (code)
             {
-                case 0: return " Normality completion"; break;
+                case 0: return "Normality completion"; break;
                 case 1: return "Failed in the acquisition of the resource. When you install the hardware, the resource of I/O address, interrupt level cannot be retrieved. Check the resource in Device Manager"; break;
                 case 2: return "Failed in the registration of the interruption routine. The device may be being used by such another driver as API-AIO.. Please remove other drivers by using Device Manager.. And, if the device is with interrupt jumper, please do the necessary settings"; break;
                 case 3: return "Failed in the allocation of the memory. Memory is insufficient. Terminate the unnecessary applications"; break;
                 case 4: return "Failed in the access of registry. Please contact CONTEC Information Center"; break;
                 case 5: return "The value of Address is unusual at the time of bus-master registration. Please contact CONTEC Information Center"; break;
                 case 6: return "Failed in the creation of the adapter object. Please contact CONTEC Information Center"; break;
+                case 7: return "Execute AioResetDevice function because the device has recovered from standby mode";break;
                 case 10000: return "The device name which wasn't registered by a device manager was specified. Specify the right device name"; break;
                 case 10001: return "Invalid ID was specified. Please use the ID retrieved from AioInit to specify the ID in function"; break;
                 case 10002: return "AIO driver can't be called. At first, perform the function AioInit"; break;
@@ -590,5 +590,6 @@ namespace MultiDeviceAIO
 
             }
         }
+
     }
 }
