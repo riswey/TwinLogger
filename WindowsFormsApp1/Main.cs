@@ -74,17 +74,17 @@ namespace MultiDeviceAIO
             else
             {
                 string msg = "Device Error: " + ex.code + ": " + ex.Message;
-
                 PrintLn(msg);
-
                 SaveLogFile();
 
-                if (MessageBox.Show(msg, "Application Error", MessageBoxButtons.OK) == DialogResult.OK)
-                {
-                    Application.Exit();
-                }
+                MessageBox.Show(msg, "Device Error\nDevices have been reset. Retry operation or manually reset devices again.", MessageBoxButtons.OK);
+                
+                //These are not critical errors! Can reset without affecting application state.
+                //Application.Exit();
+                myaio.ResetDevices();
+
+                return false;
             }
-            return false;
         }
 
         void loadBindData()
@@ -227,7 +227,7 @@ namespace MultiDeviceAIO
             SaveLogFile();
 
             //Produce scope
-            (new Scope(concatdata, settings.data.n_channels)).Show();
+            (new Scope(concatdata, settings.data.n_channels, settings.data.duration)).Show();
 
             SetStatus("Awaiting User Input...");
 
