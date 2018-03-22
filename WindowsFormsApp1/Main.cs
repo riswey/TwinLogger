@@ -47,6 +47,8 @@ namespace MultiDeviceAIO
             loadBindData();
         }
 
+        //#CHECK
+        //Advice from code checker
         ~Main()
         {
             if (myaio != null)
@@ -118,6 +120,9 @@ namespace MultiDeviceAIO
 
             chkExternalTrigger.DataBindings.Clear();
             chkExternalTrigger.DataBindings.Add("Checked", settings.data, "external_trigger");
+
+            chkExternalClock.DataBindings.Clear();
+            chkExternalClock.DataBindings.Add("Checked", settings.data, "external_clock");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

@@ -73,6 +73,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
+            this.chkExternalClock = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -252,7 +253,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -510,6 +511,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chkExternalClock);
             this.groupBox3.Controls.Add(this.chkExternalTrigger);
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.button1);
@@ -528,12 +530,22 @@
             // chkExternalTrigger
             // 
             this.chkExternalTrigger.AutoSize = true;
-            this.chkExternalTrigger.Location = new System.Drawing.Point(163, 139);
+            this.chkExternalTrigger.Location = new System.Drawing.Point(163, 142);
             this.chkExternalTrigger.Name = "chkExternalTrigger";
-            this.chkExternalTrigger.Size = new System.Drawing.Size(133, 17);
+            this.chkExternalTrigger.Size = new System.Drawing.Size(100, 17);
             this.chkExternalTrigger.TabIndex = 27;
-            this.chkExternalTrigger.Text = "External Clock+Trigger";
+            this.chkExternalTrigger.Text = "External Trigger";
             this.chkExternalTrigger.UseVisualStyleBackColor = true;
+            // 
+            // chkExternalClock
+            // 
+            this.chkExternalClock.AutoSize = true;
+            this.chkExternalClock.Location = new System.Drawing.Point(163, 116);
+            this.chkExternalClock.Name = "chkExternalClock";
+            this.chkExternalClock.Size = new System.Drawing.Size(94, 17);
+            this.chkExternalClock.TabIndex = 28;
+            this.chkExternalClock.Text = "External Clock";
+            this.chkExternalClock.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -613,5 +625,6 @@
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem1;
         private System.Windows.Forms.CheckBox chkExternalTrigger;
+        private System.Windows.Forms.CheckBox chkExternalClock;
     }
 }

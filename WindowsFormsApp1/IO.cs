@@ -60,8 +60,7 @@ namespace MultiDeviceAIO
                         }
                         file.WriteLine(str);
                     };
-
-                    file.Close();
+                    //File automatically closes with using (don't manually close!)
                 }
             }
             catch
