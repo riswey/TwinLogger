@@ -599,5 +599,45 @@ namespace MultiDeviceAIO
         {
             new AboutBox1().Show();
         }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "data files|*.csv";
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    has_loaded = false;
+
+                    string filename = openFileDialog1.FileName;
+
+                    List<int[]> data;
+                    string header = "";
+
+                    IO.ReadIntCSVFile(filename, ',', out data, ref header);
+
+                    if (!settings.LoadHeader(header))
+                    {
+                        throw new IOException("Loading header failed");
+                    }
+
+                    myaio.SetData(ref data, settings.data.n_channels);
+
+                    loadBindData();
+
+                    displayPath(filename, settings.data.modified);
+
+                    has_loaded = true;
+                }
+                catch (IOException ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+            }
+
+        }
     }
 }

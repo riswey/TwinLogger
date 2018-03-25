@@ -121,5 +121,28 @@ namespace MultiDeviceAIO
             return header;
         }
 
+        //Untested
+        public bool LoadHeader(string line)
+        {
+            string[] paras = line.Split(',');
+
+            if (paras.Length != 11) return false;
+            //data.n_samples = int.Parse(paras[0]);
+
+            data.n_devices = int.Parse(paras[1]);
+            data.frequency = int.Parse(paras[2]);
+            data.mass = int.Parse(paras[3]) - 1;
+            data.load = int.Parse(paras[4]);
+            data.clipsOn = (int.Parse(paras[5]) == 1);
+            data.n_channels = short.Parse(paras[6]);
+
+            data.shakertype = int.Parse(paras[7]);
+            data.paddtype = int.Parse(paras[8]);
+            data.duration = int.Parse(paras[9]);
+            data.timer_interval = short.Parse(paras[10]);
+
+            return true;
+            
+        }
     }
 }

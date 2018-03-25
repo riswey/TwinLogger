@@ -35,7 +35,7 @@ namespace MultiDeviceAIO
 
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
-        public Dictionary<DEVICEID, List<int[]>> data { get; } = new Dictionary<DEVICEID, List<int[]>>();
+        public Dictionary<DEVICEID, List<int[]>> data { get; private set; } = new Dictionary<DEVICEID, List<int[]>>();
 
         public DEVICEID GetID(int idx)
         {
@@ -95,7 +95,7 @@ namespace MultiDeviceAIO
         }
 
         public void Close()
-            {
+        {
             foreach (DEVICEID id in devices)
             {
                 aio.Exit(id);
@@ -107,7 +107,7 @@ namespace MultiDeviceAIO
         {
             //Reset internal data store
             data.Clear();
-            foreach(DEVICEID id in devices)
+            foreach (DEVICEID id in devices)
             {
                 data[id] = new List<int[]>();
             }
@@ -128,7 +128,7 @@ namespace MultiDeviceAIO
 
             float[] sum = new float[snapshot.Count];
 
-            for(int i=0; i<snapshot.Count; i++)
+            for (int i = 0; i < snapshot.Count; i++)
             {
                 sum[i] = 0;
                 foreach (float f in snapshot[i])
@@ -137,7 +137,7 @@ namespace MultiDeviceAIO
                 }
             }
 
-            for(int i=0; i < sum.Length; i++)
+            for (int i = 0; i < sum.Length; i++)
             {
                 if (sum[i] == 0)
                 {
@@ -253,7 +253,7 @@ namespace MultiDeviceAIO
             //NOTE: if sampling times changes then sampling cut short
 
             //store data
-            data[device_id].Add( data1 );   
+            data[device_id].Add(data1);
         }
 
         public void DeviceFinished(short device_id, int num_samples, int n_channels)
@@ -287,6 +287,36 @@ namespace MultiDeviceAIO
             return true;
         }
 
+        public bool SetData(ref List<int[]> concatdata, int n_channels)
+        {
+            //Must have some devices
+            if (concatdata.Count == 0) return false;
+
+            float n_devices = (float)concatdata[0].Length / (float)n_channels;
+            if (Math.Floor(n_devices) != n_devices) return false;       //devices not multiple of data width
+
+            //Dictionary<DEVICEID, List<int[]>>
+            data.Clear();
+
+            //Add room for devices
+            for(DEVICEID i=0;i<n_devices;i++)
+            {
+                data[i] = new List<int[]>();
+            }
+
+            foreach (int[] row in concatdata)
+            {
+                if (row.Length != n_devices * n_channels) return false;
+                for (DEVICEID i = 0; i < n_devices; i++)
+                {
+                    int[] cdata = row.Skip(i * n_channels).Take(n_channels).ToArray();
+                    data[i].Add(cdata);
+                }
+            }
+
+            return true;
+        }
+
         public List<float[]> ChannelsSnapShot(short n_channels)
         {
             List<float[]> snapshot = new List<float[]>();
@@ -302,6 +332,10 @@ namespace MultiDeviceAIO
         public static float I2V(int bits)
         {
             return (float)bits / 65535 * 20 - 10;
+        }
+
+        public void LoadData(ref Dictionary<DEVICEID, List<int[]>> data) {
+            this.data = data;
         }
 
     }

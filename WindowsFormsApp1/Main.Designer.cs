@@ -72,8 +72,9 @@
             this.nudChannel = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
             this.chkExternalClock = new System.Windows.Forms.CheckBox();
+            this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -137,6 +138,7 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -146,14 +148,14 @@
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -527,6 +529,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Device Control";
             // 
+            // chkExternalClock
+            // 
+            this.chkExternalClock.AutoSize = true;
+            this.chkExternalClock.Location = new System.Drawing.Point(163, 116);
+            this.chkExternalClock.Name = "chkExternalClock";
+            this.chkExternalClock.Size = new System.Drawing.Size(94, 17);
+            this.chkExternalClock.TabIndex = 28;
+            this.chkExternalClock.Text = "External Clock";
+            this.chkExternalClock.UseVisualStyleBackColor = true;
+            // 
             // chkExternalTrigger
             // 
             this.chkExternalTrigger.AutoSize = true;
@@ -537,15 +549,12 @@
             this.chkExternalTrigger.Text = "External Trigger";
             this.chkExternalTrigger.UseVisualStyleBackColor = true;
             // 
-            // chkExternalClock
+            // loadToolStripMenuItem
             // 
-            this.chkExternalClock.AutoSize = true;
-            this.chkExternalClock.Location = new System.Drawing.Point(163, 116);
-            this.chkExternalClock.Name = "chkExternalClock";
-            this.chkExternalClock.Size = new System.Drawing.Size(94, 17);
-            this.chkExternalClock.TabIndex = 28;
-            this.chkExternalClock.Text = "External Clock";
-            this.chkExternalClock.UseVisualStyleBackColor = true;
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadToolStripMenuItem.Text = "Load";
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -626,5 +635,6 @@
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem1;
         private System.Windows.Forms.CheckBox chkExternalTrigger;
         private System.Windows.Forms.CheckBox chkExternalClock;
+        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
     }
 }

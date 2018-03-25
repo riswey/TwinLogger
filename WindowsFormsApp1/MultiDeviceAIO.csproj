@@ -81,7 +81,6 @@
     <Compile Include="Calibration.Designer.cs">
       <DependentUpon>Calibration.cs</DependentUpon>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Scope.cs">
       <SubType>Form</SubType>
     </Compile>
