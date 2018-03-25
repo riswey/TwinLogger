@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace MultiDeviceAIO
 {
-    class Sys
+    class NativeMethods
     {
         [DllImport("kernel32", SetLastError = true)]
         static extern IntPtr LoadLibrary(string lpFileName);

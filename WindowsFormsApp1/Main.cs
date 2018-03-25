@@ -18,9 +18,9 @@ namespace MultiDeviceAIO
 
         public Main()
         {
-            if (!Sys.CheckLibrary("caio.dll"))
+            if (!NativeMethods.CheckLibrary("caio.dll"))
             {
-                Sys.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
+                NativeMethods.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
             }
 
             InitializeComponent();

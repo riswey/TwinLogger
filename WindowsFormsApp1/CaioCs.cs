@@ -187,7 +187,7 @@ public enum CaioConst
 
 namespace CaioCs
 {
-	unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void *Param);
+    unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void *Param);
 	unsafe public delegate int PAOCALLBACK(short Id, short Message, int wParam, int lParam, void *Param);
 	unsafe public delegate int PCNTCALLBACK(short Id, short Message, int wParam, int lParam, void *Param);
 	unsafe public delegate int PTMCALLBACK(short Id, short Message, int wParam, int lParam, void *Param);
@@ -197,19 +197,19 @@ namespace CaioCs
 	unsafe public delegate int PAIOCNTMCOUNTERERRORCALLBACK(short Id, int wParam, int lParam, void *Param);
 	unsafe public delegate int PAIOCNTMCARRYBORROWCALLBACK(short Id, int wParam, int lParam, void *Param);
 	unsafe public delegate int PAIOCNTMTMCALLBACK(short Id, int wParam, int lParam, void *Param);
-	// End for M-device
+    // End for M-device
 
-	/// <summary>
-	/// Summary description for Caio.
-	/// </summary>
-	public class Caio
-	{
-		/// <summary>
-		/// import unmanage DLL(CAIO.DLL)
-		/// </summary>
-		//Common Function
-		[DllImport("caio.dll")] static extern int AioInit(string DeviceName, ref short Id);
-		[DllImport("caio.dll")] static extern int AioExit(short Id);
+    /// <summary>
+    /// Summary description for Caio.
+    /// </summary>
+    public class Caio
+    {
+        /// <summary>
+        /// import unmanage DLL(CAIO.DLL)
+        /// </summary>
+        //Common Function
+        [DllImport("caio.dll")] static extern int AioInit(string DeviceName, ref short Id);
+        [DllImport("caio.dll")] static extern int AioExit(short Id);
 		[DllImport("caio.dll")] static extern int AioResetDevice(short Id);
 		[DllImport("caio.dll")] static extern int AioGetErrorString(int ErrorCode, System.Text.StringBuilder ErrorString);
 		[DllImport("caio.dll")] static extern int AioQueryDeviceName(short Index, System.Text.StringBuilder DeviceName, System.Text.StringBuilder Device);

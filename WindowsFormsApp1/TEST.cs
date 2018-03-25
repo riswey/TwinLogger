@@ -30,7 +30,7 @@ namespace MultiDeviceAIO
         short id;
 
         short num_channels = 4 * 3;
-        int duration = 100;
+        //int duration = 100;
         int num_samples = 100 * 12;
 
         /*

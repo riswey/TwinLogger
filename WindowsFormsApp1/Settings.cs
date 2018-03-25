@@ -74,7 +74,7 @@ namespace MultiDeviceAIO
                 this.data = Deserialise(xml);
                 return true;
             }
-            catch (XmlException ex) { return false; }
+            catch (XmlException) { return false; }
             catch (IOException) { return false; }
             catch (Exception) { throw; }
         }

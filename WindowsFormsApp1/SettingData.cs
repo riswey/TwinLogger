@@ -85,7 +85,7 @@ namespace MultiDeviceAIO
             Load(data.path);
         }
 
-        public string ToString()
+        public override string ToString()
         {
             string NL = "\r\n";
 
