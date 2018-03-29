@@ -239,27 +239,21 @@ namespace MultiDeviceAIO
             //Now ask user input to save
             //Provide a freq -> complete header. Save header
             string fn = UserInputAfterSampling();
-            RenameTempFile(fn);
+
+            string fp = tbDirectory.Text + @"\" + fn + ".csv";
+
+            RenameTempFile(fp);
 
             SetStatus("Ready");
         }
 
         string UserInputAfterSampling()
         {
-            string filepath;
-            //get default filename
-            if (checkBox1.Checked)
-            {
-                filepath = IO.GetFilePathCal(settings.data, cbOrientation.SelectedIndex);
-            }
-            else
-            {
-                filepath = IO.GetFilePathTest(settings.data);
-            }
-            
             //User decides:
             //freq
             //filename
+            var filepath = txtFilepath.Text;
+
             using (UserCompleteTest testDialog = new UserCompleteTest(filepath))
             {
                 if (testDialog.ShowDialog(this) == DialogResult.OK)
@@ -419,6 +413,19 @@ namespace MultiDeviceAIO
         // GUI EVENTS
         /////////////////////////////////////////////////////////////////////////
 
+        private void SetFilename() {
+            string filepath;
+            //get default filename
+            if (checkBox1.Checked)
+            {
+                txtFilepath.Text = IO.GetFilePathCal(settings.data, cbOrientation.SelectedIndex);
+            }
+            else
+            {
+                txtFilepath.Text = IO.GetFilePathTest(settings.data);
+            }
+        }
+
         private void monitorChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             (new Monitor(myaio, settings.data.n_channels)).Show();
@@ -436,6 +443,14 @@ namespace MultiDeviceAIO
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            if (txtFilepath.Text == "")
+            {
+                if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+
             StartSampling();
         }
 
@@ -467,22 +482,6 @@ namespace MultiDeviceAIO
             }
         }
 
-        private void resetDevicesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try {
-                myaio.ResetDevices();
-            }
-            catch (AIODeviceException ex)
-            {
-                ProcessError(ex);
-            }
-
-            settings.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
-
-            SetStatus(settings.data.n_devices + " Devices Connected");
-
-        }
-
         //Toolstrip Settings events
 
         private void loadToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -508,6 +507,22 @@ namespace MultiDeviceAIO
             settings.Reload();
             loadBindData();
             displayPath(settings.data.path, settings.data.modified);
+        }
+
+        private void resetDevicesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                myaio.ResetDevices();
+            }
+            catch (AIODeviceException ex)
+            {
+                ProcessError(ex);
+            }
+
+            settings.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
+
+            SetStatus(settings.data.n_devices + " Devices Connected");
         }
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -608,36 +623,25 @@ namespace MultiDeviceAIO
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                try
-                {
-                    has_loaded = false;
+                has_loaded = false;
 
-                    string filename = openFileDialog1.FileName;
+                string filename = openFileDialog1.FileName;
 
-                    List<int[]> data;
-                    string header = "";
-
-                    IO.ReadIntCSVFile(filename, ',', out data, ref header);
-
-                    if (!settings.LoadHeader(header))
-                    {
-                        throw new IOException("Loading header failed");
-                    }
-
-                    myaio.SetData(ref data, settings.data.n_channels);
-
-                    loadBindData();
-
-                    displayPath(filename, settings.data.modified);
-
-                    has_loaded = true;
-                }
-                catch (IOException ex)
-                {
-                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
-                }
+                (new Scope(filename)).Show();
             }
 
+        }
+
+        private void scopeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //TODO: inefficient as must convert data every time
+            //Can scope take the dictionary?
+            List<List<int>> concatdata;
+            myaio.GetData(out concatdata);
+
+            SetStatus("Loaded: " + concatdata.Count);
+
+            //(new Scope(concatdata, settings.data.n_channels, settings.data.duration)).Show();
         }
     }
 }

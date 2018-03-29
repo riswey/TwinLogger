@@ -35,6 +35,7 @@
             this.butCancel = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.nudFreq = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
             this.SuspendLayout();
             // 
@@ -63,7 +64,7 @@
             this.tbFilename.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbFilename.Location = new System.Drawing.Point(193, 79);
             this.tbFilename.Name = "tbFilename";
-            this.tbFilename.Size = new System.Drawing.Size(189, 22);
+            this.tbFilename.Size = new System.Drawing.Size(157, 22);
             this.tbFilename.TabIndex = 4;
             this.tbFilename.TextChanged += new System.EventHandler(this.tbFilename_TextChanged);
             // 
@@ -112,12 +113,22 @@
             this.nudFreq.Size = new System.Drawing.Size(120, 26);
             this.nudFreq.TabIndex = 10;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(356, 87);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(27, 13);
+            this.label2.TabIndex = 11;
+            this.label2.Text = ".csv";
+            // 
             // UserCompleteTest
             // 
             this.AcceptButton = this.butOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(490, 167);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.nudFreq);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.butCancel);
@@ -141,5 +152,6 @@
         private System.Windows.Forms.Button butCancel;
         private System.Windows.Forms.CheckBox checkBox1;
         public System.Windows.Forms.NumericUpDown nudFreq;
+        private System.Windows.Forms.Label label2;
     }
 }

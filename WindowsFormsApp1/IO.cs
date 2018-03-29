@@ -133,11 +133,11 @@ namespace MultiDeviceAIO
                 Directory.CreateDirectory(fileInfo.Directory.FullName);
         }
 
-        static public void ReadIntCSVFile(string filename, char delimiter, out List<int[]> data, ref string header)
+        static public void ReadIntCSVFile(string filename, char delimiter, out List<List<int>> data, ref string header)
         {
             //ref header in case header doesn't get set
             bool firstline = true;
-            data = new List<int[]>();
+            data = new List<List<int>>();
 
             using (var reader = new StreamReader(filename))
             {
@@ -152,7 +152,7 @@ namespace MultiDeviceAIO
                     } else
                     {
                         string[] values = line.Split(',');
-                        int[] ints = values.Select(int.Parse).ToArray();
+                        List<int> ints = values.Select(int.Parse).ToList();
                         data.Add(ints);
                     }
 

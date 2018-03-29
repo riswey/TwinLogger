@@ -34,14 +34,16 @@
             this.chkClips = new System.Windows.Forms.CheckBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetDevicesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.monitorChannelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resetDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.scopeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.resetToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,7 +76,9 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkExternalClock = new System.Windows.Forms.CheckBox();
             this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.txtFilepath = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -92,14 +96,14 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(490, 435);
+            this.textBox1.Size = new System.Drawing.Size(490, 471);
             this.textBox1.TabIndex = 1;
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 480);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 515);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(869, 22);
             this.statusStrip1.TabIndex = 3;
@@ -145,6 +149,13 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadToolStripMenuItem.Text = "Load";
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
+            // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
@@ -163,7 +174,8 @@
             // 
             this.testsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectDirectoryToolStripMenuItem,
-            this.startToolStripMenuItem});
+            this.startToolStripMenuItem,
+            this.resetDevicesToolStripMenuItem1});
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             this.testsToolStripMenuItem.Size = new System.Drawing.Size(45, 20);
             this.testsToolStripMenuItem.Text = "Tests";
@@ -182,11 +194,18 @@
             this.startToolStripMenuItem.Text = "Start";
             this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
             // 
+            // resetDevicesToolStripMenuItem1
+            // 
+            this.resetDevicesToolStripMenuItem1.Name = "resetDevicesToolStripMenuItem1";
+            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(165, 22);
+            this.resetDevicesToolStripMenuItem1.Text = "Reset Devices";
+            this.resetDevicesToolStripMenuItem1.Click += new System.EventHandler(this.resetDevicesToolStripMenuItem1_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.monitorChannelsToolStripMenuItem,
-            this.resetDevicesToolStripMenuItem});
+            this.scopeToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -194,16 +213,16 @@
             // monitorChannelsToolStripMenuItem
             // 
             this.monitorChannelsToolStripMenuItem.Name = "monitorChannelsToolStripMenuItem";
-            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.monitorChannelsToolStripMenuItem.Text = "Monitor";
             this.monitorChannelsToolStripMenuItem.Click += new System.EventHandler(this.monitorChannelsToolStripMenuItem_Click);
             // 
-            // resetDevicesToolStripMenuItem
+            // scopeToolStripMenuItem
             // 
-            this.resetDevicesToolStripMenuItem.Name = "resetDevicesToolStripMenuItem";
-            this.resetDevicesToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
-            this.resetDevicesToolStripMenuItem.Text = "Reset Devices";
-            this.resetDevicesToolStripMenuItem.Click += new System.EventHandler(this.resetDevicesToolStripMenuItem_Click);
+            this.scopeToolStripMenuItem.Name = "scopeToolStripMenuItem";
+            this.scopeToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.scopeToolStripMenuItem.Text = "Scope";
+            this.scopeToolStripMenuItem.Click += new System.EventHandler(this.scopeToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem1
             // 
@@ -375,9 +394,9 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cbOrientation);
             this.groupBox1.Controls.Add(this.checkBox1);
-            this.groupBox1.Location = new System.Drawing.Point(24, 401);
+            this.groupBox1.Location = new System.Drawing.Point(24, 443);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(323, 65);
+            this.groupBox1.Size = new System.Drawing.Size(323, 59);
             this.groupBox1.TabIndex = 33;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Calibration Mode";
@@ -393,6 +412,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label9);
+            this.groupBox2.Controls.Add(this.txtFilepath);
             this.groupBox2.Controls.Add(this.cbMass);
             this.groupBox2.Controls.Add(this.chkClips);
             this.groupBox2.Controls.Add(this.label2);
@@ -406,7 +427,7 @@
             this.groupBox2.Controls.Add(this.cbPad);
             this.groupBox2.Location = new System.Drawing.Point(24, 31);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(323, 178);
+            this.groupBox2.Size = new System.Drawing.Size(323, 208);
             this.groupBox2.TabIndex = 34;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Test Settings";
@@ -503,9 +524,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(163, 26);
+            this.button1.Location = new System.Drawing.Point(163, 19);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(133, 70);
+            this.button1.Size = new System.Drawing.Size(133, 58);
             this.button1.TabIndex = 26;
             this.button1.Text = "Start";
             this.button1.UseVisualStyleBackColor = true;
@@ -513,6 +534,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.checkBox2);
             this.groupBox3.Controls.Add(this.chkExternalClock);
             this.groupBox3.Controls.Add(this.chkExternalTrigger);
             this.groupBox3.Controls.Add(this.label5);
@@ -522,9 +544,9 @@
             this.groupBox3.Controls.Add(this.nudDuration);
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.nudInterval);
-            this.groupBox3.Location = new System.Drawing.Point(24, 215);
+            this.groupBox3.Location = new System.Drawing.Point(24, 254);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(323, 180);
+            this.groupBox3.Size = new System.Drawing.Size(323, 183);
             this.groupBox3.TabIndex = 35;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Device Control";
@@ -532,7 +554,7 @@
             // chkExternalClock
             // 
             this.chkExternalClock.AutoSize = true;
-            this.chkExternalClock.Location = new System.Drawing.Point(163, 116);
+            this.chkExternalClock.Location = new System.Drawing.Point(163, 96);
             this.chkExternalClock.Name = "chkExternalClock";
             this.chkExternalClock.Size = new System.Drawing.Size(94, 17);
             this.chkExternalClock.TabIndex = 28;
@@ -542,25 +564,44 @@
             // chkExternalTrigger
             // 
             this.chkExternalTrigger.AutoSize = true;
-            this.chkExternalTrigger.Location = new System.Drawing.Point(163, 142);
+            this.chkExternalTrigger.Location = new System.Drawing.Point(163, 119);
             this.chkExternalTrigger.Name = "chkExternalTrigger";
             this.chkExternalTrigger.Size = new System.Drawing.Size(100, 17);
             this.chkExternalTrigger.TabIndex = 27;
             this.chkExternalTrigger.Text = "External Trigger";
             this.chkExternalTrigger.UseVisualStyleBackColor = true;
             // 
-            // loadToolStripMenuItem
+            // checkBox2
             // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.loadToolStripMenuItem.Text = "Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(163, 142);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(89, 17);
+            this.checkBox2.TabIndex = 29;
+            this.checkBox2.Text = "External Stop";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // txtFilepath
+            // 
+            this.txtFilepath.Location = new System.Drawing.Point(69, 169);
+            this.txtFilepath.Name = "txtFilepath";
+            this.txtFilepath.Size = new System.Drawing.Size(232, 20);
+            this.txtFilepath.TabIndex = 31;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(14, 172);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(49, 13);
+            this.label9.TabIndex = 32;
+            this.label9.Text = "Filename";
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(869, 502);
+            this.ClientSize = new System.Drawing.Size(869, 537);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -627,7 +668,6 @@
         private System.Windows.Forms.NumericUpDown nudChannel;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.ToolStripMenuItem resetDevicesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem1;
@@ -636,5 +676,10 @@
         private System.Windows.Forms.CheckBox chkExternalTrigger;
         private System.Windows.Forms.CheckBox chkExternalClock;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetDevicesToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem scopeToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox txtFilepath;
     }
 }

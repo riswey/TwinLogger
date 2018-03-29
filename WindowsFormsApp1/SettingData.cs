@@ -6,7 +6,11 @@ using System.Text;
 namespace MultiDeviceAIO
 {
 
-    //Class to be reference type!
+    /// <summary>
+    /// Class is a reference type!
+    /// Avoids need for ref
+    /// Ensures app holds only 1 settings instance -> perhaps make singleton!
+    /// </summary>
     public class SettingData
     {
         public static string default_xml = @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><external_clock>false</external_clock><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
@@ -31,12 +35,13 @@ namespace MultiDeviceAIO
         {
             get
             {
-                return (short)(duration * timer_interval);
+                return (short)(duration * (1E6 / timer_interval ));
             }
         }
 
         public bool external_trigger { get; set; }
         public bool external_clock { get; set; }
+        public bool external_stop { get; set; }
 
         //Internal parameters
         public string path { get; set; }
@@ -120,28 +125,37 @@ namespace MultiDeviceAIO
 
             return header;
         }
-
-        //Untested
-        public bool LoadHeader(string line)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        /// <throws>FormatExceptions</throws>
+        static public SettingData LoadHeader(string line)
         {
+            SettingData sd = new SettingData();
+
             string[] paras = line.Split(',');
 
-            if (paras.Length != 11) return false;
-            //data.n_samples = int.Parse(paras[0]);
+            if (paras.Length != 11)
+            {
+                throw new FormatException("Incorrect header size");
+            }
 
-            data.n_devices = int.Parse(paras[1]);
-            data.frequency = int.Parse(paras[2]);
-            data.mass = int.Parse(paras[3]) - 1;
-            data.load = int.Parse(paras[4]);
-            data.clipsOn = (int.Parse(paras[5]) == 1);
-            data.n_channels = short.Parse(paras[6]);
+            //sd.n_samples = int.Parse(paras[0]);
+            sd.n_devices = int.Parse(paras[1]);
+            sd.frequency = int.Parse(paras[2]);
+            sd.mass = int.Parse(paras[3]) - 1;
+            sd.load = int.Parse(paras[4]);
+            sd.clipsOn = (int.Parse(paras[5]) == 1);
+            sd.n_channels = short.Parse(paras[6]);
 
-            data.shakertype = int.Parse(paras[7]);
-            data.paddtype = int.Parse(paras[8]);
-            data.duration = int.Parse(paras[9]);
-            data.timer_interval = short.Parse(paras[10]);
+            sd.shakertype = int.Parse(paras[7]);
+            sd.paddtype = int.Parse(paras[8]);
+            sd.duration = int.Parse(paras[9]);
+            sd.timer_interval = short.Parse(paras[10]);
 
-            return true;
+            return sd;
             
         }
     }

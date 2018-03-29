@@ -1,4 +1,18 @@
-﻿3) set test folder
+﻿1) Load/Scope
+
+Need to think about how to separate these.
+If you load -> what is loaded. If we load all the header what about current device status
+e.g. load a 2 device file, when only 1 device connected?
+Do we override the current state?
+When you run scope it needs to know the number devices.
+
+
+>Load could automatically scope external files to separate data
+>Scope could only work with most recent acquisistion.
+
+If we mix them problems.
+
+
 
 2) modified
 

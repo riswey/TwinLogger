@@ -6,7 +6,14 @@ using CaioCs;
 
 using System.Diagnostics;
 
+/// <summary>
+/// Class wraps devices
+/// State represents current device config (and nothing else!!!)
+/// </summary>
+
 /*
+ * 
+ * 
  *  devices need to be reset
  * 
  * assume all devices data gets prepared.
@@ -210,8 +217,15 @@ namespace MultiDeviceAIO
                     HANDLE_RETURN_VALUES = aio.SetAiClockType(id, 0);                   //internal
                 }
 
+                if (settings.external_stop)
+                {
+                    HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(id, 1);                 //0 means by time
+                }
+                else
+                {
+                    HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(id, 0);                 //0 means by time
+                }
 
-                HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(id, 0);                 //0 means by time
             }
         }
 
@@ -282,36 +296,6 @@ namespace MultiDeviceAIO
                     device_data.AddRange(bundle);
                 }
                 concatdata.Add(device_data);
-            }
-
-            return true;
-        }
-
-        public bool SetData(ref List<int[]> concatdata, int n_channels)
-        {
-            //Must have some devices
-            if (concatdata.Count == 0) return false;
-
-            float n_devices = (float)concatdata[0].Length / (float)n_channels;
-            if (Math.Floor(n_devices) != n_devices) return false;       //devices not multiple of data width
-
-            //Dictionary<DEVICEID, List<int[]>>
-            data.Clear();
-
-            //Add room for devices
-            for(DEVICEID i=0;i<n_devices;i++)
-            {
-                data[i] = new List<int[]>();
-            }
-
-            foreach (int[] row in concatdata)
-            {
-                if (row.Length != n_devices * n_channels) return false;
-                for (DEVICEID i = 0; i < n_devices; i++)
-                {
-                    int[] cdata = row.Skip(i * n_channels).Take(n_channels).ToArray();
-                    data[i].Add(cdata);
-                }
             }
 
             return true;
