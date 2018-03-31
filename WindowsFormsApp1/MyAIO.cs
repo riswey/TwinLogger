@@ -42,6 +42,12 @@ namespace MultiDeviceAIO
 
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
+
+
+        /// <summary>
+        /// Data arrives in int[] per device
+        /// A list is built of these arrays for each device (async events per device)
+        /// </summary>
         public Dictionary<DEVICEID, List<int[]>> data { get; private set; } = new Dictionary<DEVICEID, List<int[]>>();
 
         public DEVICEID GetID(int idx)
@@ -281,9 +287,17 @@ namespace MultiDeviceAIO
         {
             return finished_count == devices.Count;
         }
-
+        /// <summary>
+        /// device lists of int[] are concatenated ->
+        /// DeviceX => int[] (index 0)
+        /// DeviceY => int[] (index 1)
+        /// ...
+        /// </summary>
+        /// <param name="concatdata"></param>
+        /// <returns></returns>
         public bool GetData(out List<List<int>> concatdata)
         {
+            ///TODO: actually we can concat as data arrives. It's not a huge event.
             concatdata = new List<List<int>>();
 
             if (!IsTestFinished()) return false;

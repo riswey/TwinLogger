@@ -454,9 +454,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(13, 123);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(99, 13);
+            this.label5.Size = new System.Drawing.Size(114, 13);
             this.label5.TabIndex = 13;
-            this.label5.Text = "Sample interval (us)";
+            this.label5.Text = "Sample frequency (Hz)";
             // 
             // label4
             // 

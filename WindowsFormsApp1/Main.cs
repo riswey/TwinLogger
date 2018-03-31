@@ -113,7 +113,7 @@ namespace MultiDeviceAIO
             cbPad.DataBindings.Add("SelectedIndex", settings.data, "paddtype");
 
             nudInterval.DataBindings.Clear();
-            nudInterval.DataBindings.Add("Value", settings.data, "timer_interval");
+            nudInterval.DataBindings.Add("Value", settings.data, "sample_frequency");
 
             tbDirectory.DataBindings.Clear();
             tbDirectory.DataBindings.Add("Text", settings.data, "testpath");
@@ -203,6 +203,7 @@ namespace MultiDeviceAIO
         /// <param name="num_samples"></param>
         void TestFinished(short device_id, int num_samples)
         {
+            //Per device list of results (int[])
             List<List<int>> concatdata;
             myaio.GetData(out concatdata);
 

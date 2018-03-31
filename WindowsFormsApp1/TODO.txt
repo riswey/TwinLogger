@@ -1,4 +1,27 @@
-﻿1) Load/Scope
+﻿NOTE update default!
+//////////////////////////////////////////////////////////////////////////
+
+
+DATA format problem:
+
+Data concats into:
+Device1 => data list1 
+Device2 => data list1 
+
+-> converted into 
+Tick1 => {dev1:ch1, ch2, ch3,...,dev2: cha1,..., devN:chaM}
+Tick2 => {dev1:ch1, ch2, ch3,...,dev2: cha1,..., devN:chaM}
+
+-> save
+
+-> scope needs this format.
+
+???Any reason for GetData not to generate this format???
+
+
+
+
+1) Load/Scope
 
 Need to think about how to separate these.
 If you load -> what is loaded. If we load all the header what about current device status
