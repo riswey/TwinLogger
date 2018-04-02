@@ -4,6 +4,11 @@ using NPlot;
 using System.Collections.Generic;
 using System.Threading;
 
+using DEVICEID = System.Int16;
+//The data structure is a dictionary; K: device id V:raw list of data for device
+//K: device id :. data imported by id
+using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
+
 namespace MultiDeviceAIO
 {
     public partial class Scope : Form
@@ -11,28 +16,33 @@ namespace MultiDeviceAIO
         //Display
         NPlot.LinePlot npplot;
 
-        List<List<int>> data;
+        DATA data;
         int n_channels;
-        int size;
+        int n_samples;
 
         //Data
         float[] dataX;
         float[] dataY;
-
+        
         public Scope(string filename)
         {
             //Isolate importing from main program.
             //Main program state is for current test setup!
 
-            List<List<int>> concatdata;
-            string header = "";
-
+            DATA concatdata;
             SettingData sd;
-
             try
             {
-                IO.ReadIntCSVFile(filename, ',', out concatdata, ref header);
+                string header = IO.ReadFileHeader(filename);
+
                 sd = AIOSettings.LoadHeader(header);
+
+                this.n_channels = sd.n_channels;
+
+                //You will need to inject settings dependency into IO to decode the header
+                //However you are splitting the file by width which is settings dependent
+                //TODO: think about lose coupling IO and file format
+                IO.ReadCSVConcatColumns(filename, ',', this.n_channels, out concatdata);
             }
             catch (System.Exception ex)
             {
@@ -45,40 +55,37 @@ namespace MultiDeviceAIO
                 throw;
             }
 
-            int n_channels = sd.n_channels;
-            int duration = sd.duration;
+            n_channels = sd.n_channels;
 
-            MessageBox.Show(n_channels + "," + duration);
-        
             //Must have some devices
-            if (concatdata.Count == 0) return;
+            float n_devices = concatdata.Count;
+            if (n_devices == 0) return;
             
             //Should match header ?check
-            float n_devices = (float)concatdata[0].Count / (float)n_channels;
             if (System.Math.Floor(n_devices) != n_devices) return;       //devices not multiple of data width
 
-            Import(concatdata, n_channels, duration);
-        
+            Import(concatdata, sd.duration);
+
         }
 
-        public Scope(List<List<int>> concatdata, int n_channels, int duration)
+        public Scope(DATA concatdata, int n_channels, int duration)
         {
-            Import(concatdata, n_channels, duration);
+            this.n_channels = n_channels;
+            Import(concatdata, duration);
         }
 
-        protected void Import(List<List<int>> concatdata, int n_channels, int duration)
+        protected void Import(DATA concatdata, int duration)
         {
 
             this.data = concatdata;
-            this.n_channels = n_channels;
             //assume both devices same size
-            this.size = concatdata[0].Count / n_channels;
+            this.n_samples = concatdata[0].Count / n_channels;
 
             InitializeComponent();
 
             npplot = new LinePlot();
-            dataX = new float[size];
-            dataY = new float[size];
+            dataX = new float[n_samples];
+            dataY = new float[n_samples];
 
             //Combo items
             List<string> options = new List<string>();
@@ -102,8 +109,8 @@ namespace MultiDeviceAIO
             comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
 
             //X values
-            float scale = (float)duration / (float)size;
-            for (int i = 0; i < size; i++)
+            float scale = (float)duration / (float)n_samples;
+            for (int i = 0; i < n_samples; i++)
             {
                 dataX[i] = i * scale;
             }
@@ -111,24 +118,20 @@ namespace MultiDeviceAIO
             SetChannel(0, 0);
 
             Cursor.Current = Cursors.Arrow;
-
         }
 
-        void SetChannel(int device, int channel)
+        void SetChannel(DEVICEID device, int channel)
         {
             float min = 10;
             float max = -10;
 
             int c = 0;
-            for (int i = 0; i < data[device].Count; i++)
+            for (int i = channel; i < data[device].Count; i+=n_channels)
             {
-                if (i % n_channels == channel)
-                {
-                    dataY[c] = (float)data[device][i] / 65535 * 20 - 10;
-                    if (dataY[c] > max) max = dataY[c];
-                    if (dataY[c] < min) min = dataY[c];
-                    c++;
-                }
+                dataY[c] = (float)data[device][i] / 65535 * 20 - 10;
+                if (dataY[c] > max) max = dataY[c];
+                if (dataY[c] < min) min = dataY[c];
+                c++;
             }
             //Take range away from limits
             max *= 1.2f;
@@ -194,14 +197,14 @@ namespace MultiDeviceAIO
 
         private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            SetChannel(comboBox2.SelectedIndex, comboBox1.SelectedIndex);
+            SetChannel((DEVICEID) comboBox2.SelectedIndex, comboBox1.SelectedIndex);
 
             npSurface.Refresh();
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            SetChannel(comboBox2.SelectedIndex, comboBox1.SelectedIndex);
+            SetChannel((DEVICEID) comboBox2.SelectedIndex, comboBox1.SelectedIndex);
 
             npSurface.Refresh();
         }

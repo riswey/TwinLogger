@@ -4,6 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+using DEVICEID = System.Int16;
+//The data structure is a dictionary; K: device id V:raw list of data for device
+//K: device id :. data imported by id
+using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
+
+
 namespace MultiDeviceAIO
 {
     class IO
@@ -40,7 +46,7 @@ namespace MultiDeviceAIO
         }
 
         //FILE SAVING
-        static public void SaveArray(SettingData settings, string filepath, List<List<int>> concatdata)
+        static public void SaveDATA(SettingData settings, string filepath, DATA concatdata)
         {
             try
             {
@@ -89,12 +95,12 @@ namespace MultiDeviceAIO
             return true;
         }
 
-        public static int GetLine_Num(SettingData settings, List<List<int>> concatdata, int line_number, ref string visitor, string delimiter = ",")
+        public static int GetLine_Num(SettingData settings, DATA concatdata, int line_number, ref string visitor, string delimiter = ",")
         {
             int num = 0;
-            foreach (List<int> device_data in concatdata)
+            foreach (KeyValuePair<DEVICEID, List<int>> device_data in concatdata)
             {
-                num += IO.GetLineId_Num(settings, device_data, line_number, ref visitor, delimiter);
+                num += IO.GetLineId_Num(settings, device_data.Value, line_number, ref visitor, delimiter);
             }
             return num;
         }
@@ -118,7 +124,7 @@ namespace MultiDeviceAIO
                 {
                     str.Add(data[i].ToString());
                 }
-                visitor += string.Join(delimiter, str.ToArray() );
+                visitor += string.Join(delimiter, str.ToArray());
                 return 1;
             }
 
@@ -133,33 +139,61 @@ namespace MultiDeviceAIO
                 Directory.CreateDirectory(fileInfo.Directory.FullName);
         }
 
-        static public void ReadIntCSVFile(string filename, char delimiter, out List<List<int>> data, ref string header)
+        static public string ReadFileHeader(string filename)
         {
-            //ref header in case header doesn't get set
-            bool firstline = true;
-            data = new List<List<int>>();
+            using (var reader = new StreamReader(filename))
+            {
+                while (!reader.EndOfStream)
+                {
+                    return reader.ReadLine();
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Read file and split rows by n_channels into devices
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="delimiter"></param>
+        /// <param name="n_channels"></param>
+        /// <param name="data"></param>
+        /// <param name="header"></param>
+        static public void ReadCSVConcatColumns(string filename, char delimiter, int width, out DATA data, bool header = true)
+        {
+            bool firstline = header;
+
+            data = new DATA();
 
             using (var reader = new StreamReader(filename))
             {
+                int n_devices;
                 while (!reader.EndOfStream)
                 {
                     string line = reader.ReadLine();
 
                     if (firstline)
                     {
-                        header = line;
+                        //bin first line
                         firstline = false;
-                    } else
+                    }
+                    else
                     {
                         string[] values = line.Split(',');
                         List<int> ints = values.Select(int.Parse).ToList();
-                        data.Add(ints);
+                        n_devices = ints.Count / width;
+                        for (DEVICEID i = 0; i < n_devices; i++)
+                        {
+                            if (!data.ContainsKey(i))
+                            {
+                                data[i] = new List<int>();
+                            }
+                            data[i].AddRange(ints.GetRange(i * width, width));
+                        }
                     }
-
                 }
             }
         }
+
     }
-
-
 }

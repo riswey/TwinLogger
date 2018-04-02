@@ -7,6 +7,12 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 
+using DEVICEID = System.Int16;
+//The data structure is a dictionary; K: device id V:raw list of data for device
+//K: device id :. data imported by id
+using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
+
+
 namespace MultiDeviceAIO
 {
     public partial class Main : Form
@@ -204,7 +210,8 @@ namespace MultiDeviceAIO
         void TestFinished(short device_id, int num_samples)
         {
             //Per device list of results (int[])
-            List<List<int>> concatdata;
+            
+            DATA concatdata;
             myaio.GetData(out concatdata);
 
             //Delete existing temp file
@@ -215,17 +222,17 @@ namespace MultiDeviceAIO
             //Get new temp and add update settings
             string filepath = IO.GetFilePathTemp(settings.data);
 
-            IO.SaveArray(settings.data, filepath, concatdata);
+            IO.SaveDATA(settings.data, filepath, concatdata);
 
             PrintLn("END");
 
             //Generate User reports to see what happened
 
             PrintLn("+---Report-----------------------------------------");
-            for (int i = 0; i < concatdata.Count; i++)
+            foreach(KeyValuePair<DEVICEID, List<int>> device_data in concatdata)
             {
-                PrintLn("| Device: " + myaio.devicenames[myaio.GetID(i)] + " (" + concatdata[i].Count + ")");
-                PrintLn(GenerateDataReport(concatdata[i]));
+                PrintLn("| Device: " + myaio.devicenames[device_data.Key] + " (" + device_data.Value.Count + ")");
+                PrintLn(GenerateDataReport(device_data.Value));
             }
             PrintLn("+--------------------------------------------------");
 
@@ -637,12 +644,12 @@ namespace MultiDeviceAIO
         {
             //TODO: inefficient as must convert data every time
             //Can scope take the dictionary?
-            List<List<int>> concatdata;
+            DATA concatdata;
             myaio.GetData(out concatdata);
 
             SetStatus("Loaded: " + concatdata.Count);
 
-            //(new Scope(concatdata, settings.data.n_channels, settings.data.duration)).Show();
+            (new Scope(concatdata, settings.data.n_channels, settings.data.duration)).Show();
         }
     }
 }

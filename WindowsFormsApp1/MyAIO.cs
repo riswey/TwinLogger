@@ -24,11 +24,13 @@ using System.Diagnostics;
  * 
  */
 
+using DEVICEID = System.Int16;
+//The data structure is a dictionary; K: device id V:raw list of data for device
+//K: device id :. data imported by id
+using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
 
 namespace MultiDeviceAIO
 {
-    using DEVICEID = System.Int16;
-
     public class MyAIO
     {
 
@@ -43,12 +45,11 @@ namespace MultiDeviceAIO
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
 
-
         /// <summary>
         /// Data arrives in int[] per device
         /// A list is built of these arrays for each device (async events per device)
         /// </summary>
-        public Dictionary<DEVICEID, List<int[]>> data { get; private set; } = new Dictionary<DEVICEID, List<int[]>>();
+        public DATA data { get; private set; } = new DATA();
 
         public DEVICEID GetID(int idx)
         {
@@ -100,7 +101,7 @@ namespace MultiDeviceAIO
                 {
                     devices.Add(id);
                     devicenames[id] = full_device_name;
-                    data[id] = new List<int[]>();
+                    data[id] = new List<int>();
                 }
             }
 
@@ -122,7 +123,7 @@ namespace MultiDeviceAIO
             data.Clear();
             foreach (DEVICEID id in devices)
             {
-                data[id] = new List<int[]>();
+                data[id] = new List<int>();
             }
 
             //Reset External Buffers
@@ -273,7 +274,7 @@ namespace MultiDeviceAIO
             //NOTE: if sampling times changes then sampling cut short
 
             //store data
-            data[device_id].Add(data1);
+            data[device_id].AddRange(data1);
         }
 
         public void DeviceFinished(short device_id, int num_samples, int n_channels)
@@ -295,23 +296,16 @@ namespace MultiDeviceAIO
         /// </summary>
         /// <param name="concatdata"></param>
         /// <returns></returns>
-        public bool GetData(out List<List<int>> concatdata)
+        public bool GetData(out DATA concatdata)
         {
-            ///TODO: actually we can concat as data arrives. It's not a huge event.
-            concatdata = new List<List<int>>();
-
-            if (!IsTestFinished()) return false;
-            //Concat data
-            foreach (DEVICEID id in devices)
+            //TODO: return ref
+            if (!IsTestFinished())
             {
-                List<int> device_data = new List<int>();
-                foreach (int[] bundle in data[id])
-                {
-                    device_data.AddRange(bundle);
-                }
-                concatdata.Add(device_data);
+                concatdata = new DATA();
+                return false;
             }
 
+            concatdata = data;
             return true;
         }
 
@@ -332,7 +326,7 @@ namespace MultiDeviceAIO
             return (float)bits / 65535 * 20 - 10;
         }
 
-        public void LoadData(ref Dictionary<DEVICEID, List<int[]>> data) {
+        public void LoadData(ref DATA data) {
             this.data = data;
         }
 
