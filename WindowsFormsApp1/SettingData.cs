@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace MultiDeviceAIO
@@ -12,7 +13,30 @@ namespace MultiDeviceAIO
     /// </summary>
     public class SettingData
     {
-        //public enum HEADER { N_DEVICES, FREQUENCY, MASS, LOAD, CLIPSON, N_CHANNELS, SHAKERTYPE, PADDTYPE, DURATION, TIMER_INTERVAL }
+        /// <summary>
+        /// Replaces {KEY} defined by hard coded KEYS mapped to object values.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        /// TODO: is there a better way
+        public static string MergeObjectToString(object obj, string str)
+        {
+            Dictionary<string, string> swaps = new Dictionary<string, string>();
+            //prepare the map
+            PropertyInfo[] properties = obj.GetType().GetProperties();
+            foreach(var prop in properties)
+            {
+                string propName = prop.Name;
+                swaps[propName.ToUpper()] = obj.GetType().GetProperty(propName).GetValue(obj, null).ToString();
+            }
+            //do the map swaps
+            foreach(KeyValuePair<string, string> pair in swaps)
+            {
+                str = str.Replace("{" + pair.Key + "}", pair.Value);
+            }
+
+            return str;
+        }
 
         public static string default_xml = @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><external_clock>false</external_clock><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
 
