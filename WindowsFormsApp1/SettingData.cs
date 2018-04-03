@@ -18,19 +18,11 @@ namespace MultiDeviceAIO
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        /// TODO: is there a better way
         public static string MergeObjectToString(object obj, string str)
         {
-            Dictionary<string, string> swaps = new Dictionary<string, string>();
-            //prepare the map
-            PropertyInfo[] properties = obj.GetType().GetProperties();
-            foreach(var prop in properties)
-            {
-                string propName = prop.Name;
-                swaps[propName.ToUpper()] = obj.GetType().GetProperty(propName).GetValue(obj, null).ToString();
-            }
+            Dictionary<string, string> swaps = MergeDictionary(obj);
             //do the map swaps
-            foreach(KeyValuePair<string, string> pair in swaps)
+            foreach (KeyValuePair<string, string> pair in swaps)
             {
                 str = str.Replace("{" + pair.Key + "}", pair.Value);
             }
@@ -38,23 +30,37 @@ namespace MultiDeviceAIO
             return str;
         }
 
-        public static string default_xml = @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><external_clock>false</external_clock><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
+        public static Dictionary<string, string> MergeDictionary(object obj)
+        {
+            Dictionary<string, string> swaps = new Dictionary<string, string>();
+            //prepare the map
+            PropertyInfo[] properties = obj.GetType().GetProperties();
+            foreach (var prop in properties)
+            {
+                string propName = prop.Name;
+                swaps[propName.ToUpper()] = obj.GetType().GetProperty(propName).GetValue(obj, null).ToString();
+            }
 
-        public string testpath { get; set; }        //Path to test data
-        public string temp_filename { get; set; }   //last temp filename (recover)
+            return swaps;
+        }
+
+        //public static string default_xml = @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><external_clock>false</external_clock><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
+
+        public string testpath { get; set; } = "";       //Path to test data
+        public string temp_filename { get; set; } = "";  //last temp filename (recover)
 
         //Test parameters
-        public float frequency { get; set; }
-        public bool clipsOn { get; set; }
-        public int mass { get; set; }
-        public double load { get; set; }
-        public int shakertype { get; set; }
-        public int paddtype { get; set; }
+        public float frequency { get; set; } = 0;
+        public bool clipsOn { get; set; } = false;
+        public int mass { get; set; } = 0;
+        public double load { get; set; } = 0;
+        public int shakertype { get; set; } = 0;
+        public int paddtype { get; set; } = 0;
 
         //Sampling parameters
-        public int n_devices { get; set; }
-        public short n_channels { get; set; }
-        public int duration { get; set; }
+        public int n_devices { get; set; } = 0;
+        public short n_channels { get; set; } = 64;
+        public int duration { get; set; } = 5;
         public short timer_interval
         {
             get
@@ -66,22 +72,23 @@ namespace MultiDeviceAIO
                 sample_frequency = (short)(1E6/ value);
             }
         }
-        public short sample_frequency { get; set; }
+        public short sample_frequency { get; set; } = 1000;
         public short n_samples                  //number channels scans before stop
         {
             get
             {
-                return (short)(duration * (1E6 / timer_interval ));
+                return (short)(duration * sample_frequency);
             }
         }
 
-        public bool external_trigger { get; set; }
-        public bool external_clock { get; set; }
-        public bool external_stop { get; set; }
+        public bool external_trigger { get; set; } = false;
+        public bool external_clock { get; set; } = false;
+        public bool external_stop { get; set; } = false;
 
         //Internal parameters
-        public string path { get; set; }
-        public bool modified { get; set; }
+        public string path { get; set; } = "";
+        public string auto_template { get; set; } = "";
+        public bool modified { get; set; } = false;
     }
 
     public class AIOSettings : Settings<SettingData>
@@ -115,12 +122,14 @@ namespace MultiDeviceAIO
             if (!base.ImportXML(xml))
             {
                 //fault in given xml
-                if (!base.ImportXML(SettingData.default_xml))
-                {
-                    //fault in default xml
-                    this.data = new SettingData();
-                    return false;
-                }
+                //if (!base.ImportXML(SettingData.default_xml))
+                //{
+                //fault in default xml
+
+                //Has defaults built in 3/4/2018
+                this.data = new SettingData();
+                return false;
+                //}
             }
             return true;
         }
@@ -143,8 +152,6 @@ namespace MultiDeviceAIO
                     //"Duration: " + data.duration + NL +
                     //"Samples: " + data.n_samples + NL+
                     //"Timer: " + data.timer_interval;
-
-
         }
 
         public string GetHeader()

@@ -64,6 +64,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtFilepath = new System.Windows.Forms.TextBox();
             this.tbDirectory = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -74,11 +76,10 @@
             this.nudChannel = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.chkExternalClock = new System.Windows.Forms.CheckBox();
             this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.txtFilepath = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -152,21 +153,21 @@
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -230,7 +231,8 @@
             this.resetToolStripMenuItem1,
             this.loadToolStripMenuItem1,
             this.saveToolStripMenuItem1,
-            this.saveAsToolStripMenuItem1});
+            this.saveAsToolStripMenuItem1,
+            this.editToolStripMenuItem});
             this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
             this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem1.Text = "Settings";
@@ -238,28 +240,28 @@
             // resetToolStripMenuItem1
             // 
             this.resetToolStripMenuItem1.Name = "resetToolStripMenuItem1";
-            this.resetToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.resetToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.resetToolStripMenuItem1.Text = "Reset";
             this.resetToolStripMenuItem1.Click += new System.EventHandler(this.resetToolStripMenuItem1_Click);
             // 
             // loadToolStripMenuItem1
             // 
             this.loadToolStripMenuItem1.Name = "loadToolStripMenuItem1";
-            this.loadToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.loadToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.loadToolStripMenuItem1.Text = "Load";
             this.loadToolStripMenuItem1.Click += new System.EventHandler(this.loadToolStripMenuItem1_Click);
             // 
             // saveToolStripMenuItem1
             // 
             this.saveToolStripMenuItem1.Name = "saveToolStripMenuItem1";
-            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem1.Text = "Save";
             this.saveToolStripMenuItem1.Click += new System.EventHandler(this.saveToolStripMenuItem1_Click);
             // 
             // saveAsToolStripMenuItem1
             // 
             this.saveAsToolStripMenuItem1.Name = "saveAsToolStripMenuItem1";
-            this.saveAsToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.saveAsToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.saveAsToolStripMenuItem1.Text = "Save As...";
             this.saveAsToolStripMenuItem1.Click += new System.EventHandler(this.saveAsToolStripMenuItem1_Click);
             // 
@@ -432,6 +434,22 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Test Settings";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(14, 172);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(49, 13);
+            this.label9.TabIndex = 32;
+            this.label9.Text = "Filename";
+            // 
+            // txtFilepath
+            // 
+            this.txtFilepath.Location = new System.Drawing.Point(69, 169);
+            this.txtFilepath.Name = "txtFilepath";
+            this.txtFilepath.Size = new System.Drawing.Size(232, 20);
+            this.txtFilepath.TabIndex = 31;
+            // 
             // tbDirectory
             // 
             this.tbDirectory.Location = new System.Drawing.Point(69, 141);
@@ -551,6 +569,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Device Control";
             // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(163, 142);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(89, 17);
+            this.checkBox2.TabIndex = 29;
+            this.checkBox2.Text = "External Stop";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
             // chkExternalClock
             // 
             this.chkExternalClock.AutoSize = true;
@@ -571,31 +599,12 @@
             this.chkExternalTrigger.Text = "External Trigger";
             this.chkExternalTrigger.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // editToolStripMenuItem
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(163, 142);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(89, 17);
-            this.checkBox2.TabIndex = 29;
-            this.checkBox2.Text = "External Stop";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // txtFilepath
-            // 
-            this.txtFilepath.Location = new System.Drawing.Point(69, 169);
-            this.txtFilepath.Name = "txtFilepath";
-            this.txtFilepath.Size = new System.Drawing.Size(232, 20);
-            this.txtFilepath.TabIndex = 31;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(14, 172);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(49, 13);
-            this.label9.TabIndex = 32;
-            this.label9.Text = "Filename";
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.editToolStripMenuItem.Text = "Edit...";
+            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -681,5 +690,6 @@
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox txtFilepath;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
     }
 }

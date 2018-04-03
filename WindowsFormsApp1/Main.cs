@@ -651,5 +651,10 @@ namespace MultiDeviceAIO
 
             (new Scope(concatdata, settings.data.n_channels, settings.data.duration)).Show();
         }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            (new UserSettings(settings.data)).Show();
+        }
     }
 }
