@@ -93,9 +93,9 @@ namespace MultiDeviceAIO
 
     public class AIOSettings : Settings<SettingData>
     {
-        //TODO: implement this pattern
-        //Singleton
-        static AIOSettings settings = new AIOSettings();
+        public static AIOSettings settings = new AIOSettings();
+
+        public AIOSettings() : base(new SettingData()) { }
 
         public new bool Load(string path)
         {
