@@ -20,9 +20,9 @@ namespace MultiDeviceAIO
         static string DEVICE_ROOT = "Aio00";
 
         MyAIO myaio;
-        AIOSettings settings;
+        PersistentLoggerState ps;
 
-        public Main()
+        public Main(PersistentLoggerState ps)
         {
             if (!NativeMethods.CheckLibrary("caio.dll"))
             {
@@ -34,20 +34,13 @@ namespace MultiDeviceAIO
             //AIO
             myaio = new MyAIO();
             int devices_count = myaio.DiscoverDevices(DEVICE_ROOT);
-            
+
             //Settings
-            settings = new AIOSettings();
-            bool result = settings.ImportXML(Properties.Settings.Default.processing_settings_current);
-            if (!result)
-            {
-                string msg = "No valid settings were found. Set to zero.";
-                PrintLn(msg);
-                SetStatus(msg);
-            }
+            this.ps = ps;
 
-            settings.data.n_devices = devices_count;
+            ps.data.n_devices = devices_count;
 
-            SetStatus(settings.data.n_devices + " Devices Connected");
+            SetStatus(ps.data.n_devices + " Devices Connected");
             
             //Bindings
             loadBindData();
@@ -98,37 +91,37 @@ namespace MultiDeviceAIO
         void loadBindData()
         {
             cbMass.DataBindings.Clear();
-            cbMass.DataBindings.Add("SelectedIndex", settings.data, "mass");
+            cbMass.DataBindings.Add("SelectedIndex", ps.data, "mass");
 
             chkClips.DataBindings.Clear();
-            chkClips.DataBindings.Add("Checked", settings.data, "clipsOn");
+            chkClips.DataBindings.Add("Checked", ps.data, "clipsOn");
 
             tbLoad.DataBindings.Clear();
-            tbLoad.DataBindings.Add("Text", settings.data, "load");
+            tbLoad.DataBindings.Add("Text", ps.data, "load");
 
             nudChannel.DataBindings.Clear();
-            nudChannel.DataBindings.Add("Value", settings.data, "n_channels");
+            nudChannel.DataBindings.Add("Value", ps.data, "n_channels");
 
             nudDuration.DataBindings.Clear();
-            nudDuration.DataBindings.Add("Value", settings.data, "duration");
+            nudDuration.DataBindings.Add("Value", ps.data, "duration");
 
             cbShaker.DataBindings.Clear();
-            cbShaker.DataBindings.Add("SelectedIndex", settings.data, "shakertype");
+            cbShaker.DataBindings.Add("SelectedIndex", ps.data, "shakertype");
 
             cbPad.DataBindings.Clear();
-            cbPad.DataBindings.Add("SelectedIndex", settings.data, "paddtype");
+            cbPad.DataBindings.Add("SelectedIndex", ps.data, "paddtype");
 
             nudInterval.DataBindings.Clear();
-            nudInterval.DataBindings.Add("Value", settings.data, "sample_frequency");
+            nudInterval.DataBindings.Add("Value", ps.data, "sample_frequency");
 
             tbDirectory.DataBindings.Clear();
-            tbDirectory.DataBindings.Add("Text", settings.data, "testpath");
+            tbDirectory.DataBindings.Add("Text", ps.data, "testpath");
 
             chkExternalTrigger.DataBindings.Clear();
-            chkExternalTrigger.DataBindings.Add("Checked", settings.data, "external_trigger");
+            chkExternalTrigger.DataBindings.Add("Checked", ps.data, "external_trigger");
 
             chkExternalClock.DataBindings.Clear();
-            chkExternalClock.DataBindings.Add("Checked", settings.data, "external_clock");
+            chkExternalClock.DataBindings.Add("Checked", ps.data, "external_clock");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -139,9 +132,9 @@ namespace MultiDeviceAIO
                 myaio.Close();
             }
 
-            //Commit final settings to app state 
+            //Commit final AIOSettings.singleInstance to app state 
             string current_xml;
-            if (settings != null && settings.ExportXML(out current_xml))
+            if (ps != null && ps.ExportXML(out current_xml))
             {
                 //failed to get XML
                 Properties.Settings.Default.processing_settings_current = current_xml;
@@ -166,7 +159,7 @@ namespace MultiDeviceAIO
 
                         try
                         {
-                            myaio.DeviceFinished(device_id, num_samples, settings.data.n_channels);
+                            myaio.DeviceFinished(device_id, num_samples, ps.data.n_channels);
                         } catch (AIODeviceException ex)
                         {
                             ProcessError(ex);
@@ -184,7 +177,7 @@ namespace MultiDeviceAIO
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
                         try {
-                            myaio.RetrieveData(device_id, num_samples, settings.data.n_channels);
+                            myaio.RetrieveData(device_id, num_samples, ps.data.n_channels);
                         }
                         catch (AIODeviceException ex)
                         {
@@ -215,14 +208,14 @@ namespace MultiDeviceAIO
             myaio.GetData(out concatdata);
 
             //Delete existing temp file
-            if (settings.data.temp_filename != null)
+            if (ps.data.temp_filename != null)
             {
-                File.Delete(settings.data.temp_filename);
+                File.Delete(ps.data.temp_filename);
             }
-            //Get new temp and add update settings
-            string filepath = IO.GetFilePathTemp(settings.data);
+            //Get new temp and add update AIOSettings.singleInstance
+            string filepath = IO.GetFilePathTemp(ps.data);
 
-            IO.SaveDATA(settings.data, filepath, concatdata);
+            IO.SaveDATA(ps.data, filepath, concatdata);
 
             PrintLn("END");
 
@@ -240,7 +233,7 @@ namespace MultiDeviceAIO
             SaveLogFile();
 
             //Produce scope
-            (new Scope(concatdata, settings.data.n_channels, settings.data.duration)).Show();
+            (new Scope(concatdata, ps.data.n_channels, ps.data.duration)).Show();
 
             SetStatus("Awaiting User Input...");
 
@@ -266,9 +259,9 @@ namespace MultiDeviceAIO
             {
                 if (testDialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    settings.data.frequency = (float)testDialog.nudFreq.Value;
+                    ps.data.frequency = (float)testDialog.nudFreq.Value;
                     filepath = testDialog.tbFilename.Text;
-                    PrintLn("Frequency: \t" + settings.data.frequency);
+                    PrintLn("Frequency: \t" + ps.data.frequency);
                 }
                 else
                 {
@@ -291,7 +284,7 @@ namespace MultiDeviceAIO
             {
                 try
                 {
-                    if (IO.MoveTempFile(settings, fn)) { PrintLn("Saved: " + fn); }
+                    if (IO.MoveTempFile(ps, fn)) { PrintLn("Saved: " + fn); }
                     else { SetStatus("No data to save"); }
                 }
                 catch (IOException ex)
@@ -337,19 +330,19 @@ namespace MultiDeviceAIO
 
         void SaveLogFile()
         {
-            File.WriteAllText(settings.data.testpath + @"\log.txt", textBox1.Text);
+            File.WriteAllText(ps.data.testpath + @"\log.txt", textBox1.Text);
         }
 
         void StartSampling()
         {
-            if (settings.data.n_devices == 0)
+            if (ps.data.n_devices == 0)
             {
                 SetStatus("Warning: No Devices connected. Reset");
                 return;
             }
             
             List<int> failedID;
-            if (!myaio.DeviceCheck(settings.data.n_channels, out failedID))
+            if (!myaio.DeviceCheck(ps.data.n_channels, out failedID))
             {
                 string status = "Error: Devices not responding. Device(s) ";
                 foreach (short f in failedID)
@@ -377,10 +370,10 @@ namespace MultiDeviceAIO
             var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
 
             PrintLn("----------------------------------------------------\r\nApplied Settings");
-            PrintLn(settings.ToString());
+            PrintLn(ps.ToString());
 
             try {
-                myaio.SetupTimedSample(settings.data);
+                myaio.SetupTimedSample(ps.data);
             }
             catch (AIODeviceException ex)
             {
@@ -407,7 +400,7 @@ namespace MultiDeviceAIO
 
                 if (result == DialogResult.OK && !fbd.SelectedPath.IsNullOrWhiteSpace())
                 {
-                    settings.data.testpath = fbd.SelectedPath;
+                    ps.data.testpath = fbd.SelectedPath;
                     loadBindData();
                 }
             }
@@ -426,17 +419,17 @@ namespace MultiDeviceAIO
             //get default filename
             if (checkBox1.Checked)
             {
-                txtFilepath.Text = IO.GetFilePathCal(settings.data, cbOrientation.SelectedIndex);
+                txtFilepath.Text = IO.GetFilePathCal(ps.data, cbOrientation.SelectedIndex);
             }
             else
             {
-                txtFilepath.Text = IO.GetFilePathTest(settings.data);
+                txtFilepath.Text = IO.GetFilePathTest(ps.data);
             }
         }
 
         private void monitorChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (new Monitor(myaio, settings.data.n_channels)).Show();
+            (new Monitor(myaio, ps.data.n_channels)).Show();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -504,17 +497,17 @@ namespace MultiDeviceAIO
 
         private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (settings.data.path != "")
-                settings.Save(settings.data.path);
+            if (ps.data.path != "")
+                ps.Save(ps.data.path);
             else
                 saveSettings();
         }
 
         private void resetToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            settings.Reload();
+            ps.Reload();
             loadBindData();
-            displayPath(settings.data.path, settings.data.modified);
+            displayPath(ps.data.path, ps.data.modified);
         }
 
         private void resetDevicesToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -528,9 +521,9 @@ namespace MultiDeviceAIO
                 ProcessError(ex);
             }
 
-            settings.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
+            ps.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
 
-            SetStatus(settings.data.n_devices + " Devices Connected");
+            SetStatus(ps.data.n_devices + " Devices Connected");
         }
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -555,14 +548,14 @@ namespace MultiDeviceAIO
 
                     string filename = openFileDialog1.FileName;
 
-                    settings.Load(filename);
+                    ps.Load(filename);
 
                     loadBindData();
 
-                    displayPath(filename, settings.data.modified);
+                    displayPath(filename, ps.data.modified);
 
                     //So can reset
-                    settings.data.path = filename;
+                    ps.data.path = filename;
 
                     has_loaded = true;
                 }
@@ -585,7 +578,7 @@ namespace MultiDeviceAIO
                 try
                 {
                     string filename = saveFileDialog1.FileName;
-                    settings.Save(filename);
+                    ps.Save(filename);
                     displayPath(filename);
 
                 }
@@ -600,9 +593,9 @@ namespace MultiDeviceAIO
         {
             //Reset to base
             has_loaded = false;
-            settings.Reload();
+            ps.Reload();
             loadBindData();
-            displayPath(settings.data.path);
+            displayPath(ps.data.path);
             has_loaded = true;
         }
 
@@ -614,7 +607,7 @@ namespace MultiDeviceAIO
 
             toolStripStatusLabel1.Text = "Current config: " + fn1;
 
-            //System.Collections.Specialized.StringCollection sc = Properties.Settings.Default.processing_settings_prev;
+            //System.Collections.Specialized.StringCollection sc = Properties.Settings.Default.processing_AIOSettings.singleInstance_prev;
 
         }
 
@@ -649,12 +642,12 @@ namespace MultiDeviceAIO
 
             SetStatus("Loaded: " + concatdata.Count);
 
-            (new Scope(concatdata, settings.data.n_channels, settings.data.duration)).Show();
+            (new Scope(concatdata, ps.data.n_channels, ps.data.duration)).Show();
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (new UserSettings(settings.data)).Show();
+            (new UserSettings(ps.data)).Show();
         }
     }
 }

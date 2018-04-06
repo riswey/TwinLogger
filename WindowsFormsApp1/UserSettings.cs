@@ -11,14 +11,22 @@ namespace MultiDeviceAIO
 {
     public partial class UserSettings : Form
     {
-        public UserSettings(SettingData settings)
+        LoggerState settings;
+
+        public UserSettings(LoggerState settings)
         {
+            this.settings = settings;
+
             InitializeComponent();
+        }
 
-            Dictionary<string, string> dict = SettingData.MergeDictionary(settings);
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Dictionary<string, string> dict = LoggerState.MergeDictionary(settings);
 
-            label2.Text = String.Join(",", dict.Keys.ToArray());
+            string text = String.Join("}\n{", dict.Keys.ToArray());
 
+            MessageBox.Show("{" + text + "}");
         }
     }
 }

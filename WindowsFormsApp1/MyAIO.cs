@@ -171,7 +171,7 @@ namespace MultiDeviceAIO
             }
         }
 
-        public void SetupTimedSample(SettingData settings)
+        public void SetupTimedSample(LoggerState settings)
         {
             /*
             //resolution (works) (12/16bit)

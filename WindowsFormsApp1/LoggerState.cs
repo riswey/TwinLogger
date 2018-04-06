@@ -11,7 +11,7 @@ namespace MultiDeviceAIO
     /// Avoids need for ref
     /// Ensures app holds only 1 settings instance -> perhaps make singleton!
     /// </summary>
-    public class SettingData
+    public class LoggerState
     {
         /// <summary>
         /// Replaces {KEY} defined by hard coded KEYS mapped to object values.
@@ -91,11 +91,9 @@ namespace MultiDeviceAIO
         public bool modified { get; set; } = false;
     }
 
-    public class AIOSettings : Settings<SettingData>
+    public class PersistentLoggerState : FilePersistentState<LoggerState>
     {
-        public static AIOSettings settings = new AIOSettings();
-
-        public AIOSettings() : base(new SettingData()) { }
+        public PersistentLoggerState() : base(new LoggerState()) { }
 
         public new bool Load(string path)
         {
@@ -127,7 +125,7 @@ namespace MultiDeviceAIO
                 //fault in default xml
 
                 //Has defaults built in 3/4/2018
-                this.data = new SettingData();
+                this.data = new LoggerState();
                 return false;
                 //}
             }
@@ -178,9 +176,9 @@ namespace MultiDeviceAIO
         /// <param name="line"></param>
         /// <returns></returns>
         /// <throws>FormatExceptions</throws>
-        static public SettingData LoadHeader(string line)
+        static public LoggerState LoadHeader(string line)
         {
-            SettingData sd = new SettingData();
+            LoggerState sd = new LoggerState();
 
             string[] paras = line.Split(',');
 

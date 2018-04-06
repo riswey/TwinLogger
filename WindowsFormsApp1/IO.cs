@@ -16,18 +16,18 @@ namespace MultiDeviceAIO
     {
         public static string[] cal_enum = new string[] { "XP.cal", "XN.cal", "YP.cal", "YN.cal", "ZP.cal", "ZN,.cal" };
 
-        public static string GetFilePathCal(SettingData settings, int idx)
+        public static string GetFilePathCal(LoggerState settings, int idx)
         {
             return settings.testpath + @"\" + cal_enum[idx] + ".cal";
         }
 
-        public static string GetFilePathTest(SettingData settings)
+        public static string GetFilePathTest(LoggerState settings)
         {
             return settings.testpath + @"\" + settings.load + (settings.clipsOn ? "A" : "B") + @"\M" + (settings.mass + 1) + ".csv";
             //return settings.frequency + "hz-M" + (settings.mass + 1) + "-" + settings.load + "kN-" + (settings.clipsOn ? "ON-" : "OFF-") + settings.n_channels + "ch-" + (settings.n_samples / settings.timer_interval) + "sec-#" + devices.Count + ".csv";
         }
 
-        public static string GetFilePathTemp(SettingData settings)
+        public static string GetFilePathTemp(LoggerState settings)
         {
             string timestamp = Environment.TickCount.ToString();
             string path = settings.testpath + @"\temp" + timestamp;
@@ -46,7 +46,7 @@ namespace MultiDeviceAIO
         }
 
         //FILE SAVING
-        static public void SaveDATA(SettingData settings, string filepath, DATA concatdata)
+        static public void SaveDATA(LoggerState settings, string filepath, DATA concatdata)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace MultiDeviceAIO
 
         }
 
-        public static bool MoveTempFile(AIOSettings settings, string filepath)
+        public static bool MoveTempFile(PersistentLoggerState settings, string filepath)
         {
             string filename = settings.data.temp_filename;
             if (filename == null)
@@ -95,7 +95,7 @@ namespace MultiDeviceAIO
             return true;
         }
 
-        public static int GetLine_Num(SettingData settings, DATA concatdata, int line_number, ref string visitor, string delimiter = ",")
+        public static int GetLine_Num(LoggerState settings, DATA concatdata, int line_number, ref string visitor, string delimiter = ",")
         {
             int num = 0;
             foreach (KeyValuePair<DEVICEID, List<int>> device_data in concatdata)
@@ -105,7 +105,7 @@ namespace MultiDeviceAIO
             return num;
         }
 
-        public static int GetLineId_Num(SettingData settings, List<int> data, int line_number, ref string visitor, string delimiter)
+        public static int GetLineId_Num(LoggerState settings, List<int> data, int line_number, ref string visitor, string delimiter)
         {
             if (line_number < settings.n_samples)
             {

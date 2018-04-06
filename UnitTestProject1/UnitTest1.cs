@@ -46,9 +46,7 @@ namespace UnitTestProject1
         [TestMethod]
         public void SnapShot()
         {
-            AIOSettings s = new AIOSettings();
-
-            s.ImportXML(SettingData.default_xml);
+            PersistentLoggerState s = new PersistentLoggerState();
 
             MyAIO aio = new MyAIO();
             aio.DiscoverDevices("Aio00");
@@ -66,12 +64,10 @@ namespace UnitTestProject1
         public void TestSettingsImportExport()
         {
             //Import/export XML
-
-
             string testXMLfault = @"<?xmlversion=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop\Control Tests Device 2</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
-            string testXML = SettingData.default_xml;
+            string testXML =      @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop\Control Tests Device 2</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
 
-            Settings<SettingData> s = new Settings<SettingData>();
+            FilePersistentState<LoggerState> s = new FilePersistentState<LoggerState>();
 
             //How robust to exceptions
             bool res = s.ImportXML(testXMLfault);
@@ -96,9 +92,9 @@ namespace UnitTestProject1
         public void TestAIOSettingsImportExport()
         {
             //string testXMLfault = @"<?xmlversion=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop\Control Tests Device 2</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
-            string testXML = SettingData.default_xml;
+            string testXML = @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop\Control Tests Device 2</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
 
-            AIOSettings aios = new AIOSettings();
+            PersistentLoggerState aios = new PersistentLoggerState();
 
             bool res;
             //if comment out the default_xml line in code
@@ -116,16 +112,15 @@ namespace UnitTestProject1
         [TestMethod]
         public void TestSettingsFiling()
         {
+            string testXML = @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop\Control Tests Device 2</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
 
-            string testXML = SettingData.default_xml;
-
-            Settings<SettingData> s = new Settings<SettingData>();
+            FilePersistentState<LoggerState> s = new FilePersistentState<LoggerState>();
             s.ImportXML(testXML);
             Assert.IsTrue(s.data.n_channels == 64);
             s.data.n_channels = 32;
             s.Save("test.xml");
 
-            Settings<SettingData> t = new Settings<SettingData>();
+            FilePersistentState<LoggerState> t = new FilePersistentState<LoggerState>();
             t.Load("test.xml");
             Assert.IsTrue(t.data.n_channels == 32);
 

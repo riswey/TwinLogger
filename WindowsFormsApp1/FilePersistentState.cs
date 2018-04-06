@@ -24,9 +24,19 @@ namespace MultiDeviceAIO
     /// Wrap a generic data class with disk persistance
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Settings<T>
+    public class FilePersistentState<T>
     {
         public T data { get; set; }
+
+        public FilePersistentState()
+        {
+            //Need to manually import settings!
+        }
+
+        public FilePersistentState(T data) 
+        {
+            this.data = data;
+        }
 
         /// <summary>
         /// Load from external XML

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace MultiDeviceAIO
@@ -16,6 +17,18 @@ namespace MultiDeviceAIO
         public AIODeviceException(long code) : base(AIOERRORCODES(code))
         {
             this.code = code;
+        }
+
+        public AIODeviceException()
+        {
+        }
+
+        public AIODeviceException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected AIODeviceException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
 
         /* Handleable Errors:

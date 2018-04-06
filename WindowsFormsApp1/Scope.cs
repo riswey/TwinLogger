@@ -30,12 +30,12 @@ namespace MultiDeviceAIO
             //Main program state is for current test setup!
 
             DATA concatdata;
-            SettingData sd;
+            LoggerState sd;
             try
             {
                 string header = IO.ReadFileHeader(filename);
 
-                sd = AIOSettings.LoadHeader(header);
+                sd = PersistentLoggerState.LoadHeader(header);
 
                 this.n_channels = sd.n_channels;
 

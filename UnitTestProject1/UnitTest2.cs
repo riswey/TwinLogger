@@ -24,7 +24,7 @@ namespace UnitTestProject1
 
             string test = "This is {ONE}. This is {TWO}. This is {THREEPOINT}";
 
-            string res = SettingData.MergeObjectToString(d, test);
+            string res = LoggerState.MergeObjectToString(d, test);
 
             Debug.WriteLine(res);
 
