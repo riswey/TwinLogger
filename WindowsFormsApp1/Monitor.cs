@@ -115,7 +115,7 @@ namespace MultiDeviceAIO
             {
                 if (ch == 30 || ch == 31) continue;
 
-                if (device == 1 && ch >= 35 && ch <=37 ) continue;
+                //if (device == 1 && ch >= 35 && ch <=37 ) continue;
 
                 if (ch < 30)
                     cm = ch;
