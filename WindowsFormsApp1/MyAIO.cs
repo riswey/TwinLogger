@@ -33,6 +33,8 @@ namespace MultiDeviceAIO
         //TODO: this will crash if not installed. Check
         Caio aio;
 
+
+
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
         public Dictionary<DEVICEID, List<int[]>> data { get; } = new Dictionary<DEVICEID, List<int[]>>();

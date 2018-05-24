@@ -8,7 +8,7 @@ namespace MultiDeviceAIO
 {
     class IO
     {
-        public static string[] cal_enum = new string[] { "XP.cal", "XN.cal", "YP.cal", "YN.cal", "ZP.cal", "ZN,.cal" };
+        public static string[] cal_enum = new string[] { "XP", "XN", "YP", "YN", "ZP", "ZN" };
 
         public static string GetFilePathCal(SettingData settings, int idx)
         {
