@@ -17,7 +17,7 @@ namespace MultiDeviceAIO
 
         public static string GetFilePathTest(SettingData settings)
         {
-            return settings.testpath + @"\" + settings.load + (settings.clipsOn ? "A" : "B") + @"\M" + (settings.mass + 1) + ".csv";
+            return settings.testpath + @"\" + settings.load + (settings.clipsOn ? "A" : "B") + @"\M" + (settings.mass + 1) + ".jjd";
             //return settings.frequency + "hz-M" + (settings.mass + 1) + "-" + settings.load + "kN-" + (settings.clipsOn ? "ON-" : "OFF-") + settings.n_channels + "ch-" + (settings.n_samples / settings.timer_interval) + "sec-#" + devices.Count + ".csv";
         }
 
