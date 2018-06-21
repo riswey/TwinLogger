@@ -167,6 +167,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FolderBrowserDialogControl.png" />
+    <None Include="RES\FolderBrowserDialogControl_678.png" />
     <Content Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>

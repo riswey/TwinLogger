@@ -112,6 +112,9 @@ namespace MultiDeviceAIO
             cbPad.DataBindings.Clear();
             cbPad.DataBindings.Add("SelectedIndex", settings.data, "paddtype");
 
+            nudFreq.DataBindings.Clear();
+            nudFreq.DataBindings.Add("Value", settings.data, "frequency");
+
             nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", settings.data, "timer_interval");
 
@@ -123,6 +126,7 @@ namespace MultiDeviceAIO
 
             chkExternalClock.DataBindings.Clear();
             chkExternalClock.DataBindings.Add("Checked", settings.data, "external_clock");
+
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

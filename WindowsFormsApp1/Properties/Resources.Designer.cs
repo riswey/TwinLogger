@@ -59,5 +59,15 @@ namespace MultiDeviceAIO.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FolderBrowserDialogControl_678 {
+            get {
+                object obj = ResourceManager.GetObject("FolderBrowserDialogControl_678", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

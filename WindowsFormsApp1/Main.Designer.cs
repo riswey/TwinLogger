@@ -74,6 +74,9 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkExternalClock = new System.Windows.Forms.CheckBox();
             this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.nudFreq = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -82,6 +85,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).BeginInit();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox1
@@ -113,7 +117,7 @@
             // chkClips
             // 
             this.chkClips.AutoSize = true;
-            this.chkClips.Location = new System.Drawing.Point(17, 118);
+            this.chkClips.Location = new System.Drawing.Point(180, 119);
             this.chkClips.Name = "chkClips";
             this.chkClips.Size = new System.Drawing.Size(65, 17);
             this.chkClips.TabIndex = 5;
@@ -269,7 +273,7 @@
             "M6",
             "M7",
             "M8"});
-            this.cbMass.Location = new System.Drawing.Point(17, 37);
+            this.cbMass.Location = new System.Drawing.Point(17, 31);
             this.cbMass.Name = "cbMass";
             this.cbMass.Size = new System.Drawing.Size(121, 21);
             this.cbMass.TabIndex = 18;
@@ -277,7 +281,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 21);
+            this.label2.Location = new System.Drawing.Point(13, 15);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(32, 13);
             this.label2.TabIndex = 19;
@@ -285,7 +289,7 @@
             // 
             // tbLoad
             // 
-            this.tbLoad.Location = new System.Drawing.Point(17, 86);
+            this.tbLoad.Location = new System.Drawing.Point(17, 75);
             this.tbLoad.Name = "tbLoad";
             this.tbLoad.Size = new System.Drawing.Size(121, 20);
             this.tbLoad.TabIndex = 20;
@@ -294,7 +298,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(17, 70);
+            this.label6.Location = new System.Drawing.Point(17, 59);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(48, 13);
             this.label6.TabIndex = 21;
@@ -303,7 +307,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(177, 21);
+            this.label7.Location = new System.Drawing.Point(177, 15);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(129, 13);
             this.label7.TabIndex = 22;
@@ -316,7 +320,7 @@
             "Pancake (80mm)",
             "Vertical (53mm)",
             "Electromagnetic"});
-            this.cbShaker.Location = new System.Drawing.Point(180, 37);
+            this.cbShaker.Location = new System.Drawing.Point(180, 31);
             this.cbShaker.Name = "cbShaker";
             this.cbShaker.Size = new System.Drawing.Size(121, 21);
             this.cbShaker.TabIndex = 23;
@@ -328,7 +332,7 @@
             "Hard",
             "Medium",
             "Soft"});
-            this.cbPad.Location = new System.Drawing.Point(180, 86);
+            this.cbPad.Location = new System.Drawing.Point(180, 75);
             this.cbPad.Name = "cbPad";
             this.cbPad.Size = new System.Drawing.Size(121, 21);
             this.cbPad.TabIndex = 24;
@@ -336,7 +340,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(172, 70);
+            this.label8.Location = new System.Drawing.Point(172, 59);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(53, 13);
             this.label8.TabIndex = 25;
@@ -391,6 +395,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label10);
+            this.groupBox2.Controls.Add(this.nudFreq);
+            this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.cbMass);
             this.groupBox2.Controls.Add(this.chkClips);
             this.groupBox2.Controls.Add(this.label2);
@@ -411,19 +418,20 @@
             // 
             // tbDirectory
             // 
-            this.tbDirectory.Location = new System.Drawing.Point(69, 141);
+            this.tbDirectory.Location = new System.Drawing.Point(66, 148);
             this.tbDirectory.Name = "tbDirectory";
-            this.tbDirectory.Size = new System.Drawing.Size(232, 20);
+            this.tbDirectory.Size = new System.Drawing.Size(223, 20);
             this.tbDirectory.TabIndex = 28;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(13, 139);
+            this.button3.BackgroundImage = global::MultiDeviceAIO.Properties.Resources.FolderBrowserDialogControl_678;
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button3.Location = new System.Drawing.Point(291, 145);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(59, 23);
+            this.button3.Size = new System.Drawing.Size(26, 25);
             this.button3.TabIndex = 30;
-            this.button3.Text = "Directory";
-            this.button3.UseVisualStyleBackColor = true;
+            this.button3.UseVisualStyleBackColor = false;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label5
@@ -547,6 +555,31 @@
             this.chkExternalTrigger.Text = "External Trigger";
             this.chkExternalTrigger.UseVisualStyleBackColor = true;
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(14, 151);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(46, 13);
+            this.label9.TabIndex = 31;
+            this.label9.Text = "Data Dir";
+            // 
+            // nudFreq
+            // 
+            this.nudFreq.Location = new System.Drawing.Point(19, 118);
+            this.nudFreq.Name = "nudFreq";
+            this.nudFreq.Size = new System.Drawing.Size(120, 20);
+            this.nudFreq.TabIndex = 32;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(16, 102);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(57, 13);
+            this.label10.TabIndex = 33;
+            this.label10.Text = "Frequency";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -574,6 +607,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -626,5 +660,8 @@
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem1;
         private System.Windows.Forms.CheckBox chkExternalTrigger;
         private System.Windows.Forms.CheckBox chkExternalClock;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown nudFreq;
+        private System.Windows.Forms.Label label9;
     }
 }
