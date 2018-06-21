@@ -1,8 +1,8 @@
-﻿3) set test folder
+﻿>Cut UserCompleteTest from flow
+Filename now known. BUT have kept saving to temp file and renaming after data collected.
+This enables a file to be taken again and only overwritten when complete.
 
-2) modified
-
-
+2) modified settings not implemented
 
 
 
@@ -13,6 +13,4 @@ load
 pads (3)
 mass radius
 shaker type (3 types) 
-
-set freq at end
 excitation freq (achieved)

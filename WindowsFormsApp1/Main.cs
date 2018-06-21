@@ -242,12 +242,24 @@ namespace MultiDeviceAIO
 
             //Now ask user input to save
             //Provide a freq -> complete header. Save header
-            string fn = UserInputAfterSampling();
+            //string fn = UserInputAfterSampling();
+
+            string fn;
+            //get filename
+            if (checkBox1.Checked)
+            {
+                fn = IO.GetFilePathCal(settings.data, cbOrientation.SelectedIndex);
+            }
+            else
+            {
+                fn = IO.GetFilePathTest(settings.data);
+            }
+
             RenameTempFile(fn);
 
             SetStatus("Ready");
         }
-
+        /*
         string UserInputAfterSampling()
         {
             string filepath;
@@ -281,7 +293,7 @@ namespace MultiDeviceAIO
 
             return filepath;
         }
-
+        */
         void RenameTempFile(string fn)
         {
             if (fn == null)
@@ -303,7 +315,7 @@ namespace MultiDeviceAIO
                 }
             }
         }
-
+        
         string GenerateDataReport(List<int> data)
         {
             String report = "";
@@ -445,8 +457,9 @@ namespace MultiDeviceAIO
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string fn = UserInputAfterSampling();
-            RenameTempFile(fn);
+            //TODO: what is this?
+            //string fn = UserInputAfterSampling();
+            //RenameTempFile(fn);
         }
 
         private void button3_Click(object sender, EventArgs e)
