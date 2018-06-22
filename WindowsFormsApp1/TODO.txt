@@ -1,4 +1,16 @@
-﻿NOTE update default!
+﻿>Add a virtual device for testing!
+
+>Check filenaming!
+Was going to have a reflection string that sets the filename. Check this.
+
+
+
+
+
+
+
+
+NOTE update default!
 //////////////////////////////////////////////////////////////////////////
 
 

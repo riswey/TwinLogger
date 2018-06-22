@@ -123,6 +123,25 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>220, 17</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="button3.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk02AwAAAAAAADYAAAAoAAAAEAAAABAAAAABABgAAAAAAAAAAAASCwAAEgsAAAAAAAAAAAAA/wD//wD/
+        /wD//wD//wD//wD//wD//wD//wD//wD//wD//wD//wD//wD//wD//wD/taWUY0oxY0oxY0oxY0oxY0ox
+        Y0oxY0oxY0oxY0oxY0oxY0oxY0oxY0oxY0oxY0oxtaWU////3t7W3tbW3tbO3s7F3sW93sW13r2t3r2l
+        3r2l3r2l3r2l3r2lzrWlY0oxtaWU////c4SMa3uEQkpSMTpCISkxEBAZEBAZEBAZEBAZ9+be9+be997W
+        zrWlY0oxtaWU////c4SUlOb/Y873SsXvQrXmMa3eKZzWGYS1GRkh9+be9+be9+bezrWlY0oxtaWU////
+        hJylre//lOb/e97/a873Ur33OrXvGYzFWmNr9+bm9+bm9+bezrWlY0oxvaWU////hJyltff/nOb/jN7/
+        c9b3Y873Sr3vGZTOY3N79+/m9+/m9+/mzrWtY0oxva2c////jJylvff/re/3nOb/hN7/c9b3Y8X3GZzW
+        Y3N7/+/v/+/v9+/mzr21Y0oxxa2c////jKWtvff/ve/3re/3jJylhJylhJSchJSczs7O//fv//fv9+/v
+        zr21Y0oxxbWl////5u/3jKWtjKWtlLXF3ubv////////Y0oxY0oxY0oxY0ox//fvzr21Y0oxva2c////
+        //////////////////////////////////////f3//f3//f3zr21Y0oxxa2c////////////////////
+        ////////////Y0oxY0oxY0oxY0ox//f3zr21Y0oxxbWl////////////////////////////////////
+        ///////////////3//f3Y0ox5q2M5q2M5q2M5q2M5qWE5px75pRr5oxj5oRS5ntK5nNC3nM63nM63nM6
+        3nM6xWMx5q2M/8Wl/8Wl/72c/72c/7WU/7WU962M962E96V796Vz95xz95xr95Rj95RjzmMx5q2M5q2M
+        5q2M5q2M5q2M5qWE5qV75pxz5pRr5oxj5oRa5oRK5ntK5nNC5nNC3nM6
+</value>
+  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>25</value>
   </metadata>

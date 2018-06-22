@@ -111,6 +111,9 @@ namespace MultiDeviceAIO
             cbPad.DataBindings.Clear();
             cbPad.DataBindings.Add("SelectedIndex", ps.data, "paddtype");
 
+            nudFreq.DataBindings.Clear();
+            nudFreq.DataBindings.Add("Value", ps.data, "frequency");
+
             nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", ps.data, "sample_frequency");
 
@@ -239,15 +242,28 @@ namespace MultiDeviceAIO
 
             //Now ask user input to save
             //Provide a freq -> complete header. Save header
-            string fn = UserInputAfterSampling();
+            //string fn = UserInputAfterSampling();
 
+            string fn;
+            //get filename
+            if (checkBox1.Checked)
+            {
+                fn = IO.GetFilePathCal(ps.data, cbOrientation.SelectedIndex);
+            }
+            else
+            {
+                fn = IO.GetFilePathTest(ps.data);
+            }
+
+            //TODO: check we need path!!!!
             string fp = tbDirectory.Text + @"\" + fn + ".csv";
 
             RenameTempFile(fp);
 
             SetStatus("Ready");
-        }
 
+        }
+        /*
         string UserInputAfterSampling()
         {
             //User decides:
@@ -272,7 +288,7 @@ namespace MultiDeviceAIO
 
             return filepath;
         }
-
+        */
         void RenameTempFile(string fn)
         {
             if (fn == null)
@@ -413,7 +429,7 @@ namespace MultiDeviceAIO
         /////////////////////////////////////////////////////////////////////////
         // GUI EVENTS
         /////////////////////////////////////////////////////////////////////////
-
+        /*
         private void SetFilename() {
             string filepath;
             //get default filename
@@ -426,7 +442,7 @@ namespace MultiDeviceAIO
                 txtFilepath.Text = IO.GetFilePathTest(ps.data);
             }
         }
-
+        */
         private void monitorChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             (new Monitor(myaio, ps.data.n_channels)).Show();
@@ -444,7 +460,7 @@ namespace MultiDeviceAIO
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            if (txtFilepath.Text == "")
+            if (tbDirectory.Text == "")
             {
                 if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                 {
@@ -457,8 +473,9 @@ namespace MultiDeviceAIO
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string fn = UserInputAfterSampling();
-            RenameTempFile(fn);
+            MessageBox.Show("What is this?");
+            //string fn = UserInputAfterSampling();
+            //RenameTempFile(fn);
         }
 
         private void button3_Click(object sender, EventArgs e)
