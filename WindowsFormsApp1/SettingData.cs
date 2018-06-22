@@ -28,12 +28,23 @@ namespace MultiDeviceAIO
         public int n_devices { get; set; }
         public short n_channels { get; set; }
         public int duration { get; set; }
-        public short timer_interval { get; set; }
+        public short timer_interval
+        {
+            get
+            {
+                return (short)(1E6 / sample_frequency);
+            }
+            set
+            {
+                sample_frequency = (short)(1E6 / value);
+            }
+        }
+        public short sample_frequency { get; set; } = 1000;
         public short n_samples                  //number channels scans before stop
         {
             get
             {
-                return (short)(duration * timer_interval);
+                return (short)(duration * sample_frequency);
             }
         }
 
