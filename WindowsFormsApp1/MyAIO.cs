@@ -40,7 +40,7 @@ namespace MultiDeviceAIO
         const string LINEEND = "\r\n";
 
         //TODO: this will crash if not installed. Check
-        Caio aio;
+        Caio1 aio;
 
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
@@ -64,7 +64,7 @@ namespace MultiDeviceAIO
 
         public MyAIO()
         {
-            aio = new Caio();
+            aio = new Caio1();
         }
 
         ~MyAIO()

@@ -14,6 +14,8 @@ namespace MultiDeviceAIO
 {
     class IO
     {
+        public static string FILETYPE = "jjd";
+
         public static string[] cal_enum = new string[] { "XP.cal", "XN.cal", "YP.cal", "YN.cal", "ZP.cal", "ZN,.cal" };
 
         public static string GetFilePathCal(LoggerState settings, int idx)
@@ -23,7 +25,7 @@ namespace MultiDeviceAIO
 
         public static string GetFilePathTest(LoggerState settings)
         {
-            return settings.testpath + @"\" + settings.load + (settings.clipsOn ? "A" : "B") + @"\M" + (settings.mass + 1) + ".csv";
+            return settings.testpath + @"\" + settings.load + (settings.clipsOn ? "A" : "B") + @"\M" + (settings.mass + 1) + "." + FILETYPE;
             //return settings.frequency + "hz-M" + (settings.mass + 1) + "-" + settings.load + "kN-" + (settings.clipsOn ? "ON-" : "OFF-") + settings.n_channels + "ch-" + (settings.n_samples / settings.timer_interval) + "sec-#" + devices.Count + ".csv";
         }
 

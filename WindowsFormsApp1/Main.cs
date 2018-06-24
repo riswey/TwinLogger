@@ -211,7 +211,7 @@ namespace MultiDeviceAIO
             myaio.GetData(out concatdata);
 
             //Delete existing temp file
-            if (ps.data.temp_filename != null)
+            if (ps.data.temp_filename != "")
             {
                 File.Delete(ps.data.temp_filename);
             }
@@ -255,10 +255,7 @@ namespace MultiDeviceAIO
                 fn = IO.GetFilePathTest(ps.data);
             }
 
-            //TODO: check we need path!!!!
-            string fp = tbDirectory.Text + @"\" + fn + ".csv";
-
-            RenameTempFile(fp);
+            RenameTempFile(fn);
 
             SetStatus("Ready");
 
@@ -396,16 +393,17 @@ namespace MultiDeviceAIO
                 ProcessError(ex);
             }
 
-            try {
+            SetStatus("Sampling...");
+            PrintLn("Sampling...", false);
+
+            try
+            {
                 myaio.Start((uint)this.Handle.ToInt32());
             }
             catch (AIODeviceException ex)
             {
                 ProcessError(ex);
             }
-
-            SetStatus("Sampling...");
-            PrintLn("Sampling...", false);
         }
 
         private void SelectDirectory()

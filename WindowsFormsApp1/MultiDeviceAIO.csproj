@@ -77,13 +77,13 @@
     </Compile>
     <Compile Include="AIODeviceException.cs" />
     <Compile Include="CaioCs.cs" />
+    <Compile Include="CaioCs1.cs" />
     <Compile Include="Calibration.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Calibration.Designer.cs">
       <DependentUpon>Calibration.cs</DependentUpon>
     </Compile>
-    <Compile Include="MyAIO1.cs" />
     <Compile Include="Scope.cs">
       <SubType>Form</SubType>
     </Compile>

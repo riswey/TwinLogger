@@ -599,6 +599,8 @@ namespace MultiDeviceAIO
                 case 28030: return "The coefficient of one-shot pulse width is out of range"; 
                 case 28031: return "The input logic of control input signal is out of range"; 
                 case 28032: return "The output data is out of range";
+                case 10: return "Dummy function not implemented. Check.";
+
                 default:
                     return "Unknown error " + code;
             }
