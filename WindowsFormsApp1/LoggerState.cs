@@ -46,8 +46,9 @@ namespace MultiDeviceAIO
 
         //public static string default_xml = @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><external_clock>false</external_clock><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
 
+        public string version { get; } = "2.1";       //Logger content version
 
-            //TODO: shouldn't these be null? And test for null in prog. OR doesn't it serialise?
+        //TODO: shouldn't these be null? And test for null in prog. OR doesn't it serialise?
         public string testpath { get; set; } = "";       //Path to test data
         public string temp_filename {get;set;} = "";  //last temp filename (recover)
 
@@ -58,6 +59,14 @@ namespace MultiDeviceAIO
         public double load { get; set; } = 0;
         public int shakertype { get; set; } = 0;
         public int paddtype { get; set; } = 0;
+        //filename mods
+        public string massnum {
+            get { return (mass + 1).ToString();  }
+        }
+        public string clipsAB
+        {
+            get { return ((clipsOn) ? "A" : "B") ; }
+        }
 
         //Sampling parameters
         public int n_devices { get; set; } = 0;
@@ -157,6 +166,7 @@ namespace MultiDeviceAIO
         public string GetHeader()
         {
             String header = "";
+            header += data.version + ",";
             header += data.n_samples + ",";
             header += data.n_devices + ",";
             header += data.frequency + ",";
