@@ -29,12 +29,27 @@ namespace CaioCs
         //Signal generators
         float nextVolt(int id, int channel)
         {
-            return (float) (4 * rnd.NextDouble() - 2);
+            //random
+            //return (float) (4 * rnd.NextDouble() - 2);
+
+            if (channel == 0)
+            {
+                if (++t > 1000) t = 0;
+            }
+            return (float) (2 * Math.Sin(t * 0.1));
+
         }
 
+        int t = 0;
         int nextWord(int id, int channel)
         {
-            return rnd.Next(0,65535);
+            if (channel == 0)
+            {
+                if (++t > 1000) t = 0;
+            }
+            return (int) Math.Floor(32767 * (Math.Sin(t*0.01) + 1));
+            //random
+            //return rnd.Next(0,65535);
         }
 
         //Common Function
