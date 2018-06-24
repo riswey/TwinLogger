@@ -14,7 +14,7 @@ namespace MultiDeviceAIO
 {
     class IO
     {
-        public static string DATAFILEFORMAT = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}.jdd";
+        public static string DATAFILEFORMAT = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_{FREQUENCY}.jdd";
 
         public static string[] cal_enum = new string[] { "XP.cal", "XN.cal", "YP.cal", "YN.cal", "ZP.cal", "ZN,.cal" };
 
