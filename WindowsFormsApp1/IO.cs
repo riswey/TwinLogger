@@ -12,7 +12,7 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 
 namespace MultiDeviceAIO
 {
-    class IO
+    public class IO
     {
         public static string DATAFILEFORMAT = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_{FREQUENCY}.jdd";
 
@@ -140,18 +140,20 @@ namespace MultiDeviceAIO
                 Directory.CreateDirectory(fileInfo.Directory.FullName);
         }
 
-        static public string ReadFileHeader(string filename)
+        static public string ReadFileHeader(string filename, char delimiter = ',')
         {
             using (var reader = new StreamReader(filename))
             {
                 while (!reader.EndOfStream)
                 {
-                    return reader.ReadLine();
+                    string header = reader.ReadLine();
                 }
             }
             return null;
         }
 
+
+        //TODO: obsolete delete
         /// <summary>
         /// Read file and split rows by n_channels into devices
         /// </summary>
@@ -160,9 +162,9 @@ namespace MultiDeviceAIO
         /// <param name="n_channels"></param>
         /// <param name="data"></param>
         /// <param name="header"></param>
-        static public void ReadCSVConcatColumns(string filename, char delimiter, int width, out DATA data, bool header = true)
+        static public void ReadCSVConcatColumns(string filename, char delimiter, int width, out DATA data, bool hasheader = true)
         {
-            bool firstline = header;
+            bool firstline = hasheader;
 
             data = new DATA();
 
@@ -191,6 +193,69 @@ namespace MultiDeviceAIO
                             }
                             data[i].AddRange(ints.GetRange(i * width, width));
                         }
+                    }
+                }
+            }
+        }
+
+        //IO.ReadCSV<int>(filename, IO.DelegateParseInt<int>, out List<List<int>> dataall,',',true);
+        static public void ConvertJJD2DATA(List<List<int>> array, int n_channels, out DATA data)
+        {
+            //jjd file
+            data = new DATA();
+
+            int n_devices = array[0].Count / n_channels;
+
+            foreach (List<int> row in array) {
+                for (DEVICEID i = 0; i < n_devices; i++)
+                {
+                    if (!data.ContainsKey(i))
+                    {
+                        data[i] = new List<int>();
+                    }
+                    data[i].AddRange(row.GetRange(i * n_channels, n_channels));
+                }
+            }
+        }
+
+
+        public delegate List<T> ProcessRow<T>(string[] row);
+
+        //conforms to ProcessRow
+        static public List<double> DelegateParseDouble<T>(string[] row)
+        {
+            List<double> list = row.Select(double.Parse).ToList();
+            return list;
+        }
+
+        //conforms to ProcessRow
+        static public List<int> DelegateParseInt<T>(string[] row)
+        {
+            List<int> list = row.Select(int.Parse).ToList();
+            return list;
+        }
+
+        static public void ReadCSV<T>(string filename, ProcessRow<T> processrow, out List<List<T>> data, char delimiter = ',', bool hasheader = false )
+        {
+            bool firstline = hasheader;
+
+            data = new List<List<T>>();
+
+            using (var reader = new StreamReader(filename))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    if (firstline)
+                    {
+                        //bin first line
+                        firstline = false;
+                    }
+                    else
+                    {
+                        string[] values = line.Split(delimiter);
+                        List<T> row = processrow(values);
+                        data.Add(row);
                     }
                 }
             }

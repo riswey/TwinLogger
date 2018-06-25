@@ -12,11 +12,11 @@ Standardise DATA format! See scope format. Why not use this throughout!
 
 DATA format problem:
 
-Data concats into:
+DATA concats into:
 Device1 => data list1 
 Device2 => data list1 
 
--> converted into 
+-> converted into SCOPEDATA
 Tick1 => {dev1:ch1, ch2, ch3,...,dev2: cha1,..., devN:chaM}
 Tick2 => {dev1:ch1, ch2, ch3,...,dev2: cha1,..., devN:chaM}
 

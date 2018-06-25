@@ -185,6 +185,29 @@ namespace MultiDeviceAIO
 
         }
 
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            using (var ofd = new OpenFileDialog())
+            {
+                DialogResult result = ofd.ShowDialog();
 
+                if (result == DialogResult.OK && !ofd.FileName.IsNullOrWhiteSpace())
+                {
+                    importCalFile(ofd.FileName);
+                }
+            }
+
+        }
+
+        void importCalFile(string path)
+        {
+
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
     }
 }

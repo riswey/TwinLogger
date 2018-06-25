@@ -37,7 +37,6 @@ namespace CaioCs
                 if (++t > 1000) t = 0;
             }
             return (float) (2 * Math.Sin(t * 0.1));
-
         }
 
         int t = 0;

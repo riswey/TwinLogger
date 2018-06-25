@@ -42,7 +42,12 @@ namespace MultiDeviceAIO
                 //You will need to inject settings dependency into IO to decode the header
                 //However you are splitting the file by width which is settings dependent
                 //TODO: think about lose coupling IO and file format
-                IO.ReadCSVConcatColumns(filename, ',', this.n_channels, out concatdata);
+                IO.ReadCSV<int>(filename, IO.DelegateParseInt<int>, out List<List<int>> jjdarray, ',', true);
+
+                //TODO: get n_channels from header
+                //TODO: move from IO since this is a file conversion now!
+
+                IO.ConvertJJD2DATA(jjdarray, this.n_channels, out concatdata);
             }
             catch (System.Exception ex)
             {
