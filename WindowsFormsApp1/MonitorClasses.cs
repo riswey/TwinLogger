@@ -30,11 +30,11 @@ namespace MultiDeviceAIO
             }
         }
 
-        public int G
+        public double G
         {
             get
             {
-                return (int)valueInGs;
+                return Math.Round(valueInGs,2);
             }
         }
 

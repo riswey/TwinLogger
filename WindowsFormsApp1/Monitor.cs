@@ -71,7 +71,7 @@ namespace MultiDeviceAIO
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             rectAccLabel = g.MeasureString("00", f);
-            rectMeterLabel = g.MeasureString("-10", f);
+            rectMeterLabel = g.MeasureString("-10.00", f);
 
             List<List<int>> mapping = null;
             try
@@ -156,11 +156,15 @@ namespace MultiDeviceAIO
             rectAcc.Width = rect.Width/2;
             rectAcc.Height = rect.Height / mid_acc;
 
+            int row, col;
+
             foreach (KeyValuePair<int, Accelerometer> accr in Accelerometer.accrs)
             {
                 //Key is proper number (not this List row crap elsewhere). 1 based not 0
-                rectAcc.X = rect.X + (int)Math.Floor((double)(accr.Key-1) / mid_acc) * rectAcc.Width;
-                rectAcc.Y = rect.Y + (accr.Key-1) % mid_acc * rectAcc.Height;
+                col = (int)Math.Floor((double)(accr.Key - 1) / mid_acc);
+                row = (accr.Key - 1) % mid_acc;
+                rectAcc.X = rect.X + col * rectAcc.Width;
+                rectAcc.Y = rect.Y + row * rectAcc.Height;
                 DrawAccelerometer(rectAcc, accr.Value);
             }
 
@@ -212,8 +216,8 @@ namespace MultiDeviceAIO
             //TextRenderer.DrawText(g.GetHdc(), c.G.ToString(), f, rect.X, rect.Y, brushes["Black"]);
             g.DrawString(c.G.ToString(), f, brushes["Black"], rect.X, rect.Y);
 
-            rect.Width -= (int)rectAccLabel.Width;
-            rect.X += (int)rectAccLabel.Width;
+            rect.Width -= (int)rectMeterLabel.Width;
+            rect.X += (int)rectMeterLabel.Width;
             int radius = 7;
 
             Pen pen = pens["Grey"];

@@ -1,4 +1,6 @@
-﻿test Meter State.
+﻿delete temp files.
+
+test Meter State.
 
 Check rectangle logic. Try a rectangle and see what get back.
 
