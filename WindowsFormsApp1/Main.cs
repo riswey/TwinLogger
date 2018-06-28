@@ -238,7 +238,7 @@ namespace MultiDeviceAIO
             //Produce scope
             (new Scope(concatdata, ps.data.n_channels, ps.data.duration)).Show();
 
-            SetStatus("Awaiting User Input...");
+            //SetStatus("Awaiting User Input...");
 
             //Now ask user input to save
             //Provide a freq -> complete header. Save header
@@ -252,7 +252,9 @@ namespace MultiDeviceAIO
             }
             else
             {
-                fn = IO.GetFilePathTest(ps.data);
+                string DATAFILEFORMAT = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_{FREQUENCY}.jdd";
+                string extension = "jdd";
+                fn = IO.GetFilePathTest(ps.data, DATAFILEFORMAT, extension);
             }
 
             RenameTempFile(fn);
@@ -443,7 +445,14 @@ namespace MultiDeviceAIO
         */
         private void monitorChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (new Monitor(myaio, ps.data.n_channels)).Show();
+            try
+            {
+                (new Monitor(myaio, ps.data.n_channels)).Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Problem encountered. Monitor needs to close.\n\n" + ex.Message, "Game Over", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)

@@ -14,8 +14,6 @@ namespace MultiDeviceAIO
 {
     public class IO
     {
-        public static string DATAFILEFORMAT = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_{FREQUENCY}.jdd";
-
         public static string[] cal_enum = new string[] { "XP.cal", "XN.cal", "YP.cal", "YN.cal", "ZP.cal", "ZN,.cal" };
 
         public static string GetFilePathCal(LoggerState settings, int idx)
@@ -23,9 +21,10 @@ namespace MultiDeviceAIO
             return settings.testpath + @"\" + cal_enum[idx] + ".cal";
         }
 
-        public static string GetFilePathTest(LoggerState settings)
+        public static string GetFilePathTest(LoggerState settings, string datafileformat, string extension)
         {
-            return LoggerState.MergeObjectToString(settings, DATAFILEFORMAT);
+            //TODO: chekc its a valid filename
+            return LoggerState.MergeObjectToString(settings, datafileformat) + "." + extension;
         }
 
         public static string GetFilePathTemp(LoggerState settings)
@@ -152,8 +151,7 @@ namespace MultiDeviceAIO
             return null;
         }
 
-
-        //TODO: obsolete delete
+        /* deprecated
         /// <summary>
         /// Read file and split rows by n_channels into devices
         /// </summary>
@@ -197,6 +195,7 @@ namespace MultiDeviceAIO
                 }
             }
         }
+        */
 
         //IO.ReadCSV<int>(filename, IO.DelegateParseInt<int>, out List<List<int>> dataall,',',true);
         static public void ConvertJJD2DATA(List<List<int>> array, int n_channels, out DATA data)
@@ -218,7 +217,6 @@ namespace MultiDeviceAIO
             }
         }
 
-
         public delegate List<T> ProcessRow<T>(string[] row);
 
         //conforms to ProcessRow
@@ -235,6 +233,7 @@ namespace MultiDeviceAIO
             return list;
         }
 
+        ///<exception cref="System.IO.FileNotFoundException">Check filename exists</exception>
         static public void ReadCSV<T>(string filename, ProcessRow<T> processrow, out List<List<T>> data, char delimiter = ',', bool hasheader = false )
         {
             bool firstline = hasheader;

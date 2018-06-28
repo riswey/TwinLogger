@@ -84,6 +84,8 @@
     <Compile Include="Calibration.Designer.cs">
       <DependentUpon>Calibration.cs</DependentUpon>
     </Compile>
+    <Compile Include="GraphicsExtensions.cs" />
+    <Compile Include="MonitorClasses.cs" />
     <Compile Include="Scope.cs">
       <SubType>Form</SubType>
     </Compile>

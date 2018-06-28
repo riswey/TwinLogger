@@ -321,6 +321,19 @@ namespace MultiDeviceAIO
             return snapshot;
         }
 
+        public List<int[]> ChannelsSnapShotBinary(short n_channels)
+        {
+            List<int[]> snapshot = new List<int[]>();
+            foreach (DEVICEID id in devices)
+            {
+                int[] aidata = new int[n_channels];
+                aio.MultiAi(id, n_channels, aidata);
+                snapshot.Add(aidata);
+            }
+            return snapshot;
+        }
+
+
         public static float I2V(int bits)
         {
             return (float)bits / 65535 * 20 - 10;

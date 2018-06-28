@@ -142,7 +142,13 @@ namespace CaioCs
         }
         public int MultiAi(short Id, short AiChannels, int[] AiData)
         {
-            int ret = 10;//AioMultiAi(Id, AiChannels, AiData);
+            //Create random data
+            for (int i = 0; i < AiChannels; i++)
+            {
+                AiData[i] = nextWord(Id, i);
+            }
+
+            int ret = 0;//AioMultiAiEx(Id, AiChannels, AiData);
             return ret;
         }
         public int MultiAiEx(short Id, short AiChannels, float[] AiData)

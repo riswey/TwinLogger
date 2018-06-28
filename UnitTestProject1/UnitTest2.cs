@@ -45,7 +45,7 @@ namespace UnitTestProject1
             Assert.IsTrue(data[18][0].Equals(19));
 
         }
-
+        /*
         [TestMethod]
         public void CSVLoadingJJD()
         {
@@ -53,6 +53,7 @@ namespace UnitTestProject1
             string fn = @"C:\Users\Alva\Desktop\JIM\M1.jjd";
             int n_channels = 64;
 
+            //depricated
             IO.ReadCSVConcatColumns(fn, ',', n_channels, out DATA data, true);
 
             IO.ReadCSV<int>(fn, IO.DelegateParseInt<int>, out List<List<int>> jjdarray,',',true);
@@ -79,6 +80,6 @@ namespace UnitTestProject1
 
 
         }
-
+        */
     }
 }
