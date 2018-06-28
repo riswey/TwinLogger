@@ -72,11 +72,11 @@ namespace MultiDeviceAIO
         public int n_devices { get; set; } = 0;
         public short n_channels { get; set; } = 64;
         public int duration { get; set; } = 5;
-        public short timer_interval
+        public int timer_interval
         {
             get
             {
-                return (short)(1E6 / sample_frequency);
+                return (int)Math.Round(1E6 / sample_frequency,0);
             }
             set
             {

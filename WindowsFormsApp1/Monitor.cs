@@ -82,7 +82,8 @@ namespace MultiDeviceAIO
                 throw new Exception("Cannot find mapping.csv");
             }
 
-            Accelerometer.ImportMapping(mapping, n_channels);
+            if (Accelerometer.accrs.Count == 0)     //not mapped yet
+                Accelerometer.ImportMapping(mapping, n_channels);
 
             ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
@@ -101,6 +102,8 @@ namespace MultiDeviceAIO
         //What about CSV errors!
         void ImportCalibration(List<List<double>> caldata)
         {
+            if (caldata == null) return;        //none loaded yet
+
             foreach (KeyValuePair<int, Accelerometer> accr in Accelerometer.accrs)
             {
                 accr.Value.Calibrate(caldata);

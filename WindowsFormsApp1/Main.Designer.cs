@@ -456,6 +456,11 @@
             // nudFreq
             // 
             this.nudFreq.Location = new System.Drawing.Point(16, 87);
+            this.nudFreq.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
             this.nudFreq.Name = "nudFreq";
             this.nudFreq.Size = new System.Drawing.Size(120, 20);
             this.nudFreq.TabIndex = 32;

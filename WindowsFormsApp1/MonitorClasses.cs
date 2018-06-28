@@ -139,6 +139,8 @@ namespace MultiDeviceAIO
 
         public static void ImportMapping(List<List<int>> mapping, int n_channels)
         {
+            Accelerometer.accrs.Clear();
+
             foreach (List<int> row in mapping)
             {
                 //NOTE: row[0] is the index for *rows* in cal file
