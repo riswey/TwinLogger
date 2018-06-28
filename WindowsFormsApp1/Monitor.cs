@@ -345,8 +345,6 @@ namespace MultiDeviceAIO
         {
             //Caller has set the aio object now
             base.OnShown(e);
-            if (aio.GetID(0) != -1) label1.Text = "Device: " + aio.devicenames[aio.GetID(0)];
-            if (aio.GetID(1) != -1) label2.Text = "Device: " + aio.devicenames[aio.GetID(1)];
         }
 
         private void timer1_Tick_1(object sender, EventArgs e)
