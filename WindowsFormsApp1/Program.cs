@@ -17,9 +17,9 @@ namespace MultiDeviceAIO
             Application.SetCompatibleTextRenderingDefault(false);
 
             //TODO make PersistentLoggerState disposable and put in using()
-            PersistentLoggerState ps = new PersistentLoggerState();
+            PersistentLoggerState.ps = new PersistentLoggerState();
 
-            bool result = ps.ImportXML(Properties.Settings.Default.processing_settings_current);
+            bool result = PersistentLoggerState.ps.ImportXML(Properties.Settings.Default.processing_settings_current);
             if (!result)
             {
                 string msg = "No valid AIOSettings.singleInstance were found. Set to zero.";
@@ -27,7 +27,7 @@ namespace MultiDeviceAIO
 
             try
             {
-                Application.Run(new Main(ps));
+                Application.Run(new Main());
 
             } catch (Exception ex)
             {

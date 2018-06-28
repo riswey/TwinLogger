@@ -81,5 +81,39 @@ namespace UnitTestProject1
 
         }
         */
+
+        [TestMethod]
+        public void TestPos()
+        {
+            Assert.IsTrue(transmodFilename("hello") == "hello_1");
+            Assert.IsTrue(transmodFilename("hello_1") == "hello_2");
+            Assert.IsTrue(transmodFilename("hello_125") == "hello_126");
+        }
+
+        string transmodFilename(string fn)
+        {
+            //Debug.WriteLine(str.LastIndexOf('_', str.Length-1));
+            int pos = fn.LastIndexOf('_', fn.Length - 2); //eliminates fn ending in "_"
+            if (pos >= 0)
+            {
+                string root = fn.Substring(0, pos);
+                string end = fn.Substring(pos + 1); //safe as pos != length
+                if (int.TryParse(end, out int n))
+                {
+                    //n is the current number
+                    return root + "_" + (n+1);
+                }
+            }
+
+            return fn + "_1";
+        }
+
+        [TestMethod]
+        public void transmod()
+        {
+            string fn = @"C:\Users\Alva\Desktop\dummytest\0A\M3_100.jdd";
+            fn = IO.CheckPath(fn, false);
+            Debug.WriteLine(fn);
+        }
     }
 }

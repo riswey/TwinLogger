@@ -46,13 +46,10 @@ namespace MultiDeviceAIO
         }
 
         //FILE SAVING
-        static public void SaveDATA(LoggerState settings, string filepath, DATA concatdata)
+        static public void SaveDATA(LoggerState settings, ref string filepath, DATA concatdata)
         {
             try
             {
-                //Makes Folder if not exist
-                IO.CheckPath(filepath);
-
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(filepath))
                 {
                     int line_number = 0;
@@ -76,7 +73,7 @@ namespace MultiDeviceAIO
 
         }
 
-        public static bool MoveTempFile(PersistentLoggerState settings, string filepath)
+        public static bool MoveTempFileAddHeader(PersistentLoggerState settings, string filepath)
         {
             string filename = settings.data.temp_filename;
             if (filename == null)
@@ -131,12 +128,44 @@ namespace MultiDeviceAIO
             return 0;
         }
 
-        public static void CheckPath(string path)
+        public static string CheckPath(string path, bool overwrite = false)
         {
             FileInfo fileInfo = new FileInfo(path);
-
-            if (!fileInfo.Exists)
+            if (!Directory.Exists(fileInfo.DirectoryName))
                 Directory.CreateDirectory(fileInfo.Directory.FullName);
+
+            if (!overwrite)
+            {
+                while (File.Exists(path))
+                {
+                    path = transformToFreeFilename(path);
+                }
+            }
+
+            return path;
+
+        }
+
+        public static string transformToFreeFilename(string filepath)
+        {
+            string fn = Path.GetDirectoryName(filepath) + "\\" + Path.GetFileNameWithoutExtension(filepath);
+            string ext = Path.GetExtension(filepath);
+            int pos = fn.LastIndexOf('_', fn.Length - 2); //eliminates fn ending in "_"
+            string root = fn.Substring(0, pos);
+            string end = fn.Substring(pos + 1); //safe as pos != length
+            if (pos >= 0)
+            {
+                if (int.TryParse(end, out int n))
+                {
+                    //increment index
+                    return root + "_" + (n + 1) + ext;
+                }
+                //end is not actually a number. Reassemble and + rename index
+                return root + "_" + end + "_" + (n + 1) + ext;
+
+            }
+            //just _ rename index
+            return root + "_1" + ext;
         }
 
         static public string ReadFileHeader(string filename, char delimiter = ',')

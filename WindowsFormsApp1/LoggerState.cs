@@ -96,6 +96,8 @@ namespace MultiDeviceAIO
         public bool external_clock { get; set; } = false;
         public bool external_stop { get; set; } = false;
 
+        public List<List<double>> caldata { get; set; } = null;
+
         //Internal parameters
         public string path { get; set; } = "";
         public string auto_template { get; set; } = "";
@@ -104,6 +106,8 @@ namespace MultiDeviceAIO
 
     public class PersistentLoggerState : FilePersistentState<LoggerState>
     {
+        public static PersistentLoggerState ps = null;
+
         public PersistentLoggerState() : base(new LoggerState()) { }
 
         public new bool Load(string path)

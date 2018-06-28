@@ -20,9 +20,8 @@ namespace MultiDeviceAIO
         static string DEVICE_ROOT = "Aio00";
 
         MyAIO myaio;
-        PersistentLoggerState ps;
 
-        public Main(PersistentLoggerState ps)
+        public Main()
         {
             if (!NativeMethods.CheckLibrary("caio.dll"))
             {
@@ -35,12 +34,9 @@ namespace MultiDeviceAIO
             myaio = new MyAIO();
             int devices_count = myaio.DiscoverDevices(DEVICE_ROOT);
 
-            //Settings
-            this.ps = ps;
+            PersistentLoggerState.ps.data.n_devices = devices_count;
 
-            ps.data.n_devices = devices_count;
-
-            SetStatus(ps.data.n_devices + " Devices Connected");
+            SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
             
             //Bindings
             loadBindData();
@@ -91,40 +87,40 @@ namespace MultiDeviceAIO
         void loadBindData()
         {
             cbMass.DataBindings.Clear();
-            cbMass.DataBindings.Add("SelectedIndex", ps.data, "mass");
+            cbMass.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "mass");
 
             chkClips.DataBindings.Clear();
-            chkClips.DataBindings.Add("Checked", ps.data, "clipsOn");
+            chkClips.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "clipsOn");
 
             tbLoad.DataBindings.Clear();
-            tbLoad.DataBindings.Add("Text", ps.data, "load");
+            tbLoad.DataBindings.Add("Text", PersistentLoggerState.ps.data, "load");
 
             nudChannel.DataBindings.Clear();
-            nudChannel.DataBindings.Add("Value", ps.data, "n_channels");
+            nudChannel.DataBindings.Add("Value", PersistentLoggerState.ps.data, "n_channels");
 
             nudDuration.DataBindings.Clear();
-            nudDuration.DataBindings.Add("Value", ps.data, "duration");
+            nudDuration.DataBindings.Add("Value", PersistentLoggerState.ps.data, "duration");
 
             cbShaker.DataBindings.Clear();
-            cbShaker.DataBindings.Add("SelectedIndex", ps.data, "shakertype");
+            cbShaker.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "shakertype");
 
             cbPad.DataBindings.Clear();
-            cbPad.DataBindings.Add("SelectedIndex", ps.data, "paddtype");
+            cbPad.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "paddtype");
 
             nudFreq.DataBindings.Clear();
-            nudFreq.DataBindings.Add("Value", ps.data, "frequency");
+            nudFreq.DataBindings.Add("Value", PersistentLoggerState.ps.data, "frequency");
 
             nudInterval.DataBindings.Clear();
-            nudInterval.DataBindings.Add("Value", ps.data, "sample_frequency");
+            nudInterval.DataBindings.Add("Value", PersistentLoggerState.ps.data, "sample_frequency");
 
             tbDirectory.DataBindings.Clear();
-            tbDirectory.DataBindings.Add("Text", ps.data, "testpath");
+            tbDirectory.DataBindings.Add("Text", PersistentLoggerState.ps.data, "testpath");
 
             chkExternalTrigger.DataBindings.Clear();
-            chkExternalTrigger.DataBindings.Add("Checked", ps.data, "external_trigger");
+            chkExternalTrigger.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_trigger");
 
             chkExternalClock.DataBindings.Clear();
-            chkExternalClock.DataBindings.Add("Checked", ps.data, "external_clock");
+            chkExternalClock.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_clock");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -137,7 +133,7 @@ namespace MultiDeviceAIO
 
             //Commit final AIOSettings.singleInstance to app state 
             string current_xml;
-            if (ps != null && ps.ExportXML(out current_xml))
+            if (PersistentLoggerState.ps != null && PersistentLoggerState.ps.ExportXML(out current_xml))
             {
                 //failed to get XML
                 Properties.Settings.Default.processing_settings_current = current_xml;
@@ -162,7 +158,7 @@ namespace MultiDeviceAIO
 
                         try
                         {
-                            myaio.DeviceFinished(device_id, num_samples, ps.data.n_channels);
+                            myaio.DeviceFinished(device_id, num_samples, PersistentLoggerState.ps.data.n_channels);
                         } catch (AIODeviceException ex)
                         {
                             ProcessError(ex);
@@ -180,7 +176,7 @@ namespace MultiDeviceAIO
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
                         try {
-                            myaio.RetrieveData(device_id, num_samples, ps.data.n_channels);
+                            myaio.RetrieveData(device_id, num_samples, PersistentLoggerState.ps.data.n_channels);
                         }
                         catch (AIODeviceException ex)
                         {
@@ -211,14 +207,16 @@ namespace MultiDeviceAIO
             myaio.GetData(out concatdata);
 
             //Delete existing temp file
-            if (ps.data.temp_filename != "")
+            if (PersistentLoggerState.ps.data.temp_filename != "")
             {
-                File.Delete(ps.data.temp_filename);
+                File.Delete(PersistentLoggerState.ps.data.temp_filename);
             }
             //Get new temp and add update AIOSettings.singleInstance
-            string filepath = IO.GetFilePathTemp(ps.data);
+            string filepath = IO.GetFilePathTemp(PersistentLoggerState.ps.data);
 
-            IO.SaveDATA(ps.data, filepath, concatdata);
+            filepath = IO.CheckPath(filepath, false);
+
+            IO.SaveDATA(PersistentLoggerState.ps.data, ref filepath, concatdata);
 
             PrintLn("END");
 
@@ -236,7 +234,7 @@ namespace MultiDeviceAIO
             SaveLogFile();
 
             //Produce scope
-            (new Scope(concatdata, ps.data.n_channels, ps.data.duration)).Show();
+            (new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration)).Show();
 
             //SetStatus("Awaiting User Input...");
 
@@ -248,13 +246,15 @@ namespace MultiDeviceAIO
             //get filename
             if (checkBox1.Checked)
             {
-                fn = IO.GetFilePathCal(ps.data, cbOrientation.SelectedIndex);
+                fn = IO.GetFilePathCal(PersistentLoggerState.ps.data, cbOrientation.SelectedIndex);
             }
             else
             {
-                string DATAFILEFORMAT = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_{FREQUENCY}.jdd";
+                //beware _1 is the file rename index
+                string DATAFILEFORMAT = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_f{FREQUENCY}";
                 string extension = "jdd";
-                fn = IO.GetFilePathTest(ps.data, DATAFILEFORMAT, extension);
+                fn = IO.GetFilePathTest(PersistentLoggerState.ps.data, DATAFILEFORMAT, extension);
+                fn = IO.CheckPath(fn, false);
             }
 
             RenameTempFile(fn);
@@ -274,9 +274,9 @@ namespace MultiDeviceAIO
             {
                 if (testDialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    ps.data.frequency = (float)testDialog.nudFreq.Value;
+                    PersistentLoggerState.ps.data.frequency = (float)testDialog.nudFreq.Value;
                     filepath = testDialog.tbFilename.Text;
-                    PrintLn("Frequency: \t" + ps.data.frequency);
+                    PrintLn("Frequency: \t" + PersistentLoggerState.ps.data.frequency);
                 }
                 else
                 {
@@ -299,7 +299,7 @@ namespace MultiDeviceAIO
             {
                 try
                 {
-                    if (IO.MoveTempFile(ps, fn)) { PrintLn("Saved: " + fn); }
+                    if (IO.MoveTempFileAddHeader(PersistentLoggerState.ps, fn)) { PrintLn("Saved: " + fn); }
                     else { SetStatus("No data to save"); }
                 }
                 catch (IOException ex)
@@ -345,19 +345,19 @@ namespace MultiDeviceAIO
 
         void SaveLogFile()
         {
-            File.WriteAllText(ps.data.testpath + @"\log.txt", textBox1.Text);
+            File.WriteAllText(PersistentLoggerState.ps.data.testpath + @"\log.txt", textBox1.Text);
         }
 
         void StartSampling()
         {
-            if (ps.data.n_devices == 0)
+            if (PersistentLoggerState.ps.data.n_devices == 0)
             {
                 SetStatus("Warning: No Devices connected. Reset");
                 return;
             }
             
             List<int> failedID;
-            if (!myaio.DeviceCheck(ps.data.n_channels, out failedID))
+            if (!myaio.DeviceCheck(PersistentLoggerState.ps.data.n_channels, out failedID))
             {
                 string status = "Error: Devices not responding. Device(s) ";
                 foreach (short f in failedID)
@@ -385,10 +385,10 @@ namespace MultiDeviceAIO
             var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
 
             PrintLn("----------------------------------------------------\r\nApplied Settings");
-            PrintLn(ps.ToString());
+            PrintLn(PersistentLoggerState.ps.ToString());
 
             try {
-                myaio.SetupTimedSample(ps.data);
+                myaio.SetupTimedSample(PersistentLoggerState.ps.data);
             }
             catch (AIODeviceException ex)
             {
@@ -416,7 +416,7 @@ namespace MultiDeviceAIO
 
                 if (result == DialogResult.OK && !fbd.SelectedPath.IsNullOrWhiteSpace())
                 {
-                    ps.data.testpath = fbd.SelectedPath;
+                    PersistentLoggerState.ps.data.testpath = fbd.SelectedPath;
                     loadBindData();
                 }
             }
@@ -435,11 +435,11 @@ namespace MultiDeviceAIO
             //get default filename
             if (checkBox1.Checked)
             {
-                txtFilepath.Text = IO.GetFilePathCal(ps.data, cbOrientation.SelectedIndex);
+                txtFilepath.Text = IO.GetFilePathCal(PersistentLoggerState.ps.data, cbOrientation.SelectedIndex);
             }
             else
             {
-                txtFilepath.Text = IO.GetFilePathTest(ps.data);
+                txtFilepath.Text = IO.GetFilePathTest(PersistentLoggerState.ps.data);
             }
         }
         */
@@ -447,7 +447,7 @@ namespace MultiDeviceAIO
         {
             try
             {
-                (new Monitor(myaio, ps.data.n_channels)).Show();
+                (new Monitor(myaio, PersistentLoggerState.ps.data.n_channels)).Show();
             }
             catch (Exception ex)
             {
@@ -521,17 +521,17 @@ namespace MultiDeviceAIO
 
         private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (ps.data.path != "")
-                ps.Save(ps.data.path);
+            if (PersistentLoggerState.ps.data.path != "")
+                PersistentLoggerState.ps.Save(PersistentLoggerState.ps.data.path);
             else
                 saveSettings();
         }
 
         private void resetToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            ps.Reload();
+            PersistentLoggerState.ps.Reload();
             loadBindData();
-            displayPath(ps.data.path, ps.data.modified);
+            displayPath(PersistentLoggerState.ps.data.path, PersistentLoggerState.ps.data.modified);
         }
 
         private void resetDevicesToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -545,9 +545,9 @@ namespace MultiDeviceAIO
                 ProcessError(ex);
             }
 
-            ps.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
+            PersistentLoggerState.ps.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
 
-            SetStatus(ps.data.n_devices + " Devices Connected");
+            SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
         }
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -572,14 +572,14 @@ namespace MultiDeviceAIO
 
                     string filename = openFileDialog1.FileName;
 
-                    ps.Load(filename);
+                    PersistentLoggerState.ps.Load(filename);
 
                     loadBindData();
 
-                    displayPath(filename, ps.data.modified);
+                    displayPath(filename, PersistentLoggerState.ps.data.modified);
 
                     //So can reset
-                    ps.data.path = filename;
+                    PersistentLoggerState.ps.data.path = filename;
 
                     has_loaded = true;
                 }
@@ -602,7 +602,7 @@ namespace MultiDeviceAIO
                 try
                 {
                     string filename = saveFileDialog1.FileName;
-                    ps.Save(filename);
+                    PersistentLoggerState.ps.Save(filename);
                     displayPath(filename);
 
                 }
@@ -617,9 +617,9 @@ namespace MultiDeviceAIO
         {
             //Reset to base
             has_loaded = false;
-            ps.Reload();
+            PersistentLoggerState.ps.Reload();
             loadBindData();
-            displayPath(ps.data.path);
+            displayPath(PersistentLoggerState.ps.data.path);
             has_loaded = true;
         }
 
@@ -666,12 +666,12 @@ namespace MultiDeviceAIO
 
             SetStatus("Loaded: " + concatdata.Count);
 
-            (new Scope(concatdata, ps.data.n_channels, ps.data.duration)).Show();
+            (new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration)).Show();
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (new UserSettings(ps.data)).Show();
+            (new UserSettings(PersistentLoggerState.ps.data)).Show();
         }
     }
 }

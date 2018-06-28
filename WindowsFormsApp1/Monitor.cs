@@ -16,9 +16,6 @@ namespace MultiDeviceAIO
 
         string fnMAPPING = @"mapping.csv";
 
-        //TODO: this needs to be set in settings!
-        string fnCalibration = null;
-
         short n_channels;
 
         Font f = new Font(FontFamily.GenericMonospace, 10);
@@ -87,8 +84,7 @@ namespace MultiDeviceAIO
 
             Accelerometer.ImportMapping(mapping, n_channels);
 
-            //If not set just returns false
-            ImportCalibrationFile();
+            ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
             timer1.Start();
         }
@@ -103,24 +99,12 @@ namespace MultiDeviceAIO
         //TODO: sort out error handling. Magic number rather than create new exception type!
         //Currently false means no file set
         //What about CSV errors!
-        bool ImportCalibrationFile()
+        void ImportCalibration(List<List<double>> caldata)
         {
-            if (fnCalibration == null)
-            {
-                return false;
-            }
-
-            //try
-            IO.ReadCSV<double>(fnCalibration, IO.DelegateParseDouble<double>, out List<List<double>> caldata);
-
-            foreach(KeyValuePair<int, Accelerometer> accr in Accelerometer.accrs)
+            foreach (KeyValuePair<int, Accelerometer> accr in Accelerometer.accrs)
             {
                 accr.Value.Calibrate(caldata);
             }
-
-            MessageBox.Show("Cal file imported");
-
-            return true;
         }
 
         /*
@@ -329,13 +313,19 @@ namespace MultiDeviceAIO
 
                 if (result == DialogResult.OK && !ofd.FileName.IsNullOrWhiteSpace())
                 {
-                    //automatically set cal data
-                    fnCalibration = ofd.FileName;
-
-                    if (!ImportCalibrationFile())
+                    //try
+                    try
                     {
-                        MessageBox.Show("Calibration file not set.");
+                        IO.ReadCSV<double>(ofd.FileName, IO.DelegateParseDouble<double>, out List<List<double>> caldata);
+                        PersistentLoggerState.ps.data.caldata = caldata;
+                        ImportCalibration(PersistentLoggerState.ps.data.caldata);
                     }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show("Error loading file" + ex.Message);
+                    }
+
+                    MessageBox.Show("Cal file imported");
                 }
             }
 

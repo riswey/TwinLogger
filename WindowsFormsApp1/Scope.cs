@@ -80,13 +80,14 @@ namespace MultiDeviceAIO
         }
 
         protected void Import(DATA concatdata, int duration)
-        {
+        {            
+            InitializeComponent();
 
             this.data = concatdata;
             //assume both devices same size
-            this.n_samples = concatdata[0].Count / n_channels;
+            this.n_samples = (concatdata.Count == 0) ? 0 : concatdata[0].Count / n_channels;
 
-            InitializeComponent();
+            if (this.n_samples == 0) return;
 
             npplot = new LinePlot();
             dataX = new float[n_samples];
