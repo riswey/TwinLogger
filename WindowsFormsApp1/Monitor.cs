@@ -150,7 +150,7 @@ namespace MultiDeviceAIO
             //An acceleromoeter is 3x channels (with 3 states). 3x METER_WIDTH = 100
 
             //below on left, equal+ on right (1 based not 0 -> +1) = y num accelerometers
-            int mid_acc = (int)Math.Floor((double)Accelerometer.Count / 2);
+            int mid_acc = (int)Math.Floor((double)(Accelerometer.Count)/ 2);
 
             Rectangle rectAcc = new Rectangle();
             rectAcc.Width = rect.Width/2;
@@ -158,21 +158,31 @@ namespace MultiDeviceAIO
 
             int row, col;
 
-            foreach (KeyValuePair<int, Accelerometer> accr in Accelerometer.accrs)
+            //41,42 are treated differently
+            for (int a = 0; a< Accelerometer.accrs.Count - 2;a++)
             {
                 //Key is proper number (not this List row crap elsewhere). 1 based not 0
-                col = (int)Math.Floor((double)(accr.Key - 1) / mid_acc);
-                row = (accr.Key - 1) % mid_acc;
+                col = (int)Math.Floor((double)a / (mid_acc-1));
+                row = a % (mid_acc-1);
+
                 rectAcc.X = rect.X + col * rectAcc.Width;
                 rectAcc.Y = rect.Y + row * rectAcc.Height;
-                DrawAccelerometer(rectAcc, accr.Value);
+                DrawAccelerometer(rectAcc, Accelerometer.accrs[a+1]);
             }
+            //41
+            rectAcc.X = rect.X + 0 * rectAcc.Width;
+            rectAcc.Y = rect.Y + 20 * rectAcc.Height;
+            DrawAccelerometer(rectAcc, Accelerometer.accrs[41]);
+            //42
+            rectAcc.X = rect.X + 1 * rectAcc.Width;
+            rectAcc.Y = rect.Y + 20 * rectAcc.Height;
+            DrawAccelerometer(rectAcc, Accelerometer.accrs[42]);
+
 
         }
-        
+
         void DrawAccelerometer(Rectangle rect, Accelerometer a )
         {
-
             string label = a.number.ToString();
             Rectangle rectLabel = new Rectangle() { X = rect.X, Y = rect.Y, Width = (int)rectAccLabel.Width , Height = (int)rectAccLabel.Height };
             
