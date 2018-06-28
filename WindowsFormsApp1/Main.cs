@@ -206,11 +206,6 @@ namespace MultiDeviceAIO
             DATA concatdata;
             myaio.GetData(out concatdata);
 
-            //Delete existing temp file
-            if (PersistentLoggerState.ps.data.temp_filename != "")
-            {
-                File.Delete(PersistentLoggerState.ps.data.temp_filename);
-            }
             //Get new temp and add update AIOSettings.singleInstance
             string filepath = IO.GetFilePathTemp(PersistentLoggerState.ps.data);
 

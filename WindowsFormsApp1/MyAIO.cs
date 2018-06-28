@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define TESTING
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,8 +42,11 @@ namespace MultiDeviceAIO
         const string LINEEND = "\r\n";
 
         //TODO: this will crash if not installed. Check
+#if TESTING 
         Caio1 aio;
-
+#else
+        Caio aio;
+#endif
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
 
@@ -64,7 +69,11 @@ namespace MultiDeviceAIO
 
         public MyAIO()
         {
+#if TESTING
             aio = new Caio1();
+#else
+            aio = new Caio();
+#endif
         }
 
         ~MyAIO()

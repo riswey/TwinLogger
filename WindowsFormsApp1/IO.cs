@@ -76,19 +76,18 @@ namespace MultiDeviceAIO
         public static bool MoveTempFileAddHeader(PersistentLoggerState settings, string filepath)
         {
             string filename = settings.data.temp_filename;
-            if (filename == null)
+            if (filename == "")
                 return false;
 
             string data = File.ReadAllText(filename);
             string header = settings.GetHeader();
 
-            CheckPath(filepath);
+            filepath = CheckPath(filepath);
 
             File.WriteAllText(filepath, header + "\r\n" + data);
             //Clean up
-            //shifted to just before get new temp file
-            //File.Delete(settings.data.temp_filename);
-            //settings.data.temp_filename = null;
+            File.Delete(settings.data.temp_filename);
+            settings.data.temp_filename = "";
             return true;
         }
 
