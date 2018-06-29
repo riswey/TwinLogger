@@ -11,6 +11,8 @@ namespace MultiDeviceAIO
 {
     public struct Channel
     {
+        const double TOLERANCE = 0.1;
+        
         //Set to refer to data source
         public static List<int[]> dataSource = null;
 
@@ -22,7 +24,7 @@ namespace MultiDeviceAIO
         public int zero;
         public double gain;
 
-        private double valueInGs
+        private double gValue
         {
             get
             {
@@ -34,7 +36,7 @@ namespace MultiDeviceAIO
         {
             get
             {
-                return Math.Round(valueInGs,2);
+                return Math.Round(gValue, 2);
             }
         }
 
@@ -42,14 +44,18 @@ namespace MultiDeviceAIO
         {
             get
             {
-                //+/- half gain allowed in state 2
-                if (valueInGs < -0.5) return 0;
-                if (valueInGs > 0.5) return 2;
-                return 1;
+                double gVal = gValue;
+                if (gVal < -1-TOLERANCE) return 0;
+                if (gVal < -1+TOLERANCE) return 1;
+                if (gVal < -TOLERANCE) return 2;
+                if (gVal < TOLERANCE) return 3;
+                if (gVal < 1-TOLERANCE) return 4;
+                if (gVal < 1+TOLERANCE) return 5;
+                return 6;
             }
         }
 
-        public Channel(int tracknum, int n_channel, int zero = 32768, double gain = 2000, int value = 32768)
+        public Channel(int tracknum, int n_channel, int zero = 38192, double gain = 2413.5, int value = 32768)
         {
             this.tracknum = tracknum;                                               //1 based
 

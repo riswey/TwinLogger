@@ -25,14 +25,18 @@ namespace MultiDeviceAIO
                 string msg = "No valid AIOSettings.singleInstance were found. Set to zero.";
             }
 
+#if TESTING
+            Application.Run(new Main());
+#else
             try
             {
                 Application.Run(new Main());
-
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 NativeMethods.FailApplication("Game Over", "Problem encountered. App needs to close.\n\n" + ex.Message + "\n" + ex.GetType());
             }
+#endif
         }
     }
 }

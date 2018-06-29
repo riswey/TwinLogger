@@ -46,7 +46,7 @@ namespace CaioCs
             {
                 if (++t > 1000) t = 0;
             }
-            return (int) Math.Floor(32767 * (Math.Sin(t*0.01) + 1));
+            return 38192 + (int)Math.Floor(2413.5 * (Math.Sin(t*0.08)));
             //random
             //return rnd.Next(0,65535);
         }

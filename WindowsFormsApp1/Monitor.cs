@@ -29,6 +29,7 @@ namespace MultiDeviceAIO
             = new Dictionary<string, Pen>
             {
                 { "Black", new Pen(Color.Black) },
+                { "Transparent", new Pen(Color.Transparent) },
                 { "Grey", new Pen(Color.Gray) },
                 { "White", new Pen(Color.White) },
                 { "LightGrey", new Pen(Color.LightGray) },
@@ -50,6 +51,7 @@ namespace MultiDeviceAIO
                 { "Red", new SolidBrush(Color.Red) },
                 { "Amber", new SolidBrush(Color.Orange) },
                 { "Green", new SolidBrush(Color.Green) },
+                { "Blue", new SolidBrush(Color.Blue) },
                 { "DarkRed", new SolidBrush(Color.DarkRed) },
                 { "DarkAmber", new SolidBrush(Color.DarkGoldenrod) },
                 { "DarkGreen", new SolidBrush(Color.DarkGreen) },
@@ -142,11 +144,9 @@ namespace MultiDeviceAIO
         
 
         //TODO: should send a rectange to next layer to work within
-
         
         void DrawAccelerometers(Rectangle rect)
         {
-
             //Takes channel data + cal_data and organises a display of accelerometers
 
             //in 2 columns (?make dynamic on resize) width window?
@@ -156,8 +156,8 @@ namespace MultiDeviceAIO
             int mid_acc = (int)Math.Floor((double)(Accelerometer.Count)/ 2);
 
             Rectangle rectAcc = new Rectangle();
-            rectAcc.Width = rect.Width/2;
-            rectAcc.Height = rect.Height / mid_acc;
+            rectAcc.Width = rect.Width/2 - 2;
+            rectAcc.Height = rect.Height / mid_acc - 7;
 
             int row, col;
 
@@ -168,17 +168,17 @@ namespace MultiDeviceAIO
                 col = (int)Math.Floor((double)a / (mid_acc-1));
                 row = a % (mid_acc-1);
 
-                rectAcc.X = rect.X + col * rectAcc.Width;
-                rectAcc.Y = rect.Y + row * rectAcc.Height;
+                rectAcc.X = rect.X + col * (rectAcc.Width + 3);
+                rectAcc.Y = rect.Y + row * (rectAcc.Height + 7);
                 DrawAccelerometer(rectAcc, Accelerometer.accrs[a+1]);
             }
             //41
-            rectAcc.X = rect.X + 0 * rectAcc.Width;
-            rectAcc.Y = rect.Y + 20 * rectAcc.Height;
+            rectAcc.X = rect.X + 0 * (rectAcc.Width + 3);
+            rectAcc.Y = rect.Y + 20 * (rectAcc.Height + 7);
             DrawAccelerometer(rectAcc, Accelerometer.accrs[41]);
             //42
-            rectAcc.X = rect.X + 1 * rectAcc.Width;
-            rectAcc.Y = rect.Y + 20 * rectAcc.Height;
+            rectAcc.X = rect.X + 1 * (rectAcc.Width + 3);
+            rectAcc.Y = rect.Y + 20 * (rectAcc.Height + 7);
             DrawAccelerometer(rectAcc, Accelerometer.accrs[42]);
 
 
@@ -186,13 +186,17 @@ namespace MultiDeviceAIO
 
         void DrawAccelerometer(Rectangle rect, Accelerometer a )
         {
-            string label = a.number.ToString();
-            Rectangle rectLabel = new Rectangle() { X = rect.X, Y = rect.Y, Width = (int)rectAccLabel.Width , Height = (int)rectAccLabel.Height };
-            
-            g.FillEllipse(brushes["White"], rectLabel);
-            g.DrawEllipse(pens["White"], rectLabel);
+            const int CORNER_RADIUS = 8;
 
-            g.DrawString(label, f, brushes["Grey"], rect.X, rect.Y);
+            string label = a.number.ToString();
+            Rectangle rectLabel = new Rectangle() { X = rect.X, Y = rect.Y + (int)(rect.Height - rectAccLabel.Height) / 2, Width = (int)rectAccLabel.Width , Height = (int)rectAccLabel.Height };
+
+            //g.DrawRoundedRectangle(pens["Grey"], rect, CORNER_RADIUS);
+            g.FillRoundedRectangle(brushes["White"], rect, CORNER_RADIUS);
+
+            g.FillRoundedRectangle(brushes["Black"], rectLabel, 2);
+            g.DrawRoundedRectangle(pens["White"], rectLabel, 2);
+            g.DrawString(label, f, brushes["White"], rectLabel.X, rectLabel.Y);
 
             int newWidth = rect.Width - (int)rectAccLabel.Width;
 
@@ -241,12 +245,24 @@ namespace MultiDeviceAIO
             switch (c.State)
             {
                 case 0:
-                    brush1 = brushes["Green"];
+                    brush1 = brushes["Blue"];
                     break;
                 case 1:
-                    brush2 = brushes["Amber"];
+                    brush1 = brushes["Green"];
                     break;
                 case 2:
+                    brush2 = brushes["Blue"];
+                    break;
+                case 3:
+                    brush2 = brushes["Green"];
+                    break;
+                case 4:
+                    brush2 = brushes["Red"];
+                    break;
+                case 5:
+                    brush3 = brushes["Green"];
+                    break;
+                case 6:
                     brush3 = brushes["Red"];
                     break;
             }
