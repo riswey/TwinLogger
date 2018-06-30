@@ -30,13 +30,7 @@ namespace MultiDeviceAIO
 
             InitializeComponent();
 
-            //AIO
             SetAIO();
-            int devices_count = myaio.DiscoverDevices(DEVICE_ROOT);
-
-            PersistentLoggerState.ps.data.n_devices = devices_count;
-
-            SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
             
             //Bindings
             loadBindData();
@@ -57,12 +51,18 @@ namespace MultiDeviceAIO
             //so can dynamically change AIO device binding (testing mode)
             if (myaio != null)
             {
+                myaio = null;
                 //need to implement Dispose!
                 //myaio.Dispose();
             }
-            myaio = new MyAIO();
+            myaio = new MyAIO(PersistentLoggerState.ps.data.testingmode);
 
-            MessageBox.Show("Change aio bind " + myaio.aio.GetType().Name);
+            //Load Devices
+            int devices_count = myaio.DiscoverDevices(DEVICE_ROOT);
+
+            PersistentLoggerState.ps.data.n_devices = devices_count;
+
+            SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
         }
 
         /// <summary>

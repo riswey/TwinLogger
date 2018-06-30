@@ -40,12 +40,8 @@ namespace MultiDeviceAIO
         const string LINEEND = "\r\n";
 
         //TODO: this will crash if not installed. Check
-        //TODO: TESTING public to see type while making dynamic
-#if TESTING
-        public Caio1 aio;
-#else
         public Caio aio;
-#endif
+
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
 
@@ -66,13 +62,12 @@ namespace MultiDeviceAIO
 
         private int finished_count = 0;
 
-        public MyAIO()
+        public MyAIO(bool testing)
         {
-#if TESTING
-            aio = new Caio1();
-#else
-            aio = new Caio();
-#endif
+            if (testing)
+                aio = new Caio1();
+            else
+                aio = new Caio();
         }
 
         ~MyAIO()
