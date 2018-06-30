@@ -40,10 +40,11 @@ namespace MultiDeviceAIO
         const string LINEEND = "\r\n";
 
         //TODO: this will crash if not installed. Check
-#if TESTING 
-        Caio1 aio;
+        //TODO: TESTING public to see type while making dynamic
+#if TESTING
+        public Caio1 aio;
 #else
-        Caio aio;
+        public Caio aio;
 #endif
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();

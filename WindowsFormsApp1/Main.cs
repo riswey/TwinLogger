@@ -31,7 +31,7 @@ namespace MultiDeviceAIO
             InitializeComponent();
 
             //AIO
-            myaio = new MyAIO();
+            SetAIO();
             int devices_count = myaio.DiscoverDevices(DEVICE_ROOT);
 
             PersistentLoggerState.ps.data.n_devices = devices_count;
@@ -50,6 +50,19 @@ namespace MultiDeviceAIO
             {
                 myaio.Close();
             }
+        }
+
+        void SetAIO()
+        {
+            //so can dynamically change AIO device binding (testing mode)
+            if (myaio != null)
+            {
+                //need to implement Dispose!
+                //myaio.Dispose();
+            }
+            myaio = new MyAIO();
+
+            MessageBox.Show("Change aio bind " + myaio.aio.GetType().Name);
         }
 
         /// <summary>
@@ -652,7 +665,6 @@ namespace MultiDeviceAIO
 
                 (new Scope(filename)).Show();
             }
-
         }
 
         private void scopeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -669,7 +681,20 @@ namespace MultiDeviceAIO
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (new UserSettings(PersistentLoggerState.ps.data)).ShowDialog();
+            bool originalTesting = PersistentLoggerState.ps.data.testingmode; 
+            using (var form = new UserSettings(PersistentLoggerState.ps.data))
+            {
+                var res = form.ShowDialog();
+                if (res == DialogResult.OK)
+                {
+                    if (originalTesting != PersistentLoggerState.ps.data.testingmode)
+                    {
+                        //change of state
+                        SetAIO();
+                    }
+                }
+
+            }
         }
     }
 }

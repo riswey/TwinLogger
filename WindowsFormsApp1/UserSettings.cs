@@ -19,6 +19,7 @@ namespace MultiDeviceAIO
 
             InitializeComponent();
 
+            cbTesting.Checked = settings.testingmode;
             tbFileFormat.Text = settings.datafileformat;
         }
 
@@ -33,12 +34,16 @@ namespace MultiDeviceAIO
 
         private void button1_Click(object sender, EventArgs e)
         {
+            settings.testingmode = cbTesting.Checked;
             settings.datafileformat = tbFileFormat.Text;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
     }
 }

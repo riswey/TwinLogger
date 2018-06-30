@@ -52,6 +52,7 @@ namespace MultiDeviceAIO
         public string testpath { get; set; } = "";       //Path to test data
         public string temp_filename {get;set;} = "";  //last temp filename (recover)
         public string datafileformat { get; set; } = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_f{FREQUENCY}";
+        public bool testingmode { get; set; } = false;
 
         //Test parameters
         public float frequency { get; set; } = 0;
@@ -111,7 +112,7 @@ namespace MultiDeviceAIO
 
         public PersistentLoggerState() : base(new LoggerState()) { }
 
-        public new bool Load(string path)
+        public bool Load(string path)
         {
             if (base.Load(path))
             {
@@ -124,14 +125,14 @@ namespace MultiDeviceAIO
             }
         }
 
-        public new bool Save(string path)
+        public bool Save(string path)
         {
             data.path = path;
             data.modified = false;
             return base.Save(path);
         }
 
-        public new bool ImportXML(string xml)
+        public bool ImportXML(string xml)
         {
             if (!base.ImportXML(xml))
             {
