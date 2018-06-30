@@ -246,8 +246,9 @@ namespace MultiDeviceAIO
             else
             {
                 //beware _1 is the file rename index
-                string DATAFILEFORMAT = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_f{FREQUENCY}";
+                string DATAFILEFORMAT = PersistentLoggerState.ps.data.datafileformat;
                 string extension = "jdd";
+                //awesome: this is recursive if you want :-)
                 fn = IO.GetFilePathTest(PersistentLoggerState.ps.data, DATAFILEFORMAT, extension);
                 fn = IO.CheckPath(fn, false);
             }
@@ -492,6 +493,8 @@ namespace MultiDeviceAIO
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
+            MessageBox.Show(this.panel3.BackgroundImage.ToString());
+
             if (checkBox1.Checked)
             {
                 this.BackColor = Color.Orchid;
@@ -664,9 +667,9 @@ namespace MultiDeviceAIO
             (new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration)).Show();
         }
 
-        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (new UserSettings(PersistentLoggerState.ps.data)).Show();
+            (new UserSettings(PersistentLoggerState.ps.data)).ShowDialog();
         }
     }
 }

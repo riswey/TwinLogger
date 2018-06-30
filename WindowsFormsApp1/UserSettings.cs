@@ -18,6 +18,8 @@ namespace MultiDeviceAIO
             this.settings = settings;
 
             InitializeComponent();
+
+            tbFileFormat.Text = settings.datafileformat;
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -27,6 +29,16 @@ namespace MultiDeviceAIO
             string text = String.Join("}\n{", dict.Keys.ToArray());
 
             MessageBox.Show("{" + text + "}");
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            settings.datafileformat = tbFileFormat.Text;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

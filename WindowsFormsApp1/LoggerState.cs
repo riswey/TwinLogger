@@ -51,6 +51,7 @@ namespace MultiDeviceAIO
         //TODO: shouldn't these be null? And test for null in prog. OR doesn't it serialise?
         public string testpath { get; set; } = "";       //Path to test data
         public string temp_filename {get;set;} = "";  //last temp filename (recover)
+        public string datafileformat { get; set; } = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_f{FREQUENCY}";
 
         //Test parameters
         public float frequency { get; set; } = 0;
