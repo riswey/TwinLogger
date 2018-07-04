@@ -85,7 +85,7 @@
       <DependentUpon>Calibration.cs</DependentUpon>
     </Compile>
     <Compile Include="GraphicsExtensions.cs" />
-    <Compile Include="MonitorClasses.cs" />
+    <Compile Include="AccelerometerClasses.cs" />
     <Compile Include="Scope.cs">
       <SubType>Form</SubType>
     </Compile>

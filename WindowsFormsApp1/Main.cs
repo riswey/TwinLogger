@@ -53,7 +53,7 @@ namespace MultiDeviceAIO
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
             //TODO: this must be stopped while sampling and restarted at end!!!
-            timer1.Start();
+            TimerState(true);
         }
 
         //#CHECK
@@ -285,7 +285,7 @@ namespace MultiDeviceAIO
             RenameTempFile(fn);
 
             //RESTART TIMER
-            timer1.Start();
+            TimerState(true);
 
             SetStatus("Ready");
 
@@ -424,7 +424,7 @@ namespace MultiDeviceAIO
             }
 
             //STOP TIMER
-            timer1.Stop();
+            TimerState(false);
 
             SetStatus("Sampling...");
             PrintLn("Sampling...", false);
@@ -738,9 +738,17 @@ namespace MultiDeviceAIO
             }
         }
 
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void TimerState(bool on)
         {
-
+            if (on)
+            {
+                timer1.Start();
+            } else
+            {
+                pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
+                timer1.Stop();
+            }
         }
+
     }
 }

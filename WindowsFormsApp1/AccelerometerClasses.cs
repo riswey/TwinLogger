@@ -5,8 +5,6 @@ using System.Text;
 
 using System.Diagnostics;
 
-
-
 namespace MultiDeviceAIO
 {
     public struct Channel
@@ -96,18 +94,14 @@ namespace MultiDeviceAIO
         public static int ArrayStatus()
         {
             //No accelerometers is an error
-            if (Accelerometer.accrs.Count == 0) return 2;
+            if (Accelerometer.accrs.Count == 0) return -1;
 
             //anyone out of tolerance?
-
-            int count = 0;
             foreach (var accr in Accelerometer.accrs)
             {
-                //if (!accr.Value.Status) return false;
-                if (accr.Value.Status) count++;
+                if (!accr.Value.Status) return 0;
             }
-            return (count > 10)?0:1; 
-            //return true;
+            return 1;
         }
 
         //TODO: sort out error handling. Magic number rather than create new exception type!
