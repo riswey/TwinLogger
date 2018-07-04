@@ -21,6 +21,9 @@ namespace MultiDeviceAIO
 
         MyAIO myaio;
 
+        Monitor monitor;
+        DATA concatdata;        //stores most recent data
+
         public Main()
         {
             if (!NativeMethods.CheckLibrary("caio.dll"))
@@ -34,6 +37,23 @@ namespace MultiDeviceAIO
             
             //Bindings
             loadBindData();
+
+            //Set up accelerometers
+            try
+            {
+                List<List<int>> mapping;
+                IO.ReadCSV<int>(Monitor.fnMAPPING, IO.DelegateParseInt<int>, out mapping, ',', true);
+                Accelerometer.ImportMapping(mapping, PersistentLoggerState.ps.data.n_channels);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new Exception("Cannot find mapping.csv");
+            }
+
+            Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
+
+            //TODO: this must be stopped while sampling and restarted at end!!!
+            timer1.Start();
         }
 
         //#CHECK
@@ -216,7 +236,6 @@ namespace MultiDeviceAIO
         {
             //Per device list of results (int[])
             
-            DATA concatdata;
             myaio.GetData(out concatdata);
 
             //Get new temp and add update AIOSettings.singleInstance
@@ -241,10 +260,6 @@ namespace MultiDeviceAIO
             //SAVE LOG
             SaveLogFile();
 
-
-            //Produce scope
-            //(new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration)).Show();
-
             //SetStatus("Awaiting User Input...");
 
             //Now ask user input to save
@@ -268,6 +283,9 @@ namespace MultiDeviceAIO
             }
 
             RenameTempFile(fn);
+
+            //RESTART TIMER
+            timer1.Start();
 
             SetStatus("Ready");
 
@@ -405,6 +423,9 @@ namespace MultiDeviceAIO
                 ProcessError(ex);
             }
 
+            //STOP TIMER
+            timer1.Stop();
+
             SetStatus("Sampling...");
             PrintLn("Sampling...", false);
 
@@ -433,9 +454,6 @@ namespace MultiDeviceAIO
         }
 
 
-
-
-
         /////////////////////////////////////////////////////////////////////////
         // GUI EVENTS
         /////////////////////////////////////////////////////////////////////////
@@ -455,14 +473,8 @@ namespace MultiDeviceAIO
         */
         private void monitorChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try
-            {
-                (new Monitor(myaio, PersistentLoggerState.ps.data.n_channels)).Show();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Problem encountered. Monitor needs to close.\n\n" + ex.Message, "Game Over", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            monitor = new Monitor(PersistentLoggerState.ps.data.n_channels);
+            monitor.Show();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -672,10 +684,6 @@ namespace MultiDeviceAIO
         {
             //TODO: inefficient as must convert data every time
             //Can scope take the dictionary?
-            DATA concatdata;
-            myaio.GetData(out concatdata);
-
-            SetStatus("Loaded: " + concatdata.Count);
 
             (new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration)).Show();
         }
@@ -696,6 +704,43 @@ namespace MultiDeviceAIO
                 }
 
             }
+        }
+
+        private void calibrateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Monitor.LoadAccelometerCalibration();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            //Do status stuff
+            var snapshot = myaio.ChannelsSnapShotBinary(PersistentLoggerState.ps.data.n_channels);
+            Accelerometer.setChannelData(snapshot);
+
+            DrawStatus(Accelerometer.ArrayStatus());
+
+            if (monitor != null) monitor.ReDraw();
+        }
+
+        private void DrawStatus(int status)
+        {
+            switch(status)
+            {
+                case 0:
+                    pbStatus.Image = MultiDeviceAIO.Properties.Resources.red;
+                    break;
+                case 1:
+                    pbStatus.Image = MultiDeviceAIO.Properties.Resources.green;
+                    break;
+                default:
+                    pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
+                    break;
+            }
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

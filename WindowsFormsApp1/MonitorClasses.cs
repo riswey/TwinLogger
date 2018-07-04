@@ -87,17 +87,78 @@ namespace MultiDeviceAIO
     public struct Accelerometer
     {
         //This should last the lifetime of the app!
-        public static Dictionary <int,Accelerometer> accrs = new Dictionary<int, Accelerometer>();
+        public static Dictionary<int, Accelerometer> accrs = new Dictionary<int, Accelerometer>();
 
-        public static bool ArrayStatus()
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        /// Static Funcs //////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
+
+        public static int ArrayStatus()
         {
+            //No accelerometers is an error
+            if (Accelerometer.accrs.Count == 0) return 2;
+
             //anyone out of tolerance?
-            foreach(var accr in Accelerometer.accrs)
+
+            int count = 0;
+            foreach (var accr in Accelerometer.accrs)
             {
-                if (!accr.Value.Status) return false;
+                //if (!accr.Value.Status) return false;
+                if (accr.Value.Status) count++;
+            }
+            return (count > 10)?0:1; 
+            //return true;
+        }
+
+        //TODO: sort out error handling. Magic number rather than create new exception type!
+        //Currently false means no file set
+        //What about CSV errors!
+        public static bool ImportCalibration(List<List<double>> caldata)
+        {
+            if (caldata == null) return false;        //none loaded yet
+
+            foreach (KeyValuePair<int, Accelerometer> accr in Accelerometer.accrs)
+            {
+                accr.Value.Calibrate(caldata);
             }
             return true;
         }
+
+        public static bool ImportMapping(List<List<int>> mapping, int n_channels)
+        {
+            if (mapping == null) return false;        //none loaded yet
+
+            Accelerometer.accrs.Clear();
+
+            foreach (List<int> row in mapping)
+            {
+                //NOTE: row[0] is the index for *rows* in cal file
+                //row[1],[2],[3] mean orientations 0,1,2 which refer to cols in cal file
+                Accelerometer.accrs.Add(row[0], new Accelerometer(row[0], n_channels, row[1], row[2], row[3]));
+            }
+
+            Accelerometer.Count = mapping.Count;
+            return true;
+        }
+
+        public static void setChannelData(List<int[]> data)
+        {
+            //set static value faster than passing the reference loads of time
+            Channel.dataSource = data;
+
+            //tell channels to sync
+            foreach (KeyValuePair<int, Accelerometer> aclr in Accelerometer.accrs)
+            {
+                //can't be foreach as members are const!
+                for (int i = 0; i < aclr.Value.channels.Length; i++)
+                {
+                    aclr.Value.channels[i].Sync();
+                }
+
+            }
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
         //each row is an accelerometer
         //col 0 = acc #
@@ -128,7 +189,8 @@ namespace MultiDeviceAIO
         //Test I am in tolerance
         public bool Status
         {
-            get {
+            get
+            {
                 //x == zero, y == 1, z == zero
                 return channels[0].State == 3 && channels[1].State == 5 && channels[2].State == 3;
             }
@@ -150,47 +212,6 @@ namespace MultiDeviceAIO
                 int zero = (int)caldata[calidx][1 + orientation];
                 double gain = caldata[calidx][4 + orientation];
                 channels[orientation].Calibrate(zero, gain);
-            }
-        }
-
-        public static bool ImportCalibration(List<List<double>> caldata)
-        {
-            foreach (KeyValuePair<int, Accelerometer> accr in Accelerometer.accrs)
-            {
-                accr.Value.Calibrate(caldata);
-            }
-            return true;
-        }
-
-        public static void ImportMapping(List<List<int>> mapping, int n_channels)
-        {
-            Accelerometer.accrs.Clear();
-
-            foreach (List<int> row in mapping)
-            {
-                //NOTE: row[0] is the index for *rows* in cal file
-                //row[1],[2],[3] mean orientations 0,1,2 which refer to cols in cal file
-                Accelerometer.accrs.Add(row[0], new Accelerometer(row[0], n_channels, row[1], row[2], row[3]));
-            }
-
-            Accelerometer.Count = mapping.Count;
-
-        }
-
-        public static void setChannelData(List<int[]> data)
-        {
-            //set static value faster than passing the reference loads of time
-            Channel.dataSource = data;
-
-            //tell channels to sync
-            foreach (KeyValuePair<int, Accelerometer> aclr in Accelerometer.accrs)
-            {
-                //can't be foreach as members are const!
-                for (int i=0;i<aclr.Value.channels.Length;i++)
-                {
-                    aclr.Value.channels[i].Sync();
-                }
-
             }
         }
     }

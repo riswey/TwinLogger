@@ -170,6 +170,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\red.png" />
+    <None Include="Resources\green.png" />
+    <None Include="Resources\grey.png" />
     <Content Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
