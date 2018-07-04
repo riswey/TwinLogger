@@ -241,8 +241,9 @@ namespace MultiDeviceAIO
             //SAVE LOG
             SaveLogFile();
 
+
             //Produce scope
-            (new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration)).Show();
+            //(new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration)).Show();
 
             //SetStatus("Awaiting User Input...");
 

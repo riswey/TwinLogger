@@ -46,11 +46,11 @@ namespace MultiDeviceAIO
             {
                 double gVal = gValue;
                 if (gVal < -1-TOLERANCE) return 0;
-                if (gVal < -1+TOLERANCE) return 1;
+                if (gVal < -1+TOLERANCE) return 1;  //- ok
                 if (gVal < -TOLERANCE) return 2;
-                if (gVal < TOLERANCE) return 3;
+                if (gVal < TOLERANCE) return 3;     //0 ok
                 if (gVal < 1-TOLERANCE) return 4;
-                if (gVal < 1+TOLERANCE) return 5;
+                if (gVal < 1+TOLERANCE) return 5;   //+ ok
                 return 6;
             }
         }
@@ -89,6 +89,16 @@ namespace MultiDeviceAIO
         //This should last the lifetime of the app!
         public static Dictionary <int,Accelerometer> accrs = new Dictionary<int, Accelerometer>();
 
+        public static bool ArrayStatus()
+        {
+            //anyone out of tolerance?
+            foreach(var accr in Accelerometer.accrs)
+            {
+                if (!accr.Value.Status) return false;
+            }
+            return true;
+        }
+
         //each row is an accelerometer
         //col 0 = acc #
         //col 1-3 = zero
@@ -113,6 +123,15 @@ namespace MultiDeviceAIO
             channels[0] = new Channel(ch1, n_channels);
             channels[1] = new Channel(ch2, n_channels);
             channels[2] = new Channel(ch3, n_channels);
+        }
+
+        //Test I am in tolerance
+        public bool Status
+        {
+            get {
+                //x == zero, y == 1, z == zero
+                return channels[0].State == 3 && channels[1].State == 5 && channels[2].State == 3;
+            }
         }
 
         //TODO: why can't this be protected ina struct?
