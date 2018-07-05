@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace MultiDeviceAIO
 {
-    public struct Channel
+    public class Channel
     {
         const double TOLERANCE = 0.1;
         
@@ -82,7 +82,7 @@ namespace MultiDeviceAIO
 
     }
 
-    public struct Accelerometer
+    public class Accelerometer
     {
         //This should last the lifetime of the app!
         public static Dictionary<int, Accelerometer> accrs = new Dictionary<int, Accelerometer>();
@@ -164,8 +164,14 @@ namespace MultiDeviceAIO
 
         public static int Count = 0;
 
+        //core info
         public int number;
         public Channel[] channels;
+
+        //other info
+        public int spacing { get; set; } = -1;          //mm
+        public int position { get; set; } = 0;          //1=left,2=right
+        public int orientation { get; set; } = 0;       //1,2
 
         public Accelerometer(int n, int n_channels, int ch1, int ch2, int ch3)
         {

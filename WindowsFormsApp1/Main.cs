@@ -750,5 +750,9 @@ namespace MultiDeviceAIO
             }
         }
 
+        private void setupToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -1,26 +1,11 @@
-﻿delete temp files.
+﻿mapping is from local file, switch top setup data.
 
-test Meter State.
-
-Check rectangle logic. Try a rectangle and see what get back.
+Currently other info extract from setup.
 
 
-CAL/MAP add tpo seetings (serialise)
 
-
-cal file must be present before Monitor!
-else how many accelerometers etc
-
-Plus cal_file won't be saved in settings unless done on main tab!
-
-So add cal file on main tab and warn no monitor without!
 
 ===
-
-
->Check filenaming!
-Was going to have a reflection string that sets the filename. Check this.
-
 
 
 NOTE update default!

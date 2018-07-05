@@ -102,6 +102,79 @@ namespace MultiDeviceAIO
             }
         }
 
+        public static void LoadAccelometerSetup()
+        {
+            //Load calibration   
+            using (var ofd = new OpenFileDialog())
+            {
+                DialogResult result = ofd.ShowDialog();
+
+                if (result == DialogResult.OK && !ofd.FileName.IsNullOrWhiteSpace())
+                {
+                    //try
+                    try
+                    {
+                        IO.ReadCSV<int>(ofd.FileName, IO.DelegateParseInt<int>, out List<List<int>> accsetup);
+                        Monitor.ExtractSetupFile(accsetup);
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show("Error loading file" + ex.Message);
+                    }
+
+                    MessageBox.Show("Setup file imported");
+                }
+            }
+        }
+
+        private static void ExtractSetupFile(List<List<int>> setup)
+        {
+            //spacings
+            //1,2 = l/r
+            //#
+            //orientation number {1,2}
+            Dictionary<string, List<int>> info = new Dictionary<string, List<int>>();
+            List<List<int>> mapping = new List<List<int>>();
+            const int OFFSET = 4;       //zero based
+            int num;
+
+            //extract other info
+            num = setup[0].Count;
+            if (setup[1].Count != num || setup[2].Count != num || setup[3].Count != num)
+            {
+                throw new FileFormatException("Accelerometer Setup File error: columns unequal");
+            }
+
+            info["spacing"] = new List<int>(setup[0]);
+            info["position"] = new List<int>(setup[1]);
+            info["number"] = new List<int>(setup[2]);
+            info["orientation"] = new List<int>(setup[3]);
+
+            info["spacing"].AddRange(setup[0]);                 //same spacings on second list
+            info["position"].AddRange(setup[num + OFFSET]);
+            info["number"].AddRange(setup[num + OFFSET + 1]);
+            info["orientation"].AddRange(setup[num + OFFSET + 2]);
+
+            for(int row = 0;row < num; row++)
+            {
+                mapping[row] = new List<int>();
+                //add acc number
+                mapping[row].Add(info["number"][row]);
+                mapping[row].AddRange(setup[OFFSET + row]);
+            }
+
+            for (int row = 0; row < num; row++)
+            {
+                mapping[num + row] = new List<int>();
+                //add acc number
+                mapping[num + row].Add(info["number"][num + row]);
+                mapping[num + row].AddRange(setup[OFFSET + 3 + num + row]);     //second offset is 1 less as no spacing
+            }
+
+            //TODO: store this
+            //TODO: Test
+        }
+
         void DrawAccelerometers(Rectangle rect)
         {
             //Takes channel data + cal_data and organises a display of accelerometers
