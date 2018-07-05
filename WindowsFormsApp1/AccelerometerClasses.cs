@@ -43,13 +43,13 @@ namespace MultiDeviceAIO
             get
             {
                 double gVal = gValue;
-                if (gVal < -1-TOLERANCE) return 0;
-                if (gVal < -1+TOLERANCE) return 1;  //- ok
-                if (gVal < -TOLERANCE) return 2;
-                if (gVal < TOLERANCE) return 3;     //0 ok
-                if (gVal < 1-TOLERANCE) return 4;
-                if (gVal < 1+TOLERANCE) return 5;   //+ ok
-                return 6;
+                if (gVal < -1-TOLERANCE) return 1;
+                if (gVal < -1+TOLERANCE) return 2;  //- ok
+                if (gVal < -TOLERANCE) return 4;
+                if (gVal < TOLERANCE) return 8;     //0 ok
+                if (gVal < 1-TOLERANCE) return 16;
+                if (gVal < 1+TOLERANCE) return 32;   //+ ok
+                return 64;
             }
         }
 
@@ -185,8 +185,19 @@ namespace MultiDeviceAIO
         {
             get
             {
-                //x == zero, y == 1, z == zero
-                return channels[0].State == 3 && channels[1].State == 5 && channels[2].State == 3;
+                //all green
+                //State {1,2,4,8,16,32,64} = 01111111
+                //Green {  2,  8,   32}    = 00101010
+                //      {2,8,32,10,34,40,42} green possibilities
+                //complement               = 01010101 = 85
+                //val & complement == 0 when bits only fit green
+                int and = channels[0].State & channels[1].State & channels[2].State;
+                return (and & 85)==0;   //when green
+                //bool x = channels[0].State == 2 || channels[0].State == 8 || channels[0].State == 32;
+                //bool y = channels[1].State == 2 || channels[1].State == 8 || channels[1].State == 32;
+                //bool z = channels[2].State == 2 || channels[2].State == 8 || channels[2].State == 32;
+                //return x && y && z;
+                //todo: profile this
             }
         }
 

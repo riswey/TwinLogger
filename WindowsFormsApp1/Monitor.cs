@@ -199,27 +199,27 @@ namespace MultiDeviceAIO
 
             switch (c.State)
             {
-                case 0:
+                case 1:
                     brush1 = brushes["Red"];
                     break;
-                case 1:
+                case 2:
                     brush1 = brushes["Green"];
                     break;
-                case 2:
+                case 4:
                     brush1 = brushes["Red"];
                     brush2 = brushes["Red"];
                     break;
-                case 3:
+                case 8:
                     brush2 = brushes["Green"];
                     break;
-                case 4:
+                case 16:
                     brush2 = brushes["Red"];
                     brush3 = brushes["Red"];
                     break;
-                case 5:
+                case 32:
                     brush3 = brushes["Green"];
                     break;
-                case 6:
+                case 64:
                     brush3 = brushes["Red"];
                     break;
             }
