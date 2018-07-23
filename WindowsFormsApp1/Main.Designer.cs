@@ -42,6 +42,7 @@
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.setupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setupToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,7 +92,6 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.setupToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
@@ -209,9 +209,16 @@
             // calibrateToolStripMenuItem
             // 
             this.calibrateToolStripMenuItem.Name = "calibrateToolStripMenuItem";
-            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.calibrateToolStripMenuItem.Text = "Calibrate";
             this.calibrateToolStripMenuItem.Click += new System.EventHandler(this.calibrateToolStripMenuItem_Click);
+            // 
+            // setupToolStripMenuItem1
+            // 
+            this.setupToolStripMenuItem1.Name = "setupToolStripMenuItem1";
+            this.setupToolStripMenuItem1.Size = new System.Drawing.Size(121, 22);
+            this.setupToolStripMenuItem1.Text = "Setup";
+            this.setupToolStripMenuItem1.Click += new System.EventHandler(this.setupToolStripMenuItem1_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -415,12 +422,13 @@
             // 
             // checkBox1
             // 
+            this.checkBox1.Appearance = System.Windows.Forms.Appearance.Button;
             this.checkBox1.AutoSize = true;
             this.checkBox1.Location = new System.Drawing.Point(19, 37);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(42, 17);
+            this.checkBox1.Size = new System.Drawing.Size(37, 23);
             this.checkBox1.TabIndex = 31;
-            this.checkBox1.Text = "ON";
+            this.checkBox1.Text = "OFF";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
@@ -434,7 +442,7 @@
             "- Y (Neg Y)",
             "+Z (Pos Z)",
             "- Z (Neg Z)"});
-            this.cbOrientation.Location = new System.Drawing.Point(183, 33);
+            this.cbOrientation.Location = new System.Drawing.Point(183, 37);
             this.cbOrientation.Name = "cbOrientation";
             this.cbOrientation.Size = new System.Drawing.Size(118, 21);
             this.cbOrientation.TabIndex = 32;
@@ -442,7 +450,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(117, 37);
+            this.label1.Location = new System.Drawing.Point(117, 41);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(58, 13);
             this.label1.TabIndex = 33;
@@ -704,6 +712,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.ForeColor = System.Drawing.Color.Gray;
             this.label13.Location = new System.Drawing.Point(19, 9);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(126, 16);
@@ -714,13 +723,6 @@
             // 
             this.timer1.Interval = 250;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // setupToolStripMenuItem1
-            // 
-            this.setupToolStripMenuItem1.Name = "setupToolStripMenuItem1";
-            this.setupToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.setupToolStripMenuItem1.Text = "Setup";
-            this.setupToolStripMenuItem1.Click += new System.EventHandler(this.setupToolStripMenuItem1_Click);
             // 
             // Main
             // 

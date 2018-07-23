@@ -519,15 +519,21 @@ namespace MultiDeviceAIO
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            MessageBox.Show(this.panel3.BackgroundImage.ToString());
-
             if (checkBox1.Checked)
             {
-                this.BackColor = Color.Orchid;
+                label11.ForeColor = Color.Gray;
+                label12.ForeColor = Color.Gray;
+                label13.ForeColor = Color.Black;
+                checkBox1.Text = "ON";
+                checkBox1.BackColor = Color.Orange;
             }
             else
             {
-                this.BackColor = SystemColors.Control;
+                label11.ForeColor = Color.Black;
+                label12.ForeColor = Color.Black;
+                label13.ForeColor = Color.Gray;
+                checkBox1.Text = "OFF";
+                checkBox1.BackColor = Color.Transparent;
             }
         }
 
