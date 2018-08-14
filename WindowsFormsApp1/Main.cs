@@ -764,12 +764,15 @@ namespace MultiDeviceAIO
             switch(status)
             {
                 case 0:
-                    pbStatus.Image = MultiDeviceAIO.Properties.Resources.red;
+                    pbStatusOut.Image = MultiDeviceAIO.Properties.Resources.red;
+                    pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
                     break;
                 case 1:
+                    pbStatusOut.Image = MultiDeviceAIO.Properties.Resources.grey;
                     pbStatus.Image = MultiDeviceAIO.Properties.Resources.green;
                     break;
                 default:
+                    pbStatusOut.Image = MultiDeviceAIO.Properties.Resources.grey;
                     pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
                     break;
             }
