@@ -440,8 +440,13 @@ namespace MultiDeviceAIO
 
         private void SelectDirectory()
         {
+            string startLocation = Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+            //string startLocation = Environment.SpecialFolder.Desktop.ToString();
+
             using (var fbd = new FolderBrowserDialog())
             {
+                fbd.SelectedPath = startLocation;
+
                 DialogResult result = fbd.ShowDialog();
 
                 if (result == DialogResult.OK && !fbd.SelectedPath.IsNullOrWhiteSpace())
