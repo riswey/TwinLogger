@@ -80,12 +80,12 @@
             this.nudInterval = new System.Windows.Forms.NumericUpDown();
             this.nudDuration = new System.Windows.Forms.NumericUpDown();
             this.nudChannel = new System.Windows.Forms.NumericUpDown();
-            this.button1 = new System.Windows.Forms.Button();
-            this.chkExternalClock = new System.Windows.Forms.CheckBox();
-            this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
+            this.btnStart = new System.Windows.Forms.Button();
+            this.chkExternalControl = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label11 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.pbStatusOut = new System.Windows.Forms.PictureBox();
             this.pbStatus = new System.Windows.Forms.PictureBox();
             this.label14 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
@@ -100,6 +100,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbStatusOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).BeginInit();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
@@ -577,35 +578,26 @@
             0,
             0});
             // 
-            // button1
+            // btnStart
             // 
-            this.button1.Location = new System.Drawing.Point(172, 46);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(133, 58);
-            this.button1.TabIndex = 26;
-            this.button1.Text = "Start";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnStart_Click);
+            this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStart.Location = new System.Drawing.Point(172, 46);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(133, 58);
+            this.btnStart.TabIndex = 26;
+            this.btnStart.Text = "Start";
+            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
-            // chkExternalClock
+            // chkExternalControl
             // 
-            this.chkExternalClock.AutoSize = true;
-            this.chkExternalClock.Location = new System.Drawing.Point(173, 124);
-            this.chkExternalClock.Name = "chkExternalClock";
-            this.chkExternalClock.Size = new System.Drawing.Size(94, 17);
-            this.chkExternalClock.TabIndex = 28;
-            this.chkExternalClock.Text = "External Clock";
-            this.chkExternalClock.UseVisualStyleBackColor = true;
-            // 
-            // chkExternalTrigger
-            // 
-            this.chkExternalTrigger.AutoSize = true;
-            this.chkExternalTrigger.Location = new System.Drawing.Point(173, 147);
-            this.chkExternalTrigger.Name = "chkExternalTrigger";
-            this.chkExternalTrigger.Size = new System.Drawing.Size(100, 17);
-            this.chkExternalTrigger.TabIndex = 27;
-            this.chkExternalTrigger.Text = "External Trigger";
-            this.chkExternalTrigger.UseVisualStyleBackColor = true;
+            this.chkExternalControl.AutoSize = true;
+            this.chkExternalControl.Location = new System.Drawing.Point(173, 124);
+            this.chkExternalControl.Name = "chkExternalControl";
+            this.chkExternalControl.Size = new System.Drawing.Size(100, 17);
+            this.chkExternalControl.TabIndex = 28;
+            this.chkExternalControl.Text = "External Control";
+            this.chkExternalControl.UseVisualStyleBackColor = true;
             // 
             // panel1
             // 
@@ -647,12 +639,12 @@
             this.panel2.BackColor = System.Drawing.Color.Transparent;
             this.panel2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel2.BackgroundImage")));
             this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel2.Controls.Add(this.pbStatusOut);
             this.panel2.Controls.Add(this.pbStatus);
             this.panel2.Controls.Add(this.label14);
-            this.panel2.Controls.Add(this.chkExternalClock);
+            this.panel2.Controls.Add(this.chkExternalControl);
             this.panel2.Controls.Add(this.label12);
-            this.panel2.Controls.Add(this.chkExternalTrigger);
-            this.panel2.Controls.Add(this.button1);
+            this.panel2.Controls.Add(this.btnStart);
             this.panel2.Controls.Add(this.label5);
             this.panel2.Controls.Add(this.nudInterval);
             this.panel2.Controls.Add(this.label3);
@@ -663,6 +655,16 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(325, 179);
             this.panel2.TabIndex = 37;
+            // 
+            // pbStatusOut
+            // 
+            this.pbStatusOut.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pbStatusOut.Location = new System.Drawing.Point(238, 10);
+            this.pbStatusOut.Name = "pbStatusOut";
+            this.pbStatusOut.Size = new System.Drawing.Size(26, 24);
+            this.pbStatusOut.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbStatusOut.TabIndex = 31;
+            this.pbStatusOut.TabStop = false;
             // 
             // pbStatus
             // 
@@ -678,7 +680,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(216, 15);
+            this.label14.Location = new System.Drawing.Point(173, 10);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(59, 16);
             this.label14.TabIndex = 29;
@@ -751,6 +753,7 @@
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbStatusOut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -794,14 +797,13 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.NumericUpDown nudDuration;
         private System.Windows.Forms.NumericUpDown nudChannel;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem1;
-        private System.Windows.Forms.CheckBox chkExternalTrigger;
-        private System.Windows.Forms.CheckBox chkExternalClock;
+        private System.Windows.Forms.CheckBox chkExternalControl;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetDevicesToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem scopeToolStripMenuItem;
@@ -822,5 +824,6 @@
         private System.Windows.Forms.PictureBox pbStatus;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem1;
+        private System.Windows.Forms.PictureBox pbStatusOut;
     }
 }

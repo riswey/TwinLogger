@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace CaioCs
 {
@@ -608,9 +609,13 @@ namespace CaioCs
             const uint MSG_DATA = 0x1003;
 
             //Just for demo (not adding data)
-            for (long device_id = 0; device_id < 2; device_id++)
+            for (int i = 0; i < 40; i++)
             {
-                SendMessage(loop_handle, MSG_DATA, device_id, 0);
+                for (long device_id = 0; device_id < 2; device_id++)
+                {
+                    SendMessage(loop_handle, MSG_DATA, device_id, 0);
+                }
+                Thread.Sleep(100);
             }
 
             for (long device_id = 0; device_id < 2; device_id++) {

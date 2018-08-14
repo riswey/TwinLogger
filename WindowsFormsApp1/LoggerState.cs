@@ -94,9 +94,7 @@ namespace MultiDeviceAIO
             }
         }
 
-        public bool external_trigger { get; set; } = false;
-        public bool external_clock { get; set; } = false;
-        public bool external_stop { get; set; } = false;
+        public bool external_control { get; set; } = false;
 
         public List<List<int>> accsetup { get; set; } = null;
         public List<List<double>> caldata { get; set; } = null;

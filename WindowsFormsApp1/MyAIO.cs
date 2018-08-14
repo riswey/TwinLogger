@@ -209,7 +209,7 @@ namespace MultiDeviceAIO
                 HANDLE_RETURN_VALUES = aio.SetAiTransferMode(id, 0);                //Device buffered 1=sent to user memory
                 HANDLE_RETURN_VALUES = aio.SetAiMemoryType(id, 0);                  //FIFO 1=Ring
 
-                if (settings.external_trigger)
+                if (settings.external_control)
                 {
                     HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(id, 1);                //1 by External trigger rising edge
                 }
@@ -218,7 +218,7 @@ namespace MultiDeviceAIO
                     HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(id, 0);                //0 by Software
                 }
 
-                if (settings.external_clock)
+                if (settings.external_control)
                 {
                     HANDLE_RETURN_VALUES = aio.SetAiClockType(id, 1);                   //external
                 }
@@ -227,14 +227,7 @@ namespace MultiDeviceAIO
                     HANDLE_RETURN_VALUES = aio.SetAiClockType(id, 0);                   //internal
                 }
 
-                if (settings.external_stop)
-                {
-                    HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(id, 1);                 //0 means by time
-                }
-                else
-                {
-                    HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(id, 0);                 //0 means by time
-                }
+                HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(id, 0);                     //0 means by time
 
             }
         }

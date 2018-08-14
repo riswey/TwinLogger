@@ -149,11 +149,8 @@ namespace MultiDeviceAIO
             tbDirectory.DataBindings.Clear();
             tbDirectory.DataBindings.Add("Text", PersistentLoggerState.ps.data, "testpath");
 
-            chkExternalTrigger.DataBindings.Clear();
-            chkExternalTrigger.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_trigger");
-
-            chkExternalClock.DataBindings.Clear();
-            chkExternalClock.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_clock");
+            chkExternalControl.DataBindings.Clear();
+            chkExternalControl.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_control");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -283,6 +280,8 @@ namespace MultiDeviceAIO
             }
 
             RenameTempFile(fn);
+
+            setStartButtonText(false);
 
             //RESTART TIMER
             TimerState(true);
@@ -497,7 +496,39 @@ namespace MultiDeviceAIO
                 }
             }
 
+            setStartButtonText(true, chkExternalControl.Checked);
+
             StartSampling();
+        }
+
+        void setStartButtonText(bool on, bool external = false)
+        {
+            Button b = this.btnStart;
+
+            int code = ((on ? 1 : 0) + (external ? 2 : 0) );
+
+            switch (code)
+            {
+                case 0:
+                case 2:
+                    b.Text = "Start";
+                    b.BackColor = Color.Transparent;
+                    b.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular);
+                    break;
+                case 1:
+                    b.Text = "Sampling...";
+                    b.BackColor = Color.Orange;
+                    b.Font = new Font("Microsoft Sans Serif", 10.25F, FontStyle.Bold);
+                    break;
+                case 3:
+                    b.Text = "Armed";
+                    b.BackColor = Color.Orange;
+                    b.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Bold);
+                    break;
+                default:
+                    break;
+            }
+            b.Refresh();
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -760,5 +791,6 @@ namespace MultiDeviceAIO
         {
 
         }
+
     }
 }
