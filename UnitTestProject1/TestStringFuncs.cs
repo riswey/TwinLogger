@@ -18,7 +18,7 @@ namespace UnitTestProject1
     }
 
     [TestClass]
-    public class UnitTest2
+    public class TestStringFuncs
     {
         [TestMethod]
         public void MapClassString()

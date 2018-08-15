@@ -14,7 +14,7 @@ namespace UnitTestProject1
     using DEVICEID = System.Int16;
 
     [TestClass]
-    public class UnitTest1
+    public class TestSettings
     {
         [TestMethod]
         public void IsFindingDevices()

@@ -43,12 +43,12 @@ namespace MultiDeviceAIO
             get
             {
                 double gVal = gValue;
-                if (gVal < -1-TOLERANCE) return 1;
-                if (gVal < -1+TOLERANCE) return 2;  //- ok
+                if (gVal < -1.0-TOLERANCE) return 1;
+                if (gVal < -1.0+TOLERANCE) return 2;  //- ok
                 if (gVal < -TOLERANCE) return 4;
                 if (gVal < TOLERANCE) return 8;     //0 ok
-                if (gVal < 1-TOLERANCE) return 16;
-                if (gVal < 1+TOLERANCE) return 32;   //+ ok
+                if (gVal < 1.0-TOLERANCE) return 16;
+                if (gVal < 1.0+TOLERANCE) return 32;   //+ ok
                 return 64;
             }
         }
@@ -86,6 +86,28 @@ namespace MultiDeviceAIO
     {
         //This should last the lifetime of the app!
         public static Dictionary<int, Accelerometer> accrs = new Dictionary<int, Accelerometer>();
+
+        public static string toHTML()
+        {
+            string str = "<table border=1>";
+            Channel c;
+            //var allstate = new Dictionary<int, List<int>>();
+            foreach (KeyValuePair<int, Accelerometer> a in Accelerometer.accrs)
+            {
+                int or = a.Value.channels[0].State | a.Value.channels[1].State | a.Value.channels[2].State;
+                //return (and & 85) == 0;   //when green
+
+                str += string.Format("<tr><td><b>{0}</b> {1}</td>", a.Value.number, a.Value.Status);
+                for (int i = 0; i < 3; i++)
+                {
+                    c = a.Value.channels[i];
+                    str += string.Format("<td><b style='color: blue;'>{0}</b> {1} <small>{2}=({3}-{4})/{5}</small></td>", c.tracknum, c.State, c.G, c.value, c.zero, c.gain);
+                }
+                str += "</tr>";
+            }
+            str += "</table>";
+            return str;
+        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         /// Static Funcs //////////////////////////////////////////////////////////////////////////
@@ -197,8 +219,8 @@ namespace MultiDeviceAIO
                 //      {2,8,32,10,34,40,42} green possibilities
                 //complement               = 01010101 = 85
                 //val & complement == 0 when bits only fit green
-                int and = channels[0].State & channels[1].State & channels[2].State;
-                return (and & 85)==0;   //when green
+                int or = channels[0].State | channels[1].State | channels[2].State;
+                return (or & 85)==0;   //when green
                 //bool x = channels[0].State == 2 || channels[0].State == 8 || channels[0].State == 32;
                 //bool y = channels[1].State == 2 || channels[1].State == 8 || channels[1].State == 32;
                 //bool z = channels[2].State == 2 || channels[2].State == 8 || channels[2].State == 32;

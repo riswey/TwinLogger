@@ -48,12 +48,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Monitor.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="TestMonitor.cs" />
+    <Compile Include="TestSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnitTest2.cs" />
+    <Compile Include="TestStringFuncs.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="mapping.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
