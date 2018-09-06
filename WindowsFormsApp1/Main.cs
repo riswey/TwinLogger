@@ -216,6 +216,13 @@ namespace MultiDeviceAIO
                         PrintLn(device_id, false);
                     }
                     break;
+                default:
+                    //watch loop
+                    /*if (m.Msg > 0x200)
+                    {
+                        PrintLn(m.ToString(), true);
+                    }*/
+                    break;
             }
 
             base.WndProc(ref m);
@@ -587,8 +594,8 @@ namespace MultiDeviceAIO
 
         private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (PersistentLoggerState.ps.data.path != "")
-                PersistentLoggerState.ps.Save(PersistentLoggerState.ps.data.path);
+            if (PersistentLoggerState.ps.data.settingspath != "")
+                PersistentLoggerState.ps.Save(PersistentLoggerState.ps.data.settingspath);
             else
                 saveSettings();
         }
@@ -597,7 +604,7 @@ namespace MultiDeviceAIO
         {
             PersistentLoggerState.ps.Reload();
             loadBindData();
-            displayPath(PersistentLoggerState.ps.data.path, PersistentLoggerState.ps.data.modified);
+            displayPath(PersistentLoggerState.ps.data.settingspath, PersistentLoggerState.ps.data.modified);
         }
 
         private void resetDevicesToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -645,7 +652,8 @@ namespace MultiDeviceAIO
                     displayPath(filename, PersistentLoggerState.ps.data.modified);
 
                     //So can reset
-                    PersistentLoggerState.ps.data.path = filename;
+                    //auto saved
+                    //PersistentLoggerState.ps.data.settingspath = filename;
 
                     has_loaded = true;
                 }
@@ -669,8 +677,8 @@ namespace MultiDeviceAIO
                 {
                     string filename = saveFileDialog1.FileName;
                     PersistentLoggerState.ps.Save(filename);
+                    //auto sets settingspath
                     displayPath(filename);
-
                 }
                 catch (Exception ex)
                 {
@@ -685,7 +693,7 @@ namespace MultiDeviceAIO
             has_loaded = false;
             PersistentLoggerState.ps.Reload();
             loadBindData();
-            displayPath(PersistentLoggerState.ps.data.path);
+            displayPath(PersistentLoggerState.ps.data.settingspath);
             has_loaded = true;
         }
 
@@ -727,7 +735,14 @@ namespace MultiDeviceAIO
             //TODO: inefficient as must convert data every time
             //Can scope take the dictionary?
 
-            (new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration)).Show();
+            using (Scope scope = new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration))
+            {
+                if (!scope.IsDisposed)
+                {
+                    scope.Show();
+                }
+            }
+
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -800,5 +815,16 @@ namespace MultiDeviceAIO
 
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Escape)
+            {
+                //Abort
+                myaio.Stop();
+                MessageBox.Show("Run aborted.");
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
     }
 }

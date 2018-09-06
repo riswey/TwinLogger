@@ -83,47 +83,56 @@ namespace MultiDeviceAIO
         {            
             InitializeComponent();
 
-            this.data = concatdata;
-            //assume both devices same size
-            this.n_samples = (concatdata.Count == 0) ? 0 : concatdata[0].Count / n_channels;
-
-            if (this.n_samples == 0) return;
-
-            npplot = new LinePlot();
-            dataX = new float[n_samples];
-            dataY = new float[n_samples];
-
-            //Combo items
-            List<string> options = new List<string>();
-            for (int i = 0; i < n_channels; i++)
+            if (concatdata == null)
             {
-                options.Add("Channel " + (i + 1));
+                MessageBox.Show("No data");
+                this.Close();
             }
-            comboBox1.DataSource = options;
-            comboBox1.SelectedIndex = 0;
-
-            List<string> devices = new List<string>();
-            for (int i = 0; i < concatdata.Count; i++)
+            else
             {
-                devices.Add("Device " + (i + 1));
+
+                this.data = concatdata;
+                //assume both devices same size
+                this.n_samples = (concatdata.Count == 0) ? 0 : concatdata[0].Count / n_channels;
+
+                if (this.n_samples == 0) return;
+
+                npplot = new LinePlot();
+                dataX = new float[n_samples];
+                dataY = new float[n_samples];
+
+                //Combo items
+                List<string> options = new List<string>();
+                for (int i = 0; i < n_channels; i++)
+                {
+                    options.Add("Channel " + (i + 1));
+                }
+                comboBox1.DataSource = options;
+                comboBox1.SelectedIndex = 0;
+
+                List<string> devices = new List<string>();
+                for (int i = 0; i < concatdata.Count; i++)
+                {
+                    devices.Add("Device " + (i + 1));
+                }
+                comboBox2.DataSource = devices;
+                comboBox2.SelectedIndex = 0;
+
+                //Add event handler here to stop being called before initialised
+                comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+                comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
+
+                //X values
+                float scale = (float)duration / (float)n_samples;
+                for (int i = 0; i < n_samples; i++)
+                {
+                    dataX[i] = i * scale;
+                }
+
+                SetChannel(0, 0);
+
+                Cursor.Current = Cursors.Arrow;
             }
-            comboBox2.DataSource = devices;
-            comboBox2.SelectedIndex = 0;
-
-            //Add event handler here to stop being called before initialised
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
-            comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
-
-            //X values
-            float scale = (float)duration / (float)n_samples;
-            for (int i = 0; i < n_samples; i++)
-            {
-                dataX[i] = i * scale;
-            }
-
-            SetChannel(0, 0);
-
-            Cursor.Current = Cursors.Arrow;
         }
 
         void SetChannel(DEVICEID device, int channel)

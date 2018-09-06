@@ -100,7 +100,7 @@ namespace MultiDeviceAIO
         public List<List<double>> caldata { get; set; } = null;
 
         //Internal parameters
-        public string path { get; set; } = "";
+        public string settingspath { get; set; } = "";
         public string auto_template { get; set; } = "";
         public bool modified { get; set; } = false;
     }
@@ -115,7 +115,7 @@ namespace MultiDeviceAIO
         {
             if (base.Load(path))
             {
-                data.path = path;
+                data.settingspath = path;
                 data.modified = false;
                 return true;
             } else
@@ -126,7 +126,7 @@ namespace MultiDeviceAIO
 
         public bool Save(string path)
         {
-            data.path = path;
+            data.settingspath = path;
             data.modified = false;
             return base.Save(path);
         }
@@ -150,7 +150,7 @@ namespace MultiDeviceAIO
 
         public void Reload()
         {
-            Load(data.path);
+            Load(data.settingspath);
         }
 
         public override string ToString()

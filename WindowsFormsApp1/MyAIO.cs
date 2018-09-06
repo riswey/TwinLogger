@@ -248,6 +248,14 @@ namespace MultiDeviceAIO
             }
         }
 
+        public void Stop()
+        {
+            foreach (DEVICEID id in devices)
+            {
+                aio.StopAi(id);
+            }
+        }
+
         public void RetrieveData(DEVICEID device_id, int num_samples, int n_channels)
         {
             /* Testing
