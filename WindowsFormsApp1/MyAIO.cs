@@ -289,17 +289,9 @@ namespace MultiDeviceAIO
             data[device_id].AddRange(data1);
         }
 
-        public void DeviceFinished(short device_id, int num_samples, int n_channels)
-        {
-            finished_count++;
+        public void DeviceFinished(short device_id) { finished_count++; }
+        public bool IsTestFinished() { return finished_count == devices.Count; }
 
-            RetrieveData(device_id, num_samples, n_channels);
-        }
-
-        public bool IsTestFinished()
-        {
-            return finished_count == devices.Count;
-        }
         /// <summary>
         /// device lists of int[] are concatenated ->
         /// DeviceX => int[] (index 0)

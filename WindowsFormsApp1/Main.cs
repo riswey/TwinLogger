@@ -202,20 +202,14 @@ namespace MultiDeviceAIO
                     {
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
-
-                        try
-                        {
-                            myaio.DeviceFinished(device_id, num_samples, PersistentLoggerState.ps.data.n_channels);
-                        } catch (AIODeviceException ex)
-                        {
-                            ProcessError(ex);
-                            return;
-                        }
-
+                        myaio.RetrieveData(device_id, num_samples, PersistentLoggerState.ps.data.n_channels);
+                        PrintLn(device_id.ToString() + ".", false);
+                        myaio.DeviceFinished(device_id);
                         if (myaio.IsTestFinished())
                         {
                             TestFinished(device_id, num_samples);
                         }
+
                     }
                     break;
                 case 0x1003:
