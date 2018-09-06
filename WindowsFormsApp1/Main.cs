@@ -162,15 +162,32 @@ namespace MultiDeviceAIO
             }
 
             //Commit final AIOSettings.singleInstance to app state 
-            string current_xml;
-            if (PersistentLoggerState.ps != null && PersistentLoggerState.ps.ExportXML(out current_xml))
+
+            PersistentLoggerState.ps.Save("settings.xml");
+
+            /*
+            if (PersistentLoggerState.ps != null && PersistentLoggerState.ps.ExportXML(out string current_xml))
             {
-                //failed to get XML
                 Properties.Settings.Default.processing_settings_current = current_xml;
                 Properties.Settings.Default.Save();
             }
+            */
             base.OnFormClosing(e);
         }
+
+
+
+        //unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void* Param);
+
+        //CaioCs.PAICALLBACK CallBackProc;
+        /*
+        unsafe public int CallBackProc1(short Id, short Message, int wParam, int lParam, void* Param)
+        {
+            return 0;
+        }
+        */
+
+
 
         //////////////////////////////////////////////////////////////////////
         // MESSAGE LOOP
@@ -384,12 +401,15 @@ namespace MultiDeviceAIO
 
         void StartSampling()
         {
-            if (PersistentLoggerState.ps.data.n_devices == 0)
+            if (PersistentLoggerState.ps.data.n_devices != 2)
             {
-                SetStatus("Warning: No Devices connected. Reset");
+                SetStatus("Error: Incorrect Device number. Reset");
                 return;
             }
-            
+
+            //Start again (too heavy handed)
+            //myaio.ResetDevices();
+
             List<int> failedID;
             if (!myaio.DeviceCheck(PersistentLoggerState.ps.data.n_channels, out failedID))
             {
@@ -443,6 +463,7 @@ namespace MultiDeviceAIO
             {
                 ProcessError(ex);
             }
+
         }
 
         private void SelectDirectory()

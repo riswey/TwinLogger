@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.IO;
 
 namespace MultiDeviceAIO
 {
@@ -19,10 +20,17 @@ namespace MultiDeviceAIO
             //TODO make PersistentLoggerState disposable and put in using()
             PersistentLoggerState.ps = new PersistentLoggerState();
 
-            bool result = PersistentLoggerState.ps.ImportXML(Properties.Settings.Default.processing_settings_current);
-            if (!result)
+            if (File.Exists("settings.xml"))
             {
-                string msg = "No valid AIOSettings.singleInstance were found. Set to zero.";
+                PersistentLoggerState.ps.Load("settings.xml");
+            }
+            else
+            {
+                bool result = PersistentLoggerState.ps.ImportXML(Properties.Settings.Default.processing_settings_current);
+                if (!result)
+                {
+                    string msg = "No valid AIOSettings.singleInstance were found. Set to zero.";
+                }
             }
 
 #if TESTING

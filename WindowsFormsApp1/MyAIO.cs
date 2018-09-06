@@ -138,6 +138,8 @@ namespace MultiDeviceAIO
 
         public bool DeviceCheck(short n_channels, out List<int> failedID)
         {
+            //Check that devices have values
+
             failedID = new List<int>();
 
             //Per device
@@ -204,7 +206,7 @@ namespace MultiDeviceAIO
                 HANDLE_RETURN_VALUES = aio.SetAiChannels(id, settings.n_channels);
                 HANDLE_RETURN_VALUES = aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
                 HANDLE_RETURN_VALUES = aio.SetAiStopTimes(id, settings.n_samples);
-                HANDLE_RETURN_VALUES = aio.SetAiEventSamplingTimes(id, DATA_RECEIVE_EVENT);        //#samples until data retrieve event
+                HANDLE_RETURN_VALUES = aio.SetAiEventSamplingTimes(id, 500);        //#samples until data retrieve event
 
                 HANDLE_RETURN_VALUES = aio.SetAiTransferMode(id, 0);                //Device buffered 1=sent to user memory
                 HANDLE_RETURN_VALUES = aio.SetAiMemoryType(id, 0);                  //FIFO 1=Ring
@@ -235,7 +237,7 @@ namespace MultiDeviceAIO
         public void Start(uint HandleMsgLoop)
         {
             finished_count = 0;
-
+            
             foreach (DEVICEID id in devices)
             {
                 //End, 500, set num events
@@ -246,6 +248,12 @@ namespace MultiDeviceAIO
             {
                 HANDLE_RETURN_VALUES = aio.StartAi(id);
             }
+        }
+
+        //DEBUG
+        public Caio getCaio()
+        {
+            return aio;
         }
 
         public void Stop()
