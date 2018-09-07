@@ -210,8 +210,8 @@ namespace MultiDeviceAIO
             if (InvokeRequired)
             {
                 //Put on main thread anyway
-                this.Invoke(new Action(() => CallBackProc(Id, Message, wParam, lParam, Param)));
-                return 0;
+                //Invoke(new Action(() => CallBackProc(Id, Message, wParam, lParam, Param)));
+                //return 0;
             }
 
             //wParam???;
