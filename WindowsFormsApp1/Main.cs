@@ -459,6 +459,8 @@ namespace MultiDeviceAIO
                 ProcessError(ex);
             }
 
+            PrintLn(myaio.GetStatusAll());
+
             var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
 
             PrintLn("----------------------------------------------------\r\nApplied Settings");
@@ -473,10 +475,9 @@ namespace MultiDeviceAIO
             //STOP TIMER
             TimerState(false);
 
-            SetStatus("Sampling...");
-            PrintLn("Sampling...", false);
-
             myaio.Start();
+
+            PrintLn(myaio.GetStatusAll());
 
         }
 

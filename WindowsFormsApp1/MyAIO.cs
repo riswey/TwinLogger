@@ -197,8 +197,19 @@ namespace MultiDeviceAIO
                 AIOSTATUS.TryGetValue((CaioConst)AiStatus, out string status);
                 return status;
             }
-            return "N/A";
+            return null;
         }
+
+        public string GetStatusAll()
+        {
+            string output = "";
+            foreach (DEVICEID id in devices)
+            {
+                output += String.Format("Status{0}: {1}\r\n", id, GetStatus(id));
+            }
+            return output;
+        }
+
 
         public void SetupTimedSample(LoggerState settings)
         {
@@ -224,8 +235,6 @@ namespace MultiDeviceAIO
             }
             */
 
-            Random r = new Random();
-
             //Setting the 
             foreach (DEVICEID id in devices)
             {
@@ -233,8 +242,7 @@ namespace MultiDeviceAIO
                 HANDLE_RETURN_VALUES = aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
                 HANDLE_RETURN_VALUES = aio.SetAiStopTimes(id, settings.n_samples);
 
-                int rnd_interval = r.Next(100, 600);
-                HANDLE_RETURN_VALUES = aio.SetAiEventSamplingTimes(id, rnd_interval);            //#samples until data retrieve event
+                HANDLE_RETURN_VALUES = aio.SetAiEventSamplingTimes(id, 300);            //#samples until data retrieve event
 
                 HANDLE_RETURN_VALUES = aio.SetAiTransferMode(id, 0);                    //Device buffered 1=sent to user memory
                 HANDLE_RETURN_VALUES = aio.SetAiMemoryType(id, 0);                      //FIFO 1=Ring
@@ -324,7 +332,7 @@ namespace MultiDeviceAIO
                 //NOTE: if sampling times changes then sampling cut short
 
                 //store data
-                //data[device_id].AddRange(data1);
+                data[device_id].AddRange(data1);
             //}
         }
 

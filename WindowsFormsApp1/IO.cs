@@ -48,7 +48,7 @@ namespace MultiDeviceAIO
         //FILE SAVING
         static public void SaveDATA(LoggerState settings, ref string filepath, DATA concatdata)
         {
-            try
+            //try
             {
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(filepath))
                 {
@@ -66,9 +66,9 @@ namespace MultiDeviceAIO
                     //File automatically closes with using (don't manually close!)
                 }
             }
-            catch
+            //catch
             {
-                throw;
+            //    throw;
             }
 
         }
