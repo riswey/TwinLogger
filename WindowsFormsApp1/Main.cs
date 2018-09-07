@@ -7,11 +7,13 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 
+using System.Runtime.InteropServices;
+
 using DEVICEID = System.Int16;
 //The data structure is a dictionary; K: device id V:raw list of data for device
 //K: device id :. data imported by id
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
-
+using System.Runtime.CompilerServices;
 
 namespace MultiDeviceAIO
 {
@@ -24,6 +26,11 @@ namespace MultiDeviceAIO
         Monitor monitor;
         DATA concatdata;        //stores most recent data
 
+        //Handle Callback
+        static public GCHandle gCh;
+        static public MyAIO.PAICALLBACK pdelegate_func;
+        static public IntPtr pfunc;
+
         public Main()
         {
             if (!NativeMethods.CheckLibrary("caio.dll"))
@@ -34,7 +41,7 @@ namespace MultiDeviceAIO
             InitializeComponent();
 
             SetAIO();
-            
+
             //Bindings
             loadBindData();
 
@@ -63,6 +70,26 @@ namespace MultiDeviceAIO
             if (myaio != null)
             {
                 myaio.Close();
+            }
+        }
+
+        unsafe private void Form_AiCall_Load(object sender, System.EventArgs e)
+        {
+            // Initialize the delegate for event notification
+            pdelegate_func = new MyAIO.PAICALLBACK(CallBackProc);
+            // Do not release the delegate
+            if (gCh.IsAllocated == false)
+            {
+                gCh = GCHandle.Alloc(pdelegate_func);
+            }
+        }
+
+        private void Form_AiCall_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // Release the garbage collection handle of the delegate for event notification
+            if (gCh.IsAllocated == true)
+            {
+                gCh.Free();
             }
         }
 
@@ -108,7 +135,7 @@ namespace MultiDeviceAIO
                 SaveLogFile();
 
                 MessageBox.Show(msg, "Device Error\nDevices have been reset. Retry operation or manually reset devices again.", MessageBoxButtons.OK);
-                
+
                 //These are not critical errors! Can reset without affecting application state.
                 //Application.Exit();
                 myaio.ResetDevices();
@@ -175,30 +202,54 @@ namespace MultiDeviceAIO
             base.OnFormClosing(e);
         }
 
+        private readonly object syncLock = new object();
 
-
-        //unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void* Param);
-
-        //CaioCs.PAICALLBACK CallBackProc;
-        /*
-        unsafe public int CallBackProc1(short Id, short Message, int wParam, int lParam, void* Param)
+        //CallBacks
+        unsafe public int CallBackProc(short Id, short Message, int wParam, int lParam, void* Param)
         {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(() => CallBackProc(Id, Message, wParam, lParam, Param)));
+                return 0;
+            }
+
+            //wParam???;
+            int num_samples = lParam;
+
+            switch ((CaioConst)Message)
+            {
+                case CaioConst.AIOM_AIE_END:
+
+                    myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
+                    myaio.DeviceFinished(Id);
+                    if (myaio.IsTestFinished())
+                    {
+                        TestFinished(Id, num_samples);
+                    }
+                    break;
+                case CaioConst.AIOM_AIE_DATA_NUM:
+                    myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
+                    PrintLn(Id, false);
+                    break;
+                case CaioConst.AIOM_AIE_DATA_TSF:
+                    //dunno
+                    break;
+            }
             return 0;
         }
-        */
 
 
 
         //////////////////////////////////////////////////////////////////////
         // MESSAGE LOOP
         //////////////////////////////////////////////////////////////////////
-
+        /*
         [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m)
         {
-            switch (m.Msg)
+            switch ((CaioConst)m.Msg)
             {
-                case 0x1002:
+                case CaioConst.AIOM_AIE_END:
                     {
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
@@ -212,7 +263,7 @@ namespace MultiDeviceAIO
 
                     }
                     break;
-                case 0x1003:
+                case CaioConst.AIOM_AIE_DATA_NUM:
                     {
                         short device_id = (short)m.WParam;
                         int num_samples = (int)m.LParam;
@@ -227,17 +278,16 @@ namespace MultiDeviceAIO
                         PrintLn(device_id, false);
                     }
                     break;
-                default:
-                    //watch loop
-                    /*if (m.Msg > 0x200)
-                    {
-                        PrintLn(m.ToString(), true);
-                    }*/
+                case CaioConst.AIOM_AIE_DATA_TSF:
+                    //dunno
                     break;
             }
 
             base.WndProc(ref m);
         }
+        */
+
+
         /// <summary>
         /// Secure data to disk
         /// Get User input (freq, filename)
@@ -259,6 +309,8 @@ namespace MultiDeviceAIO
             filepath = IO.CheckPath(filepath, false);
 
             IO.SaveDATA(PersistentLoggerState.ps.data, ref filepath, concatdata);
+
+            PrintLn(device_id.ToString(), false);
 
             PrintLn("END");
 
@@ -383,6 +435,12 @@ namespace MultiDeviceAIO
 
         void PrintLn(object msg, bool linebreak = true)
         {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(() => PrintLn(msg, linebreak)));
+                return;
+            }
+
             textBox1.Text += msg.ToString() + (linebreak ? "\r\n" : "");
             textBox1.SelectionStart = textBox1.Text.Length;
             textBox1.ScrollToCaret();
@@ -395,11 +453,13 @@ namespace MultiDeviceAIO
 
         void StartSampling()
         {
-            if (PersistentLoggerState.ps.data.n_devices != 2)
+            /*
+            if (PersistentLoggerState.ps.data.n_devices == 0)
             {
                 SetStatus("Error: Incorrect Device number. Reset");
                 return;
             }
+            */
 
             //Start again (too heavy handed)
             //myaio.ResetDevices();
@@ -435,13 +495,11 @@ namespace MultiDeviceAIO
             PrintLn("----------------------------------------------------\r\nApplied Settings");
             PrintLn(PersistentLoggerState.ps.ToString());
 
-            try {
-                myaio.SetupTimedSample(PersistentLoggerState.ps.data);
-            }
-            catch (AIODeviceException ex)
-            {
-                ProcessError(ex);
-            }
+            myaio.SetupTimedSample(PersistentLoggerState.ps.data);
+
+            // Get the fixed pointer of the delegate for event notification
+            pfunc = Marshal.GetFunctionPointerForDelegate(pdelegate_func);
+            myaio.SetAiCallBackProc(pfunc);
 
             //STOP TIMER
             TimerState(false);
@@ -449,14 +507,7 @@ namespace MultiDeviceAIO
             SetStatus("Sampling...");
             PrintLn("Sampling...", false);
 
-            try
-            {
-                myaio.Start((uint)this.Handle.ToInt32());
-            }
-            catch (AIODeviceException ex)
-            {
-                ProcessError(ex);
-            }
+            myaio.Start();
 
         }
 
@@ -530,6 +581,12 @@ namespace MultiDeviceAIO
 
         void setStartButtonText(bool on, bool external = false)
         {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(() => setStartButtonText(on, external)));
+                return;
+            }
+
             Button b = this.btnStart;
 
             int code = ((on ? 1 : 0) + (external ? 2 : 0) );
@@ -774,7 +831,6 @@ namespace MultiDeviceAIO
                         SetAIO();
                     }
                 }
-
             }
         }
 
@@ -841,5 +897,6 @@ namespace MultiDeviceAIO
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
     }
 }

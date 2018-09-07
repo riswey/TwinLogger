@@ -210,14 +210,14 @@
             // calibrateToolStripMenuItem
             // 
             this.calibrateToolStripMenuItem.Name = "calibrateToolStripMenuItem";
-            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.calibrateToolStripMenuItem.Text = "Calibrate";
             this.calibrateToolStripMenuItem.Click += new System.EventHandler(this.calibrateToolStripMenuItem_Click);
             // 
             // setupToolStripMenuItem1
             // 
             this.setupToolStripMenuItem1.Name = "setupToolStripMenuItem1";
-            this.setupToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.setupToolStripMenuItem1.Size = new System.Drawing.Size(121, 22);
             this.setupToolStripMenuItem1.Text = "Setup";
             this.setupToolStripMenuItem1.Click += new System.EventHandler(this.setupToolStripMenuItem1_Click);
             // 
@@ -741,6 +741,8 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.Text = "Main";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form_AiCall_FormClosed);
+            this.Load += new System.EventHandler(this.Form_AiCall_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);

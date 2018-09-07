@@ -33,8 +33,7 @@ namespace MultiDeviceAIO
 {
     public class MyAIO
     {
-
-        const int DATA_RECEIVE_EVENT = 100;
+        //const int DATA_RECEIVE_EVENT = 100;
 
         //static string device_root = "Aio00";
         const string LINEEND = "\r\n";
@@ -50,6 +49,9 @@ namespace MultiDeviceAIO
         /// A list is built of these arrays for each device (async events per device)
         /// </summary>
         public DATA data { get; private set; } = new DATA();
+        
+        //copied from CaioCS
+        unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void* Param);
 
         public DEVICEID GetID(int idx)
         {
@@ -81,7 +83,8 @@ namespace MultiDeviceAIO
             {
                 if (value != 0)
                 {
-                    throw new AIODeviceException(value);
+                    aio.GetErrorString((int)value, out string ErrorString);
+                    throw new Exception(ErrorString);
                 }
             }
         }
@@ -206,10 +209,11 @@ namespace MultiDeviceAIO
                 HANDLE_RETURN_VALUES = aio.SetAiChannels(id, settings.n_channels);
                 HANDLE_RETURN_VALUES = aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
                 HANDLE_RETURN_VALUES = aio.SetAiStopTimes(id, settings.n_samples);
-                HANDLE_RETURN_VALUES = aio.SetAiEventSamplingTimes(id, 500);        //#samples until data retrieve event
+                HANDLE_RETURN_VALUES = aio.SetAiEventSamplingTimes(id, 100);            //#samples until data retrieve event
+                                                                                        //256*1024 / n_channels
 
-                HANDLE_RETURN_VALUES = aio.SetAiTransferMode(id, 0);                //Device buffered 1=sent to user memory
-                HANDLE_RETURN_VALUES = aio.SetAiMemoryType(id, 0);                  //FIFO 1=Ring
+                HANDLE_RETURN_VALUES = aio.SetAiTransferMode(id, 0);                    //Device buffered 1=sent to user memory
+                HANDLE_RETURN_VALUES = aio.SetAiMemoryType(id, 0);                      //FIFO 1=Ring
 
                 if (settings.external_control)
                 {
@@ -234,27 +238,33 @@ namespace MultiDeviceAIO
             }
         }
 
-        public void Start(uint HandleMsgLoop)
+        //Note that in loop version this was done in start
+        unsafe public void SetAiCallBackProc(IntPtr pAiCallBack)
+        {
+            // Set the callback routine : Device Operation End Event Factor
+            foreach (DEVICEID id in devices)
+            {
+                HANDLE_RETURN_VALUES = aio.SetAiCallBackProc(id, pAiCallBack, (short)(CaioConst.AIE_DATA_NUM | CaioConst.AIE_END), null);
+            }
+        }
+
+        public void Start()
         {
             finished_count = 0;
-            
+            /*
             foreach (DEVICEID id in devices)
             {
                 //End, 500, set num events
                 HANDLE_RETURN_VALUES = aio.SetAiEvent(id, HandleMsgLoop, (int)(CaioConst.AIE_END | CaioConst.AIE_DATA_NUM | CaioConst.AIE_DATA_TSF));
             }
-
+            */
             foreach (DEVICEID id in devices)
             {
                 HANDLE_RETURN_VALUES = aio.StartAi(id);
             }
-        }
 
-        //DEBUG
-        public Caio getCaio()
-        {
-            return aio;
-        }
+            //HANDLE_RETURN_VALUES = aio.StartAi(devices[1]);
+        }       
 
         public void Stop()
         {
@@ -276,17 +286,16 @@ namespace MultiDeviceAIO
              * 
              * You cannot get false data reading.
              */
+            if (num_samples > 0)
+            {
+                int sampling_times = num_samples;
+                int[] data1 = new int[n_channels * num_samples];
+                HANDLE_RETURN_VALUES = aio.GetAiSamplingData(device_id, ref sampling_times, ref data1);
+                //NOTE: if sampling times changes then sampling cut short
 
-            int sampling_times = num_samples;
-
-            int[] data1 = new int[n_channels * num_samples];
-
-            HANDLE_RETURN_VALUES = aio.GetAiSamplingData(device_id, ref sampling_times, ref data1);
-
-            //NOTE: if sampling times changes then sampling cut short
-
-            //store data
-            data[device_id].AddRange(data1);
+                //store data
+                data[device_id].AddRange(data1);
+            }
         }
 
         public void DeviceFinished(short device_id) { finished_count++; }
