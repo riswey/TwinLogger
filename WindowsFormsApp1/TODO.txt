@@ -65,3 +65,12 @@ shaker type (3 types)
 
 set freq at end
 excitation freq (achieved)
+
+
+
+-7/9/2018
+Do some data checking.
+if count(1) - count(0) goes too far astray then a device has failed.
+timeout
+> count data coming in for each device. At end is it ok
+

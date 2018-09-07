@@ -219,8 +219,11 @@ namespace MultiDeviceAIO
 
             switch ((CaioConst)Message)
             {
+                case CaioConst.AIOM_AIE_DATA_NUM:
+                    myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
+                    PrintLn(Id, false);
+                    break;
                 case CaioConst.AIOM_AIE_END:
-
                     myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
                     myaio.DeviceFinished(Id);
                     if (myaio.IsTestFinished())
@@ -228,66 +231,31 @@ namespace MultiDeviceAIO
                         TestFinished(Id, num_samples);
                     }
                     break;
-                case CaioConst.AIOM_AIE_DATA_NUM:
-                    myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
-                    PrintLn(Id, false);
+                case CaioConst.AIOM_AIE_OFERR:
+                    {
+                        string status = myaio.GetStatus(Id);
+                        myaio.Stop();
+                        myaio.ResetTest();
+                        setStartButtonText(false);
+                        PrintLn(String.Format("[Overflow error on device {0}. Status: {1} (Test reset)]", Id, status), false);
+                        //overflow error
+                    }
                     break;
-                case CaioConst.AIOM_AIE_DATA_TSF:
-                    //dunno
+                case CaioConst.AIOM_AIE_SCERR:
+                    {
+                        string status = myaio.GetStatus(Id);
+                        myaio.Stop();
+                        myaio.ResetTest();
+                        setStartButtonText(false);
+                        PrintLn(String.Format("[Sampling clock error on device {0}. Status: {1} (Test reset)]", Id, status), false);
+                    }
+                    break;
+                case CaioConst.AIOM_AIE_ADERR:
+                    PrintLn("\r\nData conversion error.");
                     break;
             }
             return 0;
         }
-
-
-
-        //////////////////////////////////////////////////////////////////////
-        // MESSAGE LOOP
-        //////////////////////////////////////////////////////////////////////
-        /*
-        [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
-        protected override void WndProc(ref Message m)
-        {
-            switch ((CaioConst)m.Msg)
-            {
-                case CaioConst.AIOM_AIE_END:
-                    {
-                        short device_id = (short)m.WParam;
-                        int num_samples = (int)m.LParam;
-                        myaio.RetrieveData(device_id, num_samples, PersistentLoggerState.ps.data.n_channels);
-                        PrintLn(device_id.ToString() + ".", false);
-                        myaio.DeviceFinished(device_id);
-                        if (myaio.IsTestFinished())
-                        {
-                            TestFinished(device_id, num_samples);
-                        }
-
-                    }
-                    break;
-                case CaioConst.AIOM_AIE_DATA_NUM:
-                    {
-                        short device_id = (short)m.WParam;
-                        int num_samples = (int)m.LParam;
-                        try {
-                            myaio.RetrieveData(device_id, num_samples, PersistentLoggerState.ps.data.n_channels);
-                        }
-                        catch (AIODeviceException ex)
-                        {
-                            ProcessError(ex);
-                        }
-
-                        PrintLn(device_id, false);
-                    }
-                    break;
-                case CaioConst.AIOM_AIE_DATA_TSF:
-                    //dunno
-                    break;
-            }
-
-            base.WndProc(ref m);
-        }
-        */
-
 
         /// <summary>
         /// Secure data to disk
@@ -315,8 +283,8 @@ namespace MultiDeviceAIO
 
             PrintLn("END");
 
+            /*
             //Generate User reports to see what happened
-
             PrintLn("+---Report-----------------------------------------");
             foreach(KeyValuePair<DEVICEID, List<int>> device_data in concatdata)
             {
@@ -324,7 +292,7 @@ namespace MultiDeviceAIO
                 PrintLn(GenerateDataReport(device_data.Value));
             }
             PrintLn("+--------------------------------------------------");
-
+            */
             //SAVE LOG
             SaveLogFile();
 

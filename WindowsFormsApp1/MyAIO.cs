@@ -44,6 +44,16 @@ namespace MultiDeviceAIO
         private List<DEVICEID> devices { get; } = new List<DEVICEID>();
         public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
 
+        readonly Dictionary<CaioConst, string> AIOSTATUS = new Dictionary<CaioConst, string>() {
+            {CaioConst.AIS_BUSY, "Device is running"},
+            {CaioConst.AIS_START_TRG, "Wait the start trigger"},
+            {CaioConst.AIS_DATA_NUM, "Store up to the specified number of data"},
+            {CaioConst.AIS_OFERR, "Overflow"},
+            {CaioConst.AIS_SCERR, "Sampling clock error"},
+            {CaioConst.AIS_AIERR, "AD conversion error"},
+            {CaioConst.AIS_DRVERR, "Driver spec error"}
+        };
+
         /// <summary>
         /// Data arrives in int[] per device
         /// A list is built of these arrays for each device (async events per device)
@@ -179,6 +189,17 @@ namespace MultiDeviceAIO
             }
         }
 
+        public string GetStatus(DEVICEID id)
+        {
+            HANDLE_RETURN_VALUES = aio.GetAiStatus(id, out int AiStatus);
+            if (AIOSTATUS.ContainsKey((CaioConst)AiStatus))
+            {
+                AIOSTATUS.TryGetValue((CaioConst)AiStatus, out string status);
+                return status;
+            }
+            return "N/A";
+        }
+
         public void SetupTimedSample(LoggerState settings)
         {
             /*
@@ -244,7 +265,13 @@ namespace MultiDeviceAIO
             // Set the callback routine : Device Operation End Event Factor
             foreach (DEVICEID id in devices)
             {
-                HANDLE_RETURN_VALUES = aio.SetAiCallBackProc(id, pAiCallBack, (short)(CaioConst.AIE_DATA_NUM | CaioConst.AIE_END), null);
+                HANDLE_RETURN_VALUES = aio.SetAiCallBackProc(id, pAiCallBack, (int)(
+                    CaioConst.AIE_DATA_NUM |        //specified numberdata is stored
+                    CaioConst.AIE_END |             //Device operation end
+                    CaioConst.AIE_OFERR |           //Overflow
+                    CaioConst.AIE_SCERR |           //Sampling clock error
+                    CaioConst.AIE_ADERR             //Data Conversion error (sure I'm not converting)
+                ), null);
             }
         }
 
@@ -286,16 +313,16 @@ namespace MultiDeviceAIO
              * 
              * You cannot get false data reading.
              */
-            if (num_samples > 0)
-            {
+            //if (num_samples > 0)
+            //{
                 int sampling_times = num_samples;
                 int[] data1 = new int[n_channels * num_samples];
                 HANDLE_RETURN_VALUES = aio.GetAiSamplingData(device_id, ref sampling_times, ref data1);
                 //NOTE: if sampling times changes then sampling cut short
 
                 //store data
-                data[device_id].AddRange(data1);
-            }
+                //data[device_id].AddRange(data1);
+            //}
         }
 
         public void DeviceFinished(short device_id) { finished_count++; }
