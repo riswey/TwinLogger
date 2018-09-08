@@ -473,6 +473,10 @@ namespace MultiDeviceAIO
 
             myaio.SetupTimedSample(PersistentLoggerState.ps.data);
 
+            pfunc = Marshal.GetFunctionPointerForDelegate(pdelegate_func);
+            myaio.SetAiCallBackProc(pfunc);
+
+
             //STOP TIMER
             TimerMonitorState(false);
 
@@ -875,6 +879,93 @@ namespace MultiDeviceAIO
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
-        
+
+
+        /**************************************************
+         * NEED A CALLBACK TO KNOW WHEN TRIGGER STARTED
+         * IT WILL NOT ALLOW STATE REQUEST WHILE RUNNING
+         *************************************************/
+
+        static public GCHandle gCh;
+        static public MyAIO.PAICALLBACK pdelegate_func;
+        static public IntPtr pfunc;
+
+        unsafe private void Form_AiCall_Load(object sender, System.EventArgs e)
+        {
+            // Initialize the delegate for event notification
+            pdelegate_func = new MyAIO.PAICALLBACK(CallBackProc);
+            // Do not release the delegate
+            if (gCh.IsAllocated == false)
+            {
+                gCh = GCHandle.Alloc(pdelegate_func);
+            }
+        }
+
+        private void Form_AiCall_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // Release the garbage collection handle of the delegate for event notification
+            if (gCh.IsAllocated == true)
+            {
+                gCh.Free();
+            }
+        }
+
+        //CallBacks
+        unsafe public int CallBackProc(short Id, short Message, int wParam, int lParam, void* Param)
+    {
+        if (InvokeRequired)
+        {
+            //Put on main thread anyway
+            //Invoke(new Action(() => CallBackProc(Id, Message, wParam, lParam, Param)));
+            //return 0;
+        }
+
+        //wParam???;
+        int num_samples = lParam;
+
+        switch ((CaioConst)Message)
+        {
+            case CaioConst.AIOM_AIE_DATA_NUM:
+                myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
+                PrintLn(Id, false);
+                break;
+            case CaioConst.AIOM_AIE_END:
+                myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
+                myaio.DeviceFinished(Id);
+                if (myaio.IsTestFinished())
+                {
+                    TestFinished(Id, num_samples);
+                }
+                break;
+            case CaioConst.AIOM_AIE_OFERR:
+                {
+                    string status = myaio.GetStatus(Id);
+                    myaio.Stop();
+                    myaio.ResetTest();
+                    setStartButtonText(false);
+                    PrintLn(String.Format("[Overflow error on device {0}. Status: {1} (Test reset)]", Id, status), false);
+                    //overflow error
+                }
+                break;
+            case CaioConst.AIOM_AIE_SCERR:
+                {
+                    string status = myaio.GetStatus(Id);
+                    myaio.Stop();
+                    myaio.ResetTest();
+                    setStartButtonText(false);
+                    PrintLn(String.Format("[Sampling clock error on device {0}. Status: {1} (Test reset)]", Id, status), false);
+                }
+                break;
+            case CaioConst.AIOM_AIE_ADERR:
+                PrintLn("\r\nData conversion error.");
+                break;
+        }
+        return 0;
     }
+
+
+
+
+
+}
 }
