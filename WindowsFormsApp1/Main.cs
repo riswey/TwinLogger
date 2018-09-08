@@ -16,7 +16,6 @@ namespace MultiDeviceAIO
 {
     public partial class Main : Form
     {
-        static string DEVICE_ROOT = "Aio00";
 
         MyAIO myaio;
 
@@ -38,6 +37,7 @@ namespace MultiDeviceAIO
         //static public IntPtr pfunc;
 
         Timer timergetdata = new Timer();
+
 
         //1000hz, 64chan, 5sec
         //
@@ -82,12 +82,12 @@ namespace MultiDeviceAIO
 
 
             //We can work this out exactly from amount of data coming in!
-            timergetdata.Interval = 500;
+            timergetdata.Interval = MyAIO.TIMERPERIOD;
 
             timergetdata.Tick += data_Tick;
 
             //TODO: this must be stopped while sampling and restarted at end!!!
-            TimerState(true);
+            TimerMonitorState(true);
         }
 
         //#CHECK
@@ -112,7 +112,7 @@ namespace MultiDeviceAIO
             myaio = new MyAIO(PersistentLoggerState.ps.data.testingmode);
 
             //Load Devices
-            int devices_count = myaio.DiscoverDevices(DEVICE_ROOT);
+            int devices_count = myaio.DiscoverDevices();
 
             PersistentLoggerState.ps.data.n_devices = devices_count;
 
@@ -211,8 +211,45 @@ namespace MultiDeviceAIO
 
         private void data_Tick(object sender, EventArgs e)
         {
-            RetrieveData();
-            //Invoke(new Action(() => RetrieveData()));
+            //TODO: improve this state logic
+            //check start sampling has reset everything
+            //don't pass data around by value
+            //
+
+            //Can only do 1 thing at a time.
+
+            int status = 0;
+
+            PrintLn(myaio.running + ",", 0);
+
+            if (!myaio.running)
+                status = myaio.GetStatusAll();
+
+            PrintLn(status + ",", 0);
+
+            if ((status & (int)CaioConst.AIS_OFERR) == (int)CaioConst.AIS_OFERR)
+            {
+                PrintLn("Device Overflow");
+                StartSampling();
+                return;
+            }
+
+            if ((status & (int)CaioConst.AIS_SCERR) == (int)CaioConst.AIS_SCERR)
+            {
+                PrintLn("Sampling Clock Error");
+                StartSampling();
+                return;
+            }
+
+            //Loop until trigger pressed
+            if ((status & (int)CaioConst.AIS_START_TRG) != (int)CaioConst.AIS_START_TRG)
+            {
+                myaio.running = true;
+                setStartButtonText(true);
+                RetrieveData();
+                //Invoke(new Action(() => RetrieveData()));
+            }
+
         }
 
         private void RetrieveData()
@@ -308,7 +345,7 @@ namespace MultiDeviceAIO
             setStartButtonText(false);
 
             //RESTART TIMER
-            TimerState(true);
+            TimerMonitorState(true);
 
             SetStatus("Ready");
             
@@ -437,7 +474,7 @@ namespace MultiDeviceAIO
             myaio.SetupTimedSample(PersistentLoggerState.ps.data);
 
             //STOP TIMER
-            TimerState(false);
+            TimerMonitorState(false);
 
             PrintLn("Start");
 
@@ -627,7 +664,7 @@ namespace MultiDeviceAIO
                 ProcessError(ex);
             }
 
-            PersistentLoggerState.ps.data.n_devices = myaio.DiscoverDevices(DEVICE_ROOT);
+            PersistentLoggerState.ps.data.n_devices = myaio.DiscoverDevices();
 
             SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
         }
@@ -806,15 +843,15 @@ namespace MultiDeviceAIO
             }
         }
 
-        private void TimerState(bool on)
+        private void TimerMonitorState(bool on)
         {
             if (on)
             {
-                timer1.Start();
+                timermonitor.Start();
             } else
             {
                 pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
-                timer1.Stop();
+                timermonitor.Stop();
             }
         }
 
@@ -822,18 +859,22 @@ namespace MultiDeviceAIO
         {
 
         }
-        /*
+        
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
             {
                 //Abort
+                timergetdata.Stop();
                 myaio.Stop();
-                MessageBox.Show("Run aborted.");
+                myaio.ResetTest();
+                myaio.ResetDevices();
+                setStartButtonText(false);
+                PrintLn("Run aborted");
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
-        */
+        
     }
 }

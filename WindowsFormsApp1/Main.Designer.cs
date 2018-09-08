@@ -91,7 +91,7 @@
             this.label12 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timermonitor = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
@@ -723,8 +723,8 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 250;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timermonitor.Interval = 250;
+            this.timermonitor.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Main
             // 
@@ -820,7 +820,7 @@
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateToolStripMenuItem;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timermonitor;
         private System.Windows.Forms.PictureBox pbStatus;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem1;

@@ -7,7 +7,7 @@ namespace MultiDeviceAIO
 {
     public class Device
     {
-        static string device_root = "Aio00";
+        public static string DEVICENAMEROOT = "Aio00";
 
         public static List<Device> devices = new List<Device>();
 

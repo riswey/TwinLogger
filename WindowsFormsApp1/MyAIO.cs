@@ -34,12 +34,12 @@ namespace MultiDeviceAIO
 
     public class MyAIO
     {
-        public const int TIMERPERIOD = 500;
+        public const int TIMERPERIOD = 400;
 
         //TODO: this will crash if not installed. Check
         public Caio aio;
 
-        readonly Dictionary<CaioConst, string> AIOSTATUS = new Dictionary<CaioConst, string>() {
+        public readonly Dictionary<CaioConst, string> AIOSTATUS = new Dictionary<CaioConst, string>() {
             {0, "Ready" },
             {CaioConst.AIS_BUSY, "Device is running"},
             {CaioConst.AIS_START_TRG, "Wait the start trigger"},
@@ -49,6 +49,9 @@ namespace MultiDeviceAIO
             {CaioConst.AIS_AIERR, "AD conversion error"},
             {CaioConst.AIS_DRVERR, "Driver spec error"}
         };
+
+        //TODO: Need a proper state machine
+        public bool running { get; set; } = false;
 
         public double testtarget { get; private set; } = 0;
 
@@ -82,7 +85,7 @@ namespace MultiDeviceAIO
             }
         }
 
-        public int DiscoverDevices(string device_root)        //add Device.devices
+        public int DiscoverDevices()        //add Device.devices
         {
             //TODO: rather than looking at error code is there a proactive way to find devices? 
             DEVICEID id = 0;
@@ -92,7 +95,7 @@ namespace MultiDeviceAIO
 
             for (int i = 0; i < 10; i++)
             {
-                name = device_root + i;
+                name = Device.DEVICENAMEROOT + i;
                 long ret = aio.Init(name, out id);
                 if (ret == 0)
                 {
@@ -105,7 +108,6 @@ namespace MultiDeviceAIO
 
         public void Close()
         {
-
             foreach (Device d in Device.devices)
             {
                 aio.Exit(d.id);
@@ -115,6 +117,8 @@ namespace MultiDeviceAIO
 
         public void ResetTest()
         {
+            running = false;
+
             foreach (Device d in Device.devices)
             {
                 d.Clear();
@@ -129,6 +133,9 @@ namespace MultiDeviceAIO
 
         public bool DeviceCheck()
         {
+            return true;
+            //this happens each click now!
+            /*
             foreach(Device d in Device.devices)
             {
                 if (GetStatus(d.id) == null)
@@ -137,6 +144,7 @@ namespace MultiDeviceAIO
                 }
             }
             return true;
+            */
             /*
             //Check that Device.devices have values
 
@@ -176,27 +184,30 @@ namespace MultiDeviceAIO
                 HANDLE_RETURN_VALUES = aio.ResetDevice(d.id);
             }
         }
-
-        public string GetStatus(DEVICEID id)
+        /*
+        private int GetStatus(DEVICEID id)
         {
             HANDLE_RETURN_VALUES = aio.GetAiStatus(id, out int AiStatus);
-
+            /*
             if (AIOSTATUS.ContainsKey((CaioConst)AiStatus))
             {
                 AIOSTATUS.TryGetValue((CaioConst)AiStatus, out string status);
                 return status;
             }
-            return AiStatus.ToString();
-        }
+            */
+            //return AiStatus;
+        //}
+        
 
-        public string GetStatusAll()
+        public int GetStatusAll()
         {
-            string output = "Device Status: ";
+            int status = 0;
             foreach (Device d in Device.devices)
             {
-                output += String.Format("{1} ", d.id, GetStatus(d.id));
+                HANDLE_RETURN_VALUES = aio.GetAiStatus(d.id, out int AiStatus);
+                status |= AiStatus;
             }
-            return output;
+            return status;
         }
 
         public void SetupTimedSample(LoggerState settings)
