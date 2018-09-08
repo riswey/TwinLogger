@@ -217,9 +217,15 @@ namespace MultiDeviceAIO
 
         private void RetrieveData()
         {
-            int t = myaio.RetrieveAllData();
+            double percent = myaio.RetrieveAllData() / myaio.testtarget * 100;
 
-            PrintLn(t + ",", false);
+            PrintLn(String.Format("{0:0.00}%",  percent)  , -1);
+
+            //Take a few more samples to get the 0s that end the test 
+            if (percent == 100.0)
+            {
+                PrintLn("Finishing...", 0);
+            }
 
             if (myaio.IsTestFinished )
             {
@@ -230,16 +236,13 @@ namespace MultiDeviceAIO
 
         void TerminateTest()
         {
-            PrintLn("");
-            PrintLn(myaio.GetStatusAll());
-
             if (myaio.IsTestFailed)
             {
                 PrintLn("Failed");
-                //Auto Redo
+                PrintLn(myaio.GetStatusAll());
+                StartSampling();
                 return;
             }
-            PrintLn("Success");
             //Success
             TestFinished();
         }
@@ -322,7 +325,7 @@ namespace MultiDeviceAIO
             {
                 try
                 {
-                    if (IO.MoveTempFileAddHeader(PersistentLoggerState.ps, fn)) { PrintLn("Saved: " + fn); }
+                    if (IO.MoveTempFileAddHeader(PersistentLoggerState.ps, fn)) { PrintLn("Saved: \r\n" + fn); }
                     else { SetStatus("No data to save"); }
                 }
                 catch (IOException ex)
@@ -332,7 +335,7 @@ namespace MultiDeviceAIO
                 }
             }
         }
-
+        /*
         string GenerateDataReport(List<int> data)
         {
             String report = "";
@@ -353,13 +356,13 @@ namespace MultiDeviceAIO
 
             return report;
         }
-
+        */
         void SetStatus(string msg)
         {
             toolStripStatusLabel1.Text = msg;
         }
 
-        void PrintLn(object msg, bool linebreak = true)
+        void PrintLn(object msg, int linebreak = 1)
         {
             if (InvokeRequired)
             {
@@ -367,7 +370,21 @@ namespace MultiDeviceAIO
                 return;
             }
 
-            textBox1.Text += msg.ToString() + (linebreak ? "\r\n" : "");
+            //
+            switch(linebreak)
+            {
+                case -1:
+                    string[] txt = textBox1.Text.Split('\n');
+                    textBox1.Text = String.Join("\n", txt, 0, txt.Length - 2) + "\n" + msg.ToString() + "\r\n";
+                    break;
+                case 0:
+                    textBox1.Text += msg.ToString();
+                    break;
+                case 1:
+                    textBox1.Text += msg.ToString() + "\r\n";
+                    break;
+            }
+
             textBox1.SelectionStart = textBox1.Text.Length;
             textBox1.ScrollToCaret();
         }
@@ -379,13 +396,11 @@ namespace MultiDeviceAIO
 
         void StartSampling()
         {
-            /*
-            if (PersistentLoggerState.ps.data.n_devices == 0)
+            if (PersistentLoggerState.ps.data.n_devices != 2)
             {
                 SetStatus("Error: Incorrect Device number. Reset");
                 return;
             }
-            */
 
             //Start again (too heavy handed)
             //myaio.ResetDevices();
@@ -417,18 +432,9 @@ namespace MultiDeviceAIO
             ////////////////////////////////////////////////////////////////////
             myaio.ResetTest();
 
-            PrintLn(myaio.GetStatusAll());
-
             var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
 
-            PrintLn("----------------------------------------------------\r\nApplied Settings");
-            PrintLn(PersistentLoggerState.ps.ToString());
-
             myaio.SetupTimedSample(PersistentLoggerState.ps.data);
-
-            // Get the fixed pointer of the delegate for event notification
-            //pfunc = Marshal.GetFunctionPointerForDelegate(pdelegate_func);
-            //myaio.SetAiCallBackProc(pfunc);
 
             //STOP TIMER
             TimerState(false);
@@ -437,9 +443,6 @@ namespace MultiDeviceAIO
 
             myaio.Start();
             timergetdata.Start();
-
-            PrintLn(myaio.GetStatusAll());
-
         }
 
         private void SelectDirectory()
@@ -506,6 +509,9 @@ namespace MultiDeviceAIO
             }
 
             setStartButtonText(true, chkExternalControl.Checked);
+
+            PrintLn("----------------------------------------------------\r\nApplied Settings");
+            PrintLn(PersistentLoggerState.ps.ToString());
 
             StartSampling();
         }
@@ -816,7 +822,7 @@ namespace MultiDeviceAIO
         {
 
         }
-
+        /*
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
@@ -828,6 +834,6 @@ namespace MultiDeviceAIO
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
-
+        */
     }
 }

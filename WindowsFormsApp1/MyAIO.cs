@@ -31,64 +31,16 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 
 namespace MultiDeviceAIO
 {
-    public class Device
-    {
-        public static List<Device> devices = new List<Device>();
-
-        public short id { get; set; }
-        string name;
-        public List<int> data = new List<int>();
-        public int target { get; set; } = 0;
-        public bool IsFinished { get; private set; } = false;
-        public bool IsFailed { get; private set; } = false;
-        //timer_duration / 1000 * sample_freq * num_channels
-        public int[] buffer;
-
-        public Device(short id, string name)
-        {
-            this.id = id;
-            this.name = name;
-        }
-
-        public void Clear()
-        {
-            data.Clear();
-            IsFinished = IsFailed = false;
-        }
-
-        public int Add(int datapointcount, ref int[] buf)
-        {
-            if (datapointcount != 0)
-            {
-                var newArray = new int[datapointcount];
-                Array.Copy(buf, newArray, datapointcount);
-                data.AddRange(newArray);
-            }
-            else
-            {
-                IsFinished = true;
-                if (data.Count != target)
-                {
-                    IsFailed = true;
-                }
-            }
-            return data.Count;
-        }
-
-    }
 
     public class MyAIO
     {
         public const int TIMERPERIOD = 500;
 
-        //static string device_root = "Aio00";
-        const string LINEEND = "\r\n";
-
         //TODO: this will crash if not installed. Check
         public Caio aio;
 
         readonly Dictionary<CaioConst, string> AIOSTATUS = new Dictionary<CaioConst, string>() {
-            {0, "Fuck Yeah" },
+            {0, "Ready" },
             {CaioConst.AIS_BUSY, "Device is running"},
             {CaioConst.AIS_START_TRG, "Wait the start trigger"},
             {CaioConst.AIS_DATA_NUM, "Store up to the specified number of data"},
@@ -98,6 +50,9 @@ namespace MultiDeviceAIO
             {CaioConst.AIS_DRVERR, "Driver spec error"}
         };
 
+        public double testtarget { get; private set; } = 0;
+
+        //Ensure you have only one copy of this!
         public DATA concatdata { get; private set; } = null;      //Keep for Scope
 
         int[] buf = new int[100000];
@@ -129,8 +84,7 @@ namespace MultiDeviceAIO
 
         public int DiscoverDevices(string device_root)        //add Device.devices
         {
-            //TODO: rather than looking at error code is there a proactive way to find Device.devices? 
-
+            //TODO: rather than looking at error code is there a proactive way to find devices? 
             DEVICEID id = 0;
             string name;
 
@@ -237,10 +191,10 @@ namespace MultiDeviceAIO
 
         public string GetStatusAll()
         {
-            string output = "";
+            string output = "Device Status: ";
             foreach (Device d in Device.devices)
             {
-                output += String.Format("Status{0}: {1}\r\n", d.id, GetStatus(d.id));
+                output += String.Format("{1} ", d.id, GetStatus(d.id));
             }
             return output;
         }
@@ -268,6 +222,8 @@ namespace MultiDeviceAIO
                 map += AiChannelSeq[i].ToString() + ",";
             }
             */
+
+            testtarget = 0;
 
             //Setting the 
             foreach (Device d in Device.devices)
@@ -299,14 +255,14 @@ namespace MultiDeviceAIO
                 }
 
                 //This is the expected number of samples per device
-                d.target = settings.sample_frequency * settings.duration * settings.n_channels;
+                testtarget += d.target = settings.sample_frequency * settings.duration * settings.n_channels;
 
                 //timer_duration / 1000 * sample_freq * num_channels *2 (no chance of overflow!)
                 d.buffer = new int[TIMERPERIOD / 1000 * settings.sample_frequency * settings.n_channels * 2];
 
             }
 
-            //Reset object state
+            //Reset data state
             concatdata = null;
 
         }
@@ -327,7 +283,6 @@ namespace MultiDeviceAIO
             }
         }
 
-
         public int RetrieveAllData()
         {
             int t = 0;
@@ -340,32 +295,16 @@ namespace MultiDeviceAIO
 
         public int RetrieveData(Device d)
         {
-            /* Testing
-             * =======
-             * 
-             * Confirmed that data size is correct: n_samples x n_channels 
-             * 
-             * Confirmed that data is zeroed before loading
-             * e.g. inc. data array and unfilled data is 0
-             * 
-             * You cannot get false data reading.
-             */
-            //if (num_samples > 0)
-            //{
-            int sampling_count;
-
-            HANDLE_RETURN_VALUES = aio.GetAiSamplingCount(d.id, out sampling_count);
-
+            HANDLE_RETURN_VALUES = aio.GetAiSamplingCount(d.id, out int sampling_count);
 
             if (sampling_count > 0)
             {
                 HANDLE_RETURN_VALUES = aio.GetAiSamplingData(d.id, ref sampling_count, ref buf);
             }
 
-            int size = d.Add(sampling_count * PersistentLoggerState.ps.data.n_channels, ref buf);
+            int added_size = d.Add(sampling_count * PersistentLoggerState.ps.data.n_channels, ref buf);
 
-            //return sampling_count;
-            return size;
+            return added_size;
         }
 
         public bool IsTestFinished {

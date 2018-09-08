@@ -85,6 +85,7 @@
     <Compile Include="Calibration.Designer.cs">
       <DependentUpon>Calibration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Device.cs" />
     <Compile Include="GraphicsExtensions.cs" />
     <Compile Include="AccelerometerClasses.cs" />
     <Compile Include="Scope.cs">
