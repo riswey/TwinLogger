@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using System.Runtime.InteropServices;
 
 using System.Diagnostics;
 
@@ -211,6 +212,7 @@ namespace MultiDeviceAIO
 
         private void data_Tick(object sender, EventArgs e)
         {
+
             //TODO: improve this state logic
             //check start sampling has reset everything
             //don't pass data around by value
@@ -218,22 +220,38 @@ namespace MultiDeviceAIO
 
             //Can only do 1 thing at a time.
 
+            PrintLn(myaio.state + ",", 0);
+
+
             int status = 0;
+            //Must not request if running.
+            //So once armed wait for callback and block everything else
 
-            PrintLn(myaio.running + ",", 0);
-
-            if (!myaio.running)
-                status = myaio.GetStatusAll();
+            switch(myaio.state)
+            {
+                case 0: //Ready
+                    status = myaio.GetStatusAll();
+                    break;
+                case 1: //Armed (no need to make other requests)
+                    status = (int)CaioConst.AIS_START_TRG;
+                    break;
+                case 2:// Busy (do not make requests)
+                    status = (int)CaioConst.AIS_BUSY;
+                    //Start polling
+                    break;
+            }
 
             PrintLn(status + ",", 0);
 
+            //Respond to status
+            //Overflow
             if ((status & (int)CaioConst.AIS_OFERR) == (int)CaioConst.AIS_OFERR)
             {
                 PrintLn("Device Overflow");
                 StartSampling();
                 return;
             }
-
+            //Timer error
             if ((status & (int)CaioConst.AIS_SCERR) == (int)CaioConst.AIS_SCERR)
             {
                 PrintLn("Sampling Clock Error");
@@ -241,10 +259,15 @@ namespace MultiDeviceAIO
                 return;
             }
 
-            //Loop until trigger pressed
-            if ((status & (int)CaioConst.AIS_START_TRG) != (int)CaioConst.AIS_START_TRG)
+            //Waiting for trigger
+            if ((status & (int)CaioConst.AIS_START_TRG) == (int)CaioConst.AIS_START_TRG)
             {
-                myaio.running = true;
+                myaio.state = 1;
+            }
+
+            //Its collecting data
+            if ((status & (int)CaioConst.AIS_BUSY) == (int)CaioConst.AIS_BUSY)
+            {
                 setStartButtonText(true);
                 RetrieveData();
                 //Invoke(new Action(() => RetrieveData()));
@@ -882,8 +905,10 @@ namespace MultiDeviceAIO
 
 
         /**************************************************
-         * NEED A CALLBACK TO KNOW WHEN TRIGGER STARTED
-         * IT WILL NOT ALLOW STATE REQUEST WHILE RUNNING
+         * 
+         *  NEED A CALLBACK TO KNOW WHEN TRIGGER STARTED
+         *  IT WILL NOT ALLOW STATE REQUEST WHILE RUNNING
+         * 
          *************************************************/
 
         static public GCHandle gCh;
@@ -912,60 +937,22 @@ namespace MultiDeviceAIO
 
         //CallBacks
         unsafe public int CallBackProc(short Id, short Message, int wParam, int lParam, void* Param)
-    {
-        if (InvokeRequired)
         {
-            //Put on main thread anyway
-            //Invoke(new Action(() => CallBackProc(Id, Message, wParam, lParam, Param)));
-            //return 0;
+            if (InvokeRequired)
+            {
+                //Put on main thread anyway
+                //Invoke(new Action(() => CallBackProc(Id, Message, wParam, lParam, Param)));
+                //return 0;
+            }
+
+            switch ((CaioConst)Message)
+            {
+                case CaioConst.AIOM_AIE_START:
+                    myaio.state = 2;
+                    break;
+            }
+            return 0;
         }
 
-        //wParam???;
-        int num_samples = lParam;
-
-        switch ((CaioConst)Message)
-        {
-            case CaioConst.AIOM_AIE_DATA_NUM:
-                myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
-                PrintLn(Id, false);
-                break;
-            case CaioConst.AIOM_AIE_END:
-                myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
-                myaio.DeviceFinished(Id);
-                if (myaio.IsTestFinished())
-                {
-                    TestFinished(Id, num_samples);
-                }
-                break;
-            case CaioConst.AIOM_AIE_OFERR:
-                {
-                    string status = myaio.GetStatus(Id);
-                    myaio.Stop();
-                    myaio.ResetTest();
-                    setStartButtonText(false);
-                    PrintLn(String.Format("[Overflow error on device {0}. Status: {1} (Test reset)]", Id, status), false);
-                    //overflow error
-                }
-                break;
-            case CaioConst.AIOM_AIE_SCERR:
-                {
-                    string status = myaio.GetStatus(Id);
-                    myaio.Stop();
-                    myaio.ResetTest();
-                    setStartButtonText(false);
-                    PrintLn(String.Format("[Sampling clock error on device {0}. Status: {1} (Test reset)]", Id, status), false);
-                }
-                break;
-            case CaioConst.AIOM_AIE_ADERR:
-                PrintLn("\r\nData conversion error.");
-                break;
-        }
-        return 0;
     }
-
-
-
-
-
-}
 }

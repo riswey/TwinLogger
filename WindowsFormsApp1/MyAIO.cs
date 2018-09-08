@@ -51,7 +51,7 @@ namespace MultiDeviceAIO
         };
 
         //TODO: Need a proper state machine
-        public bool running { get; set; } = false;
+        public int state { get; set; } = 0;
 
         public double testtarget { get; private set; } = 0;
 
@@ -117,7 +117,7 @@ namespace MultiDeviceAIO
 
         public void ResetTest()
         {
-            running = false;
+            state = 0;
 
             foreach (Device d in Device.devices)
             {
@@ -127,6 +127,8 @@ namespace MultiDeviceAIO
             //Reset External Buffers
             foreach (Device d in Device.devices)
             {
+                //TODO: this causing problems if the device is 
+                HANDLE_RETURN_VALUES = aio.StopAi(d.id);
                 HANDLE_RETURN_VALUES = aio.ResetAiMemory(d.id);
             }
         }
@@ -395,6 +397,29 @@ namespace MultiDeviceAIO
         {
             return (float)bits / 65535 * 20 - 10;
         }
+
+        
+
+        /***********************************
+         *
+         *    CALLBACK STUFF FOR START
+         *
+         **********************************/
+
+        //copied from CaioCS
+        unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void* Param);
+
+        //Note that in loop version this was done in start
+        unsafe public void SetAiCallBackProc(IntPtr pAiCallBack)
+        {
+            // Set the callback routine : Device Operation End Event Factor
+            foreach (Device d in Device.devices)
+            {
+                HANDLE_RETURN_VALUES = aio.SetAiCallBackProc(d.id, pAiCallBack, (int)(CaioConst.AIE_START), null);
+            }
+        }
+
+
 
     }
 
