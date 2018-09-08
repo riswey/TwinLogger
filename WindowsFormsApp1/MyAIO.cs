@@ -7,16 +7,16 @@ using CaioCs;
 using System.Diagnostics;
 
 /// <summary>
-/// Class wraps devices
+/// Class wraps Device.devices
 /// State represents current device config (and nothing else!!!)
 /// </summary>
 
 /*
  * 
  * 
- *  devices need to be reset
+ *  Device.devices need to be reset
  * 
- * assume all devices data gets prepared.
+ * assume all Device.devices data gets prepared.
  * 
  * when last id gets called call the save data
  * 
@@ -31,9 +31,55 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 
 namespace MultiDeviceAIO
 {
+    public class Device
+    {
+        public static List<Device> devices = new List<Device>();
+
+        public short id { get; set; }
+        string name;
+        public List<int> data = new List<int>();
+        public int target { get; set; } = 0;
+        public bool IsFinished { get; private set; } = false;
+        public bool IsFailed { get; private set; } = false;
+        //timer_duration / 1000 * sample_freq * num_channels
+        public int[] buffer;
+
+        public Device(short id, string name)
+        {
+            this.id = id;
+            this.name = name;
+        }
+
+        public void Clear()
+        {
+            data.Clear();
+            IsFinished = IsFailed = false;
+        }
+
+        public int Add(int datapointcount, ref int[] buf)
+        {
+            if (datapointcount != 0)
+            {
+                var newArray = new int[datapointcount];
+                Array.Copy(buf, newArray, datapointcount);
+                data.AddRange(newArray);
+            }
+            else
+            {
+                IsFinished = true;
+                if (data.Count != target)
+                {
+                    IsFailed = true;
+                }
+            }
+            return data.Count;
+        }
+
+    }
+
     public class MyAIO
     {
-        //const int DATA_RECEIVE_EVENT = 100;
+        public const int TIMERPERIOD = 500;
 
         //static string device_root = "Aio00";
         const string LINEEND = "\r\n";
@@ -41,10 +87,8 @@ namespace MultiDeviceAIO
         //TODO: this will crash if not installed. Check
         public Caio aio;
 
-        private List<DEVICEID> devices { get; } = new List<DEVICEID>();
-        public Dictionary<DEVICEID, string> devicenames { get; } = new Dictionary<DEVICEID, string>();
-
         readonly Dictionary<CaioConst, string> AIOSTATUS = new Dictionary<CaioConst, string>() {
+            {0, "Fuck Yeah" },
             {CaioConst.AIS_BUSY, "Device is running"},
             {CaioConst.AIS_START_TRG, "Wait the start trigger"},
             {CaioConst.AIS_DATA_NUM, "Store up to the specified number of data"},
@@ -54,25 +98,9 @@ namespace MultiDeviceAIO
             {CaioConst.AIS_DRVERR, "Driver spec error"}
         };
 
-        /// <summary>
-        /// Data arrives in int[] per device
-        /// A list is built of these arrays for each device (async events per device)
-        /// </summary>
-        public DATA data { get; private set; } = new DATA();
-        
-        //copied from CaioCS
-        unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void* Param);
+        public DATA concatdata { get; private set; } = null;      //Keep for Scope
 
-        public DEVICEID GetID(int idx)
-        {
-            if (idx < devices.Count)
-            {
-                return devices[idx];
-            }
-            return -1;
-        }
-
-        private int finished_count = 0;
+        int[] buf = new int[100000];
 
         public MyAIO(bool testing)
         {
@@ -87,7 +115,7 @@ namespace MultiDeviceAIO
             Close();
         }
 
-        long HANDLE_RETURN_VALUES
+        public long HANDLE_RETURN_VALUES
         {
             set
             {
@@ -99,59 +127,64 @@ namespace MultiDeviceAIO
             }
         }
 
-        public int DiscoverDevices(string device_root)        //add devices
+        public int DiscoverDevices(string device_root)        //add Device.devices
         {
-            //TODO: rather than looking at error code is there a proactive way to find devices? 
+            //TODO: rather than looking at error code is there a proactive way to find Device.devices? 
 
             DEVICEID id = 0;
-            string full_device_name;
+            string name;
 
-            devices.Clear();
-            devicenames.Clear();
+            Device.devices.Clear();
 
             for (int i = 0; i < 10; i++)
             {
-                full_device_name = device_root + i;
-                long ret = aio.Init(full_device_name, out id);
+                name = device_root + i;
+                long ret = aio.Init(name, out id);
                 if (ret == 0)
                 {
-                    devices.Add(id);
-                    devicenames[id] = full_device_name;
-                    data[id] = new List<int>();
+                    Device.devices.Add(new Device(id, name));
                 }
             }
 
-            return devices.Count();
+            return Device.devices.Count();
         }
 
         public void Close()
         {
-            foreach (DEVICEID id in devices)
+
+            foreach (Device d in Device.devices)
             {
-                aio.Exit(id);
+                aio.Exit(d.id);
             }
-            devices.Clear();
+            Device.devices.Clear();
         }
 
         public void ResetTest()
         {
-            //Reset internal data store
-            data.Clear();
-            foreach (DEVICEID id in devices)
+            foreach (Device d in Device.devices)
             {
-                data[id] = new List<int>();
+                d.Clear();
             }
 
             //Reset External Buffers
-            foreach (DEVICEID id in devices)
+            foreach (Device d in Device.devices)
             {
-                HANDLE_RETURN_VALUES = aio.ResetAiMemory(id);
+                HANDLE_RETURN_VALUES = aio.ResetAiMemory(d.id);
             }
         }
 
-        public bool DeviceCheck(short n_channels, out List<int> failedID)
+        public bool DeviceCheck()
         {
-            //Check that devices have values
+            foreach(Device d in Device.devices)
+            {
+                if (GetStatus(d.id) == null)
+                {
+                    return false;
+                }
+            }
+            return true;
+            /*
+            //Check that Device.devices have values
 
             failedID = new List<int>();
 
@@ -178,38 +211,39 @@ namespace MultiDeviceAIO
             }
 
             return failedID.Count == 0;
+            */
         }
 
         public void ResetDevices()
         {
-            //Resets Devices and Drivers
-            foreach (DEVICEID id in devices)
+            //Resets Device.devices and Drivers
+            foreach (Device d in Device.devices)
             {
-                HANDLE_RETURN_VALUES = aio.ResetDevice(id);
+                HANDLE_RETURN_VALUES = aio.ResetDevice(d.id);
             }
         }
 
         public string GetStatus(DEVICEID id)
         {
             HANDLE_RETURN_VALUES = aio.GetAiStatus(id, out int AiStatus);
+
             if (AIOSTATUS.ContainsKey((CaioConst)AiStatus))
             {
                 AIOSTATUS.TryGetValue((CaioConst)AiStatus, out string status);
                 return status;
             }
-            return null;
+            return AiStatus.ToString();
         }
 
         public string GetStatusAll()
         {
             string output = "";
-            foreach (DEVICEID id in devices)
+            foreach (Device d in Device.devices)
             {
-                output += String.Format("Status{0}: {1}\r\n", id, GetStatus(id));
+                output += String.Format("Status{0}: {1}\r\n", d.id, GetStatus(d.id));
             }
             return output;
         }
-
 
         public void SetupTimedSample(LoggerState settings)
         {
@@ -236,83 +270,75 @@ namespace MultiDeviceAIO
             */
 
             //Setting the 
-            foreach (DEVICEID id in devices)
+            foreach (Device d in Device.devices)
             {
-                HANDLE_RETURN_VALUES = aio.SetAiChannels(id, settings.n_channels);
-                HANDLE_RETURN_VALUES = aio.SetAiSamplingClock(id, settings.timer_interval);  //default usec (2000 for)
-                HANDLE_RETURN_VALUES = aio.SetAiStopTimes(id, settings.n_samples);
+                HANDLE_RETURN_VALUES = aio.SetAiChannels(d.id, settings.n_channels);
+                HANDLE_RETURN_VALUES = aio.SetAiSamplingClock(d.id, settings.timer_interval);  //default usec (2000 for)
+                HANDLE_RETURN_VALUES = aio.SetAiStopTimes(d.id, settings.n_samples);
 
-                HANDLE_RETURN_VALUES = aio.SetAiEventSamplingTimes(id, 300);            //#samples until data retrieve event
+                HANDLE_RETURN_VALUES = aio.SetAiMemoryType(d.id, 0);                      //FIFO 1=Ring
 
-                HANDLE_RETURN_VALUES = aio.SetAiTransferMode(id, 0);                    //Device buffered 1=sent to user memory
-                HANDLE_RETURN_VALUES = aio.SetAiMemoryType(id, 0);                      //FIFO 1=Ring
+                HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(d.id, 0);                     //0 means by time
 
                 if (settings.external_control)
                 {
-                    HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(id, 1);                //1 by External trigger rising edge
+                    HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(d.id, 1);                //1 by External trigger rising edge
                 }
                 else
                 {
-                    HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(id, 0);                //0 by Software
+                    HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(d.id, 0);                //0 by Software
                 }
 
                 if (settings.external_control)
                 {
-                    HANDLE_RETURN_VALUES = aio.SetAiClockType(id, 1);                   //external
+                    HANDLE_RETURN_VALUES = aio.SetAiClockType(d.id, 1);                   //external
                 }
                 else
                 {
-                    HANDLE_RETURN_VALUES = aio.SetAiClockType(id, 0);                   //internal
+                    HANDLE_RETURN_VALUES = aio.SetAiClockType(d.id, 0);                   //internal
                 }
 
-                HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(id, 0);                     //0 means by time
+                //This is the expected number of samples per device
+                d.target = settings.sample_frequency * settings.duration * settings.n_channels;
+
+                //timer_duration / 1000 * sample_freq * num_channels *2 (no chance of overflow!)
+                d.buffer = new int[TIMERPERIOD / 1000 * settings.sample_frequency * settings.n_channels * 2];
 
             }
-        }
 
-        //Note that in loop version this was done in start
-        unsafe public void SetAiCallBackProc(IntPtr pAiCallBack)
-        {
-            // Set the callback routine : Device Operation End Event Factor
-            foreach (DEVICEID id in devices)
-            {
-                HANDLE_RETURN_VALUES = aio.SetAiCallBackProc(id, pAiCallBack, (int)(
-                    CaioConst.AIE_DATA_NUM |        //specified numberdata is stored
-                    CaioConst.AIE_END |             //Device operation end
-                    CaioConst.AIE_OFERR |           //Overflow
-                    CaioConst.AIE_SCERR |           //Sampling clock error
-                    CaioConst.AIE_ADERR             //Data Conversion error (sure I'm not converting)
-                ), null);
-            }
+            //Reset object state
+            concatdata = null;
+
         }
 
         public void Start()
         {
-            finished_count = 0;
-            /*
-            foreach (DEVICEID id in devices)
+            foreach (Device d in Device.devices)
             {
-                //End, 500, set num events
-                HANDLE_RETURN_VALUES = aio.SetAiEvent(id, HandleMsgLoop, (int)(CaioConst.AIE_END | CaioConst.AIE_DATA_NUM | CaioConst.AIE_DATA_TSF));
+                HANDLE_RETURN_VALUES = aio.StartAi(d.id);
             }
-            */
-            foreach (DEVICEID id in devices)
-            {
-                HANDLE_RETURN_VALUES = aio.StartAi(id);
-            }
-
-            //HANDLE_RETURN_VALUES = aio.StartAi(devices[1]);
         }       
 
         public void Stop()
         {
-            foreach (DEVICEID id in devices)
+            foreach (Device d in Device.devices)
             {
-                aio.StopAi(id);
+                aio.StopAi(d.id);
             }
         }
 
-        public void RetrieveData(DEVICEID device_id, int num_samples, int n_channels)
+
+        public int RetrieveAllData()
+        {
+            int t = 0;
+            foreach (Device d in Device.devices)
+            {
+                t += RetrieveData(d);
+            }
+            return t;
+        }
+
+        public int RetrieveData(Device d)
         {
             /* Testing
              * =======
@@ -326,18 +352,44 @@ namespace MultiDeviceAIO
              */
             //if (num_samples > 0)
             //{
-                int sampling_times = num_samples;
-                int[] data1 = new int[n_channels * num_samples];
-                HANDLE_RETURN_VALUES = aio.GetAiSamplingData(device_id, ref sampling_times, ref data1);
-                //NOTE: if sampling times changes then sampling cut short
+            int sampling_count;
 
-                //store data
-                data[device_id].AddRange(data1);
-            //}
+            HANDLE_RETURN_VALUES = aio.GetAiSamplingCount(d.id, out sampling_count);
+
+
+            if (sampling_count > 0)
+            {
+                HANDLE_RETURN_VALUES = aio.GetAiSamplingData(d.id, ref sampling_count, ref buf);
+            }
+
+            int size = d.Add(sampling_count * PersistentLoggerState.ps.data.n_channels, ref buf);
+
+            //return sampling_count;
+            return size;
         }
 
-        public void DeviceFinished(short device_id) { finished_count++; }
-        public bool IsTestFinished() { return finished_count == devices.Count; }
+        public bool IsTestFinished {
+            get
+            {
+                foreach (Device d in Device.devices)
+                {
+                    if (!d.IsFinished) return false;
+                }
+                return true;
+            }
+        }
+
+        public bool IsTestFailed
+        {
+            get
+            {
+                foreach (Device d in Device.devices)
+                {
+                    if (d.IsFailed) return true;
+                }
+                return false;
+            }
+        }
 
         /// <summary>
         /// device lists of int[] are concatenated ->
@@ -347,26 +399,31 @@ namespace MultiDeviceAIO
         /// </summary>
         /// <param name="concatdata"></param>
         /// <returns></returns>
-        public bool GetData(out DATA concatdata)
-        {
-            //TODO: return ref
-            if (!IsTestFinished())
-            {
-                concatdata = new DATA();
-                return false;
-            }
 
-            concatdata = data;
-            return true;
+        //TODO: With all this state need to reset object at some stage!!
+        public DATA GetConcatData
+        {
+            get
+            {
+                if (concatdata == null)
+                {
+                    concatdata = new DATA();
+                    foreach (Device d in Device.devices)
+                    {
+                        concatdata.Add(d.id, d.data);
+                    }
+                }
+                return concatdata;
+            }
         }
 
         public List<float[]> ChannelsSnapShot(short n_channels)
         {
             List<float[]> snapshot = new List<float[]>();
-            foreach (DEVICEID id in devices)
+            foreach (Device d in Device.devices)
             {
                 float[] aidata = new float[n_channels];
-                aio.MultiAiEx(id, n_channels, aidata);
+                aio.MultiAiEx(d.id, n_channels, aidata);
                 snapshot.Add(aidata);
             }
             return snapshot;
@@ -375,23 +432,18 @@ namespace MultiDeviceAIO
         public List<int[]> ChannelsSnapShotBinary(short n_channels)
         {
             List<int[]> snapshot = new List<int[]>();
-            foreach (DEVICEID id in devices)
+            foreach (Device d in Device.devices)
             {
                 int[] aidata = new int[n_channels];
-                aio.MultiAi(id, n_channels, aidata);
+                aio.MultiAi(d.id, n_channels, aidata);
                 snapshot.Add(aidata);
             }
             return snapshot;
         }
 
-
         public static float I2V(int bits)
         {
             return (float)bits / 65535 * 20 - 10;
-        }
-
-        public void LoadData(ref DATA data) {
-            this.data = data;
         }
 
     }

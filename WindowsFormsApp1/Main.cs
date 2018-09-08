@@ -5,9 +5,6 @@ using System.Windows.Forms;
 using System.IO;
 
 using System.Diagnostics;
-using System.Threading;
-
-using System.Runtime.InteropServices;
 
 using DEVICEID = System.Int16;
 //The data structure is a dictionary; K: device id V:raw list of data for device
@@ -24,12 +21,36 @@ namespace MultiDeviceAIO
         MyAIO myaio;
 
         Monitor monitor;
-        DATA concatdata;        //stores most recent data
+
+
+        public DATA ConcatData
+        {
+            get
+            {
+                //This is backed by a variable
+                return myaio.GetConcatData;
+            }
+        }
 
         //Handle Callback
-        static public GCHandle gCh;
-        static public MyAIO.PAICALLBACK pdelegate_func;
-        static public IntPtr pfunc;
+        //static public GCHandle gCh;
+        //static public MyAIO.PAICALLBACK pdelegate_func;
+        //static public IntPtr pfunc;
+
+        Timer timergetdata = new Timer();
+
+        //1000hz, 64chan, 5sec
+        //
+        //int target = 10000;        //sampling freq x duration x 2
+            //TODO: make per device
+
+
+            //if returns 0 then its over for that device (end)
+
+            //If target not met then can see who didn't get enough. Flag error
+            //reset
+
+
 
         public Main()
         {
@@ -59,6 +80,12 @@ namespace MultiDeviceAIO
 
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
+
+            //We can work this out exactly from amount of data coming in!
+            timergetdata.Interval = 500;
+
+            timergetdata.Tick += data_Tick;
+
             //TODO: this must be stopped while sampling and restarted at end!!!
             TimerState(true);
         }
@@ -70,26 +97,6 @@ namespace MultiDeviceAIO
             if (myaio != null)
             {
                 myaio.Close();
-            }
-        }
-
-        unsafe private void Form_AiCall_Load(object sender, System.EventArgs e)
-        {
-            // Initialize the delegate for event notification
-            pdelegate_func = new MyAIO.PAICALLBACK(CallBackProc);
-            // Do not release the delegate
-            if (gCh.IsAllocated == false)
-            {
-                gCh = GCHandle.Alloc(pdelegate_func);
-            }
-        }
-
-        private void Form_AiCall_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            // Release the garbage collection handle of the delegate for event notification
-            if (gCh.IsAllocated == true)
-            {
-                gCh.Free();
             }
         }
 
@@ -202,59 +209,39 @@ namespace MultiDeviceAIO
             base.OnFormClosing(e);
         }
 
-        private readonly object syncLock = new object();
-
-        //CallBacks
-        unsafe public int CallBackProc(short Id, short Message, int wParam, int lParam, void* Param)
+        private void data_Tick(object sender, EventArgs e)
         {
-            if (InvokeRequired)
-            {
-                //Put on main thread anyway
-                //Invoke(new Action(() => CallBackProc(Id, Message, wParam, lParam, Param)));
-                //return 0;
-            }
+            RetrieveData();
+            //Invoke(new Action(() => RetrieveData()));
+        }
 
-            //wParam???;
-            int num_samples = lParam;
+        private void RetrieveData()
+        {
+            int t = myaio.RetrieveAllData();
 
-            switch ((CaioConst)Message)
+            PrintLn(t + ",", false);
+
+            if (myaio.IsTestFinished )
             {
-                case CaioConst.AIOM_AIE_DATA_NUM:
-                    myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
-                    PrintLn(Id, false);
-                    break;
-                case CaioConst.AIOM_AIE_END:
-                    myaio.RetrieveData(Id, num_samples, PersistentLoggerState.ps.data.n_channels);
-                    myaio.DeviceFinished(Id);
-                    if (myaio.IsTestFinished())
-                    {
-                        TestFinished(Id, num_samples);
-                    }
-                    break;
-                case CaioConst.AIOM_AIE_OFERR:
-                    {
-                        string status = myaio.GetStatus(Id);
-                        myaio.Stop();
-                        myaio.ResetTest();
-                        setStartButtonText(false);
-                        PrintLn(String.Format("[Overflow error on device {0}. Status: {1} (Test reset)]", Id, status), false);
-                        //overflow error
-                    }
-                    break;
-                case CaioConst.AIOM_AIE_SCERR:
-                    {
-                        string status = myaio.GetStatus(Id);
-                        myaio.Stop();
-                        myaio.ResetTest();
-                        setStartButtonText(false);
-                        PrintLn(String.Format("[Sampling clock error on device {0}. Status: {1} (Test reset)]", Id, status), false);
-                    }
-                    break;
-                case CaioConst.AIOM_AIE_ADERR:
-                    PrintLn("\r\nData conversion error.");
-                    break;
+                timergetdata.Stop();
+                TerminateTest();
             }
-            return 0;
+        }
+
+        void TerminateTest()
+        {
+            PrintLn("");
+            PrintLn(myaio.GetStatusAll());
+
+            if (myaio.IsTestFailed)
+            {
+                PrintLn("Failed");
+                //Auto Redo
+                return;
+            }
+            PrintLn("Success");
+            //Success
+            TestFinished();
         }
 
         /// <summary>
@@ -266,11 +253,10 @@ namespace MultiDeviceAIO
         /// </summary>
         /// <param name="device_id"></param>
         /// <param name="num_samples"></param>
-        void TestFinished(short device_id, int num_samples)
+        void TestFinished()
         {
-            //Per device list of results (int[])
-            
-            myaio.GetData(out concatdata);
+
+            DATA concatdata = myaio.GetConcatData;
 
             //Get new temp and add update AIOSettings.singleInstance
             string filepath = IO.GetFilePathTemp(PersistentLoggerState.ps.data);
@@ -278,10 +264,6 @@ namespace MultiDeviceAIO
             filepath = IO.CheckPath(filepath, false);
 
             IO.SaveDATA(PersistentLoggerState.ps.data, ref filepath, concatdata);
-
-            PrintLn(device_id.ToString(), false);
-
-            PrintLn("END");
 
             /*
             //Generate User reports to see what happened
@@ -326,34 +308,9 @@ namespace MultiDeviceAIO
             TimerState(true);
 
             SetStatus("Ready");
-
+            
         }
-        /*
-        string UserInputAfterSampling()
-        {
-            //User decides:
-            //freq
-            //filename
-            var filepath = txtFilepath.Text;
 
-            using (UserCompleteTest testDialog = new UserCompleteTest(filepath))
-            {
-                if (testDialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    PersistentLoggerState.ps.data.frequency = (float)testDialog.nudFreq.Value;
-                    filepath = testDialog.tbFilename.Text;
-                    PrintLn("Frequency: \t" + PersistentLoggerState.ps.data.frequency);
-                }
-                else
-                {
-                    //Abort
-                    filepath = null;
-                }
-            }
-
-            return filepath;
-        }
-        */
         void RenameTempFile(string fn)
         {
             if (fn == null)
@@ -433,9 +390,12 @@ namespace MultiDeviceAIO
             //Start again (too heavy handed)
             //myaio.ResetDevices();
 
+            //TODO: no device check
+            /*
             List<int> failedID;
-            if (!myaio.DeviceCheck(PersistentLoggerState.ps.data.n_channels, out failedID))
+            if (!myaio.DeviceCheck())
             {
+                
                 string status = "Error: Devices not responding. Device(s) ";
                 foreach (short f in failedID)
                 {
@@ -443,21 +403,19 @@ namespace MultiDeviceAIO
                 }
 
                 status += "failed.";
+                
+                //SetStatus(status);
 
-                SetStatus(status);
+                //?Who failed
+                PrintLn("Failed");
                 return;
             }
+            */
 
             ////////////////////////////////////////////////////////////////////
             // RESET DATA HERE
             ////////////////////////////////////////////////////////////////////
-            try {
-                myaio.ResetTest();
-            }
-            catch (AIODeviceException ex)
-            {
-                ProcessError(ex);
-            }
+            myaio.ResetTest();
 
             PrintLn(myaio.GetStatusAll());
 
@@ -469,13 +427,16 @@ namespace MultiDeviceAIO
             myaio.SetupTimedSample(PersistentLoggerState.ps.data);
 
             // Get the fixed pointer of the delegate for event notification
-            pfunc = Marshal.GetFunctionPointerForDelegate(pdelegate_func);
-            myaio.SetAiCallBackProc(pfunc);
+            //pfunc = Marshal.GetFunctionPointerForDelegate(pdelegate_func);
+            //myaio.SetAiCallBackProc(pfunc);
 
             //STOP TIMER
             TimerState(false);
 
+            PrintLn("Start");
+
             myaio.Start();
+            timergetdata.Start();
 
             PrintLn(myaio.GetStatusAll());
 
@@ -777,7 +738,7 @@ namespace MultiDeviceAIO
             //TODO: inefficient as must convert data every time
             //Can scope take the dictionary?
 
-            using (Scope scope = new Scope(concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration))
+            using (Scope scope = new Scope(myaio.GetConcatData, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration))
             {
                 if (!scope.IsDisposed)
                 {
