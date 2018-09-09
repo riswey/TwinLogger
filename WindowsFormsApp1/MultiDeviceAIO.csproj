@@ -88,6 +88,9 @@
     <Compile Include="Device.cs" />
     <Compile Include="GraphicsExtensions.cs" />
     <Compile Include="AccelerometerClasses.cs" />
+    <Compile Include="MainBusinessCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Scope.cs">
       <SubType>Form</SubType>
     </Compile>

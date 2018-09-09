@@ -741,8 +741,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.Text = "Main";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form_AiCall_FormClosed);
-            this.Load += new System.EventHandler(this.Form_AiCall_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);

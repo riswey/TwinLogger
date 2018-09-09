@@ -220,53 +220,40 @@ namespace MultiDeviceAIO
 
             //Can only do 1 thing at a time.
 
-            PrintLn(myaio.state + ",", 0);
-
+            //PrintLn(myaio.state + ",", 0);
 
             int status = 0;
             //Must not request if running.
             //So once armed wait for callback and block everything else
 
-            switch(myaio.state)
-            {
-                case 0: //Ready
-                    status = myaio.GetStatusAll();
-                    break;
-                case 1: //Armed (no need to make other requests)
-                    status = (int)CaioConst.AIS_START_TRG;
-                    break;
-                case 2:// Busy (do not make requests)
-                    status = (int)CaioConst.AIS_BUSY;
-                    //Start polling
-                    break;
-            }
+            status = myaio.GetStatusAll();
 
-            PrintLn(status + ",", 0);
+            PrintLn(status.ToString("X") + ",", 0);
 
             //Respond to status
             //Overflow
             if ((status & (int)CaioConst.AIS_OFERR) == (int)CaioConst.AIS_OFERR)
             {
                 PrintLn("Device Overflow");
-                StartSampling();
+                Abort();
                 return;
             }
             //Timer error
             if ((status & (int)CaioConst.AIS_SCERR) == (int)CaioConst.AIS_SCERR)
             {
                 PrintLn("Sampling Clock Error");
-                StartSampling();
-                return;
+                //Abort();
+                //return;
             }
 
             //Waiting for trigger
             if ((status & (int)CaioConst.AIS_START_TRG) == (int)CaioConst.AIS_START_TRG)
             {
-                myaio.state = 1;
+                //Its waiting
             }
 
             //Its collecting data
-            if ((status & (int)CaioConst.AIS_BUSY) == (int)CaioConst.AIS_BUSY)
+            if ((status & (int)CaioConst.AIS_DATA_NUM) == (int)CaioConst.AIS_DATA_NUM)
             {
                 setStartButtonText(true);
                 RetrieveData();
@@ -496,8 +483,8 @@ namespace MultiDeviceAIO
 
             myaio.SetupTimedSample(PersistentLoggerState.ps.data);
 
-            pfunc = Marshal.GetFunctionPointerForDelegate(pdelegate_func);
-            myaio.SetAiCallBackProc(pfunc);
+            //pfunc = Marshal.GetFunctionPointerForDelegate(pdelegate_func);
+            //myaio.SetAiCallBackProc(pfunc);
 
 
             //STOP TIMER
@@ -529,9 +516,8 @@ namespace MultiDeviceAIO
         }
 
 
-        /////////////////////////////////////////////////////////////////////////
         // GUI EVENTS
-        /////////////////////////////////////////////////////////////////////////
+
         /*
         private void SetFilename() {
             string filepath;
@@ -696,10 +682,8 @@ namespace MultiDeviceAIO
             SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////
-        // SETTINGS
-        ////////////////////////////////////////////////////////////////////////////////////
-
+        //SETTINGS
+        
         //Flag to stop initial databinding setting everything dirty
         bool has_loaded = false;
 
@@ -903,14 +887,20 @@ namespace MultiDeviceAIO
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        void Abort() {
+            //Abort
+            timergetdata.Stop();
+            myaio.Stop();
+            myaio.ResetTest();
+            myaio.ResetDevices();
+            setStartButtonText(false);
+        }
 
-        /**************************************************
-         * 
-         *  NEED A CALLBACK TO KNOW WHEN TRIGGER STARTED
+
+        /*  NEED A CALLBACK TO KNOW WHEN TRIGGER STARTED
          *  IT WILL NOT ALLOW STATE REQUEST WHILE RUNNING
-         * 
          *************************************************/
-
+        /*
         static public GCHandle gCh;
         static public MyAIO.PAICALLBACK pdelegate_func;
         static public IntPtr pfunc;
@@ -953,6 +943,6 @@ namespace MultiDeviceAIO
             }
             return 0;
         }
-
+        */
     }
 }

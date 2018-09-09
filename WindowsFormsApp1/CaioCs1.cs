@@ -82,13 +82,8 @@ namespace CaioCs
         }
         public override int GetErrorString(int ErrorCode, out string ErrorString)
         {
-            ErrorString = new String('0', 1);
-            System.Text.StringBuilder errorstring = new System.Text.StringBuilder(256);
-            int ret = 10;//AioGetErrorString(ErrorCode, errorstring);
-            if (ret == 0)
-            {
-                ErrorString = errorstring.ToString();
-            }
+            int ret = 0;//AioGetErrorString(ErrorCode, errorstring);
+            ErrorString = "Testing";
             return ret;
         }
         public override int QueryDeviceName(short Index, out string DeviceName, out string Device)
@@ -631,13 +626,13 @@ namespace CaioCs
         }
         public override int StopAi(short Id)
         {
-            int ret = 10;//AioStopAi(Id);
+            int ret = 0;// AioStopAi(Id);
             return ret;
         }
         public override int GetAiStatus(short Id, out int AiStatus)
         {
-            AiStatus = 0;
-            int ret = 10;//AioGetAiStatus(Id, ref AiStatus);
+            AiStatus = (int) CaioConst.AOE_DATA_NUM;
+            int ret = 0;//AioGetAiStatus(Id, ref AiStatus);
             return ret;
         }
         public override int GetAiSamplingCount(short Id, out int AiSamplingCount)

@@ -39,7 +39,7 @@ namespace MultiDeviceAIO
         //TODO: this will crash if not installed. Check
         public Caio aio;
 
-        public readonly Dictionary<CaioConst, string> AIOSTATUS = new Dictionary<CaioConst, string>() {
+        public static readonly Dictionary<CaioConst, string> AIOSTATUS = new Dictionary<CaioConst, string>() {
             {0, "Ready" },
             {CaioConst.AIS_BUSY, "Device is running"},
             {CaioConst.AIS_START_TRG, "Wait the start trigger"},
@@ -51,7 +51,7 @@ namespace MultiDeviceAIO
         };
 
         //TODO: Need a proper state machine
-        public int state { get; set; } = 0;
+        //public int state { get; set; } = 0;
 
         public double testtarget { get; private set; } = 0;
 
@@ -117,7 +117,7 @@ namespace MultiDeviceAIO
 
         public void ResetTest()
         {
-            state = 0;
+            //state = 0;
 
             foreach (Device d in Device.devices)
             {
@@ -405,7 +405,7 @@ namespace MultiDeviceAIO
          *    CALLBACK STUFF FOR START
          *
          **********************************/
-
+         /*
         //copied from CaioCS
         unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void* Param);
 
@@ -418,7 +418,7 @@ namespace MultiDeviceAIO
                 HANDLE_RETURN_VALUES = aio.SetAiCallBackProc(d.id, pAiCallBack, (int)(CaioConst.AIE_START), null);
             }
         }
-
+        */
 
 
     }
