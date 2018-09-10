@@ -41,7 +41,7 @@ namespace MultiDeviceAIO
 
         void StartSampling()
         {
-            if (PersistentLoggerState.ps.data.n_devices != 2)
+            if (PersistentLoggerState.ps.data.n_devices == 0)
             {
                 SetStatus("Error: Incorrect Device number. Reset");
                 return;
