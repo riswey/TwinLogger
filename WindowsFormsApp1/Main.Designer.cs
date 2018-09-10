@@ -92,6 +92,33 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
             this.timermonitor = new System.Windows.Forms.Timer(this.components);
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.pb1overflow = new System.Windows.Forms.PictureBox();
+            this.pb1data = new System.Windows.Forms.PictureBox();
+            this.pb1arm = new System.Windows.Forms.PictureBox();
+            this.pb1busy = new System.Windows.Forms.PictureBox();
+            this.pb1ok = new System.Windows.Forms.PictureBox();
+            this.pb1timer = new System.Windows.Forms.PictureBox();
+            this.pb1convert = new System.Windows.Forms.PictureBox();
+            this.pb1device = new System.Windows.Forms.PictureBox();
+            this.pb2device = new System.Windows.Forms.PictureBox();
+            this.pb2convert = new System.Windows.Forms.PictureBox();
+            this.pb2timer = new System.Windows.Forms.PictureBox();
+            this.pb2overflow = new System.Windows.Forms.PictureBox();
+            this.pb2data = new System.Windows.Forms.PictureBox();
+            this.pb2arm = new System.Windows.Forms.PictureBox();
+            this.pb2busy = new System.Windows.Forms.PictureBox();
+            this.pb2ok = new System.Windows.Forms.PictureBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
@@ -103,6 +130,23 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbStatusOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).BeginInit();
             this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1overflow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1data)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1arm)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1busy)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1ok)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1timer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1convert)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1device)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2device)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2convert)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2timer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2overflow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2data)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2arm)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2busy)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2ok)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox1
@@ -110,11 +154,11 @@
             this.textBox1.BackColor = System.Drawing.Color.Black;
             this.textBox1.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.ForeColor = System.Drawing.Color.LawnGreen;
-            this.textBox1.Location = new System.Drawing.Point(367, 31);
+            this.textBox1.Location = new System.Drawing.Point(367, 156);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(490, 481);
+            this.textBox1.Size = new System.Drawing.Size(490, 356);
             this.textBox1.TabIndex = 1;
             // 
             // statusStrip1
@@ -123,7 +167,7 @@
             this.toolStripStatusLabel1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 515);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(869, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(866, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -154,7 +198,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(869, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(866, 24);
             this.menuStrip1.TabIndex = 17;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -726,12 +770,296 @@
             this.timermonitor.Interval = 250;
             this.timermonitor.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.label24);
+            this.panel4.Controls.Add(this.label23);
+            this.panel4.Controls.Add(this.label19);
+            this.panel4.Controls.Add(this.label20);
+            this.panel4.Controls.Add(this.label21);
+            this.panel4.Controls.Add(this.label22);
+            this.panel4.Controls.Add(this.label18);
+            this.panel4.Controls.Add(this.label17);
+            this.panel4.Controls.Add(this.label16);
+            this.panel4.Controls.Add(this.label15);
+            this.panel4.Controls.Add(this.pb2device);
+            this.panel4.Controls.Add(this.pb2convert);
+            this.panel4.Controls.Add(this.pb2timer);
+            this.panel4.Controls.Add(this.pb2overflow);
+            this.panel4.Controls.Add(this.pb2data);
+            this.panel4.Controls.Add(this.pb2arm);
+            this.panel4.Controls.Add(this.pb2busy);
+            this.panel4.Controls.Add(this.pb2ok);
+            this.panel4.Controls.Add(this.pb1device);
+            this.panel4.Controls.Add(this.pb1convert);
+            this.panel4.Controls.Add(this.pb1timer);
+            this.panel4.Controls.Add(this.pb1overflow);
+            this.panel4.Controls.Add(this.pb1data);
+            this.panel4.Controls.Add(this.pb1arm);
+            this.panel4.Controls.Add(this.pb1busy);
+            this.panel4.Controls.Add(this.pb1ok);
+            this.panel4.Location = new System.Drawing.Point(367, 28);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(487, 91);
+            this.panel4.TabIndex = 39;
+            // 
+            // pb1overflow
+            // 
+            this.pb1overflow.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1overflow.Location = new System.Drawing.Point(154, 20);
+            this.pb1overflow.Name = "pb1overflow";
+            this.pb1overflow.Size = new System.Drawing.Size(21, 21);
+            this.pb1overflow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1overflow.TabIndex = 41;
+            this.pb1overflow.TabStop = false;
+            // 
+            // pb1data
+            // 
+            this.pb1data.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1data.Location = new System.Drawing.Point(115, 20);
+            this.pb1data.Name = "pb1data";
+            this.pb1data.Size = new System.Drawing.Size(21, 21);
+            this.pb1data.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1data.TabIndex = 40;
+            this.pb1data.TabStop = false;
+            // 
+            // pb1arm
+            // 
+            this.pb1arm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1arm.Location = new System.Drawing.Point(88, 20);
+            this.pb1arm.Name = "pb1arm";
+            this.pb1arm.Size = new System.Drawing.Size(21, 21);
+            this.pb1arm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1arm.TabIndex = 39;
+            this.pb1arm.TabStop = false;
+            // 
+            // pb1busy
+            // 
+            this.pb1busy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1busy.Location = new System.Drawing.Point(61, 20);
+            this.pb1busy.Name = "pb1busy";
+            this.pb1busy.Size = new System.Drawing.Size(21, 21);
+            this.pb1busy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1busy.TabIndex = 38;
+            this.pb1busy.TabStop = false;
+            // 
+            // pb1ok
+            // 
+            this.pb1ok.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1ok.Location = new System.Drawing.Point(34, 20);
+            this.pb1ok.Name = "pb1ok";
+            this.pb1ok.Size = new System.Drawing.Size(21, 21);
+            this.pb1ok.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1ok.TabIndex = 37;
+            this.pb1ok.TabStop = false;
+            // 
+            // pb1timer
+            // 
+            this.pb1timer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1timer.Location = new System.Drawing.Point(181, 20);
+            this.pb1timer.Name = "pb1timer";
+            this.pb1timer.Size = new System.Drawing.Size(21, 21);
+            this.pb1timer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1timer.TabIndex = 42;
+            this.pb1timer.TabStop = false;
+            // 
+            // pb1convert
+            // 
+            this.pb1convert.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1convert.Location = new System.Drawing.Point(208, 20);
+            this.pb1convert.Name = "pb1convert";
+            this.pb1convert.Size = new System.Drawing.Size(21, 21);
+            this.pb1convert.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1convert.TabIndex = 43;
+            this.pb1convert.TabStop = false;
+            // 
+            // pb1device
+            // 
+            this.pb1device.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1device.Location = new System.Drawing.Point(235, 20);
+            this.pb1device.Name = "pb1device";
+            this.pb1device.Size = new System.Drawing.Size(21, 21);
+            this.pb1device.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1device.TabIndex = 44;
+            this.pb1device.TabStop = false;
+            // 
+            // pb2device
+            // 
+            this.pb2device.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb2device.Location = new System.Drawing.Point(235, 47);
+            this.pb2device.Name = "pb2device";
+            this.pb2device.Size = new System.Drawing.Size(21, 21);
+            this.pb2device.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb2device.TabIndex = 52;
+            this.pb2device.TabStop = false;
+            // 
+            // pb2convert
+            // 
+            this.pb2convert.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb2convert.Location = new System.Drawing.Point(208, 47);
+            this.pb2convert.Name = "pb2convert";
+            this.pb2convert.Size = new System.Drawing.Size(21, 21);
+            this.pb2convert.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb2convert.TabIndex = 51;
+            this.pb2convert.TabStop = false;
+            // 
+            // pb2timer
+            // 
+            this.pb2timer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb2timer.Location = new System.Drawing.Point(181, 47);
+            this.pb2timer.Name = "pb2timer";
+            this.pb2timer.Size = new System.Drawing.Size(21, 21);
+            this.pb2timer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb2timer.TabIndex = 50;
+            this.pb2timer.TabStop = false;
+            // 
+            // pb2overflow
+            // 
+            this.pb2overflow.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb2overflow.Location = new System.Drawing.Point(154, 47);
+            this.pb2overflow.Name = "pb2overflow";
+            this.pb2overflow.Size = new System.Drawing.Size(21, 21);
+            this.pb2overflow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb2overflow.TabIndex = 49;
+            this.pb2overflow.TabStop = false;
+            // 
+            // pb2data
+            // 
+            this.pb2data.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb2data.Location = new System.Drawing.Point(115, 47);
+            this.pb2data.Name = "pb2data";
+            this.pb2data.Size = new System.Drawing.Size(21, 21);
+            this.pb2data.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb2data.TabIndex = 48;
+            this.pb2data.TabStop = false;
+            // 
+            // pb2arm
+            // 
+            this.pb2arm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb2arm.Location = new System.Drawing.Point(88, 47);
+            this.pb2arm.Name = "pb2arm";
+            this.pb2arm.Size = new System.Drawing.Size(21, 21);
+            this.pb2arm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb2arm.TabIndex = 47;
+            this.pb2arm.TabStop = false;
+            // 
+            // pb2busy
+            // 
+            this.pb2busy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb2busy.Location = new System.Drawing.Point(61, 47);
+            this.pb2busy.Name = "pb2busy";
+            this.pb2busy.Size = new System.Drawing.Size(21, 21);
+            this.pb2busy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb2busy.TabIndex = 46;
+            this.pb2busy.TabStop = false;
+            // 
+            // pb2ok
+            // 
+            this.pb2ok.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb2ok.Location = new System.Drawing.Point(34, 47);
+            this.pb2ok.Name = "pb2ok";
+            this.pb2ok.Size = new System.Drawing.Size(21, 21);
+            this.pb2ok.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb2ok.TabIndex = 45;
+            this.pb2ok.TabStop = false;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(38, 5);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(13, 13);
+            this.label15.TabIndex = 53;
+            this.label15.Text = "0";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(65, 5);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(14, 13);
+            this.label16.TabIndex = 54;
+            this.label16.Text = "B";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(92, 5);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(14, 13);
+            this.label17.TabIndex = 55;
+            this.label17.Text = "A";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(118, 5);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(15, 13);
+            this.label18.TabIndex = 56;
+            this.label18.Text = "D";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(238, 5);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(15, 13);
+            this.label19.TabIndex = 60;
+            this.label19.Text = "D";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(212, 5);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(14, 13);
+            this.label20.TabIndex = 59;
+            this.label20.Text = "C";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(185, 5);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(14, 13);
+            this.label21.TabIndex = 58;
+            this.label21.Text = "T";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(158, 5);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(15, 13);
+            this.label22.TabIndex = 57;
+            this.label22.Text = "O";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(17, 24);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(13, 13);
+            this.label23.TabIndex = 61;
+            this.label23.Text = "0";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(16, 50);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(13, 13);
+            this.label24.TabIndex = 62;
+            this.label24.Text = "1";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(869, 537);
+            this.ClientSize = new System.Drawing.Size(866, 537);
+            this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -757,6 +1085,24 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1overflow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1data)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1arm)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1busy)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1ok)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1timer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1convert)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1device)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2device)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2convert)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2timer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2overflow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2data)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2arm)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2busy)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb2ok)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -825,5 +1171,32 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem1;
         private System.Windows.Forms.PictureBox pbStatusOut;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.PictureBox pb2device;
+        private System.Windows.Forms.PictureBox pb2convert;
+        private System.Windows.Forms.PictureBox pb2timer;
+        private System.Windows.Forms.PictureBox pb2overflow;
+        private System.Windows.Forms.PictureBox pb2data;
+        private System.Windows.Forms.PictureBox pb2arm;
+        private System.Windows.Forms.PictureBox pb2busy;
+        private System.Windows.Forms.PictureBox pb2ok;
+        private System.Windows.Forms.PictureBox pb1device;
+        private System.Windows.Forms.PictureBox pb1convert;
+        private System.Windows.Forms.PictureBox pb1timer;
+        private System.Windows.Forms.PictureBox pb1overflow;
+        private System.Windows.Forms.PictureBox pb1data;
+        private System.Windows.Forms.PictureBox pb1arm;
+        private System.Windows.Forms.PictureBox pb1busy;
+        private System.Windows.Forms.PictureBox pb1ok;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
     }
 }

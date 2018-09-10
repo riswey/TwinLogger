@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
 
@@ -95,6 +96,22 @@ namespace MultiDeviceAIO
             timergetdata.Start();
         }
 
+        void DrawStatus(PictureBox pb, int state)
+        {
+            if (state == 0)
+            {
+                pb.Image = MultiDeviceAIO.Properties.Resources.grey;
+            }
+            else
+            {
+                if (state < 65536)
+                    pb.Image = MultiDeviceAIO.Properties.Resources.green;
+                else
+                    pb.Image = MultiDeviceAIO.Properties.Resources.red;
+            }
+        }
+
+        List<int> status = new List<int>();
         private void data_Tick(object sender, EventArgs e)
         {
             //TODO: improve this state logic
@@ -102,14 +119,44 @@ namespace MultiDeviceAIO
             //don't pass data around by value
             //
 
+            myaio.GetStatusAll(ref status);
 
-            int status = myaio.GetStatusAll();
+            int allstate = 0;
+            foreach(int s1 in status)
+            {
+                allstate |= s1;
+            }
 
-            PrintLn(status.ToString("X") + ",", 0);
+            int s = status[0];
+            DrawStatus(pb1ok, s==0?1:0);
+            DrawStatus(pb1busy, s & (int)CaioConst.AIS_BUSY);
+            DrawStatus(pb1arm, s & (int)CaioConst.AIS_START_TRG);
+            DrawStatus(pb1data, s & (int)CaioConst.AIS_DATA_NUM);
+            DrawStatus(pb1overflow, s & (int)CaioConst.AIS_OFERR);
+            DrawStatus(pb1timer, s & (int)CaioConst.AIS_SCERR);
+            DrawStatus(pb1convert, s & (int)CaioConst.AIS_AIERR);
+            DrawStatus(pb1device, s & (int)CaioConst.AIS_DRVERR);
+
+            if (status.Count > 1)
+            {
+                s = status[1];
+                DrawStatus(pb2ok, s);
+                DrawStatus(pb2busy, s & (int)CaioConst.AIS_BUSY);
+                DrawStatus(pb2arm, s & (int)CaioConst.AIS_START_TRG);
+                DrawStatus(pb2data, s & (int)CaioConst.AIS_DATA_NUM);
+                DrawStatus(pb2overflow, s & (int)CaioConst.AIS_OFERR);
+                DrawStatus(pb2timer, s & (int)CaioConst.AIS_SCERR);
+                DrawStatus(pb2convert, s & (int)CaioConst.AIS_AIERR);
+                DrawStatus(pb2device, s & (int)CaioConst.AIS_DRVERR);
+            }
+
+
+
+            //PrintLn(status.ToString("X") + ",", 0);
 
             //Respond to status
             //Overflow
-            if (TestBit(status, CaioConst.AIS_OFERR))
+            if (TestBit(allstate, CaioConst.AIS_OFERR))
             {
                 PrintLn("Device Overflow");
                 Abort();
@@ -117,22 +164,22 @@ namespace MultiDeviceAIO
                 return;
             }
             //Timer error
-            if (TestBit(status, CaioConst.AIS_SCERR))
+            if (TestBit(allstate, CaioConst.AIS_SCERR))
             {
-                //PrintLn("Sampling Clock Error");
-                //Abort();
-                //StartSampling();
-                //return;
+                PrintLn("Sampling Clock Error");
+                Abort();
+                StartSampling();
+                return;
             }
-
+            
             //Waiting for trigger
-            if (TestBit(status, CaioConst.AIS_START_TRG))
+            if (TestBit(allstate, CaioConst.AIS_START_TRG))
             {
                 state = STATE.ARMED;
             }
-
+            
             //Its collecting data
-            if (TestBit(status, CaioConst.AIS_DATA_NUM) || status == 0)
+            if (TestBit(allstate, CaioConst.AIS_DATA_NUM) || allstate == 0)
             {
                 RetrieveData();
                 //Invoke(new Action(() => RetrieveData()));
@@ -164,7 +211,7 @@ namespace MultiDeviceAIO
             if (myaio.IsTestFailed)
             {
                 PrintLn("Failed");
-                PrintLn(myaio.GetStatusAll());
+                //PrintLn(myaio.GetStatusAll());
                 StartSampling();
                 return;
             }

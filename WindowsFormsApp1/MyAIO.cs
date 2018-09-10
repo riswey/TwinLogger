@@ -185,6 +185,12 @@ namespace MultiDeviceAIO
             {
                 HANDLE_RETURN_VALUES = aio.ResetDevice(d.id);
             }
+
+            DiscoverDevices();
+
+            //TODO: how programatically disconnect and reconnect dvices
+            //They show in device manager but not to program
+            //How to debug usb devices? i.e. they show but why not showing up in prog
         }
         /*
         private int GetStatus(DEVICEID id)
@@ -201,15 +207,14 @@ namespace MultiDeviceAIO
         //}
         
 
-        public int GetStatusAll()
+        public void GetStatusAll(ref List<int> status)
         {
-            int status = 0;
+            status.Clear();
             foreach (Device d in Device.devices)
             {
                 HANDLE_RETURN_VALUES = aio.GetAiStatus(d.id, out int AiStatus);
-                status |= AiStatus;
+                status.Add(AiStatus);                
             }
-            return status;
         }
 
         public void SetupTimedSample(LoggerState settings)
@@ -312,7 +317,13 @@ namespace MultiDeviceAIO
 
             if (sampling_count > 0)
             {
-                HANDLE_RETURN_VALUES = aio.GetAiSamplingData(d.id, ref sampling_count, ref buf);
+                try
+                {
+                    HANDLE_RETURN_VALUES = aio.GetAiSamplingData(d.id, ref sampling_count, ref buf);
+                } catch (StackOverflowException ex)
+                {
+                    //sometimes there is memory corruption
+                }
             }
 
             int added_size = d.Add(sampling_count * PersistentLoggerState.ps.data.n_channels, ref buf);
