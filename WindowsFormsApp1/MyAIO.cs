@@ -254,7 +254,7 @@ namespace MultiDeviceAIO
 
                 HANDLE_RETURN_VALUES = aio.SetAiStopTrigger(d.id, 0);                     //0 means by time
 
-                if (settings.external_control)
+                if (settings.external_trigger)
                 {
                     HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(d.id, 1);                //1 by External trigger rising edge
                 }
@@ -263,7 +263,7 @@ namespace MultiDeviceAIO
                     HANDLE_RETURN_VALUES = aio.SetAiStartTrigger(d.id, 0);                //0 by Software
                 }
 
-                if (settings.external_control)
+                if (settings.external_clock)
                 {
                     HANDLE_RETURN_VALUES = aio.SetAiClockType(d.id, 1);                   //external
                 }

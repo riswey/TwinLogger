@@ -183,8 +183,11 @@ namespace MultiDeviceAIO
             tbDirectory.DataBindings.Clear();
             tbDirectory.DataBindings.Add("Text", PersistentLoggerState.ps.data, "testpath");
 
-            chkExternalControl.DataBindings.Clear();
-            chkExternalControl.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_control");
+            chkExternalTrigger.DataBindings.Clear();
+            chkExternalTrigger.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_trigger");
+
+            chkExternalClock.DataBindings.Clear();
+            chkExternalClock.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_clock");
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

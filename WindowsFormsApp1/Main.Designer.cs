@@ -81,7 +81,8 @@
             this.nudDuration = new System.Windows.Forms.NumericUpDown();
             this.nudChannel = new System.Windows.Forms.NumericUpDown();
             this.btnStart = new System.Windows.Forms.Button();
-            this.chkExternalControl = new System.Windows.Forms.CheckBox();
+            this.chkExternalClock = new System.Windows.Forms.CheckBox();
+            this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label11 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -93,14 +94,16 @@
             this.label13 = new System.Windows.Forms.Label();
             this.timermonitor = new System.Windows.Forms.Timer(this.components);
             this.panel4 = new System.Windows.Forms.Panel();
-            this.pb1overflow = new System.Windows.Forms.PictureBox();
-            this.pb1data = new System.Windows.Forms.PictureBox();
-            this.pb1arm = new System.Windows.Forms.PictureBox();
-            this.pb1busy = new System.Windows.Forms.PictureBox();
-            this.pb1ok = new System.Windows.Forms.PictureBox();
-            this.pb1timer = new System.Windows.Forms.PictureBox();
-            this.pb1convert = new System.Windows.Forms.PictureBox();
-            this.pb1device = new System.Windows.Forms.PictureBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.pb2device = new System.Windows.Forms.PictureBox();
             this.pb2convert = new System.Windows.Forms.PictureBox();
             this.pb2timer = new System.Windows.Forms.PictureBox();
@@ -109,16 +112,14 @@
             this.pb2arm = new System.Windows.Forms.PictureBox();
             this.pb2busy = new System.Windows.Forms.PictureBox();
             this.pb2ok = new System.Windows.Forms.PictureBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
+            this.pb1device = new System.Windows.Forms.PictureBox();
+            this.pb1convert = new System.Windows.Forms.PictureBox();
+            this.pb1timer = new System.Windows.Forms.PictureBox();
+            this.pb1overflow = new System.Windows.Forms.PictureBox();
+            this.pb1data = new System.Windows.Forms.PictureBox();
+            this.pb1arm = new System.Windows.Forms.PictureBox();
+            this.pb1busy = new System.Windows.Forms.PictureBox();
+            this.pb1ok = new System.Windows.Forms.PictureBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
@@ -131,14 +132,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).BeginInit();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1overflow)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1data)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1arm)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1busy)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1ok)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1timer)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1convert)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1device)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2device)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2convert)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2timer)).BeginInit();
@@ -147,6 +140,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb2arm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2busy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2ok)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1device)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1convert)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1timer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1overflow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1data)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1arm)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1busy)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1ok)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox1
@@ -633,15 +634,25 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
-            // chkExternalControl
+            // chkExternalClock
             // 
-            this.chkExternalControl.AutoSize = true;
-            this.chkExternalControl.Location = new System.Drawing.Point(173, 124);
-            this.chkExternalControl.Name = "chkExternalControl";
-            this.chkExternalControl.Size = new System.Drawing.Size(100, 17);
-            this.chkExternalControl.TabIndex = 28;
-            this.chkExternalControl.Text = "External Control";
-            this.chkExternalControl.UseVisualStyleBackColor = true;
+            this.chkExternalClock.AutoSize = true;
+            this.chkExternalClock.Location = new System.Drawing.Point(173, 114);
+            this.chkExternalClock.Name = "chkExternalClock";
+            this.chkExternalClock.Size = new System.Drawing.Size(94, 17);
+            this.chkExternalClock.TabIndex = 28;
+            this.chkExternalClock.Text = "External Clock";
+            this.chkExternalClock.UseVisualStyleBackColor = true;
+            // 
+            // chkExternalTrigger
+            // 
+            this.chkExternalTrigger.AutoSize = true;
+            this.chkExternalTrigger.Location = new System.Drawing.Point(173, 148);
+            this.chkExternalTrigger.Name = "chkExternalTrigger";
+            this.chkExternalTrigger.Size = new System.Drawing.Size(100, 17);
+            this.chkExternalTrigger.TabIndex = 27;
+            this.chkExternalTrigger.Text = "External Trigger";
+            this.chkExternalTrigger.UseVisualStyleBackColor = true;
             // 
             // panel1
             // 
@@ -686,7 +697,8 @@
             this.panel2.Controls.Add(this.pbStatusOut);
             this.panel2.Controls.Add(this.pbStatus);
             this.panel2.Controls.Add(this.label14);
-            this.panel2.Controls.Add(this.chkExternalControl);
+            this.panel2.Controls.Add(this.chkExternalClock);
+            this.panel2.Controls.Add(this.chkExternalTrigger);
             this.panel2.Controls.Add(this.label12);
             this.panel2.Controls.Add(this.btnStart);
             this.panel2.Controls.Add(this.label5);
@@ -803,85 +815,95 @@
             this.panel4.Size = new System.Drawing.Size(487, 91);
             this.panel4.TabIndex = 39;
             // 
-            // pb1overflow
+            // label24
             // 
-            this.pb1overflow.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1overflow.Location = new System.Drawing.Point(154, 20);
-            this.pb1overflow.Name = "pb1overflow";
-            this.pb1overflow.Size = new System.Drawing.Size(21, 21);
-            this.pb1overflow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb1overflow.TabIndex = 41;
-            this.pb1overflow.TabStop = false;
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(16, 50);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(13, 13);
+            this.label24.TabIndex = 62;
+            this.label24.Text = "1";
             // 
-            // pb1data
+            // label23
             // 
-            this.pb1data.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1data.Location = new System.Drawing.Point(115, 20);
-            this.pb1data.Name = "pb1data";
-            this.pb1data.Size = new System.Drawing.Size(21, 21);
-            this.pb1data.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb1data.TabIndex = 40;
-            this.pb1data.TabStop = false;
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(17, 24);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(13, 13);
+            this.label23.TabIndex = 61;
+            this.label23.Text = "0";
             // 
-            // pb1arm
+            // label19
             // 
-            this.pb1arm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1arm.Location = new System.Drawing.Point(88, 20);
-            this.pb1arm.Name = "pb1arm";
-            this.pb1arm.Size = new System.Drawing.Size(21, 21);
-            this.pb1arm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb1arm.TabIndex = 39;
-            this.pb1arm.TabStop = false;
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(238, 5);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(15, 13);
+            this.label19.TabIndex = 60;
+            this.label19.Text = "D";
             // 
-            // pb1busy
+            // label20
             // 
-            this.pb1busy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1busy.Location = new System.Drawing.Point(61, 20);
-            this.pb1busy.Name = "pb1busy";
-            this.pb1busy.Size = new System.Drawing.Size(21, 21);
-            this.pb1busy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb1busy.TabIndex = 38;
-            this.pb1busy.TabStop = false;
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(212, 5);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(14, 13);
+            this.label20.TabIndex = 59;
+            this.label20.Text = "C";
             // 
-            // pb1ok
+            // label21
             // 
-            this.pb1ok.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1ok.Location = new System.Drawing.Point(34, 20);
-            this.pb1ok.Name = "pb1ok";
-            this.pb1ok.Size = new System.Drawing.Size(21, 21);
-            this.pb1ok.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb1ok.TabIndex = 37;
-            this.pb1ok.TabStop = false;
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(185, 5);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(14, 13);
+            this.label21.TabIndex = 58;
+            this.label21.Text = "T";
             // 
-            // pb1timer
+            // label22
             // 
-            this.pb1timer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1timer.Location = new System.Drawing.Point(181, 20);
-            this.pb1timer.Name = "pb1timer";
-            this.pb1timer.Size = new System.Drawing.Size(21, 21);
-            this.pb1timer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb1timer.TabIndex = 42;
-            this.pb1timer.TabStop = false;
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(158, 5);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(15, 13);
+            this.label22.TabIndex = 57;
+            this.label22.Text = "O";
             // 
-            // pb1convert
+            // label18
             // 
-            this.pb1convert.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1convert.Location = new System.Drawing.Point(208, 20);
-            this.pb1convert.Name = "pb1convert";
-            this.pb1convert.Size = new System.Drawing.Size(21, 21);
-            this.pb1convert.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb1convert.TabIndex = 43;
-            this.pb1convert.TabStop = false;
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(118, 5);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(15, 13);
+            this.label18.TabIndex = 56;
+            this.label18.Text = "D";
             // 
-            // pb1device
+            // label17
             // 
-            this.pb1device.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1device.Location = new System.Drawing.Point(235, 20);
-            this.pb1device.Name = "pb1device";
-            this.pb1device.Size = new System.Drawing.Size(21, 21);
-            this.pb1device.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb1device.TabIndex = 44;
-            this.pb1device.TabStop = false;
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(92, 5);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(14, 13);
+            this.label17.TabIndex = 55;
+            this.label17.Text = "A";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(65, 5);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(14, 13);
+            this.label16.TabIndex = 54;
+            this.label16.Text = "B";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(38, 5);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(13, 13);
+            this.label15.TabIndex = 53;
+            this.label15.Text = "0";
             // 
             // pb2device
             // 
@@ -963,95 +985,85 @@
             this.pb2ok.TabIndex = 45;
             this.pb2ok.TabStop = false;
             // 
-            // label15
+            // pb1device
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(38, 5);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(13, 13);
-            this.label15.TabIndex = 53;
-            this.label15.Text = "0";
+            this.pb1device.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1device.Location = new System.Drawing.Point(235, 20);
+            this.pb1device.Name = "pb1device";
+            this.pb1device.Size = new System.Drawing.Size(21, 21);
+            this.pb1device.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1device.TabIndex = 44;
+            this.pb1device.TabStop = false;
             // 
-            // label16
+            // pb1convert
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(65, 5);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(14, 13);
-            this.label16.TabIndex = 54;
-            this.label16.Text = "B";
+            this.pb1convert.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1convert.Location = new System.Drawing.Point(208, 20);
+            this.pb1convert.Name = "pb1convert";
+            this.pb1convert.Size = new System.Drawing.Size(21, 21);
+            this.pb1convert.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1convert.TabIndex = 43;
+            this.pb1convert.TabStop = false;
             // 
-            // label17
+            // pb1timer
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(92, 5);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(14, 13);
-            this.label17.TabIndex = 55;
-            this.label17.Text = "A";
+            this.pb1timer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1timer.Location = new System.Drawing.Point(181, 20);
+            this.pb1timer.Name = "pb1timer";
+            this.pb1timer.Size = new System.Drawing.Size(21, 21);
+            this.pb1timer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1timer.TabIndex = 42;
+            this.pb1timer.TabStop = false;
             // 
-            // label18
+            // pb1overflow
             // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(118, 5);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(15, 13);
-            this.label18.TabIndex = 56;
-            this.label18.Text = "D";
+            this.pb1overflow.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1overflow.Location = new System.Drawing.Point(154, 20);
+            this.pb1overflow.Name = "pb1overflow";
+            this.pb1overflow.Size = new System.Drawing.Size(21, 21);
+            this.pb1overflow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1overflow.TabIndex = 41;
+            this.pb1overflow.TabStop = false;
             // 
-            // label19
+            // pb1data
             // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(238, 5);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(15, 13);
-            this.label19.TabIndex = 60;
-            this.label19.Text = "D";
+            this.pb1data.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1data.Location = new System.Drawing.Point(115, 20);
+            this.pb1data.Name = "pb1data";
+            this.pb1data.Size = new System.Drawing.Size(21, 21);
+            this.pb1data.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1data.TabIndex = 40;
+            this.pb1data.TabStop = false;
             // 
-            // label20
+            // pb1arm
             // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(212, 5);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(14, 13);
-            this.label20.TabIndex = 59;
-            this.label20.Text = "C";
+            this.pb1arm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1arm.Location = new System.Drawing.Point(88, 20);
+            this.pb1arm.Name = "pb1arm";
+            this.pb1arm.Size = new System.Drawing.Size(21, 21);
+            this.pb1arm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1arm.TabIndex = 39;
+            this.pb1arm.TabStop = false;
             // 
-            // label21
+            // pb1busy
             // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(185, 5);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(14, 13);
-            this.label21.TabIndex = 58;
-            this.label21.Text = "T";
+            this.pb1busy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1busy.Location = new System.Drawing.Point(61, 20);
+            this.pb1busy.Name = "pb1busy";
+            this.pb1busy.Size = new System.Drawing.Size(21, 21);
+            this.pb1busy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1busy.TabIndex = 38;
+            this.pb1busy.TabStop = false;
             // 
-            // label22
+            // pb1ok
             // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(158, 5);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(15, 13);
-            this.label22.TabIndex = 57;
-            this.label22.Text = "O";
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(17, 24);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(13, 13);
-            this.label23.TabIndex = 61;
-            this.label23.Text = "0";
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(16, 50);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(13, 13);
-            this.label24.TabIndex = 62;
-            this.label24.Text = "1";
+            this.pb1ok.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pb1ok.Location = new System.Drawing.Point(34, 20);
+            this.pb1ok.Name = "pb1ok";
+            this.pb1ok.Size = new System.Drawing.Size(21, 21);
+            this.pb1ok.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb1ok.TabIndex = 37;
+            this.pb1ok.TabStop = false;
             // 
             // Main
             // 
@@ -1087,14 +1099,6 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1overflow)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1data)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1arm)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1busy)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1ok)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1timer)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1convert)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pb1device)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2device)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2convert)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2timer)).EndInit();
@@ -1103,6 +1107,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb2arm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2busy)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2ok)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1device)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1convert)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1timer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1overflow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1data)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1arm)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1busy)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb1ok)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1149,7 +1161,8 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem1;
-        private System.Windows.Forms.CheckBox chkExternalControl;
+        private System.Windows.Forms.CheckBox chkExternalClock;
+        private System.Windows.Forms.CheckBox chkExternalTrigger;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetDevicesToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem scopeToolStripMenuItem;
