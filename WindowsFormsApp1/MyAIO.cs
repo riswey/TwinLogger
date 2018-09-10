@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using CaioCs;
 
 using System.Diagnostics;
@@ -127,7 +126,8 @@ namespace MultiDeviceAIO
             //Reset External Buffers
             foreach (Device d in Device.devices)
             {
-                //TODO: this causing problems if the device is 
+                //TODO: this causing problems if the device is
+                //It failed in USB transfer
                 HANDLE_RETURN_VALUES = aio.StopAi(d.id);
                 HANDLE_RETURN_VALUES = aio.ResetAiMemory(d.id);
             }
@@ -183,7 +183,14 @@ namespace MultiDeviceAIO
             //Resets Device.devices and Drivers
             foreach (Device d in Device.devices)
             {
-                HANDLE_RETURN_VALUES = aio.ResetDevice(d.id);
+                try
+                {
+                    HANDLE_RETURN_VALUES = aio.ResetDevice(d.id);
+                } catch (Exception ex)
+                {
+                    //It failed in USB transfer.
+                    //TODO low level USB check
+                }
             }
 
             DiscoverDevices();

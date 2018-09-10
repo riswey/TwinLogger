@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiDeviceAIO", "WindowsFo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{237DE931-A6A8-4987-9E95-973BEC5550B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MotorController", "..\Arduino\Arduino\MotorController.csproj", "{BF236221-B5C8-409D-860A-32FA4918E6F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{237DE931-A6A8-4987-9E95-973BEC5550B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{237DE931-A6A8-4987-9E95-973BEC5550B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{237DE931-A6A8-4987-9E95-973BEC5550B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF236221-B5C8-409D-860A-32FA4918E6F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF236221-B5C8-409D-860A-32FA4918E6F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF236221-B5C8-409D-860A-32FA4918E6F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF236221-B5C8-409D-860A-32FA4918E6F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

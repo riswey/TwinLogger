@@ -96,6 +96,34 @@ namespace MultiDeviceAIO
             timergetdata.Start();
         }
 
+        void DrawStatusStrip(int[] status)
+        {
+            //Improve this 4FS
+            int s;
+            s = status[0];
+            DrawStatus(pb1ok, s == 0 ? 1 : 0);
+            DrawStatus(pb1busy, s & (int)CaioConst.AIS_BUSY);
+            DrawStatus(pb1arm, s & (int)CaioConst.AIS_START_TRG);
+            DrawStatus(pb1data, s & (int)CaioConst.AIS_DATA_NUM);
+            DrawStatus(pb1overflow, s & (int)CaioConst.AIS_OFERR);
+            DrawStatus(pb1timer, s & (int)CaioConst.AIS_SCERR);
+            DrawStatus(pb1convert, s & (int)CaioConst.AIS_AIERR);
+            DrawStatus(pb1device, s & (int)CaioConst.AIS_DRVERR);
+
+            if (status.Length > 1)
+            {
+                s = status[1];
+                DrawStatus(pb2ok, s);
+                DrawStatus(pb2busy, s & (int)CaioConst.AIS_BUSY);
+                DrawStatus(pb2arm, s & (int)CaioConst.AIS_START_TRG);
+                DrawStatus(pb2data, s & (int)CaioConst.AIS_DATA_NUM);
+                DrawStatus(pb2overflow, s & (int)CaioConst.AIS_OFERR);
+                DrawStatus(pb2timer, s & (int)CaioConst.AIS_SCERR);
+                DrawStatus(pb2convert, s & (int)CaioConst.AIS_AIERR);
+                DrawStatus(pb2device, s & (int)CaioConst.AIS_DRVERR);
+            }
+        }
+
         void DrawStatus(PictureBox pb, int state)
         {
             if (state == 0)
@@ -114,10 +142,6 @@ namespace MultiDeviceAIO
         List<int> status = new List<int>();
         private void data_Tick(object sender, EventArgs e)
         {
-            //TODO: improve this state logic
-            //check start sampling has reset everything
-            //don't pass data around by value
-            //
 
             myaio.GetStatusAll(ref status);
 
@@ -127,31 +151,8 @@ namespace MultiDeviceAIO
                 allstate |= s1;
             }
 
-            int s = status[0];
-            DrawStatus(pb1ok, s==0?1:0);
-            DrawStatus(pb1busy, s & (int)CaioConst.AIS_BUSY);
-            DrawStatus(pb1arm, s & (int)CaioConst.AIS_START_TRG);
-            DrawStatus(pb1data, s & (int)CaioConst.AIS_DATA_NUM);
-            DrawStatus(pb1overflow, s & (int)CaioConst.AIS_OFERR);
-            DrawStatus(pb1timer, s & (int)CaioConst.AIS_SCERR);
-            DrawStatus(pb1convert, s & (int)CaioConst.AIS_AIERR);
-            DrawStatus(pb1device, s & (int)CaioConst.AIS_DRVERR);
-
-            if (status.Count > 1)
-            {
-                s = status[1];
-                DrawStatus(pb2ok, s);
-                DrawStatus(pb2busy, s & (int)CaioConst.AIS_BUSY);
-                DrawStatus(pb2arm, s & (int)CaioConst.AIS_START_TRG);
-                DrawStatus(pb2data, s & (int)CaioConst.AIS_DATA_NUM);
-                DrawStatus(pb2overflow, s & (int)CaioConst.AIS_OFERR);
-                DrawStatus(pb2timer, s & (int)CaioConst.AIS_SCERR);
-                DrawStatus(pb2convert, s & (int)CaioConst.AIS_AIERR);
-                DrawStatus(pb2device, s & (int)CaioConst.AIS_DRVERR);
-            }
-
-
-
+            DrawStatusStrip(status.ToArray());
+            
             //PrintLn(status.ToString("X") + ",", 0);
 
             //Respond to status

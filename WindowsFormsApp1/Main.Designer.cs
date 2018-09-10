@@ -120,6 +120,7 @@
             this.pb1arm = new System.Windows.Forms.PictureBox();
             this.pb1busy = new System.Windows.Forms.PictureBox();
             this.pb1ok = new System.Windows.Forms.PictureBox();
+            this.motorControllerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
@@ -307,6 +308,7 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.motorControllerToolStripMenuItem,
             this.monitorChannelsToolStripMenuItem,
             this.scopeToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
@@ -316,14 +318,14 @@
             // monitorChannelsToolStripMenuItem
             // 
             this.monitorChannelsToolStripMenuItem.Name = "monitorChannelsToolStripMenuItem";
-            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.monitorChannelsToolStripMenuItem.Text = "Monitor";
             this.monitorChannelsToolStripMenuItem.Click += new System.EventHandler(this.monitorChannelsToolStripMenuItem_Click);
             // 
             // scopeToolStripMenuItem
             // 
             this.scopeToolStripMenuItem.Name = "scopeToolStripMenuItem";
-            this.scopeToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.scopeToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.scopeToolStripMenuItem.Text = "Scope";
             this.scopeToolStripMenuItem.Click += new System.EventHandler(this.scopeToolStripMenuItem_Click);
             // 
@@ -1065,6 +1067,13 @@
             this.pb1ok.TabIndex = 37;
             this.pb1ok.TabStop = false;
             // 
+            // motorControllerToolStripMenuItem
+            // 
+            this.motorControllerToolStripMenuItem.Name = "motorControllerToolStripMenuItem";
+            this.motorControllerToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.motorControllerToolStripMenuItem.Text = "Motor Controller";
+            this.motorControllerToolStripMenuItem.Click += new System.EventHandler(this.motorControllerToolStripMenuItem_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1081,6 +1090,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.Text = "Main";
+            this.Load += new System.EventHandler(this.Main_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -1211,5 +1221,6 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ToolStripMenuItem motorControllerToolStripMenuItem;
     }
 }

@@ -99,7 +99,7 @@ namespace MultiDeviceAIO
                 File.WriteAllText(path, xml);
                 return true;
             }
-            catch (XmlException ex) { return false; }
+            catch (XmlException) { return false; }
             catch (IOException) { return false; }
             catch (Exception) { throw; }
         }

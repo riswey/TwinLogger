@@ -11,7 +11,6 @@ using DEVICEID = System.Int16;
 //The data structure is a dictionary; K: device id V:raw list of data for device
 //K: device id :. data imported by id
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
-using System.Runtime.CompilerServices;
 
 namespace MultiDeviceAIO
 {
@@ -31,26 +30,19 @@ namespace MultiDeviceAIO
             }
         }
 
-        //Handle Callback
-        //static public GCHandle gCh;
-        //static public MyAIO.PAICALLBACK pdelegate_func;
-        //static public IntPtr pfunc;
-
         Timer timergetdata = new Timer();
 
 
         //1000hz, 64chan, 5sec
         //
         //int target = 10000;        //sampling freq x duration x 2
-            //TODO: make per device
+        //TODO: make per device
 
 
-            //if returns 0 then its over for that device (end)
+        //if returns 0 then its over for that device (end)
 
-            //If target not met then can see who didn't get enough. Flag error
-            //reset
-
-
+        //If target not met then can see who didn't get enough. Flag error
+        //reset
 
         public Main()
         {
@@ -89,7 +81,7 @@ namespace MultiDeviceAIO
             //TODO: this must be stopped while sampling and restarted at end!!!
             TimerMonitorState(true);
         }
-
+        
         //#CHECK
         //Advice from code checker
         ~Main()
@@ -673,9 +665,14 @@ namespace MultiDeviceAIO
             //Abort
             timergetdata.Stop();
             myaio.Stop();
+
+            //TODO: how handle a reset failure (USB in transit)
             myaio.ResetTest();
             myaio.ResetDevices();
             setStartButtonText(false);
+
+            timermonitor.Stop();
+            timermonitor.Start();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -737,5 +734,68 @@ namespace MultiDeviceAIO
             return 0;
         }
         */
+
+        //
+        // USB Notify
+        //
+        /*
+        private const int WM_DEVICECHANGE = 0x0219;  // int = 537
+        private const int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 0x00000004;
+
+        private bool readytodevicechange = false;
+        private int numdeviceschanged = 0;
+
+        protected override void WndProc(ref Message m)
+        {
+            switch(m.Msg)
+            {
+                case WM_DEVICECHANGE:
+                    //msg=0x219 (WM_DEVICECHANGE) hwnd=0x230352 wparam=0x7 lparam=0x0 result=0x0
+                    //multiple fires!
+                    PrintLn(m.ToString());
+                    if (readytodevicechange)
+                    {
+                        readytodevicechange = false;
+                        HandleDeviceChange();
+                    }
+
+                    break;
+            }
+            base.WndProc(ref m);
+        }
+
+        void HandleDeviceChange()
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(() => HandleDeviceChange() ));
+                return;
+            }
+
+            //This expected 2 devices now!!!
+            numdeviceschanged = (numdeviceschanged + 1) % 2;
+
+            PrintLn("Device Changed");
+
+            if (numdeviceschanged == 0)
+            {
+                PrintLn("Resetting Devices");
+                //TODO
+                //or perhaps make resetdevices safe
+                //myaio.ResetDevices(); //it failed in USB transfer
+            }
+
+            readytodevicechange = true;
+        }
+        */
+        private void Main_Load(object sender, EventArgs e)
+        {
+            //readytodevicechange = true;
+        }
+
+        private void motorControllerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            (new MotorController.MotorController()).Show();
+        }
     }
 }
