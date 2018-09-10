@@ -7,6 +7,37 @@ namespace MultiDeviceAIO
 
     public partial class Main : Form
     {
+        enum STATE { READY, ARMED, SAMPLING }
+        STATE _state = STATE.READY;
+        STATE state {
+            get
+            {
+                return _state;
+            }
+            set
+            {
+                if (_state == STATE.READY && value == STATE.ARMED)
+                {
+                    //A device just got armed
+                    PrintLn("Armed");
+                    setStartButtonText(true, true);
+                }
+
+                if (_state == STATE.ARMED && value == STATE.SAMPLING)
+                {
+                    //A device just got triggered
+                    PrintLn("Triggered");
+                    setStartButtonText(true);
+                }
+
+                _state = value;
+            }
+        }
+
+        public static bool TestBit(object code, object bit)
+        {
+            return ((int)code & (int)bit) == (int)bit;
+        }
 
         void StartSampling()
         {
@@ -54,61 +85,55 @@ namespace MultiDeviceAIO
             //myaio.SetAiCallBackProc(pfunc);
 
 
-            //STOP TIMER
+            //STOP Monitor Timer
             TimerMonitorState(false);
 
             PrintLn("Start");
 
             myaio.Start();
+
             timergetdata.Start();
         }
 
         private void data_Tick(object sender, EventArgs e)
         {
-
             //TODO: improve this state logic
             //check start sampling has reset everything
             //don't pass data around by value
             //
 
-            //Can only do 1 thing at a time.
 
-            //PrintLn(myaio.state + ",", 0);
-
-            int status = 0;
-            //Must not request if running.
-            //So once armed wait for callback and block everything else
-
-            status = myaio.GetStatusAll();
+            int status = myaio.GetStatusAll();
 
             PrintLn(status.ToString("X") + ",", 0);
 
             //Respond to status
             //Overflow
-            if ((status & (int)CaioConst.AIS_OFERR) == (int)CaioConst.AIS_OFERR)
+            if (TestBit(status, CaioConst.AIS_OFERR))
             {
                 PrintLn("Device Overflow");
                 Abort();
+                StartSampling();
                 return;
             }
             //Timer error
-            if ((status & (int)CaioConst.AIS_SCERR) == (int)CaioConst.AIS_SCERR)
+            if (TestBit(status, CaioConst.AIS_SCERR))
             {
-                PrintLn("Sampling Clock Error");
+                //PrintLn("Sampling Clock Error");
                 //Abort();
+                //StartSampling();
                 //return;
             }
 
             //Waiting for trigger
-            if ((status & (int)CaioConst.AIS_START_TRG) == (int)CaioConst.AIS_START_TRG)
+            if (TestBit(status, CaioConst.AIS_START_TRG))
             {
-                //Its waiting
+                state = STATE.ARMED;
             }
 
             //Its collecting data
-            if ((status & (int)CaioConst.AIS_DATA_NUM) == (int)CaioConst.AIS_DATA_NUM)
+            if (TestBit(status, CaioConst.AIS_DATA_NUM) || status == 0)
             {
-                setStartButtonText(true);
                 RetrieveData();
                 //Invoke(new Action(() => RetrieveData()));
             }

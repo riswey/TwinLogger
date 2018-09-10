@@ -354,8 +354,6 @@ namespace MultiDeviceAIO
                 }
             }
 
-            setStartButtonText(true, chkExternalControl.Checked);
-
             PrintLn("----------------------------------------------------\r\nApplied Settings");
             PrintLn(PersistentLoggerState.ps.ToString());
 
@@ -666,24 +664,9 @@ namespace MultiDeviceAIO
         {
 
         }
-        
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == Keys.Escape)
-            {
-                //Abort
-                timergetdata.Stop();
-                myaio.Stop();
-                myaio.ResetTest();
-                myaio.ResetDevices();
-                setStartButtonText(false);
-                PrintLn("Run aborted");
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
 
-        void Abort() {
+        void Abort()
+        {
             //Abort
             timergetdata.Stop();
             myaio.Stop();
@@ -692,6 +675,17 @@ namespace MultiDeviceAIO
             setStartButtonText(false);
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Escape)
+            {
+                //Abort
+                Abort();
+                PrintLn("Run aborted");
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
 
         /*  NEED A CALLBACK TO KNOW WHEN TRIGGER STARTED
          *  IT WILL NOT ALLOW STATE REQUEST WHILE RUNNING
