@@ -99,6 +99,28 @@ namespace MultiDeviceAIO
         void DrawStatusStrip(int[] status)
         {
             //Improve this 4FS
+            if (status == null)
+            {
+                DrawStatus(pb1ok, 0);
+                DrawStatus(pb1busy, 0);
+                DrawStatus(pb1arm, 0);
+                DrawStatus(pb1data, 0);
+                DrawStatus(pb1overflow, 0);
+                DrawStatus(pb1timer, 0);
+                DrawStatus(pb1convert, 0);
+                DrawStatus(pb1device, 0);
+
+                DrawStatus(pb2ok, 0);
+                DrawStatus(pb2busy, 0);
+                DrawStatus(pb2arm, 0);
+                DrawStatus(pb2data, 0);
+                DrawStatus(pb2overflow, 0);
+                DrawStatus(pb2timer, 0);
+                DrawStatus(pb2convert, 0);
+                DrawStatus(pb2device, 0);
+                return;
+            }
+
             int s;
             s = status[0];
             DrawStatus(pb1ok, s == 0 ? 1 : 0);
@@ -113,7 +135,7 @@ namespace MultiDeviceAIO
             if (status.Length > 1)
             {
                 s = status[1];
-                DrawStatus(pb2ok, s);
+                DrawStatus(pb2ok, s == 0 ? 1 : 0);
                 DrawStatus(pb2busy, s & (int)CaioConst.AIS_BUSY);
                 DrawStatus(pb2arm, s & (int)CaioConst.AIS_START_TRG);
                 DrawStatus(pb2data, s & (int)CaioConst.AIS_DATA_NUM);

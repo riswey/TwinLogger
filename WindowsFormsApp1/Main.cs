@@ -72,6 +72,7 @@ namespace MultiDeviceAIO
 
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
+            DrawStatusStrip(null);
 
             //We can work this out exactly from amount of data coming in!
             timergetdata.Interval = MyAIO.TIMERPERIOD;
