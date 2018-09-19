@@ -8,38 +8,7 @@ namespace MultiDeviceAIO
 
     public partial class FmControlPanel : Form
     {
-        enum STATE { READY, ARMED, SAMPLING }
-        STATE _state = STATE.READY;
-        STATE state {
-            get
-            {
-                return _state;
-            }
-            set
-            {
-                if (_state == STATE.READY && value == STATE.ARMED)
-                {
-                    //A device just got armed
-                    PrintLn("Armed");
-                    setStartButtonText(true, true);
-                }
-
-                if (_state == STATE.ARMED && value == STATE.SAMPLING)
-                {
-                    //A device just got triggered
-                    PrintLn("Triggered");
-                    setStartButtonText(true);
-                }
-
-                _state = value;
-            }
-        }
-
-        public static bool TestBit(object code, object bit)
-        {
-            return ((int)code & (int)bit) == (int)bit;
-        }
-
+        
         void StartSampling()
         {
             if (PersistentLoggerState.ps.data.n_devices == 0)
@@ -96,112 +65,63 @@ namespace MultiDeviceAIO
             timergetdata.Start();
         }
 
-        void DrawStatusStrip(int[] status)
-        {
-            //Improve this 4FS
-            if (status == null)
-            {
-                DrawStatus(pb1ok, 0);
-                DrawStatus(pb1busy, 0);
-                DrawStatus(pb1arm, 0);
-                DrawStatus(pb1data, 0);
-                DrawStatus(pb1overflow, 0);
-                DrawStatus(pb1timer, 0);
-                DrawStatus(pb1convert, 0);
-                DrawStatus(pb1device, 0);
-
-                DrawStatus(pb2ok, 0);
-                DrawStatus(pb2busy, 0);
-                DrawStatus(pb2arm, 0);
-                DrawStatus(pb2data, 0);
-                DrawStatus(pb2overflow, 0);
-                DrawStatus(pb2timer, 0);
-                DrawStatus(pb2convert, 0);
-                DrawStatus(pb2device, 0);
-                return;
-            }
-
-            int s;
-            s = status[0];
-            DrawStatus(pb1ok, s == 0 ? 1 : 0);
-            DrawStatus(pb1busy, s & (int)CaioConst.AIS_BUSY);
-            DrawStatus(pb1arm, s & (int)CaioConst.AIS_START_TRG);
-            DrawStatus(pb1data, s & (int)CaioConst.AIS_DATA_NUM);
-            DrawStatus(pb1overflow, s & (int)CaioConst.AIS_OFERR);
-            DrawStatus(pb1timer, s & (int)CaioConst.AIS_SCERR);
-            DrawStatus(pb1convert, s & (int)CaioConst.AIS_AIERR);
-            DrawStatus(pb1device, s & (int)CaioConst.AIS_DRVERR);
-
-            if (status.Length > 1)
-            {
-                s = status[1];
-                DrawStatus(pb2ok, s == 0 ? 1 : 0);
-                DrawStatus(pb2busy, s & (int)CaioConst.AIS_BUSY);
-                DrawStatus(pb2arm, s & (int)CaioConst.AIS_START_TRG);
-                DrawStatus(pb2data, s & (int)CaioConst.AIS_DATA_NUM);
-                DrawStatus(pb2overflow, s & (int)CaioConst.AIS_OFERR);
-                DrawStatus(pb2timer, s & (int)CaioConst.AIS_SCERR);
-                DrawStatus(pb2convert, s & (int)CaioConst.AIS_AIERR);
-                DrawStatus(pb2device, s & (int)CaioConst.AIS_DRVERR);
-            }
-        }
-
-        void DrawStatus(PictureBox pb, int state)
-        {
-            if (state == 0)
-            {
-                pb.Image = MultiDeviceAIO.Properties.Resources.grey;
-            }
-            else
-            {
-                if (state < 65536)
-                    pb.Image = MultiDeviceAIO.Properties.Resources.green;
-                else
-                    pb.Image = MultiDeviceAIO.Properties.Resources.red;
-            }
-        }
-
-        List<int> status = new List<int>();
         private void data_Tick(object sender, EventArgs e)
         {
-            myaio.GetStatusAll(ref status);
+            var status = new List<int>();
 
-            int allstate = 0;
-            foreach(int s1 in status)
+            myaio.SampleDeviceState(ref status, out int bitflags, out MyAIO.DEVICESTATEDELTA delta);
+
+            //Draw status
+            DrawStatusStrip(status.ToArray());
+
+            //Handle delta
+            if (delta == MyAIO.DEVICESTATEDELTA.ARMED)
             {
-                allstate |= s1;
+                //A device just got armed
+                SayMessage("Armed");
+                PrintLn("Armed");
+                setStartButtonText(true, true);
             }
 
-            DrawStatusStrip(status.ToArray());
-            
-            //PrintLn(status.ToString("X") + ",", 0);
+            if (delta == MyAIO.DEVICESTATEDELTA.SAMPLING)
+            {
+                //A device just got triggered
+                SayMessage("Triggered");
+                PrintLn("Triggered");
+                setStartButtonText(true);
+            }
 
-            //Respond to status
-            //Overflow
-            if (TestBit(allstate, CaioConst.AIS_OFERR))
+            if (delta == MyAIO.DEVICESTATEDELTA.READY)
+            {
+                //A device just stopped collecting data and returned to ready.
+                SayMessage("Complete");
+                PrintLn("Collection Ended");
+                setStartButtonText(true);
+                //retrieve last bit data
+            }
+
+            //Handle bitflags
+
+            //A device got Overflow error
+            if (MyAIO.TestBit(bitflags, CaioConst.AIS_OFERR))
             {
                 PrintLn("Device Overflow");
                 Abort();
                 StartSampling();
                 return;
             }
-            //Timer error
-            if (TestBit(allstate, CaioConst.AIS_SCERR))
+
+            //A device got Clock error
+            if (MyAIO.TestBit(bitflags, CaioConst.AIS_SCERR))
             {
                 PrintLn("Sampling Clock Error");
                 Abort();
                 StartSampling();
                 return;
             }
-            
-            //Waiting for trigger
-            if (TestBit(allstate, CaioConst.AIS_START_TRG))
-            {
-                state = STATE.ARMED;
-            }
-            
-            //Its collecting data
-            if (TestBit(allstate, CaioConst.AIS_DATA_NUM) || allstate == 0)
+
+            //Collecting data || just got an Idle status after sampling
+            if (MyAIO.TestBit(bitflags, CaioConst.AIS_DATA_NUM) || delta == MyAIO.DEVICESTATEDELTA.READY)
             {
                 RetrieveData();
                 //Invoke(new Action(() => RetrieveData()));

@@ -49,8 +49,71 @@ namespace MultiDeviceAIO
             {CaioConst.AIS_DRVERR, "Driver spec error"}
         };
 
-        //TODO: Need a proper state machine
-        //public int state { get; set; } = 0;
+        public static bool TestBit(object code, object bit)
+        {
+            if ((int)code == 0 && (int)bit == 0)
+            {
+                return true;
+            }
+
+            return ((int)code & (int)bit) != 0;
+        }
+
+
+        public enum DEVICESTATE { READY, ARMED, SAMPLING }
+        public enum DEVICESTATEDELTA { NONE, READY, ARMED, SAMPLING }       //measures boundary events
+
+        private static DEVICESTATE devicestate = DEVICESTATE.READY;
+
+        /*
+         * Delta measures the first device to change state.
+         * TODO: maybe make it measure the last
+         */
+        public void SampleDeviceState(ref List<int> status, out int bitflags, out DEVICESTATEDELTA delta)
+        {
+            //set status list
+            GetStatusAll(ref status);
+
+            //Prepare bit flags
+            bitflags = 0;
+            foreach (int s1 in status)
+            {
+                bitflags |= s1;
+            }
+
+            //Respond to bigflags
+            //NOTE: 1 == AIS_BUSY (TODO: any use?)
+            delta = DEVICESTATEDELTA.NONE;
+
+            if (TestBit(bitflags, 0))       //Idle
+            {
+                if (devicestate == DEVICESTATE.SAMPLING)
+                    delta = DEVICESTATEDELTA.READY;
+
+                devicestate = DEVICESTATE.READY;
+            }
+
+            //Waiting for trigger
+            if (TestBit(bitflags, CaioConst.AIS_START_TRG))
+            {
+                if (devicestate == DEVICESTATE.READY)
+                    delta = DEVICESTATEDELTA.ARMED;
+
+                devicestate = DEVICESTATE.ARMED;
+            }
+
+            //Started sampling
+            if (TestBit(bitflags, CaioConst.AIS_DATA_NUM))
+            {
+                if (devicestate == DEVICESTATE.ARMED)
+                    delta = DEVICESTATEDELTA.SAMPLING;
+
+                devicestate = DEVICESTATE.SAMPLING;
+            }
+
+        }
+
+
 
         public double testtarget { get; private set; } = 1e5;
 
@@ -216,6 +279,17 @@ namespace MultiDeviceAIO
 
         public void GetStatusAll(ref List<int> status)
         {
+            /*  //Working State
+                AIS_BUSY		Device is running
+                AIS_START_TRG	Wait the start trigger
+                AIS_DATA_NUM	Store up to the specified number of data
+                //Error State
+                AIS_OFERR		Overflow
+                AIS_SCERR		Sampling clock error
+                AIS_AIERR		AD conversion error
+                AIS_DRVERR		Driver spec error
+             */
+
             status.Clear();
             foreach (Device d in Device.devices)
             {
@@ -329,7 +403,9 @@ namespace MultiDeviceAIO
                     HANDLE_RETURN_VALUES = aio.GetAiSamplingData(d.id, ref sampling_count, ref buf);
                 } catch (StackOverflowException ex)
                 {
-                    //sometimes there is memory corruption
+                    //sometimes there is memory overflow
+                    //TODO: is this all caught by sampling status now?
+                    //Need to abort the run!
                 }
             }
 
@@ -378,10 +454,14 @@ namespace MultiDeviceAIO
                 if (concatdata == null)
                 {
                     concatdata = new DATA();
+
+                    Device.devices.ForEach(d => concatdata.Add(d.id, d.data));
+                    /*
                     foreach (Device d in Device.devices)
                     {
                         concatdata.Add(d.id, d.data);
                     }
+                    */
                 }
                 return concatdata;
             }

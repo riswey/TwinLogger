@@ -1,4 +1,18 @@
-﻿mapping is from local file, switch top setup data.
+﻿NOTES
+=====
+
+11.09	Version 2.0 complete (Current Version)
+10.09	Switched from event driven to polling to reduce dependency on unstable devices.
+28.06	Monitor -> object oriented
+25.03	Version 1.0 complete (Current Version)
+22.03	External Trigger/Clock
+09.03	TwinLogger Start
+18.01	Project Start
+
+
+
+
+mapping is from local file, switch top setup data.
 
 Currently other info extract from setup.
 

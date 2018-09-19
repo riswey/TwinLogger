@@ -11,6 +11,7 @@ using DEVICEID = System.Int16;
 //The data structure is a dictionary; K: device id V:raw list of data for device
 //K: device id :. data imported by id
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
+using System.Speech.Synthesis;
 
 namespace MultiDeviceAIO
 {
@@ -358,6 +359,22 @@ namespace MultiDeviceAIO
             StartSampling();
         }
 
+        void SayMessage(string msg)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(() => SayMessage(msg)) );
+                return;
+            }
+
+            // Initialize a new instance of the SpeechSynthesizer.  
+            using (SpeechSynthesizer synth = new SpeechSynthesizer())
+            {
+                synth.SetOutputToDefaultAudioDevice();
+                synth.Speak( msg );
+            }
+        }
+
         void setStartButtonText(bool on, bool external = false)
         {
             if (InvokeRequired)
@@ -645,6 +662,72 @@ namespace MultiDeviceAIO
                     break;
             }
         }
+
+        private void DrawStatusStrip(int[] status)
+        {
+            //Improve this 4FS
+            if (status == null)
+            {
+                DrawStatus(pb1ok, 0);
+                DrawStatus(pb1busy, 0);
+                DrawStatus(pb1arm, 0);
+                DrawStatus(pb1data, 0);
+                DrawStatus(pb1overflow, 0);
+                DrawStatus(pb1timer, 0);
+                DrawStatus(pb1convert, 0);
+                DrawStatus(pb1device, 0);
+
+                DrawStatus(pb2ok, 0);
+                DrawStatus(pb2busy, 0);
+                DrawStatus(pb2arm, 0);
+                DrawStatus(pb2data, 0);
+                DrawStatus(pb2overflow, 0);
+                DrawStatus(pb2timer, 0);
+                DrawStatus(pb2convert, 0);
+                DrawStatus(pb2device, 0);
+                return;
+            }
+
+            int s;
+            s = status[0];
+            DrawStatus(pb1ok, s == 0 ? 1 : 0);
+            DrawStatus(pb1busy, s & (int)CaioConst.AIS_BUSY);
+            DrawStatus(pb1arm, s & (int)CaioConst.AIS_START_TRG);
+            DrawStatus(pb1data, s & (int)CaioConst.AIS_DATA_NUM);
+            DrawStatus(pb1overflow, s & (int)CaioConst.AIS_OFERR);
+            DrawStatus(pb1timer, s & (int)CaioConst.AIS_SCERR);
+            DrawStatus(pb1convert, s & (int)CaioConst.AIS_AIERR);
+            DrawStatus(pb1device, s & (int)CaioConst.AIS_DRVERR);
+
+            if (status.Length > 1)
+            {
+                s = status[1];
+                DrawStatus(pb2ok, s == 0 ? 1 : 0);
+                DrawStatus(pb2busy, s & (int)CaioConst.AIS_BUSY);
+                DrawStatus(pb2arm, s & (int)CaioConst.AIS_START_TRG);
+                DrawStatus(pb2data, s & (int)CaioConst.AIS_DATA_NUM);
+                DrawStatus(pb2overflow, s & (int)CaioConst.AIS_OFERR);
+                DrawStatus(pb2timer, s & (int)CaioConst.AIS_SCERR);
+                DrawStatus(pb2convert, s & (int)CaioConst.AIS_AIERR);
+                DrawStatus(pb2device, s & (int)CaioConst.AIS_DRVERR);
+            }
+        }
+
+        private void DrawStatus(PictureBox pb, int state)
+        {
+            if (state == 0)
+            {
+                pb.Image = MultiDeviceAIO.Properties.Resources.grey;
+            }
+            else
+            {
+                if (state < 65536)
+                    pb.Image = MultiDeviceAIO.Properties.Resources.green;
+                else
+                    pb.Image = MultiDeviceAIO.Properties.Resources.red;
+            }
+        }
+
 
         private void TimerMonitorState(bool on)
         {
