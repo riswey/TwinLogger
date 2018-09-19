@@ -14,7 +14,7 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 
 namespace MultiDeviceAIO
 {
-    public partial class Main : Form
+    public partial class FmControlPanel : Form
     {
 
         MyAIO myaio;
@@ -44,7 +44,7 @@ namespace MultiDeviceAIO
         //If target not met then can see who didn't get enough. Flag error
         //reset
 
-        public Main()
+        public FmControlPanel()
         {
             if (!NativeMethods.CheckLibrary("caio.dll"))
             {
@@ -52,6 +52,8 @@ namespace MultiDeviceAIO
             }
 
             InitializeComponent();
+
+            progressBar1.Maximum = 100;
 
             SetAIO();
 
@@ -85,7 +87,7 @@ namespace MultiDeviceAIO
         
         //#CHECK
         //Advice from code checker
-        ~Main()
+        ~FmControlPanel()
         {
             if (myaio != null)
             {
@@ -594,15 +596,15 @@ namespace MultiDeviceAIO
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool originalTesting = PersistentLoggerState.ps.data.testingmode; 
-            using (var form = new UserSettings(PersistentLoggerState.ps.data))
+            int originalTesting = PersistentLoggerState.ps.data.testingmode; 
+            using (var form = new FmOptions(PersistentLoggerState.ps.data))
             {
                 var res = form.ShowDialog();
                 if (res == DialogResult.OK)
                 {
                     if (originalTesting != PersistentLoggerState.ps.data.testingmode)
                     {
-                        //change of state
+                        //change of testing state
                         SetAIO();
                     }
                 }
@@ -656,7 +658,7 @@ namespace MultiDeviceAIO
                 pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
                 monitorChannelsToolStripMenuItem.Enabled = false;
                 timermonitor.Stop();
-                monitor.Close();
+                if (monitor != null) monitor.Close();
             }
         }
 

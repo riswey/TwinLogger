@@ -1,6 +1,6 @@
 ﻿namespace MultiDeviceAIO
 {
-    partial class UserSettings
+    partial class FmOptions
     {
         /// <summary>
         /// Required designer variable.
@@ -33,7 +33,9 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.cbTesting = new System.Windows.Forms.CheckBox();
+            this.nudTesting = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTesting)).BeginInit();
             this.SuspendLayout();
             // 
             // tbFileFormat
@@ -82,29 +84,42 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // cbTesting
+            // nudTesting
             // 
-            this.cbTesting.AutoSize = true;
-            this.cbTesting.Location = new System.Drawing.Point(32, 45);
-            this.cbTesting.Name = "cbTesting";
-            this.cbTesting.Size = new System.Drawing.Size(91, 17);
-            this.cbTesting.TabIndex = 6;
-            this.cbTesting.Text = "Testing Mode";
-            this.cbTesting.UseVisualStyleBackColor = true;
+            this.nudTesting.Location = new System.Drawing.Point(129, 42);
+            this.nudTesting.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudTesting.Name = "nudTesting";
+            this.nudTesting.Size = new System.Drawing.Size(40, 20);
+            this.nudTesting.TabIndex = 7;
             // 
-            // UserSettings
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(51, 44);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Testing Mode";
+            // 
+            // FmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(558, 263);
-            this.Controls.Add(this.cbTesting);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.nudTesting);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbFileFormat);
-            this.Name = "UserSettings";
+            this.Name = "FmOptions";
             this.Text = "UserSettings";
+            ((System.ComponentModel.ISupportInitialize)(this.nudTesting)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -117,6 +132,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.CheckBox cbTesting;
+        private System.Windows.Forms.NumericUpDown nudTesting;
+        private System.Windows.Forms.Label label2;
     }
 }

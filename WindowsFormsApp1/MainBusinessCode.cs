@@ -6,7 +6,7 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 namespace MultiDeviceAIO
 {
 
-    public partial class Main : Form
+    public partial class FmControlPanel : Form
     {
         enum STATE { READY, ARMED, SAMPLING }
         STATE _state = STATE.READY;
@@ -212,6 +212,8 @@ namespace MultiDeviceAIO
         private void RetrieveData()
         {
             double percent = myaio.RetrieveAllData() / myaio.testtarget * 100;
+
+            progressBar1.Value = (int)Math.Round(percent, 0);
 
             PrintLn(String.Format("{0:0.00}%", percent), -1);
 

@@ -34,7 +34,7 @@ namespace MultiDeviceAIO
             }
 
 #if TESTING
-            Application.Run(new Main());
+            Application.Run(new FmControlPanel());
 #else
             try
             {

@@ -107,11 +107,11 @@
       <DependentUpon>UserCompleteTest.cs</DependentUpon>
     </Compile>
     <Compile Include="IO.cs" />
-    <Compile Include="Main.cs">
+    <Compile Include="FmControlPanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Main.Designer.cs">
-      <DependentUpon>Main.cs</DependentUpon>
+    <Compile Include="FmControlPanel.Designer.cs">
+      <DependentUpon>FmControlPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Monitor.cs">
       <SubType>Form</SubType>
@@ -124,11 +124,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LoggerState.cs" />
     <Compile Include="FilePersistentState.cs" />
-    <Compile Include="UserSettings.cs">
+    <Compile Include="FmOptions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UserSettings.Designer.cs">
-      <DependentUpon>UserSettings.cs</DependentUpon>
+    <Compile Include="FmOptions.Designer.cs">
+      <DependentUpon>FmOptions.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
@@ -142,8 +142,8 @@
     <EmbeddedResource Include="UserCompleteTest.resx">
       <DependentUpon>UserCompleteTest.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main.resx">
-      <DependentUpon>Main.cs</DependentUpon>
+    <EmbeddedResource Include="FmControlPanel.resx">
+      <DependentUpon>FmControlPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Monitor.resx">
       <DependentUpon>Monitor.cs</DependentUpon>
@@ -158,8 +158,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UserSettings.resx">
-      <DependentUpon>UserSettings.cs</DependentUpon>
+    <EmbeddedResource Include="FmOptions.resx">
+      <DependentUpon>FmOptions.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="MultiDeviceAIO.ruleset" />
     <None Include="Properties\Settings.settings">

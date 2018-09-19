@@ -9,17 +9,17 @@ using System.Windows.Forms;
 
 namespace MultiDeviceAIO
 {
-    public partial class UserSettings : Form
+    public partial class FmOptions : Form
     {
         LoggerState settings;
 
-        public UserSettings(LoggerState settings)
+        public FmOptions(LoggerState settings)
         {
             this.settings = settings;
 
             InitializeComponent();
 
-            cbTesting.Checked = settings.testingmode;
+            nudTesting.Value = settings.testingmode;
             tbFileFormat.Text = settings.datafileformat;
         }
 
@@ -34,7 +34,7 @@ namespace MultiDeviceAIO
 
         private void button1_Click(object sender, EventArgs e)
         {
-            settings.testingmode = cbTesting.Checked;
+            settings.testingmode = (int)nudTesting.Value;
             settings.datafileformat = tbFileFormat.Text;
             this.DialogResult = DialogResult.OK;
             this.Close();

@@ -52,16 +52,16 @@ namespace MultiDeviceAIO
         //TODO: Need a proper state machine
         //public int state { get; set; } = 0;
 
-        public double testtarget { get; private set; } = 0;
+        public double testtarget { get; private set; } = 1e5;
 
         //Ensure you have only one copy of this!
         public DATA concatdata { get; private set; } = null;      //Keep for Scope
 
         int[] buf = new int[100000];
 
-        public MyAIO(bool testing)
+        public MyAIO(int testing)
         {
-            if (testing)
+            if (testing == 2)
                 aio = new Caio1();
             else
                 aio = new Caio();
