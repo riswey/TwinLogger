@@ -11,6 +11,7 @@ namespace MultiDeviceAIO
         
         void StartSampling()
         {
+            //TODO: for twin this should be 2
             if (PersistentLoggerState.ps.data.n_devices == 0)
             {
                 SetStatus("Error: Incorrect Device number. Reset");
@@ -58,7 +59,7 @@ namespace MultiDeviceAIO
             //STOP Monitor Timer
             TimerMonitorState(false);
 
-            PrintLn("Start");
+            PrintLn("Start", true);
 
             myaio.Start();
 
@@ -67,9 +68,26 @@ namespace MultiDeviceAIO
 
         private void data_Tick(object sender, EventArgs e)
         {
+            //This the data collection driver
+            InteractWithDevices();
+        }
+
+        private void InteractWithDevices()
+        {
             var status = new List<int>();
 
-            myaio.SampleDeviceState(ref status, out int bitflags, out MyAIO.DEVICESTATEDELTA delta);
+            myaio.SampleDeviceState(ref status, out int allstatus, out MyAIO.DEVICESTATEDELTA delta);
+
+            PrintLn(String.Format("{0:X}", allstatus));
+
+            if (PersistentLoggerState.ps.data.testingmode == 1)
+            {
+                //waiting for trigger
+                if (allstatus == 2)
+                {
+                    //TODO: we havge no trigger in testing mode 1 so do in software
+                }
+            }
 
             //Draw status
             DrawStatusStrip(status.ToArray());
@@ -78,83 +96,89 @@ namespace MultiDeviceAIO
             if (delta == MyAIO.DEVICESTATEDELTA.ARMED)
             {
                 //A device just got armed
-                SayMessage("Armed");
-                PrintLn("Armed");
-                setStartButtonText(true, true);
+                PrintLn("Armed", true);
+                setStartButtonText(1);
             }
 
             if (delta == MyAIO.DEVICESTATEDELTA.SAMPLING)
             {
                 //A device just got triggered
-                SayMessage("Triggered");
-                PrintLn("Triggered");
-                setStartButtonText(true);
+                PrintLn("Sampling", true);
+                setStartButtonText(2);
             }
 
             if (delta == MyAIO.DEVICESTATEDELTA.READY)
             {
                 //A device just stopped collecting data and returned to ready.
-                SayMessage("Complete");
-                PrintLn("Collection Ended");
-                setStartButtonText(true);
+                PrintLn("Complete", true);
+                setStartButtonText(0);
                 //retrieve last bit data
             }
 
             //Handle bitflags
 
             //A device got Overflow error
-            if (MyAIO.TestBit(bitflags, CaioConst.AIS_OFERR))
+            if (MyAIO.TestBit(allstatus, CaioConst.AIS_OFERR))
             {
-                PrintLn("Device Overflow");
+                PrintLn("Device Overflow", true);
                 Abort();
                 StartSampling();
                 return;
             }
 
             //A device got Clock error
-            if (MyAIO.TestBit(bitflags, CaioConst.AIS_SCERR))
+            if (MyAIO.TestBit(allstatus, CaioConst.AIS_SCERR))
             {
-                PrintLn("Sampling Clock Error");
+                PrintLn("Sampling Clock Error", true);
                 Abort();
                 StartSampling();
                 return;
             }
 
             //Collecting data || just got an Idle status after sampling
-            if (MyAIO.TestBit(bitflags, CaioConst.AIS_DATA_NUM) || delta == MyAIO.DEVICESTATEDELTA.READY)
+            if (MyAIO.TestBit(allstatus, CaioConst.AIS_DATA_NUM) || delta == MyAIO.DEVICESTATEDELTA.READY )
             {
-                RetrieveData();
+                //TODO: May as well do one main thread
+                //but exception handling gets stuck here
+
+                //NOTE: accessviolation
                 //Invoke(new Action(() => RetrieveData()));
+                if (!RetrieveData())
+                {
+                    Abort();
+                    return;
+                }
+
             }
 
         }
 
-        private void RetrieveData()
+        private bool RetrieveData()
         {
-            double percent = myaio.RetrieveAllData() / myaio.testtarget * 100;
+            int dat = myaio.RetrieveAllData();
+
+            if (dat == -1) return false;
+
+            double percent =  dat / myaio.testtarget * 100;
 
             progressBar1.Value = (int)Math.Round(percent, 0);
 
-            PrintLn(String.Format("{0:0.00}%", percent), -1);
-
-            //Take a few more samples to get the 0s that end the test 
-            if (percent == 100.0)
-            {
-                PrintLn("Finishing...", 0);
-            }
-
+            PrintLn(String.Format("{0:0.00}%", percent), false, -1);
+            
             if (myaio.IsTestFinished)
             {
                 timergetdata.Stop();
                 TerminateTest();
             }
+
+            return true;
         }
 
         void TerminateTest()
         {
             if (myaio.IsTestFailed)
             {
-                PrintLn("Failed");
+                PrintLn("Test Failed", true);
                 //PrintLn(myaio.GetStatusAll());
                 StartSampling();
                 return;
@@ -219,12 +243,13 @@ namespace MultiDeviceAIO
             }
 
             RenameTempFile(fn);
-
-            setStartButtonText(false);
+            
+            setStartButtonText(0);
 
             //RESTART TIMER
             TimerMonitorState(true);
 
+            PrintLn("Saved", true);
             SetStatus("Ready");
 
         }

@@ -15,7 +15,13 @@ namespace MultiDeviceAIO
         string name;
         public List<int> data = new List<int>();
         public int target { get; set; } = 0;
-        public bool IsFinished { get; private set; } = false;
+        public bool IsFinished
+        {
+            get
+            {
+                return data.Count == target;
+            }
+        }
         public bool IsFailed { get; private set; } = false;
         //timer_duration / 1000 * sample_freq * num_channels
         public int[] buffer;
@@ -29,7 +35,7 @@ namespace MultiDeviceAIO
         public void Clear()
         {
             data.Clear();
-            IsFinished = IsFailed = false;
+            IsFailed = false;
         }
 
         public int Add(int datapointcount, ref int[] buf)
@@ -53,14 +59,27 @@ namespace MultiDeviceAIO
             }
             else
             {
-                IsFinished = true;
-                if (data.Count != target)
+                //TODO: check logic. If gets zero data but not complete then fail it
+                //Give a second chance?
+                //It doesn't get a second chance if state returned to 0
+                if (!IsFinished)
                 {
                     IsFailed = true;
                 }
             }
+            
             return data.Count;
         }
+
+        //TODO:
+        //When receives zeros -> see if got enough data -> finished
+        //BUT  
+
+
+
+
+
+
 
     }
 }

@@ -32,8 +32,7 @@ namespace MultiDeviceAIO
         }
 
         Timer timergetdata = new Timer();
-
-
+        
         //1000hz, 64chan, 5sec
         //
         //int target = 10000;        //sampling freq x duration x 2
@@ -75,7 +74,7 @@ namespace MultiDeviceAIO
 
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
-            DrawStatusStrip(null);
+            InteractWithDevices();
 
             //We can work this out exactly from amount of data coming in!
             timergetdata.Interval = MyAIO.TIMERPERIOD;
@@ -84,6 +83,7 @@ namespace MultiDeviceAIO
 
             //TODO: this must be stopped while sampling and restarted at end!!!
             TimerMonitorState(true);
+
         }
         
         //#CHECK
@@ -207,9 +207,7 @@ namespace MultiDeviceAIO
             */
             base.OnFormClosing(e);
         }
-
-
-
+        
         void RenameTempFile(string fn)
         {
             if (fn == null)
@@ -258,16 +256,18 @@ namespace MultiDeviceAIO
             toolStripStatusLabel1.Text = msg;
         }
 
-        void PrintLn(object msg, int linebreak = 1)
+        void PrintLn(object msg, bool speak = false, int linebreak = 1)
         {
             if (InvokeRequired)
             {
-                this.Invoke(new Action(() => PrintLn(msg, linebreak)));
+                this.Invoke(new Action(() => PrintLn(msg, speak, linebreak)));
                 return;
             }
 
+            if (speak) SayMessage(msg.ToString());
+
             //
-            switch(linebreak)
+            switch (linebreak)
             {
                 case -1:
                     string[] txt = textBox1.Text.Split('\n');
@@ -289,8 +289,7 @@ namespace MultiDeviceAIO
         {
             File.WriteAllText(PersistentLoggerState.ps.data.testpath + @"\log.txt", textBox1.Text);
         }
-
-
+        
         private void SelectDirectory()
         {
             string startLocation = Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath);
@@ -309,8 +308,7 @@ namespace MultiDeviceAIO
                 }
             }
         }
-
-
+        
         // GUI EVENTS
 
         /*
@@ -371,43 +369,42 @@ namespace MultiDeviceAIO
             using (SpeechSynthesizer synth = new SpeechSynthesizer())
             {
                 synth.SetOutputToDefaultAudioDevice();
+                synth.Volume = 100;  // (0 - 100)
                 synth.Speak( msg );
             }
         }
 
-        void setStartButtonText(bool on, bool external = false)
+        void setStartButtonText(int code)
         {
             if (InvokeRequired)
             {
-                this.Invoke(new Action(() => setStartButtonText(on, external)));
+                this.Invoke(new Action(() => setStartButtonText(code)));
                 return;
             }
 
             Button b = this.btnStart;
 
-            int code = ((on ? 1 : 0) + (external ? 2 : 0) );
-
             switch (code)
             {
                 case 0:
-                case 2:
                     b.Text = "Start";
                     b.BackColor = Color.Transparent;
                     b.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular);
                     break;
                 case 1:
-                    b.Text = "Sampling...";
-                    b.BackColor = Color.Orange;
-                    b.Font = new Font("Microsoft Sans Serif", 10.25F, FontStyle.Bold);
-                    break;
-                case 3:
                     b.Text = "Armed";
                     b.BackColor = Color.Orange;
                     b.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Bold);
                     break;
+                case 2:
+                    b.Text = "Sampling...";
+                    b.BackColor = Color.Orange;
+                    b.Font = new Font("Microsoft Sans Serif", 10.25F, FontStyle.Bold);
+                    break;
                 default:
                     break;
             }
+
             b.Refresh();
         }
 
@@ -663,31 +660,9 @@ namespace MultiDeviceAIO
             }
         }
 
+        //TODO: these can be passed as an array to the device and have it DrawStatus()
         private void DrawStatusStrip(int[] status)
         {
-            //Improve this 4FS
-            if (status == null)
-            {
-                DrawStatus(pb1ok, 0);
-                DrawStatus(pb1busy, 0);
-                DrawStatus(pb1arm, 0);
-                DrawStatus(pb1data, 0);
-                DrawStatus(pb1overflow, 0);
-                DrawStatus(pb1timer, 0);
-                DrawStatus(pb1convert, 0);
-                DrawStatus(pb1device, 0);
-
-                DrawStatus(pb2ok, 0);
-                DrawStatus(pb2busy, 0);
-                DrawStatus(pb2arm, 0);
-                DrawStatus(pb2data, 0);
-                DrawStatus(pb2overflow, 0);
-                DrawStatus(pb2timer, 0);
-                DrawStatus(pb2convert, 0);
-                DrawStatus(pb2device, 0);
-                return;
-            }
-
             int s;
             s = status[0];
             DrawStatus(pb1ok, s == 0 ? 1 : 0);
@@ -717,18 +692,17 @@ namespace MultiDeviceAIO
         {
             if (state == 0)
             {
-                pb.Image = MultiDeviceAIO.Properties.Resources.grey;
+                pb.Image = Properties.Resources.grey;
             }
             else
             {
                 if (state < 65536)
-                    pb.Image = MultiDeviceAIO.Properties.Resources.green;
+                    pb.Image = Properties.Resources.green;
                 else
-                    pb.Image = MultiDeviceAIO.Properties.Resources.red;
+                    pb.Image = Properties.Resources.red;
             }
         }
-
-
+        
         private void TimerMonitorState(bool on)
         {
             if (on)
@@ -752,12 +726,22 @@ namespace MultiDeviceAIO
             myaio.Stop();
 
             //TODO: how handle a reset failure (USB in transit)
-            myaio.ResetTest();
+            //myaio.ResetTest(); //This will cause device inner error if device malfunctioning
+
+
+            //TODO:
+            //Need to work on a way to reset devices at hardware level!!!
+
+
+            //This will hang if the device has failed.
             myaio.ResetDevices();
-            setStartButtonText(false);
+            setStartButtonText(0);
+
+            progressBar1.Value = 0;
 
             timermonitor.Stop();
             timermonitor.Start();
+            PrintLn("Run aborted");
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -766,7 +750,6 @@ namespace MultiDeviceAIO
             {
                 //Abort
                 Abort();
-                PrintLn("Run aborted");
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
@@ -881,6 +864,11 @@ namespace MultiDeviceAIO
         private void motorControllerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             (new MotorController.MotorController()).Show();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Abort();
         }
     }
 }

@@ -122,6 +122,7 @@
             this.pb1busy = new System.Windows.Forms.PictureBox();
             this.pb1ok = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.button1 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
@@ -218,21 +219,21 @@
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -251,7 +252,7 @@
             this.calibrateToolStripMenuItem,
             this.setupToolStripMenuItem1});
             this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
-            this.setupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setupToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.setupToolStripMenuItem.Text = "Accelerometers";
             // 
             // calibrateToolStripMenuItem
@@ -269,7 +270,7 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -286,21 +287,21 @@
             // selectDirectoryToolStripMenuItem
             // 
             this.selectDirectoryToolStripMenuItem.Name = "selectDirectoryToolStripMenuItem";
-            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.selectDirectoryToolStripMenuItem.Text = "Select Directory...";
             this.selectDirectoryToolStripMenuItem.Click += new System.EventHandler(this.selectDirectoryToolStripMenuItem_Click);
             // 
             // startToolStripMenuItem
             // 
             this.startToolStripMenuItem.Name = "startToolStripMenuItem";
-            this.startToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.startToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.startToolStripMenuItem.Text = "Start";
             this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
             // 
             // resetDevicesToolStripMenuItem1
             // 
             this.resetDevicesToolStripMenuItem1.Name = "resetDevicesToolStripMenuItem1";
-            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(165, 22);
             this.resetDevicesToolStripMenuItem1.Text = "Reset Devices";
             this.resetDevicesToolStripMenuItem1.Click += new System.EventHandler(this.resetDevicesToolStripMenuItem1_Click);
             // 
@@ -317,21 +318,21 @@
             // motorControllerToolStripMenuItem
             // 
             this.motorControllerToolStripMenuItem.Name = "motorControllerToolStripMenuItem";
-            this.motorControllerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.motorControllerToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.motorControllerToolStripMenuItem.Text = "Motor Controller";
             this.motorControllerToolStripMenuItem.Click += new System.EventHandler(this.motorControllerToolStripMenuItem_Click);
             // 
             // monitorChannelsToolStripMenuItem
             // 
             this.monitorChannelsToolStripMenuItem.Name = "monitorChannelsToolStripMenuItem";
-            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.monitorChannelsToolStripMenuItem.Text = "Monitor";
             this.monitorChannelsToolStripMenuItem.Click += new System.EventHandler(this.monitorChannelsToolStripMenuItem_Click);
             // 
             // scopeToolStripMenuItem
             // 
             this.scopeToolStripMenuItem.Name = "scopeToolStripMenuItem";
-            this.scopeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.scopeToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.scopeToolStripMenuItem.Text = "Scope";
             this.scopeToolStripMenuItem.Click += new System.EventHandler(this.scopeToolStripMenuItem_Click);
             // 
@@ -349,28 +350,28 @@
             // resetToolStripMenuItem1
             // 
             this.resetToolStripMenuItem1.Name = "resetToolStripMenuItem1";
-            this.resetToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.resetToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
             this.resetToolStripMenuItem1.Text = "Reset";
             this.resetToolStripMenuItem1.Click += new System.EventHandler(this.resetToolStripMenuItem1_Click);
             // 
             // loadToolStripMenuItem1
             // 
             this.loadToolStripMenuItem1.Name = "loadToolStripMenuItem1";
-            this.loadToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.loadToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
             this.loadToolStripMenuItem1.Text = "Load";
             this.loadToolStripMenuItem1.Click += new System.EventHandler(this.loadToolStripMenuItem1_Click);
             // 
             // saveToolStripMenuItem1
             // 
             this.saveToolStripMenuItem1.Name = "saveToolStripMenuItem1";
-            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
             this.saveToolStripMenuItem1.Text = "Save";
             this.saveToolStripMenuItem1.Click += new System.EventHandler(this.saveToolStripMenuItem1_Click);
             // 
             // saveAsToolStripMenuItem1
             // 
             this.saveAsToolStripMenuItem1.Name = "saveAsToolStripMenuItem1";
-            this.saveAsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
             this.saveAsToolStripMenuItem1.Text = "Save As...";
             this.saveAsToolStripMenuItem1.Click += new System.EventHandler(this.saveAsToolStripMenuItem1_Click);
             // 
@@ -385,7 +386,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -634,9 +635,9 @@
             // btnStart
             // 
             this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStart.Location = new System.Drawing.Point(172, 46);
+            this.btnStart.Location = new System.Drawing.Point(156, 46);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(133, 58);
+            this.btnStart.Size = new System.Drawing.Size(108, 58);
             this.btnStart.TabIndex = 26;
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = true;
@@ -645,7 +646,7 @@
             // chkExternalClock
             // 
             this.chkExternalClock.AutoSize = true;
-            this.chkExternalClock.Location = new System.Drawing.Point(173, 114);
+            this.chkExternalClock.Location = new System.Drawing.Point(158, 110);
             this.chkExternalClock.Name = "chkExternalClock";
             this.chkExternalClock.Size = new System.Drawing.Size(94, 17);
             this.chkExternalClock.TabIndex = 28;
@@ -655,7 +656,7 @@
             // chkExternalTrigger
             // 
             this.chkExternalTrigger.AutoSize = true;
-            this.chkExternalTrigger.Location = new System.Drawing.Point(173, 148);
+            this.chkExternalTrigger.Location = new System.Drawing.Point(158, 144);
             this.chkExternalTrigger.Name = "chkExternalTrigger";
             this.chkExternalTrigger.Size = new System.Drawing.Size(100, 17);
             this.chkExternalTrigger.TabIndex = 27;
@@ -702,6 +703,7 @@
             this.panel2.BackColor = System.Drawing.Color.Transparent;
             this.panel2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel2.BackgroundImage")));
             this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel2.Controls.Add(this.button1);
             this.panel2.Controls.Add(this.pbStatusOut);
             this.panel2.Controls.Add(this.pbStatus);
             this.panel2.Controls.Add(this.label14);
@@ -1080,7 +1082,19 @@
             this.progressBar1.Size = new System.Drawing.Size(487, 23);
             this.progressBar1.TabIndex = 40;
             // 
-            // Main
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.ForeColor = System.Drawing.Color.Red;
+            this.button1.Location = new System.Drawing.Point(271, 42);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(42, 62);
+            this.button1.TabIndex = 32;
+            this.button1.Text = "Stop";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // FmControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1095,7 +1109,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.textBox1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Main";
+            this.Name = "FmControlPanel";
             this.Text = "Main";
             this.Load += new System.EventHandler(this.Main_Load);
             this.statusStrip1.ResumeLayout(false);
@@ -1230,5 +1244,6 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ToolStripMenuItem motorControllerToolStripMenuItem;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button button1;
     }
 }

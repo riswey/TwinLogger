@@ -69,6 +69,9 @@ namespace MultiDeviceAIO
          * Delta measures the first device to change state.
          * TODO: maybe make it measure the last
          */
+
+        //TODO: Actually device state is something that devices can manage!!!!!
+        //TODO: This will also handle the delta on first || last device event problem 
         public void SampleDeviceState(ref List<int> status, out int bitflags, out DEVICESTATEDELTA delta)
         {
             //set status list
@@ -105,15 +108,13 @@ namespace MultiDeviceAIO
             //Started sampling
             if (TestBit(bitflags, CaioConst.AIS_DATA_NUM))
             {
-                if (devicestate == DEVICESTATE.ARMED)
+                if (devicestate == DEVICESTATE.ARMED || devicestate == DEVICESTATE.READY)
                     delta = DEVICESTATEDELTA.SAMPLING;
 
                 devicestate = DEVICESTATE.SAMPLING;
             }
 
         }
-
-
 
         public double testtarget { get; private set; } = 1e5;
 
@@ -241,6 +242,13 @@ namespace MultiDeviceAIO
             */
         }
 
+        /*
+         * This will hang if the device has failed
+         * 
+         * 
+         * 
+         */
+
         public void ResetDevices()
         {
             //Resets Device.devices and Drivers
@@ -294,8 +302,9 @@ namespace MultiDeviceAIO
             foreach (Device d in Device.devices)
             {
                 HANDLE_RETURN_VALUES = aio.GetAiStatus(d.id, out int AiStatus);
-                status.Add(AiStatus);                
+                status.Add(AiStatus);           
             }
+
         }
 
         public void SetupTimedSample(LoggerState settings)
@@ -382,17 +391,34 @@ namespace MultiDeviceAIO
             }
         }
 
+        /*
+         *   Returns -1 to abort
+         */
         public int RetrieveAllData()
         {
-            int t = 0;
+            int t = 0, dat = 0;
             foreach (Device d in Device.devices)
             {
-                t += RetrieveData(d);
+                if ( (dat = RetrieveData(d)) != -1)
+                    t += dat;
+                else
+                {
+                    return -1;
+                }
+
             }
             return t;
         }
 
-        public int RetrieveData(Device d)
+        /*
+         * NOTE:
+         * This will throw exceptions arising from accessing the device buffer
+         * 1664LAX does not support user defined buffer. We are stuck with their flakey one.
+         * 
+         * Won't bubble exceptions into next layer. Using magic number
+         * 
+         */
+        private int RetrieveData(Device d)
         {
             HANDLE_RETURN_VALUES = aio.GetAiSamplingCount(d.id, out int sampling_count);
 
@@ -401,12 +427,17 @@ namespace MultiDeviceAIO
                 try
                 {
                     HANDLE_RETURN_VALUES = aio.GetAiSamplingData(d.id, ref sampling_count, ref buf);
-                } catch (StackOverflowException ex)
-                {
-                    //sometimes there is memory overflow
-                    //TODO: is this all caught by sampling status now?
-                    //Need to abort the run!
                 }
+                catch (Exception ex)
+                {
+                    if (ex is StackOverflowException || ex is AccessViolationException)
+                    {
+                        return -1;
+                    }
+
+                    throw;
+                }
+
             }
 
             int added_size = d.Add(sampling_count * PersistentLoggerState.ps.data.n_channels, ref buf);
