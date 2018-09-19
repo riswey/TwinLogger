@@ -262,10 +262,9 @@
             // 
             // setupToolStripMenuItem1
             // 
-            this.setupToolStripMenuItem1.Name = "setupToolStripMenuItem1";
-            this.setupToolStripMenuItem1.Size = new System.Drawing.Size(121, 22);
-            this.setupToolStripMenuItem1.Text = "Setup";
-            this.setupToolStripMenuItem1.Click += new System.EventHandler(this.setupToolStripMenuItem1_Click);
+            //this.setupToolStripMenuItem1.Name = "setupToolStripMenuItem1";
+            //this.setupToolStripMenuItem1.Size = new System.Drawing.Size(121, 22);
+            //this.setupToolStripMenuItem1.Text = "Setup";
             // 
             // optionsToolStripMenuItem
             // 

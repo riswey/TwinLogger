@@ -649,16 +649,15 @@ namespace MultiDeviceAIO
             if (on)
             {
                 timermonitor.Start();
-            } else
+                monitorChannelsToolStripMenuItem.Enabled = true;
+            }
+            else
             {
                 pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
+                monitorChannelsToolStripMenuItem.Enabled = false;
                 timermonitor.Stop();
+                monitor.Close();
             }
-        }
-
-        private void setupToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-
         }
 
         void Abort()

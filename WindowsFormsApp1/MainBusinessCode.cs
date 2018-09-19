@@ -164,7 +164,6 @@ namespace MultiDeviceAIO
         List<int> status = new List<int>();
         private void data_Tick(object sender, EventArgs e)
         {
-
             myaio.GetStatusAll(ref status);
 
             int allstate = 0;
