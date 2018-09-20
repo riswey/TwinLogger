@@ -94,7 +94,6 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
             this.timermonitor = new System.Windows.Forms.Timer(this.components);
-            this.panel4 = new System.Windows.Forms.Panel();
             this.label24 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
@@ -122,6 +121,10 @@
             this.pb1busy = new System.Windows.Forms.PictureBox();
             this.pb1ok = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
@@ -133,7 +136,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbStatusOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).BeginInit();
             this.panel3.SuspendLayout();
-            this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb2device)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2convert)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2timer)).BeginInit();
@@ -150,6 +152,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb1arm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1busy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1ok)).BeginInit();
+            this.panel6.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -522,17 +527,17 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(17, 184);
+            this.label9.Location = new System.Drawing.Point(21, 184);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(30, 13);
+            this.label9.Size = new System.Drawing.Size(51, 13);
             this.label9.TabIndex = 31;
-            this.label9.Text = "Root";
+            this.label9.Text = "Save To:";
             // 
             // tbDirectory
             // 
-            this.tbDirectory.Location = new System.Drawing.Point(53, 181);
+            this.tbDirectory.Location = new System.Drawing.Point(74, 181);
             this.tbDirectory.Name = "tbDirectory";
-            this.tbDirectory.Size = new System.Drawing.Size(236, 20);
+            this.tbDirectory.Size = new System.Drawing.Size(215, 20);
             this.tbDirectory.TabIndex = 28;
             // 
             // button3
@@ -622,7 +627,7 @@
             // btnStart
             // 
             this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStart.Location = new System.Drawing.Point(156, 46);
+            this.btnStart.Location = new System.Drawing.Point(264, 246);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(108, 58);
             this.btnStart.TabIndex = 26;
@@ -633,7 +638,7 @@
             // chkExternalClock
             // 
             this.chkExternalClock.AutoSize = true;
-            this.chkExternalClock.Location = new System.Drawing.Point(158, 110);
+            this.chkExternalClock.Location = new System.Drawing.Point(184, 97);
             this.chkExternalClock.Name = "chkExternalClock";
             this.chkExternalClock.Size = new System.Drawing.Size(94, 17);
             this.chkExternalClock.TabIndex = 28;
@@ -643,7 +648,7 @@
             // chkExternalTrigger
             // 
             this.chkExternalTrigger.AutoSize = true;
-            this.chkExternalTrigger.Location = new System.Drawing.Point(158, 144);
+            this.chkExternalTrigger.Location = new System.Drawing.Point(184, 131);
             this.chkExternalTrigger.Name = "chkExternalTrigger";
             this.chkExternalTrigger.Size = new System.Drawing.Size(100, 17);
             this.chkExternalTrigger.TabIndex = 27;
@@ -690,14 +695,12 @@
             this.panel2.BackColor = System.Drawing.Color.Transparent;
             this.panel2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel2.BackgroundImage")));
             this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel2.Controls.Add(this.button1);
             this.panel2.Controls.Add(this.pbStatusOut);
             this.panel2.Controls.Add(this.pbStatus);
             this.panel2.Controls.Add(this.label14);
             this.panel2.Controls.Add(this.chkExternalClock);
             this.panel2.Controls.Add(this.chkExternalTrigger);
             this.panel2.Controls.Add(this.label12);
-            this.panel2.Controls.Add(this.btnStart);
             this.panel2.Controls.Add(this.label5);
             this.panel2.Controls.Add(this.nudInterval);
             this.panel2.Controls.Add(this.label3);
@@ -713,7 +716,7 @@
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.Red;
-            this.button1.Location = new System.Drawing.Point(271, 42);
+            this.button1.Location = new System.Drawing.Point(379, 242);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(42, 62);
             this.button1.TabIndex = 32;
@@ -724,7 +727,7 @@
             // pbStatusOut
             // 
             this.pbStatusOut.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pbStatusOut.Location = new System.Drawing.Point(238, 10);
+            this.pbStatusOut.Location = new System.Drawing.Point(187, 30);
             this.pbStatusOut.Name = "pbStatusOut";
             this.pbStatusOut.Size = new System.Drawing.Size(26, 24);
             this.pbStatusOut.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -734,7 +737,7 @@
             // pbStatus
             // 
             this.pbStatus.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pbStatus.Location = new System.Drawing.Point(273, 10);
+            this.pbStatus.Location = new System.Drawing.Point(249, 30);
             this.pbStatus.Name = "pbStatus";
             this.pbStatus.Size = new System.Drawing.Size(26, 24);
             this.pbStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -745,11 +748,11 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(173, 10);
+            this.label14.Location = new System.Drawing.Point(159, 4);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(59, 16);
+            this.label14.Size = new System.Drawing.Size(154, 16);
             this.label14.TabIndex = 29;
-            this.label14.Text = "Status: ";
+            this.label14.Text = "Accelerometer Array:";
             // 
             // label12
             // 
@@ -757,9 +760,9 @@
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label12.Location = new System.Drawing.Point(23, 4);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(110, 16);
+            this.label12.Size = new System.Drawing.Size(117, 16);
             this.label12.TabIndex = 0;
-            this.label12.Text = "Device Control";
+            this.label12.Text = "Device Settings";
             // 
             // panel3
             // 
@@ -791,43 +794,10 @@
             this.timermonitor.Interval = 250;
             this.timermonitor.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // panel4
-            // 
-            this.panel4.Controls.Add(this.label24);
-            this.panel4.Controls.Add(this.label23);
-            this.panel4.Controls.Add(this.label19);
-            this.panel4.Controls.Add(this.label20);
-            this.panel4.Controls.Add(this.label21);
-            this.panel4.Controls.Add(this.label22);
-            this.panel4.Controls.Add(this.label18);
-            this.panel4.Controls.Add(this.label17);
-            this.panel4.Controls.Add(this.label16);
-            this.panel4.Controls.Add(this.label15);
-            this.panel4.Controls.Add(this.pb2device);
-            this.panel4.Controls.Add(this.pb2convert);
-            this.panel4.Controls.Add(this.pb2timer);
-            this.panel4.Controls.Add(this.pb2overflow);
-            this.panel4.Controls.Add(this.pb2data);
-            this.panel4.Controls.Add(this.pb2arm);
-            this.panel4.Controls.Add(this.pb2busy);
-            this.panel4.Controls.Add(this.pb2ok);
-            this.panel4.Controls.Add(this.pb1device);
-            this.panel4.Controls.Add(this.pb1convert);
-            this.panel4.Controls.Add(this.pb1timer);
-            this.panel4.Controls.Add(this.pb1overflow);
-            this.panel4.Controls.Add(this.pb1data);
-            this.panel4.Controls.Add(this.pb1arm);
-            this.panel4.Controls.Add(this.pb1busy);
-            this.panel4.Controls.Add(this.pb1ok);
-            this.panel4.Location = new System.Drawing.Point(367, 28);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(487, 91);
-            this.panel4.TabIndex = 39;
-            // 
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(16, 50);
+            this.label24.Location = new System.Drawing.Point(14, 56);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(13, 13);
             this.label24.TabIndex = 62;
@@ -836,7 +806,7 @@
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(17, 24);
+            this.label23.Location = new System.Drawing.Point(15, 30);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(13, 13);
             this.label23.TabIndex = 61;
@@ -845,7 +815,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(238, 5);
+            this.label19.Location = new System.Drawing.Point(236, 11);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(15, 13);
             this.label19.TabIndex = 60;
@@ -854,7 +824,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(212, 5);
+            this.label20.Location = new System.Drawing.Point(210, 11);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(14, 13);
             this.label20.TabIndex = 59;
@@ -863,7 +833,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(185, 5);
+            this.label21.Location = new System.Drawing.Point(183, 11);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(14, 13);
             this.label21.TabIndex = 58;
@@ -872,7 +842,7 @@
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(158, 5);
+            this.label22.Location = new System.Drawing.Point(156, 11);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(15, 13);
             this.label22.TabIndex = 57;
@@ -881,7 +851,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(118, 5);
+            this.label18.Location = new System.Drawing.Point(116, 11);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(15, 13);
             this.label18.TabIndex = 56;
@@ -890,7 +860,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(92, 5);
+            this.label17.Location = new System.Drawing.Point(90, 11);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(14, 13);
             this.label17.TabIndex = 55;
@@ -899,7 +869,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(65, 5);
+            this.label16.Location = new System.Drawing.Point(63, 11);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(14, 13);
             this.label16.TabIndex = 54;
@@ -908,7 +878,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(38, 5);
+            this.label15.Location = new System.Drawing.Point(36, 11);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(13, 13);
             this.label15.TabIndex = 53;
@@ -917,7 +887,7 @@
             // pb2device
             // 
             this.pb2device.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2device.Location = new System.Drawing.Point(235, 47);
+            this.pb2device.Location = new System.Drawing.Point(233, 53);
             this.pb2device.Name = "pb2device";
             this.pb2device.Size = new System.Drawing.Size(21, 21);
             this.pb2device.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -927,7 +897,7 @@
             // pb2convert
             // 
             this.pb2convert.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2convert.Location = new System.Drawing.Point(208, 47);
+            this.pb2convert.Location = new System.Drawing.Point(206, 53);
             this.pb2convert.Name = "pb2convert";
             this.pb2convert.Size = new System.Drawing.Size(21, 21);
             this.pb2convert.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -937,7 +907,7 @@
             // pb2timer
             // 
             this.pb2timer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2timer.Location = new System.Drawing.Point(181, 47);
+            this.pb2timer.Location = new System.Drawing.Point(179, 53);
             this.pb2timer.Name = "pb2timer";
             this.pb2timer.Size = new System.Drawing.Size(21, 21);
             this.pb2timer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -947,7 +917,7 @@
             // pb2overflow
             // 
             this.pb2overflow.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2overflow.Location = new System.Drawing.Point(154, 47);
+            this.pb2overflow.Location = new System.Drawing.Point(152, 53);
             this.pb2overflow.Name = "pb2overflow";
             this.pb2overflow.Size = new System.Drawing.Size(21, 21);
             this.pb2overflow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -957,7 +927,7 @@
             // pb2data
             // 
             this.pb2data.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2data.Location = new System.Drawing.Point(115, 47);
+            this.pb2data.Location = new System.Drawing.Point(113, 53);
             this.pb2data.Name = "pb2data";
             this.pb2data.Size = new System.Drawing.Size(21, 21);
             this.pb2data.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -967,7 +937,7 @@
             // pb2arm
             // 
             this.pb2arm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2arm.Location = new System.Drawing.Point(88, 47);
+            this.pb2arm.Location = new System.Drawing.Point(86, 53);
             this.pb2arm.Name = "pb2arm";
             this.pb2arm.Size = new System.Drawing.Size(21, 21);
             this.pb2arm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -977,7 +947,7 @@
             // pb2busy
             // 
             this.pb2busy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2busy.Location = new System.Drawing.Point(61, 47);
+            this.pb2busy.Location = new System.Drawing.Point(59, 53);
             this.pb2busy.Name = "pb2busy";
             this.pb2busy.Size = new System.Drawing.Size(21, 21);
             this.pb2busy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -987,7 +957,7 @@
             // pb2ok
             // 
             this.pb2ok.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2ok.Location = new System.Drawing.Point(34, 47);
+            this.pb2ok.Location = new System.Drawing.Point(32, 53);
             this.pb2ok.Name = "pb2ok";
             this.pb2ok.Size = new System.Drawing.Size(21, 21);
             this.pb2ok.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -997,7 +967,7 @@
             // pb1device
             // 
             this.pb1device.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1device.Location = new System.Drawing.Point(235, 20);
+            this.pb1device.Location = new System.Drawing.Point(233, 26);
             this.pb1device.Name = "pb1device";
             this.pb1device.Size = new System.Drawing.Size(21, 21);
             this.pb1device.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1007,7 +977,7 @@
             // pb1convert
             // 
             this.pb1convert.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1convert.Location = new System.Drawing.Point(208, 20);
+            this.pb1convert.Location = new System.Drawing.Point(206, 26);
             this.pb1convert.Name = "pb1convert";
             this.pb1convert.Size = new System.Drawing.Size(21, 21);
             this.pb1convert.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1017,7 +987,7 @@
             // pb1timer
             // 
             this.pb1timer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1timer.Location = new System.Drawing.Point(181, 20);
+            this.pb1timer.Location = new System.Drawing.Point(179, 26);
             this.pb1timer.Name = "pb1timer";
             this.pb1timer.Size = new System.Drawing.Size(21, 21);
             this.pb1timer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1027,7 +997,7 @@
             // pb1overflow
             // 
             this.pb1overflow.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1overflow.Location = new System.Drawing.Point(154, 20);
+            this.pb1overflow.Location = new System.Drawing.Point(152, 26);
             this.pb1overflow.Name = "pb1overflow";
             this.pb1overflow.Size = new System.Drawing.Size(21, 21);
             this.pb1overflow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1037,7 +1007,7 @@
             // pb1data
             // 
             this.pb1data.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1data.Location = new System.Drawing.Point(115, 20);
+            this.pb1data.Location = new System.Drawing.Point(113, 26);
             this.pb1data.Name = "pb1data";
             this.pb1data.Size = new System.Drawing.Size(21, 21);
             this.pb1data.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1047,7 +1017,7 @@
             // pb1arm
             // 
             this.pb1arm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1arm.Location = new System.Drawing.Point(88, 20);
+            this.pb1arm.Location = new System.Drawing.Point(86, 26);
             this.pb1arm.Name = "pb1arm";
             this.pb1arm.Size = new System.Drawing.Size(21, 21);
             this.pb1arm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1057,7 +1027,7 @@
             // pb1busy
             // 
             this.pb1busy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1busy.Location = new System.Drawing.Point(61, 20);
+            this.pb1busy.Location = new System.Drawing.Point(59, 26);
             this.pb1busy.Name = "pb1busy";
             this.pb1busy.Size = new System.Drawing.Size(21, 21);
             this.pb1busy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1067,7 +1037,7 @@
             // pb1ok
             // 
             this.pb1ok.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1ok.Location = new System.Drawing.Point(34, 20);
+            this.pb1ok.Location = new System.Drawing.Point(32, 26);
             this.pb1ok.Name = "pb1ok";
             this.pb1ok.Size = new System.Drawing.Size(21, 21);
             this.pb1ok.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1076,10 +1046,78 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(367, 156);
+            this.progressBar1.Location = new System.Drawing.Point(367, 125);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(487, 23);
             this.progressBar1.TabIndex = 40;
+            // 
+            // panel6
+            // 
+            this.panel6.BackColor = System.Drawing.Color.Transparent;
+            this.panel6.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel6.BackgroundImage")));
+            this.panel6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel6.Controls.Add(this.label24);
+            this.panel6.Controls.Add(this.label23);
+            this.panel6.Controls.Add(this.pb1data);
+            this.panel6.Controls.Add(this.label19);
+            this.panel6.Controls.Add(this.pb1ok);
+            this.panel6.Controls.Add(this.label20);
+            this.panel6.Controls.Add(this.pb1busy);
+            this.panel6.Controls.Add(this.label21);
+            this.panel6.Controls.Add(this.pb1arm);
+            this.panel6.Controls.Add(this.label22);
+            this.panel6.Controls.Add(this.pb1overflow);
+            this.panel6.Controls.Add(this.label18);
+            this.panel6.Controls.Add(this.pb1timer);
+            this.panel6.Controls.Add(this.label17);
+            this.panel6.Controls.Add(this.pb1convert);
+            this.panel6.Controls.Add(this.label16);
+            this.panel6.Controls.Add(this.pb1device);
+            this.panel6.Controls.Add(this.label15);
+            this.panel6.Controls.Add(this.pb2ok);
+            this.panel6.Controls.Add(this.pb2device);
+            this.panel6.Controls.Add(this.pb2busy);
+            this.panel6.Controls.Add(this.pb2convert);
+            this.panel6.Controls.Add(this.pb2arm);
+            this.panel6.Controls.Add(this.pb2timer);
+            this.panel6.Controls.Add(this.pb2data);
+            this.panel6.Controls.Add(this.pb2overflow);
+            this.panel6.Location = new System.Drawing.Point(367, 31);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(487, 88);
+            this.panel6.TabIndex = 42;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(367, 156);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(487, 356);
+            this.tabControl1.TabIndex = 43;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage1.Controls.Add(this.button1);
+            this.tabPage1.Controls.Add(this.btnStart);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(479, 330);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Motor Control";
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(479, 330);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Settings";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // FmControlPanel
             // 
@@ -1087,8 +1125,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(866, 537);
+            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.panel6);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -1114,8 +1153,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
-            this.panel4.ResumeLayout(false);
-            this.panel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb2device)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2convert)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2timer)).EndInit();
@@ -1132,6 +1169,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb1arm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1busy)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1ok)).EndInit();
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1200,7 +1241,6 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem1;
         private System.Windows.Forms.PictureBox pbStatusOut;
-        private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.PictureBox pb2device;
         private System.Windows.Forms.PictureBox pb2convert;
         private System.Windows.Forms.PictureBox pb2timer;
@@ -1230,5 +1270,9 @@
         private System.Windows.Forms.ToolStripMenuItem motorControllerToolStripMenuItem;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
     }
 }
