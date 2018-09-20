@@ -172,8 +172,8 @@ namespace MultiDeviceAIO
             cbPad.DataBindings.Clear();
             cbPad.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "paddtype");
 
-            nudFreq.DataBindings.Clear();
-            nudFreq.DataBindings.Add("Value", PersistentLoggerState.ps.data, "frequency");
+            nudFreqFrom.DataBindings.Clear();
+            nudFreqFrom.DataBindings.Add("Value", PersistentLoggerState.ps.data, "frequency");
 
             nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", PersistentLoggerState.ps.data, "sample_frequency");

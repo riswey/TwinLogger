@@ -30,6 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmControlPanel));
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.chkClips = new System.Windows.Forms.CheckBox();
@@ -70,7 +73,7 @@
             this.cbOrientation = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.nudFreq = new System.Windows.Forms.NumericUpDown();
+            this.nudFreqFrom = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
             this.tbDirectory = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
@@ -143,6 +146,7 @@
             this.label30 = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
             this.lblCurrentSpeed = new System.Windows.Forms.Label();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label32 = new System.Windows.Forms.Label();
             this.cbxPort = new System.Windows.Forms.ComboBox();
@@ -150,10 +154,14 @@
             this.label33 = new System.Windows.Forms.Label();
             this.tbxLogPath = new System.Windows.Forms.TextBox();
             this.tbxHistory = new System.Windows.Forms.TextBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.label34 = new System.Windows.Forms.Label();
+            this.nudFreqTo = new System.Windows.Forms.NumericUpDown();
+            this.label35 = new System.Windows.Forms.Label();
+            this.nudFreqStep = new System.Windows.Forms.NumericUpDown();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudInterval)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).BeginInit();
@@ -187,6 +195,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudP)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).BeginInit();
             this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreqTo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreqStep)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -208,7 +219,7 @@
             // chkClips
             // 
             this.chkClips.AutoSize = true;
-            this.chkClips.Location = new System.Drawing.Point(187, 91);
+            this.chkClips.Location = new System.Drawing.Point(24, 174);
             this.chkClips.Name = "chkClips";
             this.chkClips.Size = new System.Drawing.Size(65, 17);
             this.chkClips.TabIndex = 5;
@@ -458,7 +469,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(184, 125);
+            this.label7.Location = new System.Drawing.Point(184, 123);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(129, 13);
             this.label7.TabIndex = 22;
@@ -471,7 +482,7 @@
             "Pancake (80mm)",
             "Vertical (53mm)",
             "Electromagnetic"});
-            this.cbShaker.Location = new System.Drawing.Point(187, 141);
+            this.cbShaker.Location = new System.Drawing.Point(187, 139);
             this.cbShaker.Name = "cbShaker";
             this.cbShaker.Size = new System.Drawing.Size(121, 21);
             this.cbShaker.TabIndex = 23;
@@ -483,7 +494,7 @@
             "Hard",
             "Medium",
             "Soft"});
-            this.cbPad.Location = new System.Drawing.Point(23, 141);
+            this.cbPad.Location = new System.Drawing.Point(23, 139);
             this.cbPad.Name = "cbPad";
             this.cbPad.Size = new System.Drawing.Size(121, 21);
             this.cbPad.TabIndex = 24;
@@ -491,7 +502,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(21, 125);
+            this.label8.Location = new System.Drawing.Point(21, 123);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(53, 13);
             this.label8.TabIndex = 25;
@@ -536,28 +547,28 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(24, 75);
+            this.label10.Location = new System.Drawing.Point(24, 71);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(57, 13);
             this.label10.TabIndex = 33;
             this.label10.Text = "Frequency";
             // 
-            // nudFreq
+            // nudFreqFrom
             // 
-            this.nudFreq.Location = new System.Drawing.Point(23, 91);
-            this.nudFreq.Maximum = new decimal(new int[] {
+            this.nudFreqFrom.Location = new System.Drawing.Point(23, 87);
+            this.nudFreqFrom.Maximum = new decimal(new int[] {
             5000,
             0,
             0,
             0});
-            this.nudFreq.Name = "nudFreq";
-            this.nudFreq.Size = new System.Drawing.Size(120, 20);
-            this.nudFreq.TabIndex = 32;
+            this.nudFreqFrom.Name = "nudFreqFrom";
+            this.nudFreqFrom.Size = new System.Drawing.Size(70, 20);
+            this.nudFreqFrom.TabIndex = 32;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(21, 184);
+            this.label9.Location = new System.Drawing.Point(20, 207);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(51, 13);
             this.label9.TabIndex = 31;
@@ -565,7 +576,7 @@
             // 
             // tbDirectory
             // 
-            this.tbDirectory.Location = new System.Drawing.Point(74, 181);
+            this.tbDirectory.Location = new System.Drawing.Point(73, 204);
             this.tbDirectory.Name = "tbDirectory";
             this.tbDirectory.Size = new System.Drawing.Size(215, 20);
             this.tbDirectory.TabIndex = 28;
@@ -574,7 +585,7 @@
             // 
             this.button3.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button3.BackgroundImage")));
             this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button3.Location = new System.Drawing.Point(287, 179);
+            this.button3.Location = new System.Drawing.Point(286, 202);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(25, 25);
             this.button3.TabIndex = 30;
@@ -584,7 +595,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(23, 131);
+            this.label5.Location = new System.Drawing.Point(20, 97);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(114, 13);
             this.label5.TabIndex = 13;
@@ -593,7 +604,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(23, 79);
+            this.label4.Location = new System.Drawing.Point(20, 45);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(73, 13);
             this.label4.TabIndex = 12;
@@ -602,7 +613,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(23, 30);
+            this.label3.Location = new System.Drawing.Point(168, 45);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(61, 13);
             this.label3.TabIndex = 11;
@@ -610,7 +621,7 @@
             // 
             // nudInterval
             // 
-            this.nudInterval.Location = new System.Drawing.Point(23, 147);
+            this.nudInterval.Location = new System.Drawing.Point(20, 113);
             this.nudInterval.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -627,7 +638,7 @@
             // 
             // nudDuration
             // 
-            this.nudDuration.Location = new System.Drawing.Point(23, 95);
+            this.nudDuration.Location = new System.Drawing.Point(20, 61);
             this.nudDuration.Name = "nudDuration";
             this.nudDuration.Size = new System.Drawing.Size(120, 20);
             this.nudDuration.TabIndex = 7;
@@ -639,7 +650,7 @@
             // 
             // nudChannel
             // 
-            this.nudChannel.Location = new System.Drawing.Point(23, 46);
+            this.nudChannel.Location = new System.Drawing.Point(168, 61);
             this.nudChannel.Maximum = new decimal(new int[] {
             64,
             0,
@@ -657,7 +668,7 @@
             // btnStart
             // 
             this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStart.Location = new System.Drawing.Point(264, 246);
+            this.btnStart.Location = new System.Drawing.Point(348, 173);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(108, 58);
             this.btnStart.TabIndex = 26;
@@ -668,7 +679,7 @@
             // chkExternalClock
             // 
             this.chkExternalClock.AutoSize = true;
-            this.chkExternalClock.Location = new System.Drawing.Point(184, 97);
+            this.chkExternalClock.Location = new System.Drawing.Point(181, 90);
             this.chkExternalClock.Name = "chkExternalClock";
             this.chkExternalClock.Size = new System.Drawing.Size(94, 17);
             this.chkExternalClock.TabIndex = 28;
@@ -678,7 +689,7 @@
             // chkExternalTrigger
             // 
             this.chkExternalTrigger.AutoSize = true;
-            this.chkExternalTrigger.Location = new System.Drawing.Point(184, 131);
+            this.chkExternalTrigger.Location = new System.Drawing.Point(181, 113);
             this.chkExternalTrigger.Name = "chkExternalTrigger";
             this.chkExternalTrigger.Size = new System.Drawing.Size(100, 17);
             this.chkExternalTrigger.TabIndex = 27;
@@ -690,10 +701,14 @@
             this.panel1.BackColor = System.Drawing.Color.Transparent;
             this.panel1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel1.BackgroundImage")));
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel1.Controls.Add(this.label35);
+            this.panel1.Controls.Add(this.nudFreqStep);
+            this.panel1.Controls.Add(this.label34);
+            this.panel1.Controls.Add(this.nudFreqTo);
             this.panel1.Controls.Add(this.label11);
             this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.cbMass);
-            this.panel1.Controls.Add(this.nudFreq);
+            this.panel1.Controls.Add(this.nudFreqFrom);
             this.panel1.Controls.Add(this.cbPad);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.cbShaker);
@@ -707,7 +722,7 @@
             this.panel1.Controls.Add(this.label6);
             this.panel1.Location = new System.Drawing.Point(24, 31);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(325, 217);
+            this.panel1.Size = new System.Drawing.Size(325, 241);
             this.panel1.TabIndex = 36;
             // 
             // label11
@@ -734,16 +749,16 @@
             this.panel2.Controls.Add(this.label4);
             this.panel2.Controls.Add(this.nudDuration);
             this.panel2.Controls.Add(this.nudChannel);
-            this.panel2.Location = new System.Drawing.Point(24, 254);
+            this.panel2.Location = new System.Drawing.Point(24, 281);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(325, 179);
+            this.panel2.Size = new System.Drawing.Size(325, 152);
             this.panel2.TabIndex = 37;
             // 
             // label12
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(23, 4);
+            this.label12.Location = new System.Drawing.Point(21, 13);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(117, 16);
             this.label12.TabIndex = 0;
@@ -1131,6 +1146,7 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage1.Controls.Add(this.chart1);
             this.tabPage1.Controls.Add(this.lblState);
             this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Controls.Add(this.lblPulseDelay);
@@ -1156,7 +1172,7 @@
             // lblState
             // 
             this.lblState.AutoSize = true;
-            this.lblState.Location = new System.Drawing.Point(403, 61);
+            this.lblState.Location = new System.Drawing.Point(432, 10);
             this.lblState.Name = "lblState";
             this.lblState.Size = new System.Drawing.Size(36, 13);
             this.lblState.TabIndex = 46;
@@ -1170,7 +1186,7 @@
             this.groupBox1.Controls.Add(this.nudD);
             this.groupBox1.Controls.Add(this.nudI);
             this.groupBox1.Controls.Add(this.nudP);
-            this.groupBox1.Location = new System.Drawing.Point(313, 87);
+            this.groupBox1.Location = new System.Drawing.Point(310, 37);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(158, 115);
             this.groupBox1.TabIndex = 45;
@@ -1232,7 +1248,7 @@
             // 
             this.lblPulseDelay.AutoSize = true;
             this.lblPulseDelay.BackColor = System.Drawing.Color.White;
-            this.lblPulseDelay.Location = new System.Drawing.Point(149, 167);
+            this.lblPulseDelay.Location = new System.Drawing.Point(154, 159);
             this.lblPulseDelay.MinimumSize = new System.Drawing.Size(30, 18);
             this.lblPulseDelay.Name = "lblPulseDelay";
             this.lblPulseDelay.Size = new System.Drawing.Size(30, 18);
@@ -1242,7 +1258,7 @@
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(13, 167);
+            this.label28.Location = new System.Drawing.Point(18, 159);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(81, 13);
             this.label28.TabIndex = 43;
@@ -1252,7 +1268,7 @@
             // 
             this.lblMaxRotorPeriod.AutoSize = true;
             this.lblMaxRotorPeriod.BackColor = System.Drawing.Color.White;
-            this.lblMaxRotorPeriod.Location = new System.Drawing.Point(187, 127);
+            this.lblMaxRotorPeriod.Location = new System.Drawing.Point(192, 119);
             this.lblMaxRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
             this.lblMaxRotorPeriod.Name = "lblMaxRotorPeriod";
             this.lblMaxRotorPeriod.Size = new System.Drawing.Size(30, 18);
@@ -1263,7 +1279,7 @@
             // 
             this.lblMinRotorPeriod.AutoSize = true;
             this.lblMinRotorPeriod.BackColor = System.Drawing.Color.White;
-            this.lblMinRotorPeriod.Location = new System.Drawing.Point(149, 127);
+            this.lblMinRotorPeriod.Location = new System.Drawing.Point(154, 119);
             this.lblMinRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
             this.lblMinRotorPeriod.Name = "lblMinRotorPeriod";
             this.lblMinRotorPeriod.Size = new System.Drawing.Size(30, 18);
@@ -1273,7 +1289,7 @@
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(12, 127);
+            this.label29.Location = new System.Drawing.Point(17, 119);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(131, 13);
             this.label29.TabIndex = 40;
@@ -1344,6 +1360,16 @@
             this.lblCurrentSpeed.Text = "0";
             this.lblCurrentSpeed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(479, 330);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Parameters";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.label32);
@@ -1411,15 +1437,63 @@
             this.tbxHistory.Size = new System.Drawing.Size(192, 175);
             this.tbxHistory.TabIndex = 16;
             // 
-            // tabPage3
+            // chart1
             // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(479, 330);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Parameters";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(7, 193);
+            this.chart1.Name = "chart1";
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chart1.Series.Add(series1);
+            this.chart1.Size = new System.Drawing.Size(335, 122);
+            this.chart1.TabIndex = 49;
+            this.chart1.Text = "chart1";
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(97, 90);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(16, 13);
+            this.label34.TabIndex = 36;
+            this.label34.Text = "to";
+            // 
+            // nudFreqTo
+            // 
+            this.nudFreqTo.Location = new System.Drawing.Point(115, 87);
+            this.nudFreqTo.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.nudFreqTo.Name = "nudFreqTo";
+            this.nudFreqTo.Size = new System.Drawing.Size(68, 20);
+            this.nudFreqTo.TabIndex = 35;
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(190, 90);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(43, 13);
+            this.label35.TabIndex = 38;
+            this.label35.Text = "in steps";
+            // 
+            // nudFreqStep
+            // 
+            this.nudFreqStep.Location = new System.Drawing.Point(237, 86);
+            this.nudFreqStep.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.nudFreqStep.Name = "nudFreqStep";
+            this.nudFreqStep.Size = new System.Drawing.Size(45, 20);
+            this.nudFreqStep.TabIndex = 37;
             // 
             // FmControlPanel
             // 
@@ -1442,7 +1516,7 @@
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudInterval)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).EndInit();
@@ -1483,6 +1557,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreqTo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreqStep)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1534,7 +1611,7 @@
         private System.Windows.Forms.ToolStripMenuItem resetDevicesToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem scopeToolStripMenuItem;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.NumericUpDown nudFreq;
+        private System.Windows.Forms.NumericUpDown nudFreqFrom;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label11;
@@ -1610,5 +1687,10 @@
         private System.Windows.Forms.TextBox tbxLogPath;
         private System.Windows.Forms.TextBox tbxHistory;
         private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.NumericUpDown nudFreqStep;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.NumericUpDown nudFreqTo;
     }
 }
