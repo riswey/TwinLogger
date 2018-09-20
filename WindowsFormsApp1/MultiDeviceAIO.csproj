@@ -204,11 +204,5 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Arduino\Arduino\MotorController.csproj">
-      <Project>{bf236221-b5c8-409d-860a-32fa4918e6f9}</Project>
-      <Name>MotorController</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

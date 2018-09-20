@@ -86,11 +86,11 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.label11 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.btnStop = new System.Windows.Forms.Button();
             this.pbStatusOut = new System.Windows.Forms.PictureBox();
             this.pbStatus = new System.Windows.Forms.PictureBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
             this.timermonitor = new System.Windows.Forms.Timer(this.components);
@@ -124,8 +124,6 @@
             this.panel6 = new System.Windows.Forms.Panel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.btnReset = new System.Windows.Forms.Button();
             this.lblState = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label25 = new System.Windows.Forms.Label();
@@ -143,15 +141,16 @@
             this.btnSetSpeed = new System.Windows.Forms.Button();
             this.nudDesireSpeed = new System.Windows.Forms.NumericUpDown();
             this.label30 = new System.Windows.Forms.Label();
-            this.btnStop = new System.Windows.Forms.Button();
             this.label31 = new System.Windows.Forms.Label();
             this.lblCurrentSpeed = new System.Windows.Forms.Label();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label32 = new System.Windows.Forms.Label();
             this.cbxPort = new System.Windows.Forms.ComboBox();
             this.button4 = new System.Windows.Forms.Button();
             this.label33 = new System.Windows.Forms.Label();
             this.tbxLogPath = new System.Windows.Forms.TextBox();
             this.tbxHistory = new System.Windows.Forms.TextBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
@@ -182,12 +181,12 @@
             this.panel6.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudI)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudP)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).BeginInit();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -740,16 +739,27 @@
             this.panel2.Size = new System.Drawing.Size(325, 179);
             this.panel2.TabIndex = 37;
             // 
-            // button1
+            // label12
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.Red;
-            this.button1.Location = new System.Drawing.Point(379, 242);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(42, 62);
-            this.button1.TabIndex = 32;
-            this.button1.Text = "Stop";
-            this.button1.UseVisualStyleBackColor = true;
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(23, 4);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(117, 16);
+            this.label12.TabIndex = 0;
+            this.label12.Text = "Device Settings";
+            // 
+            // btnStop
+            // 
+            this.btnStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStop.ForeColor = System.Drawing.Color.Red;
+            this.btnStop.Location = new System.Drawing.Point(379, 261);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(77, 43);
+            this.btnStop.TabIndex = 32;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
             // pbStatusOut
             // 
@@ -780,16 +790,6 @@
             this.label14.Size = new System.Drawing.Size(150, 16);
             this.label14.TabIndex = 29;
             this.label14.Text = "Accelerometer Array";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(23, 4);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(117, 16);
-            this.label12.TabIndex = 0;
-            this.label12.Text = "Device Settings";
             // 
             // panel3
             // 
@@ -1120,6 +1120,7 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(367, 156);
             this.tabControl1.Name = "tabControl1";
@@ -1130,7 +1131,6 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Gainsboro;
-            this.tabPage1.Controls.Add(this.btnReset);
             this.tabPage1.Controls.Add(this.lblState);
             this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Controls.Add(this.lblPulseDelay);
@@ -1142,10 +1142,9 @@
             this.tabPage1.Controls.Add(this.btnSetSpeed);
             this.tabPage1.Controls.Add(this.nudDesireSpeed);
             this.tabPage1.Controls.Add(this.label30);
-            this.tabPage1.Controls.Add(this.btnStop);
             this.tabPage1.Controls.Add(this.label31);
             this.tabPage1.Controls.Add(this.lblCurrentSpeed);
-            this.tabPage1.Controls.Add(this.button1);
+            this.tabPage1.Controls.Add(this.btnStop);
             this.tabPage1.Controls.Add(this.btnStart);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -1153,31 +1152,6 @@
             this.tabPage1.Size = new System.Drawing.Size(479, 330);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Motor Control";
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.label32);
-            this.tabPage2.Controls.Add(this.cbxPort);
-            this.tabPage2.Controls.Add(this.button4);
-            this.tabPage2.Controls.Add(this.label33);
-            this.tabPage2.Controls.Add(this.tbxLogPath);
-            this.tabPage2.Controls.Add(this.tbxHistory);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(479, 330);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Settings";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // btnReset
-            // 
-            this.btnReset.Location = new System.Drawing.Point(315, 56);
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(75, 23);
-            this.btnReset.TabIndex = 47;
-            this.btnReset.Text = "Abort";
-            this.btnReset.UseVisualStyleBackColor = true;
             // 
             // lblState
             // 
@@ -1307,12 +1281,10 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(315, 27);
+            this.button2.Location = new System.Drawing.Point(0, 0);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 33;
-            this.button2.Text = "Start";
-            this.button2.UseVisualStyleBackColor = true;
+            this.button2.TabIndex = 48;
             // 
             // btnSetSpeed
             // 
@@ -1349,15 +1321,6 @@
             this.label30.TabIndex = 35;
             this.label30.Text = "Target Frequency (Hz)";
             // 
-            // btnStop
-            // 
-            this.btnStop.Location = new System.Drawing.Point(396, 27);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(75, 23);
-            this.btnStop.TabIndex = 38;
-            this.btnStop.Text = "Stop";
-            this.btnStop.UseVisualStyleBackColor = true;
-            // 
             // label31
             // 
             this.label31.AutoSize = true;
@@ -1380,6 +1343,22 @@
             this.lblCurrentSpeed.TabIndex = 37;
             this.lblCurrentSpeed.Text = "0";
             this.lblCurrentSpeed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.label32);
+            this.tabPage2.Controls.Add(this.cbxPort);
+            this.tabPage2.Controls.Add(this.button4);
+            this.tabPage2.Controls.Add(this.label33);
+            this.tabPage2.Controls.Add(this.tbxLogPath);
+            this.tabPage2.Controls.Add(this.tbxHistory);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(479, 330);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Settings";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // label32
             // 
@@ -1431,6 +1410,16 @@
             this.tbxHistory.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tbxHistory.Size = new System.Drawing.Size(192, 175);
             this.tbxHistory.TabIndex = 16;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(479, 330);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Parameters";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // FmControlPanel
             // 
@@ -1486,14 +1475,14 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudD)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudI)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudP)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).EndInit();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1590,12 +1579,11 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ToolStripMenuItem motorControllerToolStripMenuItem;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Label lblState;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label25;
@@ -1613,7 +1601,6 @@
         private System.Windows.Forms.Button btnSetSpeed;
         private System.Windows.Forms.NumericUpDown nudDesireSpeed;
         private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.Label lblCurrentSpeed;
         private System.Windows.Forms.Label label32;
@@ -1622,5 +1609,6 @@
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.TextBox tbxLogPath;
         private System.Windows.Forms.TextBox tbxHistory;
+        private System.Windows.Forms.TabPage tabPage3;
     }
 }

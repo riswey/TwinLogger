@@ -325,7 +325,8 @@ namespace MultiDeviceAIO
 
         private void startToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StartSampling();
+            MessageBox.Show("Who am I?");
+            //StartSampling();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -345,6 +346,11 @@ namespace MultiDeviceAIO
 
             StartScheduleRun(frequencies);
 
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            StopScheduleRun();
         }
 
         void setStartButtonText(int code)
@@ -863,5 +869,6 @@ namespace MultiDeviceAIO
 
 
         #endregion
+
     }
 }
