@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -18,10 +19,10 @@ namespace MultiDeviceAIO
         //Task task = null;
         ParameterState parameters = new ParameterState();
 
-        public MotorController()
-        {
-            InitializeComponent();
+        Timer timerarduino = new Timer();
 
+        public void InitMotorController()
+        {
             //serialPort1 = new TestSerialPort(this);
             serialPort1 = new SerialPort();
 
@@ -36,6 +37,8 @@ namespace MultiDeviceAIO
             serialPort1.DiscardInBuffer();  //clear anything
 
             serialPort1.DataReceived += serialPort1_DataReceived;
+
+
 
         }
 
@@ -65,7 +68,7 @@ namespace MultiDeviceAIO
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (timer1 != null) timer1.Dispose();
+            if (timerarduino != null) timerarduino.Dispose();
             //if (task != null) task.Dispose();
             if (serialPort1 != null) serialPort1.Close();
         }
@@ -170,7 +173,7 @@ namespace MultiDeviceAIO
                             AsyncColor(btnStart, Color.Orange);
                             //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
 
-                            this.Invoke(new Action(() => timer1.Start()));
+                            this.Invoke(new Action(() => timerarduino.Start()));
 
                             break;
                         case CMD.STOP:
@@ -181,7 +184,7 @@ namespace MultiDeviceAIO
                                 this.task = null;
                             }
                             */
-                            this.Invoke(new Action(() => timer1.Stop()));
+                            this.Invoke(new Action(() => timerarduino.Stop()));
                             state = STATE.Ready;
                             AsyncDisable(this.btnSetSpeed, false);
                             AsyncColor(btnStart, default(Color));
@@ -211,7 +214,7 @@ namespace MultiDeviceAIO
                             break;
                     }
 
-                    timer1.Start();
+                    timerarduino.Start();
 
                     break;
                 case CMD.STOP:
@@ -222,7 +225,7 @@ namespace MultiDeviceAIO
                         this.task = null;
                     }
                     */
-                    this.Invoke(new Action(() => timer1.Stop()));
+                    this.Invoke(new Action(() => timerarduino.Stop()));
                     state = STATE.Ready;
                     AsyncDisable(this.btnSetSpeed, false);
                     AsyncColor(btnStart, default(Color));
@@ -396,16 +399,6 @@ namespace MultiDeviceAIO
             MessageBox.Show(e.ToString());
         }
 
-        private void btnStart_Click(object sender, EventArgs e)
-        {
-            ProcessEvent(EVENT.Start);
-        }
-
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            ProcessEvent(EVENT.Stop);
-        }
-
         private void btnSetSpeed_Click(object sender, EventArgs e)
         {
             SendCommand(CMD.SETFREQ);
@@ -494,11 +487,7 @@ namespace MultiDeviceAIO
             MessageBox.Show(msg);
         }
 
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
+        /* What is this
         private void button1_Click(object sender, EventArgs e)
         {
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
@@ -515,6 +504,7 @@ namespace MultiDeviceAIO
 
             }
         }
+        */
 
         private void btnReset_Click(object sender, EventArgs e)
         {
@@ -533,7 +523,7 @@ namespace MultiDeviceAIO
             serialPort1.PortName = cbxPort.SelectedItem.ToString();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void timerarduino_Tick(object sender, EventArgs e)
         {
             if (state == STATE.Running)
             {

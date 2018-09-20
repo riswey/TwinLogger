@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-using System.Runtime.InteropServices;
-
-using System.Diagnostics;
 
 using DEVICEID = System.Int16;
 //The data structure is a dictionary; K: device id V:raw list of data for device
@@ -34,7 +31,7 @@ namespace MultiDeviceAIO
         }
 
         Timer timergetdata = new Timer();
-        
+
         //1000hz, 64chan, 5sec
         //
         //int target = 10000;        //sampling freq x duration x 2
@@ -62,6 +59,8 @@ namespace MultiDeviceAIO
             //Bindings
             loadBindData();
 
+            InitMotorController();
+
             //Set up accelerometers
             try
             {
@@ -87,7 +86,7 @@ namespace MultiDeviceAIO
             TimerMonitorState(true);
 
         }
-        
+
         //#CHECK
         //Advice from code checker
         ~FmControlPanel()
@@ -128,6 +127,7 @@ namespace MultiDeviceAIO
         {
             if (ex.code == 7)
             {
+                MessageBox.Show("Recover from Standby Mode");
                 myaio.ResetDevices();
                 PrintLn("Device recovered from standby mode. Please try again.");
                 SetStatus("Device recovered from standby mode. Please try again.");
@@ -209,7 +209,7 @@ namespace MultiDeviceAIO
             */
             base.OnFormClosing(e);
         }
-        
+
         void RenameTempFile(string fn)
         {
             if (fn == null)
@@ -277,8 +277,6 @@ namespace MultiDeviceAIO
 
         }
 
-        
-        
         private void SelectDirectory()
         {
             string startLocation = Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath);
@@ -297,8 +295,8 @@ namespace MultiDeviceAIO
                 }
             }
         }
-        
-        // GUI EVENTS
+
+        #region GUI Events
 
         /*
         private void SetFilename() {
@@ -343,7 +341,10 @@ namespace MultiDeviceAIO
             PrintLn("----------------------------------------------------\r\nApplied Settings");
             PrintLn(PersistentLoggerState.ps.ToString());
 
-            StartSampling();
+            List<int> frequencies = new List<int>() { 40, 41 };
+
+            StartScheduleRun(frequencies);
+
         }
 
         void setStartButtonText(int code)
@@ -460,10 +461,80 @@ namespace MultiDeviceAIO
             SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
         }
 
-        //SETTINGS
-        
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutBox1().Show();
+        }
+
+        private void scopeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //TODO: inefficient as must convert data every time
+            //Can scope take the dictionary?
+
+            using (Scope scope = new Scope(myaio.GetConcatData, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration))
+            {
+                if (!scope.IsDisposed)
+                {
+                    scope.Show();
+                }
+            }
+
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int originalTesting = PersistentLoggerState.ps.data.testingmode;
+            using (var form = new FmOptions(PersistentLoggerState.ps.data))
+            {
+                var res = form.ShowDialog();
+                if (res == DialogResult.OK)
+                {
+                    if (originalTesting != PersistentLoggerState.ps.data.testingmode)
+                    {
+                        //change of testing state
+                        SetAIO();
+                    }
+                }
+            }
+        }
+
+        private void calibrateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Monitor.LoadAccelometerCalibration();
+        }
+
+        /*private void motorControllerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            (new MotorController.MotorController()).Show();
+        }*/
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Abort();
+        }
+
+        #endregion
+
+        #region SETTINGS
+
         //Flag to stop initial databinding setting everything dirty
         bool has_loaded = false;
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "data files|*.csv";
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                has_loaded = false;
+
+                string filename = openFileDialog1.FileName;
+
+                (new Scope(filename)).Show();
+            }
+        }
 
         void loadSettings()
         {
@@ -544,63 +615,9 @@ namespace MultiDeviceAIO
 
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new AboutBox1().Show();
-        }
+        #endregion
 
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "data files|*.csv";
-            openFileDialog1.RestoreDirectory = true;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                has_loaded = false;
-
-                string filename = openFileDialog1.FileName;
-
-                (new Scope(filename)).Show();
-            }
-        }
-
-        private void scopeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //TODO: inefficient as must convert data every time
-            //Can scope take the dictionary?
-
-            using (Scope scope = new Scope(myaio.GetConcatData, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration))
-            {
-                if (!scope.IsDisposed)
-                {
-                    scope.Show();
-                }
-            }
-
-        }
-
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int originalTesting = PersistentLoggerState.ps.data.testingmode; 
-            using (var form = new FmOptions(PersistentLoggerState.ps.data))
-            {
-                var res = form.ShowDialog();
-                if (res == DialogResult.OK)
-                {
-                    if (originalTesting != PersistentLoggerState.ps.data.testingmode)
-                    {
-                        //change of testing state
-                        SetAIO();
-                    }
-                }
-            }
-        }
-
-        private void calibrateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Monitor.LoadAccelometerCalibration();
-        }
+        #region LEDs
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -615,7 +632,7 @@ namespace MultiDeviceAIO
 
         private void DrawStatus(int status)
         {
-            switch(status)
+            switch (status)
             {
                 case 0:
                     pbStatusOut.Image = MultiDeviceAIO.Properties.Resources.red;
@@ -674,7 +691,7 @@ namespace MultiDeviceAIO
                     pb.Image = Properties.Resources.red;
             }
         }
-        
+
         private void TimerMonitorState(bool on)
         {
             if (on)
@@ -691,34 +708,10 @@ namespace MultiDeviceAIO
             }
         }
 
-        void Abort()
-        {
-            //Abort
-            timergetdata.Stop();
-            myaio.Stop();
-            //This will cause device inner error if device malfunctioning
-            myaio.ResetTest();
-            //This will hang if the device has failed.
-            myaio.ResetDevices();
-            setStartButtonText(0);
+        #endregion
 
-            progressBar1.Value = 0;
 
-            timermonitor.Stop();
-            timermonitor.Start();
-            PrintLn("Run aborted", true);
-        }
-
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == Keys.Escape)
-            {
-                //Abort
-                Abort();
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
+        #region CallBack
 
         /*  NEED A CALLBACK TO KNOW WHEN TRIGGER STARTED
          *  IT WILL NOT ALLOW STATE REQUEST WHILE RUNNING
@@ -821,19 +814,54 @@ namespace MultiDeviceAIO
             readytodevicechange = true;
         }
         */
-        private void Main_Load(object sender, EventArgs e)
+
+        #endregion
+
+        #region Run Control
+
+        void StartScheduleRun(List<int> frequencies)
         {
-            //readytodevicechange = true;
+            MessageBox.Show("Ready to start...");
+
+            //ProcessEvent(MotorController.EVENT.Start);
+            //StartSampling
         }
 
-        private void motorControllerToolStripMenuItem_Click(object sender, EventArgs e)
+        void StopScheduleRun()
         {
-            (new MotorController.MotorController()).Show();
+            //ProcessEvent(MotorController.EVENT.Stop);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        void Abort()
         {
-            Abort();
+            //Abort
+            timergetdata.Stop();
+            myaio.Stop();
+            //This will cause device inner error if device malfunctioning
+            myaio.ResetTest();
+            //This will hang if the device has failed.
+            myaio.ResetDevices();
+            setStartButtonText(0);
+
+            progressBar1.Value = 0;
+
+            timermonitor.Stop();
+            timermonitor.Start();
+            PrintLn("Run aborted", true);
         }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Escape)
+            {
+                //Abort
+                Abort();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+
+        #endregion
     }
 }

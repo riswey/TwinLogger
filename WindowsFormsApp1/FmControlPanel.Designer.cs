@@ -260,7 +260,6 @@
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.closeToolStripMenuItem.Text = "Close";
-            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem1
             // 
@@ -345,7 +344,6 @@
             this.motorControllerToolStripMenuItem.Name = "motorControllerToolStripMenuItem";
             this.motorControllerToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.motorControllerToolStripMenuItem.Text = "Motor Controller";
-            this.motorControllerToolStripMenuItem.Click += new System.EventHandler(this.motorControllerToolStripMenuItem_Click);
             // 
             // monitorChannelsToolStripMenuItem
             // 
@@ -752,7 +750,6 @@
             this.button1.TabIndex = 32;
             this.button1.Text = "Stop";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // pbStatusOut
             // 
@@ -1452,7 +1449,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FmControlPanel";
             this.Text = "Main";
-            this.Load += new System.EventHandler(this.Main_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
