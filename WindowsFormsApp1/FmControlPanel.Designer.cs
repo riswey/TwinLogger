@@ -128,37 +128,40 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.panel6 = new System.Windows.Forms.Panel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.lblState = new System.Windows.Forms.Label();
+            this.nudDesireSpeed = new System.Windows.Forms.NumericUpDown();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.lblCurrentSpeed = new System.Windows.Forms.Label();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.btnStart = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label37 = new System.Windows.Forms.Label();
+            this.nudTimeout = new System.Windows.Forms.NumericUpDown();
+            this.label36 = new System.Windows.Forms.Label();
+            this.nudTolerance = new System.Windows.Forms.NumericUpDown();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label26 = new System.Windows.Forms.Label();
+            this.label27 = new System.Windows.Forms.Label();
+            this.nudD = new System.Windows.Forms.NumericUpDown();
+            this.nudI = new System.Windows.Forms.NumericUpDown();
+            this.nudP = new System.Windows.Forms.NumericUpDown();
+            this.lblPulseDelay = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.lblMaxRotorPeriod = new System.Windows.Forms.Label();
+            this.lblMinRotorPeriod = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label38 = new System.Windows.Forms.Label();
             this.label32 = new System.Windows.Forms.Label();
             this.cbxPort = new System.Windows.Forms.ComboBox();
             this.button4 = new System.Windows.Forms.Button();
             this.label33 = new System.Windows.Forms.Label();
             this.tbxLogPath = new System.Windows.Forms.TextBox();
             this.tbxHistory = new System.Windows.Forms.TextBox();
-            this.btnStart = new System.Windows.Forms.Button();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.lblCurrentSpeed = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.label30 = new System.Windows.Forms.Label();
-            this.nudDesireSpeed = new System.Windows.Forms.NumericUpDown();
-            this.btnSetSpeed = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.nudP = new System.Windows.Forms.NumericUpDown();
-            this.nudI = new System.Windows.Forms.NumericUpDown();
-            this.nudD = new System.Windows.Forms.NumericUpDown();
-            this.label27 = new System.Windows.Forms.Label();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.lblState = new System.Windows.Forms.Label();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.label29 = new System.Windows.Forms.Label();
-            this.lblMinRotorPeriod = new System.Windows.Forms.Label();
-            this.lblMaxRotorPeriod = new System.Windows.Forms.Label();
-            this.label28 = new System.Windows.Forms.Label();
-            this.lblPulseDelay = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -190,14 +193,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb1ok)).BeginInit();
             this.panel6.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudP)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudI)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudD)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).BeginInit();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudD)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudI)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudP)).BeginInit();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -1107,9 +1113,9 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(367, 125);
+            this.progressBar1.Location = new System.Drawing.Point(18, 84);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(487, 23);
+            this.progressBar1.Size = new System.Drawing.Size(451, 23);
             this.progressBar1.TabIndex = 40;
             // 
             // panel6
@@ -1119,6 +1125,7 @@
             this.panel6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panel6.Controls.Add(this.pbStatusOut);
             this.panel6.Controls.Add(this.label24);
+            this.panel6.Controls.Add(this.progressBar1);
             this.panel6.Controls.Add(this.pbStatus);
             this.panel6.Controls.Add(this.label23);
             this.panel6.Controls.Add(this.label14);
@@ -1148,7 +1155,7 @@
             this.panel6.Controls.Add(this.pb2overflow);
             this.panel6.Location = new System.Drawing.Point(367, 31);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(487, 88);
+            this.panel6.Size = new System.Drawing.Size(487, 119);
             this.panel6.TabIndex = 42;
             // 
             // tabControl1
@@ -1156,24 +1163,291 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(367, 156);
+            this.tabControl1.Location = new System.Drawing.Point(367, 160);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(487, 356);
+            this.tabControl1.Size = new System.Drawing.Size(487, 342);
             this.tabControl1.TabIndex = 43;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage1.Controls.Add(this.lblState);
+            this.tabPage1.Controls.Add(this.nudDesireSpeed);
+            this.tabPage1.Controls.Add(this.label30);
+            this.tabPage1.Controls.Add(this.label31);
+            this.tabPage1.Controls.Add(this.lblCurrentSpeed);
+            this.tabPage1.Controls.Add(this.btnStop);
+            this.tabPage1.Controls.Add(this.btnStart);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(479, 316);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Motor Control";
+            // 
+            // lblState
+            // 
+            this.lblState.AutoSize = true;
+            this.lblState.Location = new System.Drawing.Point(351, 131);
+            this.lblState.Name = "lblState";
+            this.lblState.Size = new System.Drawing.Size(36, 13);
+            this.lblState.TabIndex = 46;
+            this.lblState.Text = "(state)";
+            // 
+            // nudDesireSpeed
+            // 
+            this.nudDesireSpeed.Location = new System.Drawing.Point(162, 32);
+            this.nudDesireSpeed.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudDesireSpeed.Name = "nudDesireSpeed";
+            this.nudDesireSpeed.Size = new System.Drawing.Size(71, 20);
+            this.nudDesireSpeed.TabIndex = 34;
+            this.nudDesireSpeed.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(23, 35);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(113, 13);
+            this.label30.TabIndex = 35;
+            this.label30.Text = "Target Frequency (Hz)";
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(27, 130);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(116, 13);
+            this.label31.TabIndex = 36;
+            this.label31.Text = "Current Frequency (Hz)";
+            // 
+            // lblCurrentSpeed
+            // 
+            this.lblCurrentSpeed.AutoSize = true;
+            this.lblCurrentSpeed.BackColor = System.Drawing.Color.White;
+            this.lblCurrentSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCurrentSpeed.Location = new System.Drawing.Point(164, 112);
+            this.lblCurrentSpeed.MaximumSize = new System.Drawing.Size(130, 0);
+            this.lblCurrentSpeed.MinimumSize = new System.Drawing.Size(130, 0);
+            this.lblCurrentSpeed.Name = "lblCurrentSpeed";
+            this.lblCurrentSpeed.Size = new System.Drawing.Size(130, 37);
+            this.lblCurrentSpeed.TabIndex = 37;
+            this.lblCurrentSpeed.Text = "0";
+            this.lblCurrentSpeed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btnStop
+            // 
+            this.btnStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStop.ForeColor = System.Drawing.Color.Red;
+            this.btnStop.Location = new System.Drawing.Point(357, 266);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(108, 36);
+            this.btnStop.TabIndex = 32;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
+            // btnStart
+            // 
+            this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStart.Location = new System.Drawing.Point(354, 35);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(108, 58);
+            this.btnStart.TabIndex = 26;
+            this.btnStart.Text = "Start";
+            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
             // tabPage3
             // 
+            this.tabPage3.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage3.Controls.Add(this.chart1);
+            this.tabPage3.Controls.Add(this.label37);
+            this.tabPage3.Controls.Add(this.nudTimeout);
+            this.tabPage3.Controls.Add(this.label36);
+            this.tabPage3.Controls.Add(this.nudTolerance);
+            this.tabPage3.Controls.Add(this.groupBox1);
+            this.tabPage3.Controls.Add(this.lblPulseDelay);
+            this.tabPage3.Controls.Add(this.label28);
+            this.tabPage3.Controls.Add(this.lblMaxRotorPeriod);
+            this.tabPage3.Controls.Add(this.lblMinRotorPeriod);
+            this.tabPage3.Controls.Add(this.label29);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(479, 330);
+            this.tabPage3.Size = new System.Drawing.Size(479, 316);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Parameters";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(36, 136);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(45, 13);
+            this.label37.TabIndex = 55;
+            this.label37.Text = "Timeout";
+            // 
+            // nudTimeout
+            // 
+            this.nudTimeout.Location = new System.Drawing.Point(174, 134);
+            this.nudTimeout.Name = "nudTimeout";
+            this.nudTimeout.Size = new System.Drawing.Size(67, 20);
+            this.nudTimeout.TabIndex = 54;
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(37, 107);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(108, 13);
+            this.label36.TabIndex = 52;
+            this.label36.Text = "Frequency Tolerance";
+            // 
+            // nudTolerance
+            // 
+            this.nudTolerance.DecimalPlaces = 2;
+            this.nudTolerance.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudTolerance.Location = new System.Drawing.Point(174, 105);
+            this.nudTolerance.Name = "nudTolerance";
+            this.nudTolerance.Size = new System.Drawing.Size(67, 20);
+            this.nudTolerance.TabIndex = 51;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.BackColor = System.Drawing.Color.LightGray;
+            this.groupBox1.Controls.Add(this.label25);
+            this.groupBox1.Controls.Add(this.label26);
+            this.groupBox1.Controls.Add(this.label27);
+            this.groupBox1.Controls.Add(this.nudD);
+            this.groupBox1.Controls.Add(this.nudI);
+            this.groupBox1.Controls.Add(this.nudP);
+            this.groupBox1.Location = new System.Drawing.Point(288, 27);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(158, 115);
+            this.groupBox1.TabIndex = 50;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Rotor Control";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(33, 54);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(10, 13);
+            this.label25.TabIndex = 34;
+            this.label25.Text = "I";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(33, 85);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(15, 13);
+            this.label26.TabIndex = 33;
+            this.label26.Text = "D";
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(33, 24);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(14, 13);
+            this.label27.TabIndex = 32;
+            this.label27.Text = "P";
+            // 
+            // nudD
+            // 
+            this.nudD.DecimalPlaces = 4;
+            this.nudD.Location = new System.Drawing.Point(54, 82);
+            this.nudD.Name = "nudD";
+            this.nudD.Size = new System.Drawing.Size(72, 20);
+            this.nudD.TabIndex = 31;
+            // 
+            // nudI
+            // 
+            this.nudI.DecimalPlaces = 4;
+            this.nudI.Location = new System.Drawing.Point(53, 51);
+            this.nudI.Name = "nudI";
+            this.nudI.Size = new System.Drawing.Size(73, 20);
+            this.nudI.TabIndex = 30;
+            // 
+            // nudP
+            // 
+            this.nudP.DecimalPlaces = 4;
+            this.nudP.Location = new System.Drawing.Point(53, 21);
+            this.nudP.Name = "nudP";
+            this.nudP.Size = new System.Drawing.Size(73, 20);
+            this.nudP.TabIndex = 29;
+            // 
+            // lblPulseDelay
+            // 
+            this.lblPulseDelay.AutoSize = true;
+            this.lblPulseDelay.BackColor = System.Drawing.Color.White;
+            this.lblPulseDelay.Location = new System.Drawing.Point(173, 71);
+            this.lblPulseDelay.MinimumSize = new System.Drawing.Size(30, 18);
+            this.lblPulseDelay.Name = "lblPulseDelay";
+            this.lblPulseDelay.Size = new System.Drawing.Size(30, 18);
+            this.lblPulseDelay.TabIndex = 49;
+            this.lblPulseDelay.Text = "    ";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(37, 71);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(81, 13);
+            this.label28.TabIndex = 48;
+            this.label28.Text = "Pulse delay (us)";
+            // 
+            // lblMaxRotorPeriod
+            // 
+            this.lblMaxRotorPeriod.AutoSize = true;
+            this.lblMaxRotorPeriod.BackColor = System.Drawing.Color.White;
+            this.lblMaxRotorPeriod.Location = new System.Drawing.Point(211, 31);
+            this.lblMaxRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
+            this.lblMaxRotorPeriod.Name = "lblMaxRotorPeriod";
+            this.lblMaxRotorPeriod.Size = new System.Drawing.Size(30, 18);
+            this.lblMaxRotorPeriod.TabIndex = 47;
+            this.lblMaxRotorPeriod.Text = "     ";
+            // 
+            // lblMinRotorPeriod
+            // 
+            this.lblMinRotorPeriod.AutoSize = true;
+            this.lblMinRotorPeriod.BackColor = System.Drawing.Color.White;
+            this.lblMinRotorPeriod.Location = new System.Drawing.Point(175, 31);
+            this.lblMinRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
+            this.lblMinRotorPeriod.Name = "lblMinRotorPeriod";
+            this.lblMinRotorPeriod.Size = new System.Drawing.Size(30, 18);
+            this.lblMinRotorPeriod.TabIndex = 46;
+            this.lblMinRotorPeriod.Text = "      ";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(36, 31);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(131, 13);
+            this.label29.TabIndex = 45;
+            this.label29.Text = "Min/Max Rotor Period (us)";
             // 
             // tabPage2
             // 
+            this.tabPage2.BackColor = System.Drawing.Color.LightGray;
+            this.tabPage2.Controls.Add(this.label38);
             this.tabPage2.Controls.Add(this.label32);
             this.tabPage2.Controls.Add(this.cbxPort);
             this.tabPage2.Controls.Add(this.button4);
@@ -1186,7 +1460,15 @@
             this.tabPage2.Size = new System.Drawing.Size(479, 330);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Settings";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(280, 55);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(62, 13);
+            this.label38.TabIndex = 22;
+            this.label38.Text = "Serial Coms";
             // 
             // label32
             // 
@@ -1239,261 +1521,21 @@
             this.tbxHistory.Size = new System.Drawing.Size(192, 175);
             this.tbxHistory.TabIndex = 16;
             // 
-            // btnStart
-            // 
-            this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStart.Location = new System.Drawing.Point(348, 173);
-            this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(108, 58);
-            this.btnStart.TabIndex = 26;
-            this.btnStart.Text = "Start";
-            this.btnStart.UseVisualStyleBackColor = true;
-            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
-            // 
-            // btnStop
-            // 
-            this.btnStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnStop.ForeColor = System.Drawing.Color.Red;
-            this.btnStop.Location = new System.Drawing.Point(379, 261);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(77, 43);
-            this.btnStop.TabIndex = 32;
-            this.btnStop.Text = "Stop";
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
-            // 
-            // lblCurrentSpeed
-            // 
-            this.lblCurrentSpeed.AutoSize = true;
-            this.lblCurrentSpeed.BackColor = System.Drawing.Color.White;
-            this.lblCurrentSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCurrentSpeed.Location = new System.Drawing.Point(150, 67);
-            this.lblCurrentSpeed.MaximumSize = new System.Drawing.Size(130, 0);
-            this.lblCurrentSpeed.MinimumSize = new System.Drawing.Size(130, 0);
-            this.lblCurrentSpeed.Name = "lblCurrentSpeed";
-            this.lblCurrentSpeed.Size = new System.Drawing.Size(130, 37);
-            this.lblCurrentSpeed.TabIndex = 37;
-            this.lblCurrentSpeed.Text = "0";
-            this.lblCurrentSpeed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(12, 81);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(116, 13);
-            this.label31.TabIndex = 36;
-            this.label31.Text = "Current Frequency (Hz)";
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(12, 35);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(113, 13);
-            this.label30.TabIndex = 35;
-            this.label30.Text = "Target Frequency (Hz)";
-            // 
-            // nudDesireSpeed
-            // 
-            this.nudDesireSpeed.Location = new System.Drawing.Point(148, 32);
-            this.nudDesireSpeed.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.nudDesireSpeed.Name = "nudDesireSpeed";
-            this.nudDesireSpeed.Size = new System.Drawing.Size(71, 20);
-            this.nudDesireSpeed.TabIndex = 34;
-            this.nudDesireSpeed.Value = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            // 
-            // btnSetSpeed
-            // 
-            this.btnSetSpeed.Location = new System.Drawing.Point(233, 30);
-            this.btnSetSpeed.Name = "btnSetSpeed";
-            this.btnSetSpeed.Size = new System.Drawing.Size(47, 23);
-            this.btnSetSpeed.TabIndex = 39;
-            this.btnSetSpeed.Text = "Set";
-            this.btnSetSpeed.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(0, 0);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 48;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label25);
-            this.groupBox1.Controls.Add(this.label26);
-            this.groupBox1.Controls.Add(this.label27);
-            this.groupBox1.Controls.Add(this.nudD);
-            this.groupBox1.Controls.Add(this.nudI);
-            this.groupBox1.Controls.Add(this.nudP);
-            this.groupBox1.Location = new System.Drawing.Point(310, 37);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(158, 115);
-            this.groupBox1.TabIndex = 45;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Rotor Control";
-            // 
-            // nudP
-            // 
-            this.nudP.DecimalPlaces = 4;
-            this.nudP.Location = new System.Drawing.Point(53, 21);
-            this.nudP.Name = "nudP";
-            this.nudP.Size = new System.Drawing.Size(73, 20);
-            this.nudP.TabIndex = 29;
-            // 
-            // nudI
-            // 
-            this.nudI.DecimalPlaces = 4;
-            this.nudI.Location = new System.Drawing.Point(53, 51);
-            this.nudI.Name = "nudI";
-            this.nudI.Size = new System.Drawing.Size(73, 20);
-            this.nudI.TabIndex = 30;
-            // 
-            // nudD
-            // 
-            this.nudD.DecimalPlaces = 4;
-            this.nudD.Location = new System.Drawing.Point(54, 82);
-            this.nudD.Name = "nudD";
-            this.nudD.Size = new System.Drawing.Size(72, 20);
-            this.nudD.TabIndex = 31;
-            // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(33, 24);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(14, 13);
-            this.label27.TabIndex = 32;
-            this.label27.Text = "P";
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(33, 85);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(15, 13);
-            this.label26.TabIndex = 33;
-            this.label26.Text = "D";
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(33, 54);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(10, 13);
-            this.label25.TabIndex = 34;
-            this.label25.Text = "I";
-            // 
-            // lblState
-            // 
-            this.lblState.AutoSize = true;
-            this.lblState.Location = new System.Drawing.Point(432, 10);
-            this.lblState.Name = "lblState";
-            this.lblState.Size = new System.Drawing.Size(36, 13);
-            this.lblState.TabIndex = 46;
-            this.lblState.Text = "(state)";
-            // 
             // chart1
             // 
             chartArea1.Name = "ChartArea1";
             this.chart1.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(7, 193);
+            this.chart1.Location = new System.Drawing.Point(12, 167);
             this.chart1.Name = "chart1";
             series1.ChartArea = "ChartArea1";
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(335, 122);
-            this.chart1.TabIndex = 49;
+            this.chart1.Size = new System.Drawing.Size(461, 154);
+            this.chart1.TabIndex = 56;
             this.chart1.Text = "chart1";
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.BackColor = System.Drawing.Color.Gainsboro;
-            this.tabPage1.Controls.Add(this.chart1);
-            this.tabPage1.Controls.Add(this.lblState);
-            this.tabPage1.Controls.Add(this.groupBox1);
-            this.tabPage1.Controls.Add(this.lblPulseDelay);
-            this.tabPage1.Controls.Add(this.label28);
-            this.tabPage1.Controls.Add(this.lblMaxRotorPeriod);
-            this.tabPage1.Controls.Add(this.lblMinRotorPeriod);
-            this.tabPage1.Controls.Add(this.label29);
-            this.tabPage1.Controls.Add(this.button2);
-            this.tabPage1.Controls.Add(this.btnSetSpeed);
-            this.tabPage1.Controls.Add(this.nudDesireSpeed);
-            this.tabPage1.Controls.Add(this.label30);
-            this.tabPage1.Controls.Add(this.label31);
-            this.tabPage1.Controls.Add(this.lblCurrentSpeed);
-            this.tabPage1.Controls.Add(this.btnStop);
-            this.tabPage1.Controls.Add(this.btnStart);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(479, 330);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Motor Control";
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(17, 119);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(131, 13);
-            this.label29.TabIndex = 40;
-            this.label29.Text = "Min/Max Rotor Period (us)";
-            // 
-            // lblMinRotorPeriod
-            // 
-            this.lblMinRotorPeriod.AutoSize = true;
-            this.lblMinRotorPeriod.BackColor = System.Drawing.Color.White;
-            this.lblMinRotorPeriod.Location = new System.Drawing.Point(154, 119);
-            this.lblMinRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
-            this.lblMinRotorPeriod.Name = "lblMinRotorPeriod";
-            this.lblMinRotorPeriod.Size = new System.Drawing.Size(30, 18);
-            this.lblMinRotorPeriod.TabIndex = 41;
-            this.lblMinRotorPeriod.Text = "      ";
-            // 
-            // lblMaxRotorPeriod
-            // 
-            this.lblMaxRotorPeriod.AutoSize = true;
-            this.lblMaxRotorPeriod.BackColor = System.Drawing.Color.White;
-            this.lblMaxRotorPeriod.Location = new System.Drawing.Point(192, 119);
-            this.lblMaxRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
-            this.lblMaxRotorPeriod.Name = "lblMaxRotorPeriod";
-            this.lblMaxRotorPeriod.Size = new System.Drawing.Size(30, 18);
-            this.lblMaxRotorPeriod.TabIndex = 42;
-            this.lblMaxRotorPeriod.Text = "     ";
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(18, 159);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(81, 13);
-            this.label28.TabIndex = 43;
-            this.label28.Text = "Pulse delay (us)";
-            // 
-            // lblPulseDelay
-            // 
-            this.lblPulseDelay.AutoSize = true;
-            this.lblPulseDelay.BackColor = System.Drawing.Color.White;
-            this.lblPulseDelay.Location = new System.Drawing.Point(154, 159);
-            this.lblPulseDelay.MinimumSize = new System.Drawing.Size(30, 18);
-            this.lblPulseDelay.Name = "lblPulseDelay";
-            this.lblPulseDelay.Size = new System.Drawing.Size(30, 18);
-            this.lblPulseDelay.TabIndex = 44;
-            this.lblPulseDelay.Text = "    ";
             // 
             // FmControlPanel
             // 
@@ -1503,7 +1545,6 @@
             this.ClientSize = new System.Drawing.Size(866, 537);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel6);
-            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -1549,17 +1590,21 @@
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             this.tabControl1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudP)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudI)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudD)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudD)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudI)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudP)).EndInit();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1670,8 +1715,17 @@
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.NumericUpDown nudFreqTo;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.Label lblState;
+        private System.Windows.Forms.NumericUpDown nudDesireSpeed;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label lblCurrentSpeed;
+        private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.NumericUpDown nudTimeout;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.NumericUpDown nudTolerance;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.Label label26;
@@ -1684,13 +1738,7 @@
         private System.Windows.Forms.Label lblMaxRotorPeriod;
         private System.Windows.Forms.Label lblMinRotorPeriod;
         private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button btnSetSpeed;
-        private System.Windows.Forms.NumericUpDown nudDesireSpeed;
-        private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.Label lblCurrentSpeed;
-        private System.Windows.Forms.Button btnStop;
-        private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
     }
 }

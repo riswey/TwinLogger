@@ -66,7 +66,13 @@ namespace MultiDeviceAIO
 
             nudD.DataBindings.Clear();
             nudD.DataBindings.Add("Value", PersistentLoggerState.ps.data, "d");
-            
+
+            nudTolerance.DataBindings.Clear();
+            nudTolerance.DataBindings.Add("Value", PersistentLoggerState.ps.data, "tolerance");
+
+            nudTimeout.DataBindings.Clear();
+            nudTimeout.DataBindings.Add("Value", PersistentLoggerState.ps.data, "timeout");
+
         }
 
         private string SearchPorts()

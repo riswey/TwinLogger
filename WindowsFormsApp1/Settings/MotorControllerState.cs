@@ -22,9 +22,13 @@ namespace MultiDeviceAIO
         public long max_period { get; set; }
         public float target_speed { get; set; }
 
+        public int timeout { get; set; } = 20;
+        public float tolerance { get; set; } = 0.1f;
+
         //TODO: add to period 
         public float rotor_speed { get; set; }
 
+        /*
         MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
         float rotor_speed_ma
         {
@@ -35,15 +39,16 @@ namespace MultiDeviceAIO
                 return rotor_speed;
             }
         }
+        */
 
-        private long start_t { get; set; }
-
-
-
+        #region MinMax_TIMER
         //RM (Req. Min/Max) Timer pause
         //Put a timer block on Min/Max calls
         //Start/SetFreq reset min/max which takes 2s to stabilise
+
         const long RM_TIMER_PERIOD = 2000;
+
+        private long start_t { get; set; }
         long rm_timer { get; set; } = 0;
 
         public void StartRMTimer()
@@ -64,6 +69,7 @@ namespace MultiDeviceAIO
             return min_period != 1E7 && max_period != 0;
         }
 
+        #endregion
 
         #region LOGGING
 
