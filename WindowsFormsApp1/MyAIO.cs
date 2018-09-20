@@ -121,7 +121,6 @@ namespace MultiDeviceAIO
         //Ensure you have only one copy of this!
         public DATA concatdata { get; private set; } = null;      //Keep for Scope
 
-        int[] buf = new int[100000];
 
         public MyAIO(int testing)
         {
@@ -366,7 +365,7 @@ namespace MultiDeviceAIO
                 testtarget += d.target = settings.sample_frequency * settings.duration * settings.n_channels;
 
                 //timer_duration / 1000 * sample_freq * num_channels *2 (no chance of overflow!)
-                d.buffer = new int[TIMERPERIOD / 1000 * settings.sample_frequency * settings.n_channels * 2];
+                //d.buffer = new int[TIMERPERIOD / 1000 * settings.sample_frequency * settings.n_channels * 2];
 
             }
 
@@ -422,27 +421,30 @@ namespace MultiDeviceAIO
         {
             HANDLE_RETURN_VALUES = aio.GetAiSamplingCount(d.id, out int sampling_count);
 
-            if (sampling_count > 0)
+            int data_points = sampling_count * PersistentLoggerState.ps.data.n_channels;
+
+            //10% too large cos sampling_count not guaranteed
+            int[] buffer = GetBuffer(data_points);
+
+            if (data_points > 0)
             {
-                try
-                {
-                    HANDLE_RETURN_VALUES = aio.GetAiSamplingData(d.id, ref sampling_count, ref buf);
-                }
-                catch (Exception ex)
-                {
-                    if (ex is StackOverflowException || ex is AccessViolationException)
-                    {
-                        return -1;
-                    }
-
-                    throw;
-                }
-
+                //NOTE: warning this is where memory problems may occur
+                HANDLE_RETURN_VALUES = aio.GetAiSamplingData(d.id, ref sampling_count, ref buffer);
+                return d.Add(data_points, ref buffer);
             }
 
-            int added_size = d.Add(sampling_count * PersistentLoggerState.ps.data.n_channels, ref buf);
+            return 0;
+        }
 
-            return added_size;
+        private int[] _buffer = new int[1000];
+        private ref int[] GetBuffer(int size)
+        {
+            //Allow 10% error
+            if (size * 1.1 > _buffer.Length)
+            {
+                _buffer = new int[(int)(size * 1.1)];
+            }
+            return ref _buffer;
         }
 
         public bool IsTestFinished {

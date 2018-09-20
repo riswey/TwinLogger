@@ -43,6 +43,9 @@ namespace MultiDeviceAIO
             }
             */
 
+            var status = new List<int>();
+            myaio.GetStatusAll(ref status);
+
             ////////////////////////////////////////////////////////////////////
             // RESET DATA HERE
             ////////////////////////////////////////////////////////////////////
@@ -56,6 +59,7 @@ namespace MultiDeviceAIO
             //myaio.SetAiCallBackProc(pfunc);
 
 
+            //TODO: better timer control so that exiting closures ensures they stop/start
             //STOP Monitor Timer
             TimerMonitorState(false);
 
@@ -77,8 +81,6 @@ namespace MultiDeviceAIO
             var status = new List<int>();
 
             myaio.SampleDeviceState(ref status, out int allstatus, out MyAIO.DEVICESTATEDELTA delta);
-
-            PrintLn(String.Format("{0:X}", allstatus));
 
             if (PersistentLoggerState.ps.data.testingmode == 1)
             {
@@ -107,14 +109,6 @@ namespace MultiDeviceAIO
                 setStartButtonText(2);
             }
 
-            if (delta == MyAIO.DEVICESTATEDELTA.READY)
-            {
-                //A device just stopped collecting data and returned to ready.
-                PrintLn("Complete", true);
-                setStartButtonText(0);
-                //retrieve last bit data
-            }
-
             //Handle bitflags
 
             //A device got Overflow error
@@ -136,46 +130,37 @@ namespace MultiDeviceAIO
             }
 
             //Collecting data || just got an Idle status after sampling
-            if (MyAIO.TestBit(allstatus, CaioConst.AIS_DATA_NUM) || delta == MyAIO.DEVICESTATEDELTA.READY )
+            if (
+                MyAIO.TestBit(allstatus, CaioConst.AIS_DATA_NUM)
+                || 
+                delta == MyAIO.DEVICESTATEDELTA.READY )         //empty buffers
             {
                 //TODO: May as well do one main thread
                 //but exception handling gets stuck here
 
                 //NOTE: accessviolation
                 //Invoke(new Action(() => RetrieveData()));
-                if (!RetrieveData())
+
+                RetrieveData();
+
+                if (myaio.IsTestFinished)
                 {
-                    Abort();
-                    return;
+                    FinishTest();
                 }
 
             }
 
         }
 
-        private bool RetrieveData()
+        void FinishTest()
         {
-            int dat = myaio.RetrieveAllData();
-
-            if (dat == -1) return false;
-
-            double percent =  dat / myaio.testtarget * 100;
-
-            progressBar1.Value = (int)Math.Round(percent, 0);
-
-            PrintLn(String.Format("{0:0.00}%", percent), false, -1);
-            
-            if (myaio.IsTestFinished)
+            if (InvokeRequired)
             {
-                timergetdata.Stop();
-                TerminateTest();
+                this.Invoke(new Action(() => FinishTest() ));
+                return;
             }
 
-            return true;
-        }
-
-        void TerminateTest()
-        {
+            timergetdata.Stop();
             if (myaio.IsTestFailed)
             {
                 PrintLn("Test Failed", true);
@@ -184,7 +169,27 @@ namespace MultiDeviceAIO
                 return;
             }
             //Success
-            TestFinished();
+            SaveData();
+
+            setStartButtonText(0);
+            //RESTART TIMER
+            TimerMonitorState(true);
+            SetStatus("Ready");
+        }
+
+        void ResetUSB()
+        {
+            MessageBox.Show("Not Implemented");
+        }
+
+        private void RetrieveData()
+        {
+            double percent = myaio.RetrieveAllData() / myaio.testtarget * 100;
+
+            progressBar1.Value = (int)Math.Round(percent, 0);
+
+            PrintLn(String.Format("{0:0.00}%", percent), false, -1);
+            
         }
 
         /// <summary>
@@ -196,7 +201,7 @@ namespace MultiDeviceAIO
         /// </summary>
         /// <param name="device_id"></param>
         /// <param name="num_samples"></param>
-        void TestFinished()
+        void SaveData()
         {
             DATA concatdata = myaio.GetConcatData;
 
@@ -243,14 +248,7 @@ namespace MultiDeviceAIO
             }
 
             RenameTempFile(fn);
-            
-            setStartButtonText(0);
-
-            //RESTART TIMER
-            TimerMonitorState(true);
-
             PrintLn("Saved", true);
-            SetStatus("Ready");
 
         }
 

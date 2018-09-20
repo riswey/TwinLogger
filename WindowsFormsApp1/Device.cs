@@ -24,7 +24,7 @@ namespace MultiDeviceAIO
         }
         public bool IsFailed { get; private set; } = false;
         //timer_duration / 1000 * sample_freq * num_channels
-        public int[] buffer;
+        //public int[] buffer = new int[1000];
 
         public Device(short id, string name)
         {
@@ -56,6 +56,7 @@ namespace MultiDeviceAIO
                 var newArray = new int[datapointcount];
                 Array.Copy(buf, newArray, datapointcount);
                 data.AddRange(newArray);
+                
             }
             else
             {

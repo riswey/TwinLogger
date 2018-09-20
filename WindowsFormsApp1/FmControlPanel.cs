@@ -219,7 +219,7 @@ namespace MultiDeviceAIO
             {
                 try
                 {
-                    if (IO.MoveTempFileAddHeader(PersistentLoggerState.ps, fn)) { PrintLn("Saved: \r\n" + fn); }
+                    if (IO.MoveTempFileAddHeader(PersistentLoggerState.ps, fn)) { PrintLn("> " + fn); }
                     else { SetStatus("No data to save"); }
                 }
                 catch (IOException ex)
@@ -264,8 +264,6 @@ namespace MultiDeviceAIO
                 return;
             }
 
-            if (speak) SayMessage(msg.ToString());
-
             //
             switch (linebreak)
             {
@@ -283,6 +281,9 @@ namespace MultiDeviceAIO
 
             textBox1.SelectionStart = textBox1.Text.Length;
             textBox1.ScrollToCaret();
+
+            if (speak) SayMessage(msg.ToString());
+
         }
 
         void SaveLogFile()
@@ -724,15 +725,8 @@ namespace MultiDeviceAIO
             //Abort
             timergetdata.Stop();
             myaio.Stop();
-
-            //TODO: how handle a reset failure (USB in transit)
-            //myaio.ResetTest(); //This will cause device inner error if device malfunctioning
-
-
-            //TODO:
-            //Need to work on a way to reset devices at hardware level!!!
-
-
+            //This will cause device inner error if device malfunctioning
+            myaio.ResetTest();
             //This will hang if the device has failed.
             myaio.ResetDevices();
             setStartButtonText(0);
@@ -741,7 +735,7 @@ namespace MultiDeviceAIO
 
             timermonitor.Stop();
             timermonitor.Start();
-            PrintLn("Run aborted");
+            PrintLn("Run aborted", true);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
