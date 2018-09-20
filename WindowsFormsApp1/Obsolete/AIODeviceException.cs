@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -31,11 +32,9 @@ namespace MultiDeviceAIO
         {
         }
 
-        /* Handleable Errors:
-         * 
-         * 7: reset devices
-         * 
-         */
+        // Handleable Errors:
+         
+        //  7: reset devices
 
         private static string AIOERRORCODES(long code)
         {
@@ -608,3 +607,4 @@ namespace MultiDeviceAIO
 
     }
 }
+*/

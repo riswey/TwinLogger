@@ -17,7 +17,7 @@ namespace MultiDeviceAIO
 
         MyAIO myaio;
 
-        Monitor monitor;
+        FmMonitor monitor;
 
         FmLog fmlog;
 
@@ -65,7 +65,7 @@ namespace MultiDeviceAIO
             try
             {
                 List<List<int>> mapping;
-                IO.ReadCSV<int>(Monitor.fnMAPPING, IO.DelegateParseInt<int>, out mapping, ',', true);
+                IO.ReadCSV<int>(FmMonitor.fnMAPPING, IO.DelegateParseInt<int>, out mapping, ',', true);
                 Accelerometer.ImportMapping(mapping, PersistentLoggerState.ps.data.n_channels);
             }
             catch (FileNotFoundException e)
@@ -314,7 +314,7 @@ namespace MultiDeviceAIO
         */
         private void monitorChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            monitor = new Monitor(PersistentLoggerState.ps.data.n_channels);
+            monitor = new FmMonitor(PersistentLoggerState.ps.data.n_channels);
             monitor.Show();
         }
 
@@ -477,7 +477,7 @@ namespace MultiDeviceAIO
             //TODO: inefficient as must convert data every time
             //Can scope take the dictionary?
 
-            using (Scope scope = new Scope(myaio.GetConcatData, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration))
+            using (FmScope scope = new FmScope(myaio.GetConcatData, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration))
             {
                 if (!scope.IsDisposed)
                 {
@@ -506,7 +506,7 @@ namespace MultiDeviceAIO
 
         private void calibrateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Monitor.LoadAccelometerCalibration();
+            FmMonitor.LoadAccelometerCalibration();
         }
 
         /*private void motorControllerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -538,7 +538,7 @@ namespace MultiDeviceAIO
 
                 string filename = openFileDialog1.FileName;
 
-                (new Scope(filename)).Show();
+                (new FmScope(filename)).Show();
             }
         }
 

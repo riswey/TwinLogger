@@ -10,7 +10,7 @@ using DEVICEID = System.Int16;
 
 namespace MultiDeviceAIO
 {
-    public partial class Monitor : Form
+    public partial class FmMonitor : Form
     {
         public static string fnMAPPING = @"mapping.csv";
 
@@ -54,7 +54,7 @@ namespace MultiDeviceAIO
                 { "DarkGrey", new SolidBrush(Color.DarkGray) }
         };
 
-        public Monitor(short n_channels)
+        public FmMonitor(short n_channels)
         {
             InitializeComponent();
 
@@ -71,7 +71,7 @@ namespace MultiDeviceAIO
             ReDraw();
         }
 
-        ~Monitor()
+        ~FmMonitor()
         {
             g.Dispose();
         }
@@ -115,7 +115,7 @@ namespace MultiDeviceAIO
                     try
                     {
                         IO.ReadCSV<int>(ofd.FileName, IO.DelegateParseInt<int>, out List<List<int>> accsetup);
-                        Monitor.ExtractSetupFile(accsetup);
+                        FmMonitor.ExtractSetupFile(accsetup);
                     }
                     catch (IOException ex)
                     {

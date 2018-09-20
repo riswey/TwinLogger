@@ -17,6 +17,8 @@ namespace MultiDeviceAIO
         string TERMINAL = "\n";
         STATE state = STATE.Ready;
         //Task task = null;
+
+
         ParameterState parameters = new ParameterState();
 
         Timer timerarduino = new Timer();

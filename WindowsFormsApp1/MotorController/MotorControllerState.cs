@@ -2,31 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using System.Threading.Tasks;
 
-namespace MotorController
+namespace MultiDeviceAIO.Settings
 {
-    class PeriodAverage
+    partial class LoggerState
     {
-        List<float> buffer = new List<float>();
 
-        public void Add(float f) { buffer.Add(f); }
-
-        public float GetPeriodAverage()
+        public static long GetTime()   //millisecond time
         {
-            //sum
-            //divide by count
-            float average = 0;
-            buffer.Clear();
-            return average;
+            return (long)Math.Round(DateTimeOffset.Now.UtcTicks / 10000.0d, 0);
         }
-    }
 
-
-    class ParameterState
-    {
-
-        PeriodAverage pa = new PeriodAverage();
 
         public float p { get; set; }
         public float i { get; set; }
@@ -39,7 +25,10 @@ namespace MotorController
         //TODO: add to period 
         public float rotor_speed { get; set; }
 
-        float rotor_speed_ma { get
+        MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
+        float rotor_speed_ma
+        {
+            get
             {
                 //TODO:
                 //MA for rotor period
@@ -47,13 +36,9 @@ namespace MotorController
             }
         }
 
-        public string path { get; set; }
         private long start_t { get; set; }
 
-        public static long GetTime()   //millisecond time
-        {
-            return (long)Math.Round(DateTimeOffset.Now.UtcTicks / 10000.0d, 0);
-        }
+
 
         //RM (Req. Min/Max) Timer pause
         //Put a timer block on Min/Max calls
@@ -72,13 +57,16 @@ namespace MotorController
             return (GetTime() - rm_timer) > RM_TIMER_PERIOD;
         }
 
+
+
+
+        public string path { get; set; }
         public void Start(string path = "")
         {
             this.path = path;
             doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD\tDelay\tMin\tMax");
             start_t = GetTime();
         }
-
         private void doWrite(string str)
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(path + "Log.dat", true))
@@ -88,6 +76,7 @@ namespace MotorController
 
         }
 
+        //Seems this is just for logging
         public bool IsMMInRange()
         {
             return min_period != 1E7 && max_period != 0;
@@ -106,17 +95,19 @@ namespace MotorController
             string str = String.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}",
                 millisecs,
                 target_speed,
-                pa.GetPeriodAverage(), 
-                p, 
-                i, 
-                d, 
+                pa.GetPeriodAverage(),
+                p,
+                i,
+                d,
                 pulse_delay,
                 min_period,
                 max_period
             );
 
-            doWrite(str);
+            //doWrite(str);
         }
+
+
 
     }
 }

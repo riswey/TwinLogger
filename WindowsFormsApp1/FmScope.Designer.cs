@@ -1,6 +1,6 @@
 ﻿namespace MultiDeviceAIO
 {
-    partial class Scope
+    partial class FmScope
     {
         /// <summary>
         /// Required designer variable.

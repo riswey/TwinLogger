@@ -11,7 +11,7 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 
 namespace MultiDeviceAIO
 {
-    public partial class Scope : Form
+    public partial class FmScope : Form
     {
         //Display
         NPlot.LinePlot npplot;
@@ -24,7 +24,7 @@ namespace MultiDeviceAIO
         float[] dataX;
         float[] dataY;
         
-        public Scope(string filename)
+        public FmScope(string filename)
         {
             //Isolate importing from main program.
             //Main program state is for current test setup!
@@ -73,7 +73,7 @@ namespace MultiDeviceAIO
 
         }
 
-        public Scope(DATA concatdata, int n_channels, int duration)
+        public FmScope(DATA concatdata, int n_channels, int duration)
         {
             this.n_channels = n_channels;
             Import(concatdata, duration);
