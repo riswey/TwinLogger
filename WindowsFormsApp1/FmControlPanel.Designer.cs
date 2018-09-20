@@ -125,6 +125,33 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnReset = new System.Windows.Forms.Button();
+            this.lblState = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label26 = new System.Windows.Forms.Label();
+            this.label27 = new System.Windows.Forms.Label();
+            this.nudD = new System.Windows.Forms.NumericUpDown();
+            this.nudI = new System.Windows.Forms.NumericUpDown();
+            this.nudP = new System.Windows.Forms.NumericUpDown();
+            this.lblPulseDelay = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.lblMaxRotorPeriod = new System.Windows.Forms.Label();
+            this.lblMinRotorPeriod = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.btnSetSpeed = new System.Windows.Forms.Button();
+            this.nudDesireSpeed = new System.Windows.Forms.NumericUpDown();
+            this.label30 = new System.Windows.Forms.Label();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.label31 = new System.Windows.Forms.Label();
+            this.lblCurrentSpeed = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.cbxPort = new System.Windows.Forms.ComboBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.label33 = new System.Windows.Forms.Label();
+            this.tbxLogPath = new System.Windows.Forms.TextBox();
+            this.tbxHistory = new System.Windows.Forms.TextBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreq)).BeginInit();
@@ -155,6 +182,12 @@
             this.panel6.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudD)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudI)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudP)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -695,9 +728,6 @@
             this.panel2.BackColor = System.Drawing.Color.Transparent;
             this.panel2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel2.BackgroundImage")));
             this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel2.Controls.Add(this.pbStatusOut);
-            this.panel2.Controls.Add(this.pbStatus);
-            this.panel2.Controls.Add(this.label14);
             this.panel2.Controls.Add(this.chkExternalClock);
             this.panel2.Controls.Add(this.chkExternalTrigger);
             this.panel2.Controls.Add(this.label12);
@@ -727,7 +757,7 @@
             // pbStatusOut
             // 
             this.pbStatusOut.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pbStatusOut.Location = new System.Drawing.Point(187, 30);
+            this.pbStatusOut.Location = new System.Drawing.Point(43, 36);
             this.pbStatusOut.Name = "pbStatusOut";
             this.pbStatusOut.Size = new System.Drawing.Size(26, 24);
             this.pbStatusOut.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -737,7 +767,7 @@
             // pbStatus
             // 
             this.pbStatus.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pbStatus.Location = new System.Drawing.Point(249, 30);
+            this.pbStatus.Location = new System.Drawing.Point(105, 36);
             this.pbStatus.Name = "pbStatus";
             this.pbStatus.Size = new System.Drawing.Size(26, 24);
             this.pbStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -748,11 +778,11 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(159, 4);
+            this.label14.Location = new System.Drawing.Point(15, 10);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(154, 16);
+            this.label14.Size = new System.Drawing.Size(150, 16);
             this.label14.TabIndex = 29;
-            this.label14.Text = "Accelerometer Array:";
+            this.label14.Text = "Accelerometer Array";
             // 
             // label12
             // 
@@ -797,7 +827,7 @@
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(14, 56);
+            this.label24.Location = new System.Drawing.Point(220, 55);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(13, 13);
             this.label24.TabIndex = 62;
@@ -806,7 +836,7 @@
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(15, 30);
+            this.label23.Location = new System.Drawing.Point(221, 29);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(13, 13);
             this.label23.TabIndex = 61;
@@ -815,7 +845,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(236, 11);
+            this.label19.Location = new System.Drawing.Point(442, 10);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(15, 13);
             this.label19.TabIndex = 60;
@@ -824,7 +854,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(210, 11);
+            this.label20.Location = new System.Drawing.Point(416, 10);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(14, 13);
             this.label20.TabIndex = 59;
@@ -833,7 +863,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(183, 11);
+            this.label21.Location = new System.Drawing.Point(389, 10);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(14, 13);
             this.label21.TabIndex = 58;
@@ -842,7 +872,7 @@
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(156, 11);
+            this.label22.Location = new System.Drawing.Point(362, 10);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(15, 13);
             this.label22.TabIndex = 57;
@@ -851,7 +881,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(116, 11);
+            this.label18.Location = new System.Drawing.Point(322, 10);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(15, 13);
             this.label18.TabIndex = 56;
@@ -860,7 +890,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(90, 11);
+            this.label17.Location = new System.Drawing.Point(296, 10);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(14, 13);
             this.label17.TabIndex = 55;
@@ -869,7 +899,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(63, 11);
+            this.label16.Location = new System.Drawing.Point(269, 10);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(14, 13);
             this.label16.TabIndex = 54;
@@ -878,7 +908,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(36, 11);
+            this.label15.Location = new System.Drawing.Point(242, 10);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(13, 13);
             this.label15.TabIndex = 53;
@@ -887,7 +917,7 @@
             // pb2device
             // 
             this.pb2device.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2device.Location = new System.Drawing.Point(233, 53);
+            this.pb2device.Location = new System.Drawing.Point(439, 52);
             this.pb2device.Name = "pb2device";
             this.pb2device.Size = new System.Drawing.Size(21, 21);
             this.pb2device.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -897,7 +927,7 @@
             // pb2convert
             // 
             this.pb2convert.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2convert.Location = new System.Drawing.Point(206, 53);
+            this.pb2convert.Location = new System.Drawing.Point(412, 52);
             this.pb2convert.Name = "pb2convert";
             this.pb2convert.Size = new System.Drawing.Size(21, 21);
             this.pb2convert.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -907,7 +937,7 @@
             // pb2timer
             // 
             this.pb2timer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2timer.Location = new System.Drawing.Point(179, 53);
+            this.pb2timer.Location = new System.Drawing.Point(385, 52);
             this.pb2timer.Name = "pb2timer";
             this.pb2timer.Size = new System.Drawing.Size(21, 21);
             this.pb2timer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -917,7 +947,7 @@
             // pb2overflow
             // 
             this.pb2overflow.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2overflow.Location = new System.Drawing.Point(152, 53);
+            this.pb2overflow.Location = new System.Drawing.Point(358, 52);
             this.pb2overflow.Name = "pb2overflow";
             this.pb2overflow.Size = new System.Drawing.Size(21, 21);
             this.pb2overflow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -927,7 +957,7 @@
             // pb2data
             // 
             this.pb2data.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2data.Location = new System.Drawing.Point(113, 53);
+            this.pb2data.Location = new System.Drawing.Point(319, 52);
             this.pb2data.Name = "pb2data";
             this.pb2data.Size = new System.Drawing.Size(21, 21);
             this.pb2data.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -937,7 +967,7 @@
             // pb2arm
             // 
             this.pb2arm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2arm.Location = new System.Drawing.Point(86, 53);
+            this.pb2arm.Location = new System.Drawing.Point(292, 52);
             this.pb2arm.Name = "pb2arm";
             this.pb2arm.Size = new System.Drawing.Size(21, 21);
             this.pb2arm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -947,7 +977,7 @@
             // pb2busy
             // 
             this.pb2busy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2busy.Location = new System.Drawing.Point(59, 53);
+            this.pb2busy.Location = new System.Drawing.Point(265, 52);
             this.pb2busy.Name = "pb2busy";
             this.pb2busy.Size = new System.Drawing.Size(21, 21);
             this.pb2busy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -957,7 +987,7 @@
             // pb2ok
             // 
             this.pb2ok.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb2ok.Location = new System.Drawing.Point(32, 53);
+            this.pb2ok.Location = new System.Drawing.Point(238, 52);
             this.pb2ok.Name = "pb2ok";
             this.pb2ok.Size = new System.Drawing.Size(21, 21);
             this.pb2ok.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -967,7 +997,7 @@
             // pb1device
             // 
             this.pb1device.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1device.Location = new System.Drawing.Point(233, 26);
+            this.pb1device.Location = new System.Drawing.Point(439, 25);
             this.pb1device.Name = "pb1device";
             this.pb1device.Size = new System.Drawing.Size(21, 21);
             this.pb1device.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -977,7 +1007,7 @@
             // pb1convert
             // 
             this.pb1convert.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1convert.Location = new System.Drawing.Point(206, 26);
+            this.pb1convert.Location = new System.Drawing.Point(412, 25);
             this.pb1convert.Name = "pb1convert";
             this.pb1convert.Size = new System.Drawing.Size(21, 21);
             this.pb1convert.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -987,7 +1017,7 @@
             // pb1timer
             // 
             this.pb1timer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1timer.Location = new System.Drawing.Point(179, 26);
+            this.pb1timer.Location = new System.Drawing.Point(385, 25);
             this.pb1timer.Name = "pb1timer";
             this.pb1timer.Size = new System.Drawing.Size(21, 21);
             this.pb1timer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -997,7 +1027,7 @@
             // pb1overflow
             // 
             this.pb1overflow.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1overflow.Location = new System.Drawing.Point(152, 26);
+            this.pb1overflow.Location = new System.Drawing.Point(358, 25);
             this.pb1overflow.Name = "pb1overflow";
             this.pb1overflow.Size = new System.Drawing.Size(21, 21);
             this.pb1overflow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1007,7 +1037,7 @@
             // pb1data
             // 
             this.pb1data.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1data.Location = new System.Drawing.Point(113, 26);
+            this.pb1data.Location = new System.Drawing.Point(319, 25);
             this.pb1data.Name = "pb1data";
             this.pb1data.Size = new System.Drawing.Size(21, 21);
             this.pb1data.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1017,7 +1047,7 @@
             // pb1arm
             // 
             this.pb1arm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1arm.Location = new System.Drawing.Point(86, 26);
+            this.pb1arm.Location = new System.Drawing.Point(292, 25);
             this.pb1arm.Name = "pb1arm";
             this.pb1arm.Size = new System.Drawing.Size(21, 21);
             this.pb1arm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1027,7 +1057,7 @@
             // pb1busy
             // 
             this.pb1busy.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1busy.Location = new System.Drawing.Point(59, 26);
+            this.pb1busy.Location = new System.Drawing.Point(265, 25);
             this.pb1busy.Name = "pb1busy";
             this.pb1busy.Size = new System.Drawing.Size(21, 21);
             this.pb1busy.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1037,7 +1067,7 @@
             // pb1ok
             // 
             this.pb1ok.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pb1ok.Location = new System.Drawing.Point(32, 26);
+            this.pb1ok.Location = new System.Drawing.Point(238, 25);
             this.pb1ok.Name = "pb1ok";
             this.pb1ok.Size = new System.Drawing.Size(21, 21);
             this.pb1ok.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1056,8 +1086,11 @@
             this.panel6.BackColor = System.Drawing.Color.Transparent;
             this.panel6.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel6.BackgroundImage")));
             this.panel6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel6.Controls.Add(this.pbStatusOut);
             this.panel6.Controls.Add(this.label24);
+            this.panel6.Controls.Add(this.pbStatus);
             this.panel6.Controls.Add(this.label23);
+            this.panel6.Controls.Add(this.label14);
             this.panel6.Controls.Add(this.pb1data);
             this.panel6.Controls.Add(this.label19);
             this.panel6.Controls.Add(this.pb1ok);
@@ -1100,6 +1133,21 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage1.Controls.Add(this.btnReset);
+            this.tabPage1.Controls.Add(this.lblState);
+            this.tabPage1.Controls.Add(this.groupBox1);
+            this.tabPage1.Controls.Add(this.lblPulseDelay);
+            this.tabPage1.Controls.Add(this.label28);
+            this.tabPage1.Controls.Add(this.lblMaxRotorPeriod);
+            this.tabPage1.Controls.Add(this.lblMinRotorPeriod);
+            this.tabPage1.Controls.Add(this.label29);
+            this.tabPage1.Controls.Add(this.button2);
+            this.tabPage1.Controls.Add(this.btnSetSpeed);
+            this.tabPage1.Controls.Add(this.nudDesireSpeed);
+            this.tabPage1.Controls.Add(this.label30);
+            this.tabPage1.Controls.Add(this.btnStop);
+            this.tabPage1.Controls.Add(this.label31);
+            this.tabPage1.Controls.Add(this.lblCurrentSpeed);
             this.tabPage1.Controls.Add(this.button1);
             this.tabPage1.Controls.Add(this.btnStart);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -1111,6 +1159,12 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.label32);
+            this.tabPage2.Controls.Add(this.cbxPort);
+            this.tabPage2.Controls.Add(this.button4);
+            this.tabPage2.Controls.Add(this.label33);
+            this.tabPage2.Controls.Add(this.tbxLogPath);
+            this.tabPage2.Controls.Add(this.tbxHistory);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -1118,6 +1172,268 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Settings";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(315, 56);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(75, 23);
+            this.btnReset.TabIndex = 47;
+            this.btnReset.Text = "Abort";
+            this.btnReset.UseVisualStyleBackColor = true;
+            // 
+            // lblState
+            // 
+            this.lblState.AutoSize = true;
+            this.lblState.Location = new System.Drawing.Point(403, 61);
+            this.lblState.Name = "lblState";
+            this.lblState.Size = new System.Drawing.Size(36, 13);
+            this.lblState.TabIndex = 46;
+            this.lblState.Text = "(state)";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label25);
+            this.groupBox1.Controls.Add(this.label26);
+            this.groupBox1.Controls.Add(this.label27);
+            this.groupBox1.Controls.Add(this.nudD);
+            this.groupBox1.Controls.Add(this.nudI);
+            this.groupBox1.Controls.Add(this.nudP);
+            this.groupBox1.Location = new System.Drawing.Point(313, 87);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(158, 115);
+            this.groupBox1.TabIndex = 45;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Rotor Control";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(33, 54);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(10, 13);
+            this.label25.TabIndex = 34;
+            this.label25.Text = "I";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(33, 85);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(15, 13);
+            this.label26.TabIndex = 33;
+            this.label26.Text = "D";
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(33, 24);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(14, 13);
+            this.label27.TabIndex = 32;
+            this.label27.Text = "P";
+            // 
+            // nudD
+            // 
+            this.nudD.DecimalPlaces = 4;
+            this.nudD.Location = new System.Drawing.Point(54, 82);
+            this.nudD.Name = "nudD";
+            this.nudD.Size = new System.Drawing.Size(72, 20);
+            this.nudD.TabIndex = 31;
+            // 
+            // nudI
+            // 
+            this.nudI.DecimalPlaces = 4;
+            this.nudI.Location = new System.Drawing.Point(53, 51);
+            this.nudI.Name = "nudI";
+            this.nudI.Size = new System.Drawing.Size(73, 20);
+            this.nudI.TabIndex = 30;
+            // 
+            // nudP
+            // 
+            this.nudP.DecimalPlaces = 4;
+            this.nudP.Location = new System.Drawing.Point(53, 21);
+            this.nudP.Name = "nudP";
+            this.nudP.Size = new System.Drawing.Size(73, 20);
+            this.nudP.TabIndex = 29;
+            // 
+            // lblPulseDelay
+            // 
+            this.lblPulseDelay.AutoSize = true;
+            this.lblPulseDelay.BackColor = System.Drawing.Color.White;
+            this.lblPulseDelay.Location = new System.Drawing.Point(149, 167);
+            this.lblPulseDelay.MinimumSize = new System.Drawing.Size(30, 18);
+            this.lblPulseDelay.Name = "lblPulseDelay";
+            this.lblPulseDelay.Size = new System.Drawing.Size(30, 18);
+            this.lblPulseDelay.TabIndex = 44;
+            this.lblPulseDelay.Text = "    ";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(13, 167);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(81, 13);
+            this.label28.TabIndex = 43;
+            this.label28.Text = "Pulse delay (us)";
+            // 
+            // lblMaxRotorPeriod
+            // 
+            this.lblMaxRotorPeriod.AutoSize = true;
+            this.lblMaxRotorPeriod.BackColor = System.Drawing.Color.White;
+            this.lblMaxRotorPeriod.Location = new System.Drawing.Point(187, 127);
+            this.lblMaxRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
+            this.lblMaxRotorPeriod.Name = "lblMaxRotorPeriod";
+            this.lblMaxRotorPeriod.Size = new System.Drawing.Size(30, 18);
+            this.lblMaxRotorPeriod.TabIndex = 42;
+            this.lblMaxRotorPeriod.Text = "     ";
+            // 
+            // lblMinRotorPeriod
+            // 
+            this.lblMinRotorPeriod.AutoSize = true;
+            this.lblMinRotorPeriod.BackColor = System.Drawing.Color.White;
+            this.lblMinRotorPeriod.Location = new System.Drawing.Point(149, 127);
+            this.lblMinRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
+            this.lblMinRotorPeriod.Name = "lblMinRotorPeriod";
+            this.lblMinRotorPeriod.Size = new System.Drawing.Size(30, 18);
+            this.lblMinRotorPeriod.TabIndex = 41;
+            this.lblMinRotorPeriod.Text = "      ";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(12, 127);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(131, 13);
+            this.label29.TabIndex = 40;
+            this.label29.Text = "Min/Max Rotor Period (us)";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(315, 27);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 33;
+            this.button2.Text = "Start";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // btnSetSpeed
+            // 
+            this.btnSetSpeed.Location = new System.Drawing.Point(233, 30);
+            this.btnSetSpeed.Name = "btnSetSpeed";
+            this.btnSetSpeed.Size = new System.Drawing.Size(47, 23);
+            this.btnSetSpeed.TabIndex = 39;
+            this.btnSetSpeed.Text = "Set";
+            this.btnSetSpeed.UseVisualStyleBackColor = true;
+            // 
+            // nudDesireSpeed
+            // 
+            this.nudDesireSpeed.Location = new System.Drawing.Point(148, 32);
+            this.nudDesireSpeed.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudDesireSpeed.Name = "nudDesireSpeed";
+            this.nudDesireSpeed.Size = new System.Drawing.Size(71, 20);
+            this.nudDesireSpeed.TabIndex = 34;
+            this.nudDesireSpeed.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(12, 35);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(113, 13);
+            this.label30.TabIndex = 35;
+            this.label30.Text = "Target Frequency (Hz)";
+            // 
+            // btnStop
+            // 
+            this.btnStop.Location = new System.Drawing.Point(396, 27);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(75, 23);
+            this.btnStop.TabIndex = 38;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseVisualStyleBackColor = true;
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(12, 81);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(116, 13);
+            this.label31.TabIndex = 36;
+            this.label31.Text = "Current Frequency (Hz)";
+            // 
+            // lblCurrentSpeed
+            // 
+            this.lblCurrentSpeed.AutoSize = true;
+            this.lblCurrentSpeed.BackColor = System.Drawing.Color.White;
+            this.lblCurrentSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCurrentSpeed.Location = new System.Drawing.Point(150, 67);
+            this.lblCurrentSpeed.MaximumSize = new System.Drawing.Size(130, 0);
+            this.lblCurrentSpeed.MinimumSize = new System.Drawing.Size(130, 0);
+            this.lblCurrentSpeed.Name = "lblCurrentSpeed";
+            this.lblCurrentSpeed.Size = new System.Drawing.Size(130, 37);
+            this.lblCurrentSpeed.TabIndex = 37;
+            this.lblCurrentSpeed.Text = "0";
+            this.lblCurrentSpeed.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(10, 100);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(26, 13);
+            this.label32.TabIndex = 21;
+            this.label32.Text = "Port";
+            // 
+            // cbxPort
+            // 
+            this.cbxPort.FormattingEnabled = true;
+            this.cbxPort.Location = new System.Drawing.Point(61, 93);
+            this.cbxPort.Name = "cbxPort";
+            this.cbxPort.Size = new System.Drawing.Size(121, 21);
+            this.cbxPort.TabIndex = 20;
+            // 
+            // button4
+            // 
+            this.button4.BackColor = System.Drawing.Color.Transparent;
+            this.button4.Location = new System.Drawing.Point(222, 125);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(25, 24);
+            this.button4.TabIndex = 19;
+            this.button4.UseVisualStyleBackColor = false;
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(7, 130);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(30, 13);
+            this.label33.TabIndex = 18;
+            this.label33.Text = "Logs";
+            // 
+            // tbxLogPath
+            // 
+            this.tbxLogPath.Location = new System.Drawing.Point(61, 127);
+            this.tbxLogPath.Name = "tbxLogPath";
+            this.tbxLogPath.Size = new System.Drawing.Size(155, 20);
+            this.tbxLogPath.TabIndex = 17;
+            // 
+            // tbxHistory
+            // 
+            this.tbxHistory.Location = new System.Drawing.Point(280, 78);
+            this.tbxHistory.Multiline = true;
+            this.tbxHistory.Name = "tbxHistory";
+            this.tbxHistory.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbxHistory.Size = new System.Drawing.Size(192, 175);
+            this.tbxHistory.TabIndex = 16;
             // 
             // FmControlPanel
             // 
@@ -1173,6 +1489,15 @@
             this.panel6.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudD)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudI)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudP)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1274,5 +1599,32 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.Label lblState;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.NumericUpDown nudD;
+        private System.Windows.Forms.NumericUpDown nudI;
+        private System.Windows.Forms.NumericUpDown nudP;
+        private System.Windows.Forms.Label lblPulseDelay;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.Label lblMaxRotorPeriod;
+        private System.Windows.Forms.Label lblMinRotorPeriod;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnSetSpeed;
+        private System.Windows.Forms.NumericUpDown nudDesireSpeed;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label lblCurrentSpeed;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.ComboBox cbxPort;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.TextBox tbxLogPath;
+        private System.Windows.Forms.TextBox tbxHistory;
     }
 }
