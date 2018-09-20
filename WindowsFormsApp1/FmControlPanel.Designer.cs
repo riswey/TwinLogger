@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmControlPanel));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.chkClips = new System.Windows.Forms.CheckBox();
@@ -163,6 +163,7 @@
             this.label36 = new System.Windows.Forms.Label();
             this.nudTolerance = new System.Windows.Forms.NumericUpDown();
             this.label39 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -888,6 +889,7 @@
             this.label19.Size = new System.Drawing.Size(15, 13);
             this.label19.TabIndex = 60;
             this.label19.Text = "D";
+            this.toolTip1.SetToolTip(this.label19, "Device Error");
             // 
             // label20
             // 
@@ -897,6 +899,7 @@
             this.label20.Size = new System.Drawing.Size(14, 13);
             this.label20.TabIndex = 59;
             this.label20.Text = "C";
+            this.toolTip1.SetToolTip(this.label20, "AD Conversion Error");
             // 
             // label21
             // 
@@ -906,6 +909,7 @@
             this.label21.Size = new System.Drawing.Size(14, 13);
             this.label21.TabIndex = 58;
             this.label21.Text = "T";
+            this.toolTip1.SetToolTip(this.label21, "Clock Error");
             // 
             // label22
             // 
@@ -915,6 +919,7 @@
             this.label22.Size = new System.Drawing.Size(15, 13);
             this.label22.TabIndex = 57;
             this.label22.Text = "O";
+            this.toolTip1.SetToolTip(this.label22, "Overflow Error");
             // 
             // label18
             // 
@@ -924,6 +929,7 @@
             this.label18.Size = new System.Drawing.Size(15, 13);
             this.label18.TabIndex = 56;
             this.label18.Text = "D";
+            this.toolTip1.SetToolTip(this.label18, "Data in");
             // 
             // label17
             // 
@@ -933,6 +939,7 @@
             this.label17.Size = new System.Drawing.Size(14, 13);
             this.label17.TabIndex = 55;
             this.label17.Text = "A";
+            this.toolTip1.SetToolTip(this.label17, "Armed");
             // 
             // label16
             // 
@@ -942,6 +949,7 @@
             this.label16.Size = new System.Drawing.Size(14, 13);
             this.label16.TabIndex = 54;
             this.label16.Text = "B";
+            this.toolTip1.SetToolTip(this.label16, "Busy");
             // 
             // label15
             // 
@@ -951,6 +959,7 @@
             this.label15.Size = new System.Drawing.Size(13, 13);
             this.label15.TabIndex = 53;
             this.label15.Text = "0";
+            this.toolTip1.SetToolTip(this.label15, "Idle");
             // 
             // pb2device
             // 
@@ -1487,16 +1496,16 @@
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(10, 152);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(461, 154);
             this.chart1.TabIndex = 56;
             this.chart1.Text = "chart1";
@@ -1752,5 +1761,6 @@
         private System.Windows.Forms.NumericUpDown nudTimeout;
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.NumericUpDown nudTolerance;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

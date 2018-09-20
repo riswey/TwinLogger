@@ -218,7 +218,7 @@ namespace MultiDeviceAIO
                             */
                             this.Invoke(new Action(() => timerarduino.Stop()));
                             state = STATE.Ready;
-                            AsyncDisable(this.btnSetSpeed, false);
+                            //AsyncDisable(this.btnSetSpeed, false);
                             AsyncColor(btnStart, default(Color));
                             AsyncText(btnStart, "Start");
                             break;
@@ -226,13 +226,13 @@ namespace MultiDeviceAIO
                             state = STATE.Locked;
                             AsyncText(btnStart, "Unlock");
                             AsyncColor(btnStart, Color.Red);
-                            AsyncDisable(this.btnSetSpeed);
+                            //AsyncDisable(this.btnSetSpeed);
                             break;
                         case CMD.SETUNLOCK:
                             state = STATE.Lockable;
                             AsyncText(btnStart, "Lock");
                             AsyncColor(btnStart, Color.Orange);
-                            AsyncDisable(this.btnSetSpeed, false);
+                            //AsyncDisable(this.btnSetSpeed, false);
                             break;
                         case CMD.SETPULSEDELAY:
                             AsyncText(toolStripStatusLabel1, "Pulse Delay set.");
@@ -259,7 +259,7 @@ namespace MultiDeviceAIO
                     */
                     this.Invoke(new Action(() => timerarduino.Stop()));
                     state = STATE.Ready;
-                    AsyncDisable(this.btnSetSpeed, false);
+                    //AsyncDisable(this.btnSetSpeed, false);
                     AsyncColor(btnStart, default(Color));
                     AsyncText(btnStart, "Start");
                     break;
@@ -267,13 +267,13 @@ namespace MultiDeviceAIO
                     state = STATE.Locked;
                     AsyncText(btnStart, "Unlock");
                     AsyncColor(btnStart, Color.Red);
-                    AsyncDisable(this.btnSetSpeed);
+                    //AsyncDisable(this.btnSetSpeed);
                     break;
                 case CMD.SETUNLOCK:
                     state = STATE.Lockable;
                     AsyncText(btnStart, "Lock");
                     AsyncColor(btnStart, Color.Orange);
-                    AsyncDisable(this.btnSetSpeed, false);
+                    //AsyncDisable(this.btnSetSpeed, false);
                     break;
                 case CMD.SETPULSEDELAY:
                     AsyncText(toolStripStatusLabel1, "Pulse Delay set.");
