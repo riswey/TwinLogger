@@ -93,6 +93,7 @@
     <Compile Include="FmCPBusinessCode.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="HardwareHelper.cs" />
     <Compile Include="Scope.cs">
       <SubType>Form</SubType>
     </Compile>
