@@ -94,6 +94,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="HardwareHelper.cs" />
+    <Compile Include="FmLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FmLog.Designer.cs">
+      <DependentUpon>FmLog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Scope.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,6 +143,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Calibration.resx">
       <DependentUpon>Calibration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FmLog.resx">
+      <DependentUpon>FmLog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Scope.resx">
       <DependentUpon>Scope.cs</DependentUpon>

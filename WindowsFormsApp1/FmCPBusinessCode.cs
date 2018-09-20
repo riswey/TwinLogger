@@ -223,7 +223,7 @@ namespace MultiDeviceAIO
             PrintLn("+--------------------------------------------------");
             */
             //SAVE LOG
-            SaveLogFile();
+            fmlog.SaveLogFile();
 
             //SetStatus("Awaiting User Input...");
 

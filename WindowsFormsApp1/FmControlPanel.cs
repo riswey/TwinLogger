@@ -22,6 +22,8 @@ namespace MultiDeviceAIO
 
         Monitor monitor;
 
+        FmLog fmlog;
+
         public DATA ConcatData
         {
             get
@@ -135,7 +137,7 @@ namespace MultiDeviceAIO
             {
                 string msg = "Device Error: " + ex.code + ": " + ex.Message;
                 PrintLn(msg);
-                SaveLogFile();
+                fmlog.SaveLogFile();
 
                 MessageBox.Show(msg, "Device Error\nDevices have been reset. Retry operation or manually reset devices again.", MessageBoxButtons.OK);
 
@@ -264,32 +266,18 @@ namespace MultiDeviceAIO
                 return;
             }
 
-            //
-            switch (linebreak)
+            if (fmlog == null || fmlog.IsDisposed)
             {
-                case -1:
-                    string[] txt = textBox1.Text.Split('\n');
-                    textBox1.Text = String.Join("\n", txt, 0, txt.Length - 2) + "\n" + msg.ToString() + "\r\n";
-                    break;
-                case 0:
-                    textBox1.Text += msg.ToString();
-                    break;
-                case 1:
-                    textBox1.Text += msg.ToString() + "\r\n";
-                    break;
+                fmlog = new FmLog();
             }
 
-            textBox1.SelectionStart = textBox1.Text.Length;
-            textBox1.ScrollToCaret();
+            fmlog.Show();
 
-            if (speak) SayMessage(msg.ToString());
+            fmlog.PrintLn(msg, speak, linebreak);
 
         }
 
-        void SaveLogFile()
-        {
-            File.WriteAllText(PersistentLoggerState.ps.data.testpath + @"\log.txt", textBox1.Text);
-        }
+        
         
         private void SelectDirectory()
         {
@@ -356,23 +344,6 @@ namespace MultiDeviceAIO
             PrintLn(PersistentLoggerState.ps.ToString());
 
             StartSampling();
-        }
-
-        void SayMessage(string msg)
-        {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action(() => SayMessage(msg)) );
-                return;
-            }
-
-            // Initialize a new instance of the SpeechSynthesizer.  
-            using (SpeechSynthesizer synth = new SpeechSynthesizer())
-            {
-                synth.SetOutputToDefaultAudioDevice();
-                synth.Volume = 100;  // (0 - 100)
-                synth.Speak( msg );
-            }
         }
 
         void setStartButtonText(int code)
