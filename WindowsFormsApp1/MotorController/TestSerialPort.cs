@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiDeviceAIO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -58,14 +59,14 @@ namespace MotorController
 
         Random r = new Random();
 
-        private MotorController parentfm;
+        private FmControlPanel parentfm;
 
         private string buffer = "";
 
         public int BaudRate { get; set; }
         public string PortName { get; set; }
 
-        public TestSerialPort(MotorController parentfm)
+        public TestSerialPort(FmControlPanel parentfm)
         {
             this.parentfm = parentfm;
         }

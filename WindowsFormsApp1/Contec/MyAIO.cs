@@ -139,11 +139,19 @@ namespace MultiDeviceAIO
         {
             set
             {
-                if (value != 0)
+                switch (value)
                 {
-                    aio.GetErrorString((int)value, out string ErrorString);
-                    throw new Exception(ErrorString);
+                    case 0:
+                        return;
+                    case 7:
+                        //You got a code 7!
+                        ResetDevices();
+                        return;
+                    default:
+                        aio.GetErrorString((int)value, out string ErrorString);
+                        throw new Exception(ErrorString);
                 }
+
             }
         }
 
@@ -256,7 +264,8 @@ namespace MultiDeviceAIO
                 try
                 {
                     HANDLE_RETURN_VALUES = aio.ResetDevice(d.id);
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     //It failed in USB transfer.
                     //TODO low level USB check

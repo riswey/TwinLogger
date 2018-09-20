@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
-
-using System.Diagnostics;
 
 /*
  * To make this really reusable code: Settings should be independent of ProcessSettings!

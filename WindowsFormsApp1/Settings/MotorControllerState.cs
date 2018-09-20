@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MultiDeviceAIO.Settings
+namespace MultiDeviceAIO
 {
     partial class LoggerState
     {
@@ -45,6 +45,7 @@ namespace MultiDeviceAIO.Settings
         //Start/SetFreq reset min/max which takes 2s to stabilise
         const long RM_TIMER_PERIOD = 2000;
         long rm_timer { get; set; } = 0;
+
         public void StartRMTimer()
         {
             //Start/SetFreq events reset the MaxMin buffer
@@ -57,16 +58,25 @@ namespace MultiDeviceAIO.Settings
             return (GetTime() - rm_timer) > RM_TIMER_PERIOD;
         }
 
+        //Seems this is just for logging
+        public bool IsMMInRange()
+        {
+            return min_period != 1E7 && max_period != 0;
+        }
 
 
+        #region LOGGING
 
+        /*
         public string path { get; set; }
+        //Stores the start time (motor logs are recorded relative)
         public void Start(string path = "")
         {
             this.path = path;
             doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD\tDelay\tMin\tMax");
             start_t = GetTime();
         }
+
         private void doWrite(string str)
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(path + "Log.dat", true))
@@ -74,12 +84,6 @@ namespace MultiDeviceAIO.Settings
                 file.WriteLine(str);
             }
 
-        }
-
-        //Seems this is just for logging
-        public bool IsMMInRange()
-        {
-            return min_period != 1E7 && max_period != 0;
         }
 
         public void Write()
@@ -106,8 +110,9 @@ namespace MultiDeviceAIO.Settings
 
             //doWrite(str);
         }
+        */
 
-
+        #endregion
 
     }
 }

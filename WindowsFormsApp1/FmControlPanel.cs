@@ -57,7 +57,8 @@ namespace MultiDeviceAIO
             SetAIO();
 
             //Bindings
-            loadBindData();
+            BindTestParameters();
+            BindMotorControls();
 
             InitMotorController();
 
@@ -87,8 +88,7 @@ namespace MultiDeviceAIO
 
         }
 
-        //#CHECK
-        //Advice from code checker
+        //TODO: Check advice from code checker
         ~FmControlPanel()
         {
             if (myaio != null)
@@ -116,40 +116,7 @@ namespace MultiDeviceAIO
             SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
         }
 
-        /// <summary>
-        /// Central handler for Device Exceptions
-        /// </summary>
-        /// <param name="ex"></param>
-        /// <returns>
-        /// false   - return/abort current operation
-        /// </returns>
-        bool ProcessError(AIODeviceException ex)
-        {
-            if (ex.code == 7)
-            {
-                MessageBox.Show("Recover from Standby Mode");
-                myaio.ResetDevices();
-                PrintLn("Device recovered from standby mode. Please try again.");
-                SetStatus("Device recovered from standby mode. Please try again.");
-                return false;
-            }
-            else
-            {
-                string msg = "Device Error: " + ex.code + ": " + ex.Message;
-                PrintLn(msg);
-                fmlog.SaveLogFile();
-
-                MessageBox.Show(msg, "Device Error\nDevices have been reset. Retry operation or manually reset devices again.", MessageBoxButtons.OK);
-
-                //These are not critical errors! Can reset without affecting application state.
-                //Application.Exit();
-                myaio.ResetDevices();
-
-                return false;
-            }
-        }
-
-        void loadBindData()
+        void BindTestParameters()
         {
             cbMass.DataBindings.Clear();
             cbMass.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "mass");
@@ -291,7 +258,7 @@ namespace MultiDeviceAIO
                 if (result == DialogResult.OK && !fbd.SelectedPath.IsNullOrWhiteSpace())
                 {
                     PersistentLoggerState.ps.data.testpath = fbd.SelectedPath;
-                    loadBindData();
+                    BindTestParameters();
                 }
             }
         }
@@ -447,20 +414,13 @@ namespace MultiDeviceAIO
         private void resetToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             PersistentLoggerState.ps.Reload();
-            loadBindData();
+            BindTestParameters();
             displayPath(PersistentLoggerState.ps.data.settingspath, PersistentLoggerState.ps.data.modified);
         }
 
         private void resetDevicesToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            try
-            {
-                myaio.ResetDevices();
-            }
-            catch (AIODeviceException ex)
-            {
-                ProcessError(ex);
-            }
+            myaio.ResetDevices();
 
             PersistentLoggerState.ps.data.n_devices = myaio.DiscoverDevices();
 
@@ -559,7 +519,7 @@ namespace MultiDeviceAIO
 
                     PersistentLoggerState.ps.Load(filename);
 
-                    loadBindData();
+                    BindTestParameters();
 
                     displayPath(filename, PersistentLoggerState.ps.data.modified);
 
@@ -604,7 +564,7 @@ namespace MultiDeviceAIO
             //Reset to base
             has_loaded = false;
             PersistentLoggerState.ps.Reload();
-            loadBindData();
+            BindTestParameters();
             displayPath(PersistentLoggerState.ps.data.settingspath);
             has_loaded = true;
         }

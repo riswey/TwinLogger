@@ -18,8 +18,7 @@ namespace MultiDeviceAIO
         STATE state = STATE.Ready;
         //Task task = null;
 
-
-        ParameterState parameters = new ParameterState();
+        //ParameterState parameters = new ParameterState();
 
         Timer timerarduino = new Timer();
 
@@ -40,8 +39,34 @@ namespace MultiDeviceAIO
 
             serialPort1.DataReceived += serialPort1_DataReceived;
 
+        }
 
+        void BindMotorControls()
+        {
+            nudDesireSpeed.DataBindings.Clear();
+            nudDesireSpeed.DataBindings.Add("Value", PersistentLoggerState.ps.data, "target_speed");
 
+            lblCurrentSpeed.DataBindings.Clear();
+            lblCurrentSpeed.DataBindings.Add("Text", PersistentLoggerState.ps.data, "rotor_speed");
+
+            lblMinRotorPeriod.DataBindings.Clear();
+            lblMinRotorPeriod.DataBindings.Add("Text", PersistentLoggerState.ps.data, "min_period");
+
+            lblMaxRotorPeriod.DataBindings.Clear();
+            lblMaxRotorPeriod.DataBindings.Add("Text", PersistentLoggerState.ps.data, "max_period");
+
+            lblPulseDelay.DataBindings.Clear();
+            lblPulseDelay.DataBindings.Add("Text", PersistentLoggerState.ps.data, "pulse_delay");
+
+            nudP.DataBindings.Clear();
+            nudP.DataBindings.Add("Value", PersistentLoggerState.ps.data, "p");
+
+            nudI.DataBindings.Clear();
+            nudI.DataBindings.Add("Value", PersistentLoggerState.ps.data, "i");
+
+            nudD.DataBindings.Clear();
+            nudD.DataBindings.Add("Value", PersistentLoggerState.ps.data, "d");
+            
         }
 
         private string SearchPorts()
@@ -157,9 +182,9 @@ namespace MultiDeviceAIO
             switch (cmd)
             {
                 case CMD.START:
-
-                    parameters.Start();
-                    parameters.StartRMTimer();
+                    //Removed Motor Control Logging
+                    //PersistentLoggerState.ps.data.Start();
+                    PersistentLoggerState.ps.data.StartRMTimer();
                     state = STATE.Running;
                     AsyncColor(btnStart, Color.Orange);
                     //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
@@ -169,8 +194,7 @@ namespace MultiDeviceAIO
                     {
                         case CMD.START:
 
-                            parameters.Start();
-                            parameters.StartRMTimer();
+                            PersistentLoggerState.ps.data.StartRMTimer();
                             state = STATE.Running;
                             AsyncColor(btnStart, Color.Orange);
                             //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
@@ -211,7 +235,7 @@ namespace MultiDeviceAIO
                             AsyncText(toolStripStatusLabel1, "PID set.");
                             break;
                         case CMD.SETFREQ:
-                            parameters.StartRMTimer();
+                            PersistentLoggerState.ps.data.StartRMTimer();
                             AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
                             break;
                     }
@@ -252,7 +276,7 @@ namespace MultiDeviceAIO
                     AsyncText(toolStripStatusLabel1, "PID set.");
                     break;
                 case CMD.SETFREQ:
-                    parameters.StartRMTimer();
+                    PersistentLoggerState.ps.data.StartRMTimer();
                     AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
                     break;
             }
@@ -344,21 +368,21 @@ namespace MultiDeviceAIO
                     ProcessACK(ackcmd);
                     break;
                 case DATATYPES.GETPULSEDELAY:
-                    parameters.pulse_delay = int.Parse(data[1]);
+                    PersistentLoggerState.ps.data.pulse_delay = int.Parse(data[1]);
                     AsyncText(lblPulseDelay, data[1]);
                     break;
                 case DATATYPES.GETTARGETFREQ:
-                    parameters.target_speed = float.Parse(data[1]);
+                    PersistentLoggerState.ps.data.target_speed = float.Parse(data[1]);
                     AsyncNUD(nudDesireSpeed, Decimal.Parse(data[1]));
                     break;
                 case DATATYPES.GETROTORFREQ:
-                    parameters.rotor_speed = float.Parse(data[1]);
+                    PersistentLoggerState.ps.data.rotor_speed = float.Parse(data[1]);
                     AsyncText(lblCurrentSpeed, data[1]);
                     break;
                 case DATATYPES.GETMINMAXPERIODS:
-                    parameters.min_period = long.Parse(data[1]);
-                    parameters.max_period = long.Parse(data[2]);
-                    if (parameters.IsMMInRange())
+                    PersistentLoggerState.ps.data.min_period = long.Parse(data[1]);
+                    PersistentLoggerState.ps.data.max_period = long.Parse(data[2]);
+                    if (PersistentLoggerState.ps.data.IsMMInRange())
                     {
                         AsyncText(lblMinRotorPeriod, data[1]);
                         AsyncText(lblMaxRotorPeriod, data[2]);
@@ -370,9 +394,9 @@ namespace MultiDeviceAIO
                     }
                     break;
                 case DATATYPES.GETPID:
-                    parameters.p = float.Parse(data[1]);
-                    parameters.i = float.Parse(data[2]);
-                    parameters.d = float.Parse(data[3]);
+                    PersistentLoggerState.ps.data.p = float.Parse(data[1]);
+                    PersistentLoggerState.ps.data.i = float.Parse(data[2]);
+                    PersistentLoggerState.ps.data.d = float.Parse(data[3]);
                     AsyncNUD(nudP, Decimal.Parse(data[1]));
                     AsyncNUD(nudI, Decimal.Parse(data[2]));
                     AsyncNUD(nudD, Decimal.Parse(data[3]));
@@ -420,14 +444,14 @@ namespace MultiDeviceAIO
             //Log if 4th tick AND Max/Min are meaningful
             if ((timercycle = (++timercycle) % 4) == 0)
             {
-                if (parameters.IsRMDisabled())
+                if (PersistentLoggerState.ps.data.IsRMDisabled())
                 {
                     //RM (min/max) disable period expired
                     SendCommand(CMD.GETMINMAXPERIODS);
                     SendCommand(CMD.GETPULSEDELAY);
                     SendCommand(CMD.GETPID);
                     //SendCommand(CMD.GETTARGETFREQ); Duh! means can't change!
-                    parameters.Write();
+                    //PersistentLoggerState.ps.data.Write();
                 }
             }
 
@@ -538,14 +562,14 @@ namespace MultiDeviceAIO
             //Log if 4th tick AND Max/Min are meaningful
             if ((timercycle = (++timercycle) % 4) == 0)
             {
-                if (parameters.IsRMDisabled())
+                if (PersistentLoggerState.ps.data.IsRMDisabled())
                 {
                     //RM (min/max) disable period expired
                     SendCommand(CMD.GETMINMAXPERIODS);
                     SendCommand(CMD.GETPULSEDELAY);
                     SendCommand(CMD.GETPID);
                     //SendCommand(CMD.GETTARGETFREQ);
-                    parameters.Write();
+                    //PersistentLoggerState.ps.data.Write();
                 }
             }
 
