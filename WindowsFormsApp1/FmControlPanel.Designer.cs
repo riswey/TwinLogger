@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmControlPanel));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.chkClips = new System.Windows.Forms.CheckBox();
@@ -127,6 +127,7 @@
             this.pb1ok = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.label39 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.lblState = new System.Windows.Forms.Label();
@@ -137,6 +138,11 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label37 = new System.Windows.Forms.Label();
+            this.nudTimeout = new System.Windows.Forms.NumericUpDown();
+            this.label36 = new System.Windows.Forms.Label();
+            this.nudTolerance = new System.Windows.Forms.NumericUpDown();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label25 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
@@ -157,12 +163,6 @@
             this.label33 = new System.Windows.Forms.Label();
             this.tbxLogPath = new System.Windows.Forms.TextBox();
             this.tbxHistory = new System.Windows.Forms.TextBox();
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.label37 = new System.Windows.Forms.Label();
-            this.nudTimeout = new System.Windows.Forms.NumericUpDown();
-            this.label36 = new System.Windows.Forms.Label();
-            this.nudTolerance = new System.Windows.Forms.NumericUpDown();
-            this.label39 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -198,14 +198,14 @@
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).BeginInit();
             this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudI)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudP)).BeginInit();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -1169,6 +1169,15 @@
             this.panel6.Size = new System.Drawing.Size(487, 119);
             this.panel6.TabIndex = 42;
             // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(18, 92);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(86, 13);
+            this.label39.TabIndex = 63;
+            this.label39.Text = "Sample Progress";
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -1177,7 +1186,7 @@
             this.tabControl1.Location = new System.Drawing.Point(367, 160);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(487, 342);
+            this.tabControl1.Size = new System.Drawing.Size(487, 197);
             this.tabControl1.TabIndex = 43;
             // 
             // tabPage1
@@ -1193,14 +1202,14 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(479, 316);
+            this.tabPage1.Size = new System.Drawing.Size(479, 171);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Motor Control";
             // 
             // lblState
             // 
             this.lblState.AutoSize = true;
-            this.lblState.Location = new System.Drawing.Point(351, 131);
+            this.lblState.Location = new System.Drawing.Point(183, 77);
             this.lblState.Name = "lblState";
             this.lblState.Size = new System.Drawing.Size(36, 13);
             this.lblState.TabIndex = 46;
@@ -1259,7 +1268,7 @@
             // 
             this.btnStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStop.ForeColor = System.Drawing.Color.Red;
-            this.btnStop.Location = new System.Drawing.Point(357, 266);
+            this.btnStop.Location = new System.Drawing.Point(354, 116);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(108, 36);
             this.btnStop.TabIndex = 32;
@@ -1285,7 +1294,6 @@
             this.tabPage3.Controls.Add(this.nudTimeout);
             this.tabPage3.Controls.Add(this.label36);
             this.tabPage3.Controls.Add(this.nudTolerance);
-            this.tabPage3.Controls.Add(this.chart1);
             this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Controls.Add(this.lblPulseDelay);
             this.tabPage3.Controls.Add(this.label28);
@@ -1295,9 +1303,63 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(479, 316);
+            this.tabPage3.Size = new System.Drawing.Size(479, 171);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Parameters";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(36, 54);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(45, 13);
+            this.label37.TabIndex = 60;
+            this.label37.Text = "Timeout";
+            // 
+            // nudTimeout
+            // 
+            this.nudTimeout.Location = new System.Drawing.Point(174, 52);
+            this.nudTimeout.Name = "nudTimeout";
+            this.nudTimeout.Size = new System.Drawing.Size(67, 20);
+            this.nudTimeout.TabIndex = 59;
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(37, 25);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(108, 13);
+            this.label36.TabIndex = 58;
+            this.label36.Text = "Frequency Tolerance";
+            // 
+            // nudTolerance
+            // 
+            this.nudTolerance.DecimalPlaces = 2;
+            this.nudTolerance.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudTolerance.Location = new System.Drawing.Point(174, 23);
+            this.nudTolerance.Name = "nudTolerance";
+            this.nudTolerance.Size = new System.Drawing.Size(67, 20);
+            this.nudTolerance.TabIndex = 57;
+            // 
+            // chart1
+            // 
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(367, 363);
+            this.chart1.Name = "chart1";
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chart1.Series.Add(series1);
+            this.chart1.Size = new System.Drawing.Size(487, 149);
+            this.chart1.TabIndex = 56;
+            this.chart1.Text = "chart1";
             // 
             // groupBox1
             // 
@@ -1430,14 +1492,14 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(479, 330);
+            this.tabPage2.Size = new System.Drawing.Size(479, 171);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Settings";
             // 
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(280, 55);
+            this.label38.Location = new System.Drawing.Point(206, 12);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(62, 13);
             this.label38.TabIndex = 22;
@@ -1487,75 +1549,12 @@
             // 
             // tbxHistory
             // 
-            this.tbxHistory.Location = new System.Drawing.Point(280, 78);
+            this.tbxHistory.Location = new System.Drawing.Point(280, 6);
             this.tbxHistory.Multiline = true;
             this.tbxHistory.Name = "tbxHistory";
             this.tbxHistory.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbxHistory.Size = new System.Drawing.Size(192, 175);
+            this.tbxHistory.Size = new System.Drawing.Size(192, 143);
             this.tbxHistory.TabIndex = 16;
-            // 
-            // chart1
-            // 
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
-            this.chart1.Location = new System.Drawing.Point(10, 152);
-            this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chart1.Series.Add(series2);
-            this.chart1.Size = new System.Drawing.Size(461, 154);
-            this.chart1.TabIndex = 56;
-            this.chart1.Text = "chart1";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(36, 54);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(45, 13);
-            this.label37.TabIndex = 60;
-            this.label37.Text = "Timeout";
-            // 
-            // nudTimeout
-            // 
-            this.nudTimeout.Location = new System.Drawing.Point(174, 52);
-            this.nudTimeout.Name = "nudTimeout";
-            this.nudTimeout.Size = new System.Drawing.Size(67, 20);
-            this.nudTimeout.TabIndex = 59;
-            // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(37, 25);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(108, 13);
-            this.label36.TabIndex = 58;
-            this.label36.Text = "Frequency Tolerance";
-            // 
-            // nudTolerance
-            // 
-            this.nudTolerance.DecimalPlaces = 2;
-            this.nudTolerance.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.nudTolerance.Location = new System.Drawing.Point(174, 23);
-            this.nudTolerance.Name = "nudTolerance";
-            this.nudTolerance.Size = new System.Drawing.Size(67, 20);
-            this.nudTolerance.TabIndex = 57;
-            // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(18, 92);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(86, 13);
-            this.label39.TabIndex = 63;
-            this.label39.Text = "Sample Progress";
             // 
             // FmControlPanel
             // 
@@ -1567,6 +1566,7 @@
             this.Controls.Add(this.panel6);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
+            this.Controls.Add(this.chart1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -1615,6 +1615,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudD)).EndInit();
@@ -1622,9 +1625,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudP)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

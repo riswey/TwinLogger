@@ -631,7 +631,7 @@ namespace CaioCs
         }
         public override int GetAiStatus(short Id, out int AiStatus)
         {
-            AiStatus = (int) CaioConst.AOE_DATA_NUM;
+            AiStatus = (int) CaioConst.AIS_START_TRG;
             int ret = 0;//AioGetAiStatus(Id, ref AiStatus);
             return ret;
         }

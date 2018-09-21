@@ -772,8 +772,7 @@ namespace MultiDeviceAIO
             if (numdeviceschanged == 0)
             {
                 PrintLn("Resetting Devices");
-                //TODO
-                //or perhaps make resetdevices safe
+                //TODO or perhaps make resetdevices safe
                 //myaio.ResetDevices(); //it failed in USB transfer
             }
 
@@ -787,9 +786,15 @@ namespace MultiDeviceAIO
 
         void StartScheduleRun(List<int> frequencies)
         {
-            MessageBox.Show("Ready to start...");
+            //TODO: add scheule loop
 
+            //Test Sampling
+            StartSampling();
+
+            //Test Motor
             //ProcessEvent(MotorController.EVENT.Start);
+
+
             //StartSampling
         }
 
