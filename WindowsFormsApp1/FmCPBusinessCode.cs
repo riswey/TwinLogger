@@ -94,7 +94,7 @@ namespace MultiDeviceAIO
                 setStartButtonText(1);
 
                 if (PersistentLoggerState.ps.data.testingmode)
-                    Task.Delay(1000).ContinueWith(t => myaio.TestTrigger() );
+                    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
 
             }
 

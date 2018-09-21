@@ -584,10 +584,7 @@ namespace MultiDeviceAIO
             if (aio.GetType() == typeof(CaioTest))
             {
                 //Do a Test Trigger of the LAX1664
-                foreach( KeyValuePair<short, CaioConst> element in ((CaioTest)aio).devicestate)
-                {
-                    ((CaioTest)aio).devicestate[element.Key] = CaioConst.AIS_DATA_NUM;
-                }
+                ((CaioTest)aio).devicestate = ((CaioTest)aio).devicestate.ToDictionary(p => p.Key, p => CaioConst.AIS_DATA_NUM);
                 
             }
         }
