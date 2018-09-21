@@ -122,10 +122,10 @@ namespace MultiDeviceAIO
         public DATA concatdata { get; private set; } = null;      //Keep for Scope
 
 
-        public MyAIO(int testing)
+        public MyAIO(bool testing)
         {
-            if (testing == 2)
-                aio = new Caio1();
+            if (testing)
+                aio = new CaioTest();
             else
                 aio = new Caio();
         }
@@ -145,8 +145,11 @@ namespace MultiDeviceAIO
                         return;
                     case 7:
                         //You got a code 7!
-                        ResetDevices();
+                        throw new Exception("Got a 7 from Device (wake from idle)");
+                        //TODO ResetDevices();
                         return;
+                    case CaioTest.NOTIMPLEMENTED:
+                        throw new NotImplementedException("CaioTest method");
                     default:
                         aio.GetErrorString((int)value, out string ErrorString);
                         throw new Exception(ErrorString);
@@ -187,7 +190,6 @@ namespace MultiDeviceAIO
 
         public void ResetTest()
         {
-            //state = 0;
 
             foreach (Device d in Device.devices)
             {
@@ -197,7 +199,7 @@ namespace MultiDeviceAIO
             //Reset External Buffers
             foreach (Device d in Device.devices)
             {
-                //TODO: this causing problems if the device is
+                //TODO: this causing problems if the device is frozen
                 //It failed in USB transfer
                 HANDLE_RETURN_VALUES = aio.StopAi(d.id);
                 HANDLE_RETURN_VALUES = aio.ResetAiMemory(d.id);
@@ -400,20 +402,15 @@ namespace MultiDeviceAIO
         }
 
         /*
-         *   Returns -1 to abort
+         *   Returns total size of combined device buffers so far
          */
         public int RetrieveAllData()
         {
-            int t = 0, dat = 0;
-            foreach (Device d in Device.devices)
+            int t = 0;
+            //Added ToList() :. single random collection mod error 
+            foreach (Device d in Device.devices.ToList())
             {
-                if ( (dat = RetrieveData(d)) != -1)
-                    t += dat;
-                else
-                {
-                    return -1;
-                }
-
+                t += RetrieveData(d);
             }
             return t;
         }
@@ -459,10 +456,15 @@ namespace MultiDeviceAIO
         public bool IsTestFinished {
             get
             {
+                Debug.WriteLine("Check Fnshed: #" + Device.devices.Count);
+
                 foreach (Device d in Device.devices)
                 {
+                    Debug.WriteLine("Check if Finished...");
+
                     if (!d.IsFinished) return false;
                 }
+                Debug.WriteLine("Finished==true");
                 return true;
             }
         }
@@ -538,27 +540,61 @@ namespace MultiDeviceAIO
             return (float)bits / 65535 * 20 - 10;
         }
 
-        
+
 
         /***********************************
          *
          *    CALLBACK STUFF FOR START
          *
          **********************************/
-         /*
-        //copied from CaioCS
-        unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void* Param);
+        /*
+       //copied from CaioCS
+       unsafe public delegate int PAICALLBACK(short Id, short Message, int wParam, int lParam, void* Param);
 
-        //Note that in loop version this was done in start
-        unsafe public void SetAiCallBackProc(IntPtr pAiCallBack)
+       //Note that in loop version this was done in start
+       unsafe public void SetAiCallBackProc(IntPtr pAiCallBack)
+       {
+           // Set the callback routine : Device Operation End Event Factor
+           foreach (Device d in Device.devices)
+           {
+               HANDLE_RETURN_VALUES = aio.SetAiCallBackProc(d.id, pAiCallBack, (int)(CaioConst.AIE_START), null);
+           }
+       }
+       */
+
+        #region TESTING
+
+        public void TestTrigger()
         {
-            // Set the callback routine : Device Operation End Event Factor
-            foreach (Device d in Device.devices)
+            /* In real environment the Motor Control will Send a SS signal to Ardunio.
+             * -> Arduino will trigger LAX1664
+             * -> LAX1664 will enter DATA_NUM
+             * -> Poller will respond to LAX1664
+             * 
+             * In Test environment can be called by:
+             * Start Button (internal trigger effectively)
+             * Simulated on a timer to trigger "sometime later" 
+             * By MotorControl (Send SS includes this call)
+             *
+             * PS: this is here so as to keep the API the same in Caio modules
+             */
+
+
+            //Check that its the test environment
+            if (aio.GetType() == typeof(CaioTest))
             {
-                HANDLE_RETURN_VALUES = aio.SetAiCallBackProc(d.id, pAiCallBack, (int)(CaioConst.AIE_START), null);
+                //Do a Test Trigger of the LAX1664
+                foreach( KeyValuePair<short, CaioConst> element in ((CaioTest)aio).devicestate)
+                {
+                    ((CaioTest)aio).devicestate[element.Key] = CaioConst.AIS_DATA_NUM;
+                }
+                
             }
         }
-        */
+
+
+        #endregion
+
 
 
     }

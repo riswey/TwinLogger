@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -19,6 +20,8 @@ namespace MultiDeviceAIO
         {
             get
             {
+                Debug.WriteLine("Finished? " + data.Count + "==" + target);
+
                 return data.Count == target;
             }
         }
@@ -38,6 +41,7 @@ namespace MultiDeviceAIO
             IsFailed = false;
         }
 
+        //Returns the current device buffer size
         public int Add(int datapointcount, ref int[] buf)
         {
             /* Testing

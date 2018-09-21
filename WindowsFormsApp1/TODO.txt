@@ -17,6 +17,9 @@ mapping is from local file, switch top setup data.
 Currently other info extract from setup.
 
 
+>Fixing hung devices
+Try AioExit() and rediscover devices()
+
 
 
 ===

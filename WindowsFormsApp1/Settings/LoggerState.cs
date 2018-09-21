@@ -52,7 +52,7 @@ namespace MultiDeviceAIO
         public string testpath { get; set; } = "";       //Path to test data
         public string temp_filename {get;set;} = "";  //last temp filename (recover)
         public string datafileformat { get; set; } = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_f{FREQUENCY}";
-        public int testingmode { get; set; } = 0;
+        public bool testingmode { get; set; } = false;
 
         //Test parameters
         public float frequency { get; set; } = 0;

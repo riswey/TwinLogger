@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>MultiDeviceAIO</RootNamespace>
     <AssemblyName>MultiDeviceAIO</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -42,6 +42,7 @@
     <NoWarn>
     </NoWarn>
     <CodeAnalysisRuleSet>MultiDeviceAIO.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,6 +54,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>MultiDeviceAIO.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NPlot">
@@ -82,7 +84,7 @@
     <Compile Include="MotorController\PeriodAverage.cs" />
     <Compile Include="Obsolete\AIODeviceException.cs" />
     <Compile Include="Contec\CaioCs.cs" />
-    <Compile Include="Contec\CaioCs1.cs" />
+    <Compile Include="Contec\CaioCsTest.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="MotorController\Enums.cs" />
     <Compile Include="MotorController\FmCPMotorControl.cs">

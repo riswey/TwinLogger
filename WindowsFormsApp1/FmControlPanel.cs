@@ -52,6 +52,8 @@ namespace MultiDeviceAIO
 
             InitializeComponent();
 
+            setStartButtonText(0);
+
             progressBar1.Maximum = 100;
 
             SetAIO();
@@ -333,7 +335,7 @@ namespace MultiDeviceAIO
             switch (code)
             {
                 case 0:
-                    b.Text = "Start";
+                    b.Text = "Start Schedule";
                     b.BackColor = Color.Transparent;
                     b.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular);
                     break;
@@ -449,7 +451,7 @@ namespace MultiDeviceAIO
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int originalTesting = PersistentLoggerState.ps.data.testingmode;
+            bool originalTesting = PersistentLoggerState.ps.data.testingmode;
             using (var form = new FmOptions(PersistentLoggerState.ps.data))
             {
                 var res = form.ShowDialog();
@@ -618,6 +620,8 @@ namespace MultiDeviceAIO
         //TODO: these can be passed as an array to the device and have it DrawStatus()
         private void DrawStatusStrip(int[] status)
         {
+            if (status.Length == 0) return;
+
             int s;
             s = status[0];
             DrawStatus(pb1ok, s == 0 ? 1 : 0);
@@ -793,9 +797,11 @@ namespace MultiDeviceAIO
 
             //Test Motor
             //ProcessEvent(MotorController.EVENT.Start);
+            //-> MotorController will send SS when ready (in testing this triggers)
 
+            //
+            //myaio.TestTrigger();
 
-            //StartSampling
         }
 
         void StopScheduleRun()

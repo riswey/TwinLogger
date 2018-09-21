@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
 
@@ -82,15 +83,6 @@ namespace MultiDeviceAIO
 
             myaio.SampleDeviceState(ref status, out int allstatus, out MyAIO.DEVICESTATEDELTA delta);
 
-            if (PersistentLoggerState.ps.data.testingmode == 1)
-            {
-                //waiting for trigger
-                if (allstatus == 2)
-                {
-                    //TODO: we havge no trigger in testing mode 1 so do in software
-                }
-            }
-
             //Draw status
             DrawStatusStrip(status.ToArray());
 
@@ -100,6 +92,10 @@ namespace MultiDeviceAIO
                 //A device just got armed
                 PrintLn("Armed", true);
                 setStartButtonText(1);
+
+                if (PersistentLoggerState.ps.data.testingmode)
+                    Task.Delay(1000).ContinueWith(t => myaio.TestTrigger() );
+
             }
 
             if (delta == MyAIO.DEVICESTATEDELTA.SAMPLING)
