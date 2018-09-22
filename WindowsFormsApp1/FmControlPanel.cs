@@ -62,7 +62,7 @@ namespace MultiDeviceAIO
             BindTestParameters();
             BindMotorControls();
 
-            InitMotorController();
+            InitFmCPMotorControl();
 
             //Set up accelerometers
             try

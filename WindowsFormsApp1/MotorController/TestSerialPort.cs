@@ -1,8 +1,8 @@
-﻿using MultiDeviceAIO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 //using System.Threading.Tasks;
 
 /*
@@ -18,7 +18,7 @@ namespace MotorController
     {
         struct State
         {
-            public int running; //0=stopped,1=running,2=lockable
+            public int running; //0=stopped,1=running,2=lockable,3=triggered
             public float p;
             public float i;
             public float d;
@@ -28,45 +28,50 @@ namespace MotorController
             public long max;
         };
 
+        float NOISELEVEL = 20.0f;
+
         int _PulseDelay = 0;
-        public int PulseDelay {
-            get {
+        public int PulseDelay
+        {
+            get
+            {
                 if (!state.locked) _PulseDelay = r.Next(0, 100);
                 return _PulseDelay;
             }
         }
 
-        float _RotorFreq = 0;
+        float t = 0;
         public int RotorFreq
         {
             get
             {
-                _RotorFreq += (state.target_f - _RotorFreq) / 10;
-                return (int)_RotorFreq;
+                t += 0.3f;
+                return (int)(state.target_f + 60 * (Math.Cos(t) / (t + 1)) + r.NextDouble() * NOISELEVEL);
             }
         }
 
-        State state = new State {
+        State state = new State
+        {
             running = 0,
             p = 0,
             i = 0,
             d = 0,
             locked = false,
             target_f = 0,
-            min = (long) 1E7,
+            min = (long)1E7,
             max = 0
         };
 
         Random r = new Random();
 
-        private FmControlPanel parentfm;
+        private MultiDeviceAIO.FmControlPanel parentfm;
 
         private string buffer = "";
 
         public int BaudRate { get; set; }
         public string PortName { get; set; }
 
-        public TestSerialPort(FmControlPanel parentfm)
+        public TestSerialPort(MultiDeviceAIO.FmControlPanel parentfm)
         {
             this.parentfm = parentfm;
         }
@@ -91,7 +96,8 @@ namespace MotorController
             string[] data = packet.Split(' ');
             Enums.CMDDecode.TryGetValue(data[0], out CMD cmd);
 
-            switch (cmd) {
+            switch (cmd)
+            {
                 case CMD.START:
                     state.p = 0;
                     state.i = 0;
@@ -99,60 +105,37 @@ namespace MotorController
                     state.locked = false;
                     state.running = 1;
                     //TODO: This cannot be done in 3.5 Find another way
-                    /*
                     Task task = Task.Delay(5000).ContinueWith(t => state.running = 2);
-                    {
-                        Enums.CMDEncode.TryGetValue(CMD.START, out string str);
-                        Send("ACK " + str);
-                    }
-                    */
+                    SendACK(cmd);
                     break;
                 case CMD.STOP:
                     state.running = 0;
-                    {
-                        Enums.CMDEncode.TryGetValue(cmd, out string str);
-                        Send("ACK " + str);
-                    }
+                    SendACK(cmd);
                     break;
                 case CMD.SETLOCK:
                     //Can't lock until state = 2
                     if (state.running == 2)
-                    {
                         state.locked = true;
-                        Enums.CMDEncode.TryGetValue(cmd, out string str);
-                        Send("ACK " + str);
-                    }
+                    SendACK(cmd);
                     break;
                 case CMD.SETUNLOCK:
                     if (state.locked == true)
-                    {
                         state.locked = false;
-                        Enums.CMDEncode.TryGetValue(cmd, out string str);
-                        Send("ACK " + str);
-                    }
+                    SendACK(cmd);
                     break;
                 case CMD.SETPULSEDELAY:
                     _PulseDelay = int.Parse(data[1]);
-                    {
-                        Enums.CMDEncode.TryGetValue(cmd, out string str);
-                        Send("ACK " + str);
-                    }
+                    SendACK(cmd);
                     break;
                 case CMD.SETPID:
                     state.p = float.Parse(data[1]);
                     state.i = float.Parse(data[2]);
                     state.d = float.Parse(data[3]);
-                    {
-                        Enums.CMDEncode.TryGetValue(cmd, out string str);
-                        Send("ACK " + str);
-                    }
+                    SendACK(cmd);
                     break;
                 case CMD.SETFREQ:
                     state.target_f = int.Parse(data[1]);
-                    {
-                        Enums.CMDEncode.TryGetValue(cmd, out string str);
-                        Send("ACK " + str);
-                    }
+                    SendACK(cmd);
                     break;
 
                 // NO ACK
@@ -182,6 +165,20 @@ namespace MotorController
                     //If state.running = 2 then lockable. Answer true
                     Send(String.Format("TL {0}", state.running == 2));
                     break;
+
+                //NEW
+
+                case CMD.TRIGGER:
+                    SendACK(cmd);
+                    break;
+                case CMD.SETADC:
+                    //Do something with int.Parse(data[1]);
+                    SendACK(cmd);
+                    break;
+                case CMD.GETADC:
+                    Send(String.Format("RA {0}", 2001));
+                    break;
+
                 default:
                     parentfm.Msg("Unknown packet: " + cmd);
                     break;
@@ -190,7 +187,13 @@ namespace MotorController
             //SendLine("CF " + r.Next(0,100).ToString() );
 
         }
-
+        //NEW
+        void SendACK(CMD cmd)
+        {
+            Enums.CMDEncode.TryGetValue(cmd, out string str);
+            Send("ACK " + str);
+        }
+        //
         public string ReadLine()
         {
             return buffer;

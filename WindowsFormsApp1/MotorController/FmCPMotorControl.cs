@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using MotorController;
 
 namespace MultiDeviceAIO
@@ -22,7 +23,7 @@ namespace MultiDeviceAIO
 
         Timer timerarduino = new Timer();
 
-        public void InitMotorController()
+        public void InitFmCPMotorControl()
         {
             //serialPort1 = new TestSerialPort(this);
             serialPort1 = new SerialPort();
@@ -38,8 +39,45 @@ namespace MultiDeviceAIO
             serialPort1.DiscardInBuffer();  //clear anything
 
             serialPort1.DataReceived += serialPort1_DataReceived;
+            
+            //Chart
+            chart1.ChartAreas["ChartArea1"].AxisX.MajorGrid.LineColor = Color.Gainsboro;
+            chart1.ChartAreas["ChartArea1"].AxisY.MajorGrid.LineColor = Color.Gainsboro;
+
+            chart1.Titles.Add("Rotor Trajectory");
+            chart1.Series.Add(new Series("Series2"));
+            chart1.Series.Add(new Series("Series3"));
+            chart1.Series.Add(new Series("Series4"));
+
+            foreach (Series series in chart1.Series)
+            {
+                series.IsVisibleInLegend = false;
+                series.XValueMember = "X_Value";
+                series.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            }
+            chart1.Series["Series1"].YValueMembers = "Target";
+            chart1.Series["Series2"].YValueMembers = "Upper";
+            chart1.Series["Series3"].YValueMembers = "Lower";
+            chart1.Series["Series4"].YValueMembers = "Y_Value";
+
+            chart1.Series["Series1"].Color = Color.Black;
+            chart1.Series["Series2"].Color = Color.Red;
+            chart1.Series["Series3"].Color = Color.Red;
+            chart1.Series["Series4"].Color = Color.Blue;
+
+            chart1.ChartAreas[0].AxisY.LabelStyle.Format = "";
+
+            //chart1.Series[0].Points.Add(new double[] { 1, 5, 3, 7, 20, 50, 30 } );
+
+            chart1.ChartAreas[0].AxisX.Minimum = 0;
+            //chart1.ChartAreas[0].AxisX.Maximum = 100;
+
+            UpdateYScale();
+
+            chart1.DataSource = PersistentLoggerState.ps.data.dt;
 
         }
+
 
         void BindMotorControls()
         {
@@ -156,6 +194,22 @@ namespace MultiDeviceAIO
                         case STATE.Locked:
                             ChangeState(EVENT.Stop);
                             break;
+                        //NEW
+                        case STATE.Triggered:
+                            ChangeState(EVENT.Stop);
+                            break;
+
+                    }
+                    break;
+                //NEW
+                case EVENT.Trigger:
+                    switch (state)
+                    {
+                        case STATE.Running:
+                        case STATE.Lockable:
+                        case STATE.Locked:
+                            ChangeState(EVENT.Trigger);
+                            break;
                     }
                     break;
             }
@@ -180,6 +234,13 @@ namespace MultiDeviceAIO
                 case EVENT.Unlock:
                     SendCommand(CMD.SETUNLOCK);
                     break;
+                //NEW
+                case EVENT.Trigger:
+                    SendCommand(CMD.SETADC);
+                    SendCommand(CMD.GETADC);
+                    SendCommand(CMD.TRIGGER);
+                    break;
+
             }
         }
 
@@ -244,6 +305,16 @@ namespace MultiDeviceAIO
                             PersistentLoggerState.ps.data.StartRMTimer();
                             AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
                             break;
+
+                        //NEW
+                        case CMD.TRIGGER:
+                            state = STATE.Triggered;
+                            MessageBox.Show("Triggered...");
+                            break;
+                        case CMD.SETADC:
+                            AsyncText(toolStripStatusLabel1, "ADC set.");
+                            break;
+
                     }
 
                     timerarduino.Start();
@@ -309,6 +380,13 @@ namespace MultiDeviceAIO
                     data += " " + nudI.Value.ToString();
                     data += " " + nudD.Value.ToString();
                     break;
+//NEW
+                case CMD.SETADC:
+                    //TODO: get the value of the clock freq
+                    //data = nudP.Value.ToString();
+                    data = "1000";
+                    break;
+
             }
 
             Enums.CMDEncode.TryGetValue(cmd, out string strcmd);
@@ -350,8 +428,8 @@ namespace MultiDeviceAIO
         {
             AsyncText(tbxHistory, packet + "\r\n", -1);
 
-            //mod 
-            if (packet.Substring(0, 3) == "ACK")
+//New - API has no space in ACK
+            if (packet.Substring(0, 3) == "ACK" && packet.Substring(0, 4) != "ACK ")
             {
                 packet = packet.Substring(0, 3) + " " + packet.Substring(3);
             }
@@ -420,6 +498,12 @@ namespace MultiDeviceAIO
                         ProcessACK(CMD.SETUNLOCK);
                     }
                     break;
+//NEW
+                case DATATYPES.GETADC:
+                    //MessageBox.Show("ADC SET: " + float.Parse(data[1]));
+                    break;
+                //END
+
                 default:
                     AsyncText(toolStripStatusLabel1, "Unknown Packet: " + packet);
                     break;
@@ -579,7 +663,38 @@ namespace MultiDeviceAIO
                 }
             }
 
+            //New
+            //It is effectively queued to Arduino altho async return
 
+            chart1.DataBind();
+
+            cbxInRange.Checked = PersistentLoggerState.ps.data.IsRotorInRange;
+
+            if (PersistentLoggerState.ps.data.IsReadyToSample)
+            {
+                cbxOK.Checked = true;
+                ProcessEvent(EVENT.Lock);
+                ProcessEvent(EVENT.Trigger);
+            }
         }
+
+        public void btnIncRange_Click(object sender, EventArgs e)
+        {
+            PersistentLoggerState.ps.data.graphrange *= 1.1f;
+            UpdateYScale();
+        }
+
+        public void btnDecRange_Click(object sender, EventArgs e)
+        {
+            PersistentLoggerState.ps.data.graphrange /= 1.1f;
+            UpdateYScale();
+        }
+
+        private void UpdateYScale()
+        {
+            chart1.ChartAreas[0].AxisY.Maximum = (int)(PersistentLoggerState.ps.data.target_speed + PersistentLoggerState.ps.data.graphrange);
+            chart1.ChartAreas[0].AxisY.Minimum = (int)(PersistentLoggerState.ps.data.target_speed - PersistentLoggerState.ps.data.graphrange);
+        }
+
     }
 }

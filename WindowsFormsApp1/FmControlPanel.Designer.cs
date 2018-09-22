@@ -164,6 +164,10 @@
             this.tbxHistory = new System.Windows.Forms.TextBox();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.cbxOK = new System.Windows.Forms.CheckBox();
+            this.cbxInRange = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -1552,9 +1556,49 @@
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(487, 149);
+            this.chart1.Size = new System.Drawing.Size(460, 149);
             this.chart1.TabIndex = 56;
             this.chart1.Text = "chart1";
+            // 
+            // cbxOK
+            // 
+            this.cbxOK.Appearance = System.Windows.Forms.Appearance.Button;
+            this.cbxOK.AutoSize = true;
+            this.cbxOK.Location = new System.Drawing.Point(833, 451);
+            this.cbxOK.Name = "cbxOK";
+            this.cbxOK.Size = new System.Drawing.Size(32, 23);
+            this.cbxOK.TabIndex = 60;
+            this.cbxOK.Text = "OK";
+            this.cbxOK.UseVisualStyleBackColor = true;
+            // 
+            // cbxInRange
+            // 
+            this.cbxInRange.Appearance = System.Windows.Forms.Appearance.Button;
+            this.cbxInRange.AutoSize = true;
+            this.cbxInRange.Location = new System.Drawing.Point(833, 422);
+            this.cbxInRange.Name = "cbxInRange";
+            this.cbxInRange.Size = new System.Drawing.Size(28, 23);
+            this.cbxInRange.TabIndex = 59;
+            this.cbxInRange.Text = "IN";
+            this.cbxInRange.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(833, 392);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(22, 23);
+            this.button1.TabIndex = 58;
+            this.button1.Text = "-";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(833, 363);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(22, 23);
+            this.button2.TabIndex = 57;
+            this.button2.Text = "+";
+            this.button2.UseVisualStyleBackColor = true;
             // 
             // FmControlPanel
             // 
@@ -1562,6 +1606,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(866, 537);
+            this.Controls.Add(this.cbxOK);
+            this.Controls.Add(this.cbxInRange);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel6);
             this.Controls.Add(this.panel3);
@@ -1762,5 +1810,9 @@
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.NumericUpDown nudTolerance;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBox cbxOK;
+        private System.Windows.Forms.CheckBox cbxInRange;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }
