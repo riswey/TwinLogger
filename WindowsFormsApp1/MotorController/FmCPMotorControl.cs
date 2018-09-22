@@ -21,8 +21,6 @@ namespace MultiDeviceAIO
 
         //ParameterState parameters = new ParameterState();
 
-        Timer timerarduino = new Timer();
-
         public void InitFmCPMotorControl()
         {
             //Setup Chart
@@ -144,7 +142,6 @@ namespace MultiDeviceAIO
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (timerarduino != null) timerarduino.Dispose();
             //if (task != null) task.Dispose();
             if (serialPort1 != null) serialPort1.Close();
         }
@@ -258,77 +255,13 @@ namespace MultiDeviceAIO
             switch (cmd)
             {
                 case CMD.START:
-                    //Removed Motor Control Logging
-                    //PersistentLoggerState.ps.data.Start();
+                    //PersistentLoggerState.ps.data.Start();   //Removed Motor Control Logging
                     PersistentLoggerState.ps.data.StartRMTimer();
                     state = STATE.Running;
                     AsyncColor(btnStart, Color.Green);
-                    
                     //TODO: need check if lockable before lock when sampling!!!!
                     //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
-
-                    switch (cmd)
-                    {
-                        case CMD.START:
-
-                            PersistentLoggerState.ps.data.StartRMTimer();
-                            state = STATE.Running;
-                            AsyncColor(btnStart, Color.Orange);
-                            //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
-
-                            this.Invoke(new Action(() => timerarduino.Start()));
-
-                            break;
-                        case CMD.STOP:
-                            /*
-                            if (this.task != null)
-                            {
-                                this.task.Dispose();
-                                this.task = null;
-                            }
-                            */
-                            this.Invoke(new Action(() => timerarduino.Stop()));
-                            state = STATE.Ready;
-                            //AsyncDisable(this.btnSetSpeed, false);
-                            AsyncColor(btnStart, default(Color));
-                            AsyncText(btnStart, "Start");
-                            break;
-                        case CMD.SETLOCK:
-                            state = STATE.Locked;
-                            AsyncText(btnStart, "Unlock");
-                            AsyncColor(btnStart, Color.Red);
-                            //AsyncDisable(this.btnSetSpeed);
-                            break;
-                        case CMD.SETUNLOCK:
-                            state = STATE.Lockable;
-                            AsyncText(btnStart, "Lock");
-                            AsyncColor(btnStart, Color.Orange);
-                            //AsyncDisable(this.btnSetSpeed, false);
-                            break;
-                        case CMD.SETPULSEDELAY:
-                            AsyncText(toolStripStatusLabel1, "Pulse Delay set.");
-                            break;
-                        case CMD.SETPID:
-                            AsyncText(toolStripStatusLabel1, "PID set.");
-                            break;
-                        case CMD.SETFREQ:
-                            PersistentLoggerState.ps.data.StartRMTimer();
-                            AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
-                            break;
-
-                        //NEW
-                        case CMD.TRIGGER:
-                            state = STATE.Triggered;
-                            MessageBox.Show("Triggered...");
-                            break;
-                        case CMD.SETADC:
-                            AsyncText(toolStripStatusLabel1, "ADC set.");
-                            break;
-
-                    }
-
-                    timerarduino.Start();
-
+                    this.Invoke(new Action(() => timerarduino.Start()));
                     break;
                 case CMD.STOP:
                     /*
@@ -363,10 +296,18 @@ namespace MultiDeviceAIO
                     AsyncText(toolStripStatusLabel1, "PID set.");
                     break;
                 case CMD.SETFREQ:
-
                     //TODO: Should SETFREQ -> StartRMTImer ???
                     PersistentLoggerState.ps.data.StartRMTimer();
                     AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
+                    break;
+
+//NEW
+                case CMD.TRIGGER:
+                    state = STATE.Triggered;
+                    MessageBox.Show("Triggered...");
+                    break;
+                case CMD.SETADC:
+                    AsyncText(toolStripStatusLabel1, "ADC set.");
                     break;
             }
 
@@ -655,7 +596,7 @@ namespace MultiDeviceAIO
             serialPort1.PortName = cbxPort.SelectedItem.ToString();
         }
 
-        private void timerarduino_Tick(object sender, EventArgs e)
+        public void timerarduino_Tick(object sender, EventArgs e)
         {
             if (state == STATE.Running)
             {

@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmControlPanel));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.chkClips = new System.Windows.Forms.CheckBox();
@@ -166,8 +166,9 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.cbxOK = new System.Windows.Forms.CheckBox();
             this.cbxInRange = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnIncRange = new System.Windows.Forms.Button();
+            this.btnDecRange = new System.Windows.Forms.Button();
+            this.timerarduino = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -1323,6 +1324,11 @@
             // nudTimeout
             // 
             this.nudTimeout.Location = new System.Drawing.Point(174, 52);
+            this.nudTimeout.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
             this.nudTimeout.Name = "nudTimeout";
             this.nudTimeout.Size = new System.Drawing.Size(67, 20);
             this.nudTimeout.TabIndex = 59;
@@ -1546,16 +1552,16 @@
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(367, 363);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(460, 149);
             this.chart1.TabIndex = 56;
             this.chart1.Text = "chart1";
@@ -1582,23 +1588,30 @@
             this.cbxInRange.Text = "IN";
             this.cbxInRange.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnIncRange
             // 
-            this.button1.Location = new System.Drawing.Point(833, 392);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(22, 23);
-            this.button1.TabIndex = 58;
-            this.button1.Text = "-";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnIncRange.Location = new System.Drawing.Point(833, 392);
+            this.btnIncRange.Name = "btnIncRange";
+            this.btnIncRange.Size = new System.Drawing.Size(22, 23);
+            this.btnIncRange.TabIndex = 58;
+            this.btnIncRange.Text = "-";
+            this.btnIncRange.UseVisualStyleBackColor = true;
+            this.btnIncRange.Click += new System.EventHandler(this.btnIncRange_Click);
             // 
-            // button2
+            // btnDecRange
             // 
-            this.button2.Location = new System.Drawing.Point(833, 363);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(22, 23);
-            this.button2.TabIndex = 57;
-            this.button2.Text = "+";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnDecRange.Location = new System.Drawing.Point(833, 363);
+            this.btnDecRange.Name = "btnDecRange";
+            this.btnDecRange.Size = new System.Drawing.Size(22, 23);
+            this.btnDecRange.TabIndex = 57;
+            this.btnDecRange.Text = "+";
+            this.btnDecRange.UseVisualStyleBackColor = true;
+            this.btnDecRange.Click += new System.EventHandler(this.btnDecRange_Click);
+            // 
+            // timerarduino
+            // 
+            this.timerarduino.Interval = 500;
+            this.timerarduino.Tick += new System.EventHandler(this.timerarduino_Tick);
             // 
             // FmControlPanel
             // 
@@ -1608,8 +1621,8 @@
             this.ClientSize = new System.Drawing.Size(866, 537);
             this.Controls.Add(this.cbxOK);
             this.Controls.Add(this.cbxInRange);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btnIncRange);
+            this.Controls.Add(this.btnDecRange);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel6);
             this.Controls.Add(this.panel3);
@@ -1812,7 +1825,8 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.CheckBox cbxOK;
         private System.Windows.Forms.CheckBox cbxInRange;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnIncRange;
+        private System.Windows.Forms.Button btnDecRange;
+        private System.Windows.Forms.Timer timerarduino;
     }
 }
