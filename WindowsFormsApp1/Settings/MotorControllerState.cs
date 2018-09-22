@@ -152,9 +152,8 @@ namespace MultiDeviceAIO
             lowerspeed = target_speed / tolerance;
             upperspeed = target_speed * tolerance;
         }
-
-        [NonSerialized]
-        public long timeout = 60000;    //1min
+        
+        public long timeout { get; set; } = 60000;    //1min
         [NonSerialized]
         public long enterrange = 0;
         [NonSerialized]

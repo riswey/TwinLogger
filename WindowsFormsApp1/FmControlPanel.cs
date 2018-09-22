@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using MotorController;
 
 using DEVICEID = System.Int16;
 //The data structure is a dictionary; K: device id V:raw list of data for device
 //K: device id :. data imported by id
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
-using System.Speech.Synthesis;
 
 namespace MultiDeviceAIO
 {
@@ -792,8 +792,9 @@ namespace MultiDeviceAIO
         {
             //TODO: add scheule loop
 
-            //Test Sampling
-            StartSampling();
+            StartSampling();    //Contect -> Armed State
+
+            ProcessEvent(EVENT.Start);  //
 
             //Test Motor
             //ProcessEvent(MotorController.EVENT.Start);

@@ -93,8 +93,9 @@ namespace MultiDeviceAIO
                 PrintLn("Armed", true);
                 setStartButtonText(1);
 
-                if (PersistentLoggerState.ps.data.testingmode)
-                    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
+                //DOCS: Auto Trigger to by-pass motorcontol in testing
+                //if (PersistentLoggerState.ps.data.testingmode)
+                //    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
 
             }
 

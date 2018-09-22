@@ -12,8 +12,8 @@ namespace MultiDeviceAIO
 {
     public partial class FmControlPanel: Form
     {
-        //TestSerialPort serialPort1;
-        SerialPort serialPort1 = new SerialPort();
+        TestSerialPort serialPort1;
+        //SerialPort serialPort1 = new SerialPort();
 
         string TERMINAL = "\n";
         STATE state = STATE.Ready;
@@ -25,26 +25,11 @@ namespace MultiDeviceAIO
 
         public void InitFmCPMotorControl()
         {
-            //serialPort1 = new TestSerialPort(this);
-            serialPort1 = new SerialPort();
+            //Setup Chart
+            chart1.Titles.Add("Rotor Trajectory");
 
-            string pn = SearchPorts();
-
-            if (pn == "(None)") return;
-
-            serialPort1.PortName = pn;
-
-            serialPort1.BaudRate = 9600;
-            serialPort1.Open();
-            serialPort1.DiscardInBuffer();  //clear anything
-
-            serialPort1.DataReceived += serialPort1_DataReceived;
-            
-            //Chart
             chart1.ChartAreas["ChartArea1"].AxisX.MajorGrid.LineColor = Color.Gainsboro;
             chart1.ChartAreas["ChartArea1"].AxisY.MajorGrid.LineColor = Color.Gainsboro;
-
-            chart1.Titles.Add("Rotor Trajectory");
             chart1.Series.Add(new Series("Series2"));
             chart1.Series.Add(new Series("Series3"));
             chart1.Series.Add(new Series("Series4"));
@@ -75,6 +60,26 @@ namespace MultiDeviceAIO
             UpdateYScale();
 
             chart1.DataSource = PersistentLoggerState.ps.data.dt;
+
+
+            //Setup Serial Port
+
+
+            serialPort1 = new TestSerialPort(this);
+            //serialPort1 = new SerialPort();
+
+            string pn = SearchPorts();
+
+            if (pn == "(None)") return;
+
+            serialPort1.PortName = pn;
+
+            serialPort1.BaudRate = 9600;
+            serialPort1.Open();
+            serialPort1.DiscardInBuffer();  //clear anything
+
+            //TODO: Testing should really have a delegate handling this!
+            //serialPort1.DataReceived += serialPort1_DataReceived;
 
         }
 
@@ -153,6 +158,8 @@ namespace MultiDeviceAIO
 
         private void ProcessEvent(EVENT e)
         {
+            PrintLn("Process Motor Event: " + e.ToString());
+
             switch (e)
             {
                 case EVENT.Start:
@@ -246,6 +253,8 @@ namespace MultiDeviceAIO
 
         private void ProcessACK(CMD cmd)
         {
+            PrintLn("Process ACK: " + cmd.ToString());
+
             switch (cmd)
             {
                 case CMD.START:
@@ -253,9 +262,10 @@ namespace MultiDeviceAIO
                     //PersistentLoggerState.ps.data.Start();
                     PersistentLoggerState.ps.data.StartRMTimer();
                     state = STATE.Running;
-                    AsyncColor(btnStart, Color.Orange);
+                    AsyncColor(btnStart, Color.Green);
+                    
+                    //TODO: need check if lockable before lock when sampling!!!!
                     //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
-
 
                     switch (cmd)
                     {
@@ -353,6 +363,8 @@ namespace MultiDeviceAIO
                     AsyncText(toolStripStatusLabel1, "PID set.");
                     break;
                 case CMD.SETFREQ:
+
+                    //TODO: Should SETFREQ -> StartRMTImer ???
                     PersistentLoggerState.ps.data.StartRMTimer();
                     AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
                     break;
@@ -366,6 +378,8 @@ namespace MultiDeviceAIO
 
         void SendCommand(CMD cmd)
         {
+            PrintLn("Serial < " + cmd.ToString());
+
             string data = "";
             switch ((CMD)cmd)
             {
@@ -428,7 +442,9 @@ namespace MultiDeviceAIO
         {
             AsyncText(tbxHistory, packet + "\r\n", -1);
 
-//New - API has no space in ACK
+            PrintLn("Serial > " + packet);
+
+            //New - API has no space in ACK
             if (packet.Substring(0, 3) == "ACK" && packet.Substring(0, 4) != "ACK ")
             {
                 packet = packet.Substring(0, 3) + " " + packet.Substring(3);

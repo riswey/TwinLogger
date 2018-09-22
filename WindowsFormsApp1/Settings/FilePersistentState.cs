@@ -97,6 +97,7 @@ namespace MultiDeviceAIO
             }
             catch (XmlException) { return false; }
             catch (IOException) { return false; }
+            catch (InvalidOperationException) { return false; }     //had a fit with XML changes. Ignore.
             catch (Exception) { throw; }
         }
 

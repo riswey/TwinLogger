@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MultiDeviceAIO.MotorController
+namespace MotorController
 {
     class PeriodAverage
     {
