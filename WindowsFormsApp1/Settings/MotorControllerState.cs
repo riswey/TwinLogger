@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace MultiDeviceAIO
 {
-    partial class LoggerState
+    public partial class LoggerState
     {
-
+        
         public static long GetTime()   //millisecond time
         {
             return (long)Math.Round(DateTimeOffset.Now.UtcTicks / 10000.0d, 0);
@@ -21,11 +22,10 @@ namespace MultiDeviceAIO
         public long min_period { get; set; }
         public long max_period { get; set; }
         public float target_speed { get; set; }
-
+        
         //TODO: add to period 
         public float rotor_speed { get; set; }
 
-        /*
         MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
         float rotor_speed_ma
         {
@@ -36,17 +36,16 @@ namespace MultiDeviceAIO
                 return rotor_speed;
             }
         }
-        */
-
+        
         #region MinMax_TIMER
         //RM (Req. Min/Max) Timer pause
         //Put a timer block on Min/Max calls
         //Start/SetFreq reset min/max which takes 2s to stabilise
-        [NonSerialized]
+        //[NonSerialized]
         const long RM_TIMER_PERIOD = 2000;
         private long start_t { get; set; }
         long rm_timer { get; set; } = 0;
-
+        
         public void StartRMTimer()
         {
             //Start/SetFreq events reset the MaxMin buffer
@@ -66,7 +65,7 @@ namespace MultiDeviceAIO
         }
 
         #endregion
-
+        
         #region LOGGING
 
         /*
@@ -120,17 +119,18 @@ namespace MultiDeviceAIO
         //
         // NEW CODE
         //
-
+        
         //Don't forget period average on rotor speed
 
-        [NonSerialized]
+        [XmlIgnore]
         public DataTable dt = new DataTable();
-        [NonSerialized]
+
+        [XmlIgnore]
         private int x = 0;
 
-        [NonSerialized]
+        [XmlIgnore]
         float lowerspeed;
-        [NonSerialized]
+        [XmlIgnore]
         float upperspeed;
 
         public float tolerance { get; set; } = 1.1f;
@@ -144,7 +144,7 @@ namespace MultiDeviceAIO
             dt.Columns.Add("Y_Value", typeof(float));
         }
 
-        [NonSerialized]
+        //[NonSerialized]
         public float graphrange = 50;
 
         void SetBounds()
@@ -154,9 +154,9 @@ namespace MultiDeviceAIO
         }
         
         public long timeout { get; set; } = 60000;    //1min
-        [NonSerialized]
+        [XmlIgnore]
         public long enterrange = 0;
-        [NonSerialized]
+        [XmlIgnore]
         public long stableperiod = 3000;
 
         public bool IsRotorInRange
@@ -179,7 +179,7 @@ namespace MultiDeviceAIO
                 }
             }
         }
-
+        
         private bool IsRotorStable
         {
             get
@@ -199,7 +199,5 @@ namespace MultiDeviceAIO
                 return IsRotorStable || GetTime() - start_t > timeout;
             }
         }
-
-
     }
 }

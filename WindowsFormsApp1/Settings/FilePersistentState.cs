@@ -27,7 +27,7 @@ namespace MultiDeviceAIO
         {
             //Need to manually import settings!
         }
-
+        
         public FilePersistentState(T data) 
         {
             this.data = data;
@@ -47,8 +47,10 @@ namespace MultiDeviceAIO
                 this.data = Deserialise(xml);
                 return true;
             }
-            catch (InvalidOperationException) { return false; }
-            catch (XmlException) { return false; }
+            catch (InvalidOperationException ex) {
+                System.Windows.Forms.MessageBox.Show("Import XML: " + ex.Message);
+                return false;
+            }
         }
 
         /// <summary>
@@ -65,8 +67,11 @@ namespace MultiDeviceAIO
                 xml = Serialise(this.data);
                 return true;
             }
-            catch (InvalidOperationException) { xml = null; return false; }
-            catch (XmlException) { xml = null; return false; }
+            catch (InvalidOperationException ex) {
+                xml = null;
+                System.Windows.Forms.MessageBox.Show("Export XML: " + ex.Message);
+                return false;
+            }
         }
 
         //Load external path
@@ -79,7 +84,6 @@ namespace MultiDeviceAIO
                 this.data = Deserialise(xml);
                 return true;
             }
-            catch (XmlException) { return false; }
             catch (IOException) { return false; }
             catch (InvalidOperationException) { return false; }
             catch (Exception) { throw; }
@@ -95,9 +99,12 @@ namespace MultiDeviceAIO
                 File.WriteAllText(path, xml);
                 return true;
             }
-            catch (XmlException) { return false; }
             catch (IOException) { return false; }
-            catch (InvalidOperationException) { return false; }     //had a fit with XML changes. Ignore.
+            catch (InvalidOperationException ex) {
+                //had a fit with XML changes. Ignore.
+                System.Windows.Forms.MessageBox.Show("Export XML: " + ex.Message);
+                return false;
+            }     
             catch (Exception) { throw; }
         }
 
@@ -105,19 +112,43 @@ namespace MultiDeviceAIO
         {
             //Save
             XmlSerializer xsSubmit = new XmlSerializer(typeof(T));
+            // Set event handlers for unknown nodes/attributes
+            xsSubmit.UnknownNode += new XmlNodeEventHandler(serializer_UnknownNode);
+            xsSubmit.UnknownAttribute += new XmlAttributeEventHandler(serializer_UnknownAttribute);
+            xsSubmit.UnknownElement += new XmlElementEventHandler(serializer_UnknownElement);
 
             using (var sww = new StringWriter())
             {
                 using (XmlWriter writer = XmlWriter.Create(sww))
                 {
-                    xsSubmit.Serialize(writer, ps1);
-
+                    try
+                    {
+                        xsSubmit.Serialize(writer, ps1);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Serialise: " + ex.Message);
+                    }
+                    
                     return sww.ToString();
                 }
             }
         }
 
-        private T Deserialise(string xml)       //throws XmlException
+        private static void serializer_UnknownAttribute(object sender, XmlAttributeEventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+        private static void serializer_UnknownNode(object sender, XmlNodeEventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+        private static void serializer_UnknownElement(object sender, XmlElementEventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private T Deserialise(string xml)
         {
             XmlSerializer xsSubmit = new XmlSerializer(typeof(T));
 

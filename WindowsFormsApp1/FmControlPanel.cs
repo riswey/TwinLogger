@@ -807,11 +807,12 @@ namespace MultiDeviceAIO
 
         void StopScheduleRun()
         {
-            //ProcessEvent(MotorController.EVENT.Stop);
+            Abort();
         }
 
         void Abort()
         {
+            ProcessEvent(MotorController.EVENT.Stop);
             //Abort
             timergetdata.Stop();
             myaio.Stop();

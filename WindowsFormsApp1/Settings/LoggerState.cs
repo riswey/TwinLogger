@@ -11,6 +11,7 @@ namespace MultiDeviceAIO
     /// Avoids need for ref
     /// Ensures app holds only 1 settings instance -> perhaps make singleton!
     /// </summary>
+    [Serializable]
     public partial class LoggerState
     {
         /// <summary>
