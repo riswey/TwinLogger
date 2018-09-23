@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
@@ -55,14 +56,11 @@ namespace MultiDeviceAIO
             chart1.ChartAreas[0].AxisX.Minimum = 0;
             //chart1.ChartAreas[0].AxisX.Maximum = 100;
 
-            UpdateYScale();
-
             chart1.DataSource = PersistentLoggerState.ps.data.dt;
 
+            UpdateYScale();
 
             //Setup Serial Port
-
-
             serialPort1 = new TestSerialPort(this);
             //serialPort1 = new SerialPort();
 
@@ -111,6 +109,9 @@ namespace MultiDeviceAIO
             nudTolerance.DataBindings.Clear();
             nudTolerance.DataBindings.Add("Value", PersistentLoggerState.ps.data, "tolerance");
 
+            nudStableWindow.DataBindings.Clear();
+            nudStableWindow.DataBindings.Add("Value", PersistentLoggerState.ps.data, "stableperiod");
+
             nudTimeout.DataBindings.Clear();
             nudTimeout.DataBindings.Add("Value", PersistentLoggerState.ps.data, "timeout");
 
@@ -155,8 +156,6 @@ namespace MultiDeviceAIO
 
         private void ProcessEvent(EVENT e)
         {
-            PrintLn("Process Motor Event: " + e.ToString());
-
             switch (e)
             {
                 case EVENT.Start:
@@ -205,7 +204,6 @@ namespace MultiDeviceAIO
 
                     }
                     break;
-                //NEW
                 case EVENT.Trigger:
                     switch (state)
                     {
@@ -222,6 +220,8 @@ namespace MultiDeviceAIO
 
         private void ChangeState(EVENT e)
         {
+            PrintLn("Change Motor State: " + e.ToString());
+
             switch (e)
             {
                 case EVENT.Start:
@@ -238,13 +238,11 @@ namespace MultiDeviceAIO
                 case EVENT.Unlock:
                     SendCommand(CMD.SETUNLOCK);
                     break;
-                //NEW
                 case EVENT.Trigger:
                     SendCommand(CMD.SETADC);
                     SendCommand(CMD.GETADC);
                     SendCommand(CMD.TRIGGER);
                     break;
-
             }
         }
 
@@ -300,11 +298,16 @@ namespace MultiDeviceAIO
                     PersistentLoggerState.ps.data.StartRMTimer();
                     AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
                     break;
-
-//NEW
                 case CMD.TRIGGER:
                     state = STATE.Triggered;
-                    MessageBox.Show("Triggered...");
+
+                    if (PersistentLoggerState.ps.data.testingmode != 0)
+                    {
+                        PrintLn("Sampling triggered", true);
+                        //Simulate a trigger in the LAX1664
+                        myaio.SimulateTrigger();
+                    }
+
                     break;
                 case CMD.SETADC:
                     AsyncText(toolStripStatusLabel1, "ADC set.");
@@ -319,8 +322,6 @@ namespace MultiDeviceAIO
 
         void SendCommand(CMD cmd)
         {
-            PrintLn("Serial < " + cmd.ToString());
-
             string data = "";
             switch ((CMD)cmd)
             {
@@ -382,8 +383,6 @@ namespace MultiDeviceAIO
         void HandlePacket(string packet)
         {
             AsyncText(tbxHistory, packet + "\r\n", -1);
-
-            PrintLn("Serial > " + packet);
 
             //New - API has no space in ACK
             if (packet.Substring(0, 3) == "ACK" && packet.Substring(0, 4) != "ACK ")
@@ -622,7 +621,7 @@ namespace MultiDeviceAIO
 
             //New
             //It is effectively queued to Arduino altho async return
-
+            
             chart1.DataBind();
 
             cbxInRange.Checked = PersistentLoggerState.ps.data.IsRotorInRange;
@@ -633,18 +632,6 @@ namespace MultiDeviceAIO
                 ProcessEvent(EVENT.Lock);
                 ProcessEvent(EVENT.Trigger);
             }
-        }
-
-        public void btnIncRange_Click(object sender, EventArgs e)
-        {
-            PersistentLoggerState.ps.data.graphrange *= 1.1f;
-            UpdateYScale();
-        }
-
-        public void btnDecRange_Click(object sender, EventArgs e)
-        {
-            PersistentLoggerState.ps.data.graphrange /= 1.1f;
-            UpdateYScale();
         }
 
         private void UpdateYScale()

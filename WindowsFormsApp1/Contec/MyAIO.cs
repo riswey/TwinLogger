@@ -33,8 +33,6 @@ namespace MultiDeviceAIO
 
     public class MyAIO
     {
-        public const int TIMERPERIOD = 400;
-
         //TODO: this will crash if not installed. Check
         public Caio aio;
 
@@ -122,9 +120,9 @@ namespace MultiDeviceAIO
         public DATA concatdata { get; private set; } = null;      //Keep for Scope
 
 
-        public MyAIO(bool testing)
+        public MyAIO(int testing)
         {
-            if (testing)
+            if (testing != 0)
                 aio = new CaioTest();
             else
                 aio = new Caio();
@@ -564,7 +562,7 @@ namespace MultiDeviceAIO
 
         #region TESTING
 
-        public void TestTrigger()
+        public void SimulateTrigger()
         {
             /* In real environment the Motor Control will Send a SS signal to Ardunio.
              * -> Arduino will trigger LAX1664
@@ -585,7 +583,7 @@ namespace MultiDeviceAIO
             {
                 //Do a Test Trigger of the LAX1664
                 ((CaioTest)aio).devicestate = ((CaioTest)aio).devicestate.ToDictionary(p => p.Key, p => CaioConst.AIS_DATA_NUM);
-                
+
             }
         }
 

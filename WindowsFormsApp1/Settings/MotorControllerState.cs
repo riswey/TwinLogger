@@ -21,12 +21,40 @@ namespace MultiDeviceAIO
         public int pulse_delay { get; set; }
         public long min_period { get; set; }
         public long max_period { get; set; }
-        public float target_speed { get; set; }
         
-        //TODO: add to period 
-        public float rotor_speed { get; set; }
+        float _target_speed = 50;
+        public float target_speed
+        {
+            get
+            {
+                return _target_speed;
+            }
+            set
+            {
+                _target_speed = value;
+                SetBounds();
+            }
+        }
 
-        MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
+        //TODO: add to period
+        [XmlIgnore]
+        float _rotor_speed = 0;
+        [XmlIgnore]
+        public float rotor_speed
+        {
+            get
+            {
+                return _rotor_speed;
+            }
+            set
+            {
+                _rotor_speed = value;
+
+                dt.Rows.Add(x++, target_speed, upperspeed, lowerspeed, value);
+            }
+        }
+
+        [XmlIgnore]
         float rotor_speed_ma
         {
             get
@@ -36,16 +64,22 @@ namespace MultiDeviceAIO
                 return rotor_speed;
             }
         }
+
+        [XmlIgnore]
+        MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
         
         #region MinMax_TIMER
         //RM (Req. Min/Max) Timer pause
         //Put a timer block on Min/Max calls
         //Start/SetFreq reset min/max which takes 2s to stabilise
-        //[NonSerialized]
+        [XmlIgnore]
         const long RM_TIMER_PERIOD = 2000;
-        private long start_t { get; set; }
-        long rm_timer { get; set; } = 0;
-        
+
+        [XmlIgnore]
+        private long start_t { get; set; }      //Marker for start of rotor run
+        [XmlIgnore]
+        long rm_timer { get; set; } = 0;        //Marker for delay in Min/Max calls
+
         public void StartRMTimer()
         {
             //Start/SetFreq events reset the MaxMin buffer
@@ -65,7 +99,7 @@ namespace MultiDeviceAIO
         }
 
         #endregion
-        
+
         #region LOGGING
 
         /*
@@ -119,11 +153,33 @@ namespace MultiDeviceAIO
         //
         // NEW CODE
         //
-        
+
         //Don't forget period average on rotor speed
 
+        public float tolerance { get; set; } = 1.1f;
+        public long stableperiod { get; set; } = 3000;
+        public long timeout { get; set; } = 60000;    //1min
+
+
         [XmlIgnore]
-        public DataTable dt = new DataTable();
+        private DataTable _dt;
+        [XmlIgnore]
+        public DataTable dt
+        {
+            get
+            {
+                if (_dt == null)
+                {
+                    _dt = new DataTable();
+                    _dt.Columns.Add("X_Value", typeof(long));
+                    _dt.Columns.Add("Target", typeof(float));
+                    _dt.Columns.Add("Upper", typeof(float));
+                    _dt.Columns.Add("Lower", typeof(float));
+                    _dt.Columns.Add("Y_Value", typeof(float));
+                }
+                return _dt;
+            }
+        }
 
         [XmlIgnore]
         private int x = 0;
@@ -132,33 +188,12 @@ namespace MultiDeviceAIO
         float lowerspeed;
         [XmlIgnore]
         float upperspeed;
-
-        public float tolerance { get; set; } = 1.1f;
-
-        public void InitMotorControllerState()
-        {
-            dt.Columns.Add("X_Value", typeof(long));
-            dt.Columns.Add("Target", typeof(float));
-            dt.Columns.Add("Upper", typeof(float));
-            dt.Columns.Add("Lower", typeof(float));
-            dt.Columns.Add("Y_Value", typeof(float));
-        }
-
-        //[NonSerialized]
-        public float graphrange = 50;
-
-        void SetBounds()
-        {
-            lowerspeed = target_speed / tolerance;
-            upperspeed = target_speed * tolerance;
-        }
-        
-        public long timeout { get; set; } = 60000;    //1min
+        [XmlIgnore]
+        public float graphrange = 50;        
         [XmlIgnore]
         public long enterrange = 0;
-        [XmlIgnore]
-        public long stableperiod = 3000;
 
+        [XmlIgnore]
         public bool IsRotorInRange
         {
             get
@@ -179,7 +214,8 @@ namespace MultiDeviceAIO
                 }
             }
         }
-        
+
+        [XmlIgnore]
         private bool IsRotorStable
         {
             get
@@ -191,13 +227,21 @@ namespace MultiDeviceAIO
             }
         }
 
+        [XmlIgnore]
         public bool IsReadyToSample
         {
             get
             {
                 //DOC: Samples after timeout whatever. This is the window for improved motor control
-                return IsRotorStable || GetTime() - start_t > timeout;
+                return IsRotorStable;// || (start_t != 0 && GetTime() - start_t > timeout);
             }
         }
+
+        void SetBounds()
+        {
+            lowerspeed = target_speed / tolerance;
+            upperspeed = target_speed * tolerance;
+        }
+
     }
 }

@@ -30,8 +30,6 @@ namespace MultiDeviceAIO
             }
         }
 
-        Timer timergetdata = new Timer();
-
         //1000hz, 64chan, 5sec
         //
         //int target = 10000;        //sampling freq x duration x 2
@@ -80,10 +78,8 @@ namespace MultiDeviceAIO
 
             InteractWithDevices();
 
-            //We can work this out exactly from amount of data coming in!
-            timergetdata.Interval = MyAIO.TIMERPERIOD;
-
-            timergetdata.Tick += data_Tick;
+            //TODO: We can work this out exactly from amount of data coming in!
+            //timergetdata.Interval = ;
 
             //TODO: this must be stopped while sampling and restarted at end!!!
             TimerMonitorState(true);
@@ -155,6 +151,7 @@ namespace MultiDeviceAIO
 
             chkExternalClock.DataBindings.Clear();
             chkExternalClock.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_clock");
+
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -241,7 +238,7 @@ namespace MultiDeviceAIO
             }
 
             fmlog.Show();
-
+            fmlog.WindowState = FormWindowState.Minimized;
             fmlog.PrintLn(msg, speak, linebreak);
 
         }
@@ -451,7 +448,7 @@ namespace MultiDeviceAIO
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool originalTesting = PersistentLoggerState.ps.data.testingmode;
+            int originalTesting = PersistentLoggerState.ps.data.testingmode;
             using (var form = new FmOptions(PersistentLoggerState.ps.data))
             {
                 var res = form.ShowDialog();
@@ -479,6 +476,18 @@ namespace MultiDeviceAIO
         private void button1_Click(object sender, EventArgs e)
         {
             Abort();
+        }
+
+        public void btnIncRange_Click(object sender, EventArgs e)
+        {
+            PersistentLoggerState.ps.data.graphrange *= 1.1f;
+            UpdateYScale();
+        }
+
+        public void btnDecRange_Click(object sender, EventArgs e)
+        {
+            PersistentLoggerState.ps.data.graphrange /= 1.1f;
+            UpdateYScale();
         }
 
         #endregion
@@ -796,13 +805,6 @@ namespace MultiDeviceAIO
 
             ProcessEvent(EVENT.Start);  //
 
-            //Test Motor
-            //ProcessEvent(MotorController.EVENT.Start);
-            //-> MotorController will send SS when ready (in testing this triggers)
-
-            //
-            //myaio.TestTrigger();
-
         }
 
         void StopScheduleRun()
@@ -826,7 +828,7 @@ namespace MultiDeviceAIO
 
             timermonitor.Stop();
             timermonitor.Start();
-            PrintLn("Run aborted", true);
+            PrintLn("Run Stopped", true);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -842,6 +844,5 @@ namespace MultiDeviceAIO
 
 
         #endregion
-
     }
 }

@@ -138,6 +138,8 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label40 = new System.Windows.Forms.Label();
+            this.nudStableWindow = new System.Windows.Forms.NumericUpDown();
             this.label37 = new System.Windows.Forms.Label();
             this.nudTimeout = new System.Windows.Forms.NumericUpDown();
             this.label36 = new System.Windows.Forms.Label();
@@ -169,6 +171,7 @@
             this.btnIncRange = new System.Windows.Forms.Button();
             this.btnDecRange = new System.Windows.Forms.Button();
             this.timerarduino = new System.Windows.Forms.Timer(this.components);
+            this.timergetdata = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -203,6 +206,7 @@
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).BeginInit();
             this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStableWindow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -1249,7 +1253,7 @@
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(27, 130);
+            this.label31.Location = new System.Drawing.Point(20, 130);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(116, 13);
             this.label31.TabIndex = 36;
@@ -1295,6 +1299,8 @@
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage3.Controls.Add(this.label40);
+            this.tabPage3.Controls.Add(this.nudStableWindow);
             this.tabPage3.Controls.Add(this.label37);
             this.tabPage3.Controls.Add(this.nudTimeout);
             this.tabPage3.Controls.Add(this.label36);
@@ -1312,10 +1318,36 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Parameters";
             // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(37, 33);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(79, 13);
+            this.label40.TabIndex = 62;
+            this.label40.Text = "Stable Window";
+            // 
+            // nudStableWindow
+            // 
+            this.nudStableWindow.Increment = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudStableWindow.Location = new System.Drawing.Point(174, 31);
+            this.nudStableWindow.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.nudStableWindow.Name = "nudStableWindow";
+            this.nudStableWindow.Size = new System.Drawing.Size(67, 20);
+            this.nudStableWindow.TabIndex = 61;
+            // 
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(36, 54);
+            this.label37.Location = new System.Drawing.Point(36, 58);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(45, 13);
             this.label37.TabIndex = 60;
@@ -1323,7 +1355,7 @@
             // 
             // nudTimeout
             // 
-            this.nudTimeout.Location = new System.Drawing.Point(174, 52);
+            this.nudTimeout.Location = new System.Drawing.Point(174, 56);
             this.nudTimeout.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -1336,7 +1368,7 @@
             // label36
             // 
             this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(37, 25);
+            this.label36.Location = new System.Drawing.Point(37, 8);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(108, 13);
             this.label36.TabIndex = 58;
@@ -1350,7 +1382,7 @@
             0,
             0,
             65536});
-            this.nudTolerance.Location = new System.Drawing.Point(174, 23);
+            this.nudTolerance.Location = new System.Drawing.Point(174, 6);
             this.nudTolerance.Name = "nudTolerance";
             this.nudTolerance.Size = new System.Drawing.Size(67, 20);
             this.nudTolerance.TabIndex = 57;
@@ -1596,7 +1628,7 @@
             this.btnIncRange.TabIndex = 58;
             this.btnIncRange.Text = "-";
             this.btnIncRange.UseVisualStyleBackColor = true;
-            this.btnIncRange.Click += new System.EventHandler(this.btnIncRange_Click);
+            this.btnIncRange.Click += new System.EventHandler(this.btnDecRange_Click);
             // 
             // btnDecRange
             // 
@@ -1606,12 +1638,17 @@
             this.btnDecRange.TabIndex = 57;
             this.btnDecRange.Text = "+";
             this.btnDecRange.UseVisualStyleBackColor = true;
-            this.btnDecRange.Click += new System.EventHandler(this.btnDecRange_Click);
+            this.btnDecRange.Click += new System.EventHandler(this.btnIncRange_Click);
             // 
             // timerarduino
             // 
             this.timerarduino.Interval = 500;
             this.timerarduino.Tick += new System.EventHandler(this.timerarduino_Tick);
+            // 
+            // timergetdata
+            // 
+            this.timergetdata.Interval = 400;
+            this.timergetdata.Tick += new System.EventHandler(this.data_Tick);
             // 
             // FmControlPanel
             // 
@@ -1676,6 +1713,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDesireSpeed)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStableWindow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -1828,5 +1866,8 @@
         private System.Windows.Forms.Button btnIncRange;
         private System.Windows.Forms.Button btnDecRange;
         private System.Windows.Forms.Timer timerarduino;
+        private System.Windows.Forms.Timer timergetdata;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.NumericUpDown nudStableWindow;
     }
 }

@@ -21,7 +21,7 @@ namespace CaioCs
                   );
         */
 
-        const int RATEOFSAMPLING = 141;
+        const int RATEOFSAMPLING = 300;
 
         //Dummy Data source!
         Random rnd = new Random();

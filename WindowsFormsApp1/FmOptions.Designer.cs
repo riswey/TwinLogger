@@ -33,7 +33,9 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.cbxTesting = new System.Windows.Forms.CheckBox();
+            this.nudTestingMode = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTestingMode)).BeginInit();
             this.SuspendLayout();
             // 
             // tbFileFormat
@@ -82,22 +84,34 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // cbxTesting
+            // nudTestingMode
             // 
-            this.cbxTesting.AutoSize = true;
-            this.cbxTesting.Location = new System.Drawing.Point(222, 44);
-            this.cbxTesting.Name = "cbxTesting";
-            this.cbxTesting.Size = new System.Drawing.Size(61, 17);
-            this.cbxTesting.TabIndex = 9;
-            this.cbxTesting.Text = "Testing";
-            this.cbxTesting.UseVisualStyleBackColor = true;
+            this.nudTestingMode.Location = new System.Drawing.Point(157, 30);
+            this.nudTestingMode.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudTestingMode.Name = "nudTestingMode";
+            this.nudTestingMode.Size = new System.Drawing.Size(39, 20);
+            this.nudTestingMode.TabIndex = 6;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(93, 37);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(58, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Test Mode";
             // 
             // FmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(558, 263);
-            this.Controls.Add(this.cbxTesting);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.nudTestingMode);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -105,6 +119,7 @@
             this.Controls.Add(this.tbFileFormat);
             this.Name = "FmOptions";
             this.Text = "UserSettings";
+            ((System.ComponentModel.ISupportInitialize)(this.nudTestingMode)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -117,6 +132,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.CheckBox cbxTesting;
+        private System.Windows.Forms.NumericUpDown nudTestingMode;
+        private System.Windows.Forms.Label label2;
     }
 }

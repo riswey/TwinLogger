@@ -71,7 +71,7 @@ namespace MultiDeviceAIO
             timergetdata.Start();
         }
 
-        private void data_Tick(object sender, EventArgs e)
+        protected void data_Tick(object sender, EventArgs e)
         {
             //This the data collection driver
             InteractWithDevices();

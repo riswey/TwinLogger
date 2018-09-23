@@ -84,7 +84,7 @@
     <Compile Include="MotorController\PeriodAverage.cs" />
     <Compile Include="Obsolete\AIODeviceException.cs" />
     <Compile Include="Contec\CaioCs.cs" />
-    <Compile Include="Contec\CaioCsTest.cs" />
+    <Compile Include="TestDevices\CaioCsTest.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="MotorController\Enums.cs" />
     <Compile Include="MotorController\FmCPMotorControl.cs">
@@ -104,7 +104,7 @@
     </Compile>
     <Compile Include="Obsolete\Parameters.cs" />
     <Compile Include="MotorController\SerialEventsController.cs" />
-    <Compile Include="MotorController\TestSerialPort.cs" />
+    <Compile Include="TestDevices\TestSerialPort.cs" />
     <Compile Include="FmScope.cs">
       <SubType>Form</SubType>
     </Compile>

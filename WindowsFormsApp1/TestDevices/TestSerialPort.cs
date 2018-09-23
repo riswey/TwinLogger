@@ -28,7 +28,7 @@ namespace MotorController
             public long max;
         };
 
-        float NOISELEVEL = 20.0f;
+        float NOISELEVEL = 5.0f;
 
         int _PulseDelay = 0;
         public int PulseDelay
