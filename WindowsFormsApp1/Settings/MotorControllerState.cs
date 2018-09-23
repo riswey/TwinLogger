@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
@@ -158,6 +159,8 @@ namespace MultiDeviceAIO
 
         public float tolerance { get; set; } = 1.1f;
         public long stableperiod { get; set; } = 3000;
+
+        //TODO: timeout need to reset
         public long timeout { get; set; } = 60000;    //1min
 
 
@@ -183,7 +186,6 @@ namespace MultiDeviceAIO
 
         [XmlIgnore]
         private int x = 0;
-
         [XmlIgnore]
         float lowerspeed;
         [XmlIgnore]
@@ -192,6 +194,12 @@ namespace MultiDeviceAIO
         public float graphrange = 50;        
         [XmlIgnore]
         public long enterrange = 0;
+
+        //TODO: really questionable whether enterrange state is a parameter state or a machine state!
+        public void ResetMotorWindow()
+        {
+            enterrange = 0;
+        }
 
         [XmlIgnore]
         public bool IsRotorInRange
@@ -221,6 +229,11 @@ namespace MultiDeviceAIO
             get
             {
                 //NOTE: It calls IsRotorInRange -> ensures enterrange set
+                Debug.WriteLine(IsRotorInRange
+                    &&
+                        (enterrange != 0 && GetTime() - enterrange > stableperiod));
+
+
                 return IsRotorInRange
                     &&
                         (enterrange != 0 && GetTime() - enterrange > stableperiod);

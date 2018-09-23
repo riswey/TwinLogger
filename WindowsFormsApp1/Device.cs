@@ -76,14 +76,7 @@ namespace MultiDeviceAIO
             return data.Count;
         }
 
-        //TODO:
-        //When receives zeros -> see if got enough data -> finished
-        //BUT  
-
-
-
-
-
+        //TODO: When receives zeros -> see if got enough data -> finished
 
 
     }

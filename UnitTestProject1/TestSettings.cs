@@ -48,7 +48,7 @@ namespace UnitTestProject1
         {
             PersistentLoggerState s = new PersistentLoggerState();
 
-            MyAIO aio = new MyAIO(true);
+            MyAIO aio = new MyAIO(2);
             aio.DiscoverDevices();
 
             List<float[]> ss = aio.ChannelsSnapShot(s.data.n_channels);

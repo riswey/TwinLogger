@@ -463,6 +463,7 @@ namespace MultiDeviceAIO
                     if (!d.IsFinished) return false;
                 }
                 Debug.WriteLine("Finished==true");
+
                 return true;
             }
         }

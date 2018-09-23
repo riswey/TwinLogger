@@ -314,9 +314,8 @@ namespace MultiDeviceAIO
             PrintLn("----------------------------------------------------\r\nApplied Settings");
             PrintLn(PersistentLoggerState.ps.ToString());
 
-            List<int> frequencies = new List<int>() { 40, 41 };
-
-            StartScheduleRun(frequencies);
+            PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value - (float)nudFreqStep.Value;
+            NextRun();
 
         }
 
@@ -338,7 +337,7 @@ namespace MultiDeviceAIO
             switch (code)
             {
                 case 0:
-                    b.Text = "Start Schedule";
+                    b.Text = "Start Sequence";
                     b.BackColor = Color.Transparent;
                     b.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular);
                     break;
@@ -349,6 +348,11 @@ namespace MultiDeviceAIO
                     break;
                 case 2:
                     b.Text = "Sampling...";
+                    b.BackColor = Color.Orange;
+                    b.Font = new Font("Microsoft Sans Serif", 10.25F, FontStyle.Bold);
+                    break;
+                case 3:
+                    b.Text = "Running";
                     b.BackColor = Color.Orange;
                     b.Font = new Font("Microsoft Sans Serif", 10.25F, FontStyle.Bold);
                     break;
@@ -803,22 +807,34 @@ namespace MultiDeviceAIO
 
         #region Run Control
 
-        void StartScheduleRun(List<int> frequencies)
-        {
-            PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value - (float)nudFreqStep.Value;
-            NextRun();
-        }
-
         void NextRun()
         {
+            /*
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(() => NextRun() ));
+                return;
+            }
+            */
+
+            //TODO: hacked. Why does the state auto return to Ready after trigger state?
+            state = STATE.Ready;
+
             PersistentLoggerState.ps.data.target_speed += (float)nudFreqStep.Value;
-            
             if (PersistentLoggerState.ps.data.target_speed > (float)nudFreqTo.Value)
             {
                 StopScheduleRun();
             }
 
-            PrintLn("Target frequency = " + PersistentLoggerState.ps.data.target_speed, true);
+            //TODO: why don't controls reflect underlying data in async environment?
+            AsyncText(nudTargetSpeed, PersistentLoggerState.ps.data.target_speed.ToString());
+            PersistentLoggerState.ps.data.ResetMotorWindow();
+
+            //TODO: should be bound more closely to change freq state. But only called once so here.
+            SendCommand(CMD.SETFREQ);       //Inform Arduino
+            UpdateYScale();     //DOCS: chart range is auto_updated when data.target_speed changed
+
+            PrintLn("Target frequency is " + PersistentLoggerState.ps.data.target_speed, true);
             StartSampling();                //LAX1664 -> Armed State
             ProcessEvent(EVENT.Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
         }

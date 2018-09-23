@@ -139,7 +139,7 @@ namespace MultiDeviceAIO
             {
                 //A device just got armed
                 PrintLn("Armed", true);
-                setStartButtonText(1);
+                //setStartButtonText(1);
 
                 //DOCS: Auto Trigger to by-pass motorcontol in testing
                 //if (PersistentLoggerState.ps.data.testingmode)
@@ -150,7 +150,7 @@ namespace MultiDeviceAIO
             if (delta == MyAIO.DEVICESTATEDELTA.SAMPLING)
             {
                 //A device just got triggered
-                PrintLn("Sampling", true);
+                PrintLn("Sampling Triggered", true);
                 setStartButtonText(2);
             }
 

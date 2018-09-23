@@ -41,12 +41,14 @@ namespace MotorController
         }
 
         float t = 0;
+        float _roto_freq = 0;
         public int RotorFreq
         {
             get
             {
-                t += 0.3f;
-                return (int)(state.target_f + 60 * (Math.Cos(t) / (t + 1)) + r.NextDouble() * NOISELEVEL);
+                t += 0.1f;
+                float expected = (int)(state.target_f + 120 * (Math.Cos(t) / (t + 1)) + r.NextDouble());
+                return (int)(_roto_freq += (expected - _roto_freq) / 10 * NOISELEVEL);
             }
         }
 

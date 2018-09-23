@@ -195,6 +195,12 @@ namespace CaioCs
 
             Debug.WriteLine("Remaining: " + targetsize);
 
+            //TODO: if devices go to 0 when finished data collecting can use to indicate end the test!!!!!
+            if (targetsize[Id] == 0)
+            {
+                devicestate[Id] = 0;
+            }
+
             int ret = 0;//AioGetAiSamplingCount(Id, ref AiSamplingCount);
             return ret;
         }

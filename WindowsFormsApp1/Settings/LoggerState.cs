@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-//TODO: LoggerState should be wrapped in a BindingSource. Current bound to PersistentLoggerState.ps.data
 
 namespace MultiDeviceAIO
 {

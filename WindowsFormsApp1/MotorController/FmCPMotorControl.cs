@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
@@ -82,8 +83,8 @@ namespace MultiDeviceAIO
 
         void BindMotorControls()
         {
-            nudDesireSpeed.DataBindings.Clear();
-            nudDesireSpeed.DataBindings.Add("Value", PersistentLoggerState.ps.data, "target_speed");
+            nudTargetSpeed.DataBindings.Clear();
+            nudTargetSpeed.DataBindings.Add("Value", PersistentLoggerState.ps.data, "target_speed");
 
             lblCurrentSpeed.DataBindings.Clear();
             lblCurrentSpeed.DataBindings.Add("Text", PersistentLoggerState.ps.data, "rotor_speed");
@@ -241,6 +242,7 @@ namespace MultiDeviceAIO
                 case EVENT.Trigger:
                     SendCommand(CMD.SETADC);
                     SendCommand(CMD.GETADC);
+                    PrintLn("Send Trigger", true);
                     SendCommand(CMD.TRIGGER);
                     break;
             }
@@ -256,7 +258,7 @@ namespace MultiDeviceAIO
                     //PersistentLoggerState.ps.data.Start();   //Removed Motor Control Logging
                     PersistentLoggerState.ps.data.StartRMTimer();
                     state = STATE.Running;
-                    AsyncColor(btnStart, Color.Green);
+                    setStartButtonText(3);
                     //TODO: need check if lockable before lock when sampling!!!!
                     //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
                     this.Invoke(new Action(() => timerarduino.Start()));
@@ -303,7 +305,6 @@ namespace MultiDeviceAIO
 
                     if (PersistentLoggerState.ps.data.testingmode != 0)
                     {
-                        PrintLn("Sampling triggered", true);
                         //Simulate a trigger in the LAX1664
                         myaio.SimulateTrigger();
                     }
@@ -326,7 +327,7 @@ namespace MultiDeviceAIO
             switch ((CMD)cmd)
             {
                 case CMD.SETFREQ:
-                    data = nudDesireSpeed.Value.ToString();
+                    data = nudTargetSpeed.Value.ToString();
                     break;
                 case CMD.SETPULSEDELAY:
                     //data = nudDesireSpeed.Value.ToString();
@@ -413,7 +414,7 @@ namespace MultiDeviceAIO
                     break;
                 case DATATYPES.GETTARGETFREQ:
                     PersistentLoggerState.ps.data.target_speed = float.Parse(data[1]);
-                    AsyncNUD(nudDesireSpeed, Decimal.Parse(data[1]));
+                    AsyncText(nudTargetSpeed, data[1]);
                     break;
                 case DATATYPES.GETROTORFREQ:
                     PersistentLoggerState.ps.data.rotor_speed = float.Parse(data[1]);
@@ -625,6 +626,8 @@ namespace MultiDeviceAIO
             chart1.DataBind();
 
             cbxInRange.Checked = PersistentLoggerState.ps.data.IsRotorInRange;
+
+            Debug.WriteLine(PersistentLoggerState.ps.data.IsReadyToSample);
 
             if (PersistentLoggerState.ps.data.IsReadyToSample)
             {
