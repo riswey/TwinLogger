@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
+//TODO: LoggerState should be wrapped in a BindingSource. Current bound to PersistentLoggerState.ps.data
+
 namespace MultiDeviceAIO
 {
     /// <summary>
@@ -56,7 +58,9 @@ namespace MultiDeviceAIO
         public int testingmode { get; set; } = 0;
 
         //Test parameters
-        public float frequency { get; set; } = 0;
+        public float freq_from { get; set; } = 60;
+        public float freq_to { get; set; } = 65;
+        public float freq_step { get; set; } = 1;
         public bool clipsOn { get; set; } = false;
         public int mass { get; set; } = 0;
         public double load { get; set; } = 0;
@@ -176,7 +180,7 @@ namespace MultiDeviceAIO
             header += data.version + ",";
             header += data.n_samples + ",";
             header += data.n_devices + ",";
-            header += data.frequency + ",";
+            header += data.target_speed + ",";
             header += (data.mass + 1) + ",";
             header += data.load + ",";
             header += (data.clipsOn ? 1 : 0) + ",";
@@ -208,7 +212,7 @@ namespace MultiDeviceAIO
 
             //sd.n_samples = int.Parse(paras[0]);
             sd.n_devices = int.Parse(paras[1]);
-            sd.frequency = int.Parse(paras[2]);
+            sd.target_speed = int.Parse(paras[2]);
             sd.mass = int.Parse(paras[3]) - 1;
             sd.load = int.Parse(paras[4]);
             sd.clipsOn = (int.Parse(paras[5]) == 1);

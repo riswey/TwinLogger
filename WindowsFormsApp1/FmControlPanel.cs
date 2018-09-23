@@ -138,7 +138,13 @@ namespace MultiDeviceAIO
             cbPad.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "paddtype");
 
             nudFreqFrom.DataBindings.Clear();
-            nudFreqFrom.DataBindings.Add("Value", PersistentLoggerState.ps.data, "frequency");
+            nudFreqFrom.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_from");
+
+            nudFreqTo.DataBindings.Clear();
+            nudFreqTo.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_to");
+
+            nudFreqStep.DataBindings.Clear();
+            nudFreqStep.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_step");
 
             nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", PersistentLoggerState.ps.data, "sample_frequency");
@@ -799,12 +805,22 @@ namespace MultiDeviceAIO
 
         void StartScheduleRun(List<int> frequencies)
         {
-            //TODO: add scheule loop
+            PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value - (float)nudFreqStep.Value;
+            NextRun();
+        }
 
-            StartSampling();    //Contect -> Armed State
+        void NextRun()
+        {
+            PersistentLoggerState.ps.data.target_speed += (float)nudFreqStep.Value;
+            
+            if (PersistentLoggerState.ps.data.target_speed > (float)nudFreqTo.Value)
+            {
+                StopScheduleRun();
+            }
 
-            ProcessEvent(EVENT.Start);  //
-
+            PrintLn("Target frequency = " + PersistentLoggerState.ps.data.target_speed, true);
+            StartSampling();                //LAX1664 -> Armed State
+            ProcessEvent(EVENT.Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
         }
 
         void StopScheduleRun()

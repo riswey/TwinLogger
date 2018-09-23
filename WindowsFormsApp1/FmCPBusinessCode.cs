@@ -6,6 +6,26 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 
 namespace MultiDeviceAIO
 {
+    class ContecClockSignalError: Exception {
+        public ContecClockSignalError(){}
+        public ContecClockSignalError(string message): base(message){}
+        public ContecClockSignalError(string message, Exception inner): base(message, inner){}
+    }
+
+    class ContecDeviceBufferOverflow: Exception
+    {
+        public ContecDeviceBufferOverflow() { }
+        public ContecDeviceBufferOverflow(string message) : base(message) { }
+        public ContecDeviceBufferOverflow(string message, Exception inner) : base(message, inner) { }
+    }
+
+    class TTISamplingFailure : Exception
+    {
+        public TTISamplingFailure() { }
+        public TTISamplingFailure(string message) : base(message) { }
+        public TTISamplingFailure(string message, Exception inner) : base(message, inner) { }
+    }
+
 
     public partial class FmControlPanel : Form
     {
@@ -74,10 +94,38 @@ namespace MultiDeviceAIO
         protected void data_Tick(object sender, EventArgs e)
         {
             //This the data collection driver
-            InteractWithDevices();
+            try
+            {
+                if ( InteractWithDevices() )
+                {
+                    timergetdata.Stop();
+                    //Success
+                    SaveData();
+                    setStartButtonText(0);
+                    //RESTART TIMER (only after end of run)!
+                    //TimerMonitorState(true);
+                    SetStatus("Ready");
+                    //Sampling complete
+                    Invoke(new Action(() => NextRun()));
+
+                    return;
+                }
+            }
+            catch (Exception ex) {
+                if (ex is ContecClockSignalError || ex is ContecClockSignalError || ex is TTISamplingFailure)
+                {
+                    PrintLn("Sampling Exception", true);
+                    timergetdata.Stop();
+                    Abort();
+                    //TODO: recover from an exception
+                    //StartSampling();
+                    throw;
+                }
+                throw;
+            }
         }
 
-        private void InteractWithDevices()
+        private bool InteractWithDevices()
         {
             var status = new List<int>();
 
@@ -111,19 +159,13 @@ namespace MultiDeviceAIO
             //A device got Overflow error
             if (MyAIO.TestBit(allstatus, CaioConst.AIS_OFERR))
             {
-                PrintLn("Device Overflow", true);
-                Abort();
-                StartSampling();
-                return;
+                throw new ContecDeviceBufferOverflow();
             }
 
             //A device got Clock error
             if (MyAIO.TestBit(allstatus, CaioConst.AIS_SCERR))
             {
-                PrintLn("Sampling Clock Error", true);
-                Abort();
-                StartSampling();
-                return;
+                throw new ContecClockSignalError();
             }
 
             //Collecting data || just got an Idle status after sampling
@@ -142,36 +184,15 @@ namespace MultiDeviceAIO
 
                 if (myaio.IsTestFinished)
                 {
-                    FinishTest();
+                    if (myaio.IsTestFailed)
+                    {
+                        throw new TTISamplingFailure();
+                    }
+                    return true;
                 }
-
             }
+            return false;
 
-        }
-
-        void FinishTest()
-        {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action(() => FinishTest() ));
-                return;
-            }
-
-            timergetdata.Stop();
-            if (myaio.IsTestFailed)
-            {
-                PrintLn("Test Failed", true);
-                //PrintLn(myaio.GetStatusAll());
-                StartSampling();
-                return;
-            }
-            //Success
-            SaveData();
-
-            setStartButtonText(0);
-            //RESTART TIMER
-            TimerMonitorState(true);
-            SetStatus("Ready");
         }
 
         void ResetUSB()
