@@ -37,7 +37,18 @@ namespace MultiDeviceAIO
             }
         }
 
-        //TODO: add to period
+        #region ROTOR METRIC WINDOW
+
+        const int METRICWINDOW = 30;        //Length window in clicks
+        const int TARGETSPEED = 60;        //Length window in clicks
+
+        //TODO: make moving average period dynamic
+        //TODO: remove crosses/min/max from trailing window boundary
+
+        [XmlIgnore]
+        MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
+        //[XmlIgnore]
+        MotorController.MovingAverage mac = new MotorController.MovingAverageCrosses(METRICWINDOW, TARGETSPEED);        
         [XmlIgnore]
         float _rotor_speed = 0;
         [XmlIgnore]
@@ -52,23 +63,36 @@ namespace MultiDeviceAIO
                 _rotor_speed = value;
 
                 dt.Rows.Add(x++, target_speed, upperspeed, lowerspeed, value);
+
+                pa.Add(value);
+
+                mac.Add(value);
             }
         }
 
-        [XmlIgnore]
-        float rotor_speed_ma
+        /*
+         * Metrics used to create rotor constraints
+         * UPPERTARGETBOUNDARY
+         * LOWERTARGETBOUNDARY
+         * TARGET
+         * Current: min_v_target > LOWERTARGETBOUNDARY, max_v_target < UPPERTARGETBOUNDARY
+         * Also
+         * MA (within much tighter bounds of target)
+         * MSTD (< TARGETBOUNDARY)
+         * CROSSES (> n) more crosses -> better stability
+         * ?? Daves Min/Max + Pulse
+         * 
+         */
+
+        //TODO: expectiment with this
+        //if it won't substutide variable, then we do it manually (like with path)
+        public float EvaluateMetricWindow(string command)
         {
-            get
-            {
-                //TODO:
-                //MA for rotor period
-                return rotor_speed;
-            }
+            return (float)_dt.Compute(command, "");
         }
+        #endregion
 
-        [XmlIgnore]
-        MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
-        
+
         #region MinMax_TIMER
         //RM (Req. Min/Max) Timer pause
         //Put a timer block on Min/Max calls
