@@ -86,12 +86,14 @@ namespace MultiDeviceAIO
 
         //TODO: expectiment with this
         //if it won't substutide variable, then we do it manually (like with path)
-        public float EvaluateMetricWindow(string command)
+        public string metriccommand = "";
+
+        public bool EvaluateMetricWindow("{}")
         {
-            return (float)_dt.Compute(command, "");
+            string eval = MergeObjectToString(this, metriccommand);
+            return (bool)_dt.Compute(eval, "");
         }
         #endregion
-
 
         #region MinMax_TIMER
         //RM (Req. Min/Max) Timer pause
