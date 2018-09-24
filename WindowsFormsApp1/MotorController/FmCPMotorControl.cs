@@ -18,7 +18,10 @@ namespace MultiDeviceAIO
         //SerialPort serialPort1 = new SerialPort();
 
         string TERMINAL = "\n";
-        STATE state = STATE.Ready;
+        //STATE state = STATE.Ready;
+
+        StateMachine sm_motor = new StateMachine(STATE.Ready);
+
         //Task task = null;
 
         //ParameterState parameters = new ParameterState();
@@ -78,8 +81,8 @@ namespace MultiDeviceAIO
             //TODO: Testing should really have a delegate handling this!
             //serialPort1.DataReceived += serialPort1_DataReceived;
 
+            //TODO: explicitly/clearly put this in the startup sequence
         }
-
 
         void BindMotorControls()
         {
@@ -152,9 +155,58 @@ namespace MultiDeviceAIO
         {
             //Get current device state
             SendCommand(CMD.GETPID);
-            AsyncText(lblState, state.ToString());
+            AsyncText(lblState, sm_motor.state.ToString());
         }
 
+        void InitMotorStateMachine()
+        {
+            Console.WriteLine("set machine");
+            sm_motor.AddRule(STATE.Ready, EVENT.Send_Start, new StateMachine.CallBack((string idx) =>
+            {
+                //Start
+                SendCommand(CMD.SETFREQ);
+                SendCommand(CMD.GETTARGETFREQ);
+                SendCommand(CMD.START);
+            }));
+            sm_motor.AddRule(STATE.Lockable, EVENT.Send_Start, new StateMachine.CallBack(SEND_LOCK));
+            sm_motor.AddRule(STATE.Locked, EVENT.Send_Start, new StateMachine.CallBack(SEND_UNLOCK));
+            sm_motor.AddRule(STATE.Lockable, EVENT.Send_Lock, new StateMachine.CallBack(SEND_LOCK));
+            sm_motor.AddRule(STATE.Locked, EVENT.Send_Unlock, new StateMachine.CallBack(SEND_UNLOCK));
+            sm_motor.AddRule(StateMachine.OR(STATE.Running, STATE.Lockable, STATE.Locked), EVENT.Send_Stop, new StateMachine.CallBack((string idx) => { SendCommand(CMD.STOP); }));
+            sm_motor.AddRule(StateMachine.OR(STATE.Running, STATE.Lockable, STATE.Locked),
+                EVENT.Send_Trigger,
+                new StateMachine.CallBack((string idx) =>
+                {
+                    //Send Trigger
+                    SendCommand(CMD.SETADC);
+                    SendCommand(CMD.GETADC);
+                    PrintLn("Send Trigger", true);
+                    SendCommand(CMD.TRIGGER);
+                }));
+
+            //These events match any state (series shouldn't be returning events to wrong state)
+            sm_motor.AddRule(null, EVENT.Do_Start, STATE.Running, new StateMachine.CallBack(ACK_START));
+            sm_motor.AddRule(null, EVENT.Do_Stop, STATE.Ready, new StateMachine.CallBack(ACK_STOP));
+            sm_motor.AddRule(null, EVENT.Do_Lock, STATE.Locked, new StateMachine.CallBack(ACK_LOCK));
+            sm_motor.AddRule(null, EVENT.Do_unlock, STATE.Lockable, new StateMachine.CallBack(ACK_UNLOCK));
+            sm_motor.AddRule(null, EVENT.Do_SetPulseDelay, new StateMachine.CallBack(ACK_SETPULSEDELAY));
+            sm_motor.AddRule(null, EVENT.Do_SetPID, new StateMachine.CallBack(ACK_SETPID));
+            sm_motor.AddRule(null, EVENT.Do_SetFreq, new StateMachine.CallBack(ACK_SETFREQ));
+            sm_motor.AddRule(null, EVENT.Do_Trigger, STATE.Triggered, new StateMachine.CallBack(ACK_TRIGGER));
+            sm_motor.AddRule(null, EVENT.Do_SetADC, new StateMachine.CallBack(ACK_SETADC));
+        }
+
+
+        void SEND_LOCK(string idx)
+        {
+            SendCommand(CMD.SETLOCK);
+        }
+        
+        void SEND_UNLOCK(string idx)
+        {
+            SendCommand(CMD.SETUNLOCK);
+        }
+        /*
         private void ProcessEvent(EVENT e)
         {
             switch (e)
@@ -218,7 +270,8 @@ namespace MultiDeviceAIO
             }
 
         }
-
+        */
+        /*
         private void ChangeState(EVENT e)
         {
             PrintLn("Change Motor State: " + e.ToString());
@@ -230,6 +283,7 @@ namespace MultiDeviceAIO
                     SendCommand(CMD.GETTARGETFREQ);
                     SendCommand(CMD.START);
                     break;
+                    
                 case EVENT.Stop:
                     SendCommand(CMD.STOP);
                     break;
@@ -247,79 +301,143 @@ namespace MultiDeviceAIO
                     break;
             }
         }
+        */
 
-        private void ProcessACK(CMD cmd)
-        {
-            PrintLn("Process ACK: " + cmd.ToString());
 
-            switch (cmd)
-            {
-                case CMD.START:
-                    //PersistentLoggerState.ps.data.Start();   //Removed Motor Control Logging
-                    PersistentLoggerState.ps.data.StartRMTimer();
-                    state = STATE.Running;
-                    setStartButtonText(3);
-                    //TODO: need check if lockable before lock when sampling!!!!
-                    //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
-                    this.Invoke(new Action(() => timerarduino.Start()));
-                    break;
-                case CMD.STOP:
-                    /*
-                    if (this.task != null)
-                    {
-                        this.task.Dispose();
-                        this.task = null;
-                    }
-                    */
-                    this.Invoke(new Action(() => timerarduino.Stop()));
-                    state = STATE.Ready;
-                    //AsyncDisable(this.btnSetSpeed, false);
-                    AsyncColor(btnStart, default(Color));
-                    AsyncText(btnStart, "Start");
-                    break;
-                case CMD.SETLOCK:
-                    state = STATE.Locked;
-                    AsyncText(btnStart, "Unlock");
-                    AsyncColor(btnStart, Color.Red);
-                    //AsyncDisable(this.btnSetSpeed);
-                    break;
-                case CMD.SETUNLOCK:
-                    state = STATE.Lockable;
-                    AsyncText(btnStart, "Lock");
-                    AsyncColor(btnStart, Color.Orange);
-                    //AsyncDisable(this.btnSetSpeed, false);
-                    break;
-                case CMD.SETPULSEDELAY:
-                    AsyncText(toolStripStatusLabel1, "Pulse Delay set.");
-                    break;
-                case CMD.SETPID:
-                    AsyncText(toolStripStatusLabel1, "PID set.");
-                    break;
-                case CMD.SETFREQ:
-                    //TODO: Should SETFREQ -> StartRMTImer ???
-                    PersistentLoggerState.ps.data.StartRMTimer();
-                    AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
-                    break;
-                case CMD.TRIGGER:
-                    state = STATE.Triggered;
-
-                    if (PersistentLoggerState.ps.data.testingmode != 0)
-                    {
-                        //Simulate a trigger in the LAX1664
-                        myaio.SimulateTrigger();
-                    }
-
-                    break;
-                case CMD.SETADC:
-                    AsyncText(toolStripStatusLabel1, "ADC set.");
-                    break;
-            }
-
-            AsyncText(lblState, state.ToString());
-
-            //should we have a queue to time out unsuccessful async tasks
+        void ACK_START(string idx) {
+            //PersistentLoggerState.ps.data.Start();   //Removed Motor Control Logging
+            PersistentLoggerState.ps.data.StartRMTimer();            
+            setStartButtonText(3);
+            //TODO: need check if lockable before lock when sampling!!!!
+            //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
+            this.Invoke(new Action(() => timerarduino.Start()));
         }
 
+        void ACK_STOP(string idx) {
+            this.Invoke(new Action(() => timerarduino.Stop()));
+            //AsyncDisable(this.btnSetSpeed, false);
+            AsyncColor(btnStart, default(Color));
+            AsyncText(btnStart, "Start");
+        }
+
+        void ACK_LOCK(string idx) {
+            AsyncText(btnStart, "Unlock");
+            AsyncColor(btnStart, Color.Red);
+        }
+
+        void ACK_UNLOCK(string idx) {
+            AsyncText(btnStart, "Lock");
+            AsyncColor(btnStart, Color.Orange);
+            //AsyncDisable(this.btnSetSpeed, false);
+        }
+
+        void ACK_SETPULSEDELAY(string idx) {
+            AsyncText(toolStripStatusLabel1, "Pulse Delay set.");
+        }
+
+        void ACK_SETPID(string idx) {
+            AsyncText(toolStripStatusLabel1, "PID set.");
+        }
+        void ACK_SETFREQ(string idx) {
+            //TODO: Should SETFREQ -> StartRMTImer ???
+            PersistentLoggerState.ps.data.StartRMTimer();
+            AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
+        }
+
+        void ACK_TRIGGER(string idx) {
+
+            if (PersistentLoggerState.ps.data.testingmode != 0)
+            {
+                //Simulate a trigger in the LAX1664
+                myaio.SimulateTrigger();
+            }
+        }
+
+        void ACK_SETADC(string idx) {
+            AsyncText(toolStripStatusLabel1, "ADC set.");
+        }
+
+        void SET_LABEL(string idx)
+        {
+            AsyncText(lblState, idx.ToString());
+        }
+
+
+
+
+        /*
+        private void ProcessACK(CMD cmd)
+    {
+        PrintLn("Process ACK: " + cmd.ToString());
+
+        switch (cmd)
+        {
+            case CMD.START:
+                //PersistentLoggerState.ps.data.Start();   //Removed Motor Control Logging
+                PersistentLoggerState.ps.data.StartRMTimer();
+                state = STATE.Running;
+                setStartButtonText(3);
+                //TODO: need check if lockable before lock when sampling!!!!
+                //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
+                this.Invoke(new Action(() => timerarduino.Start()));
+                break;
+            case CMD.STOP:
+
+                //if (this.task != null)
+                //{
+                //    this.task.Dispose();
+                 //   this.task = null;
+                //}
+
+                this.Invoke(new Action(() => timerarduino.Stop()));
+                state = STATE.Ready;
+                //AsyncDisable(this.btnSetSpeed, false);
+                AsyncColor(btnStart, default(Color));
+                AsyncText(btnStart, "Start");
+                break;
+            case CMD.SETLOCK:
+                state = STATE.Locked;
+                AsyncText(btnStart, "Unlock");
+                AsyncColor(btnStart, Color.Red);
+                //AsyncDisable(this.btnSetSpeed);
+                break;
+            case CMD.SETUNLOCK:
+                state = STATE.Lockable;
+                AsyncText(btnStart, "Lock");
+                AsyncColor(btnStart, Color.Orange);
+                //AsyncDisable(this.btnSetSpeed, false);
+                break;
+            case CMD.SETPULSEDELAY:
+                AsyncText(toolStripStatusLabel1, "Pulse Delay set.");
+                break;
+            case CMD.SETPID:
+                AsyncText(toolStripStatusLabel1, "PID set.");
+                break;
+            case CMD.SETFREQ:
+                //TODO: Should SETFREQ -> StartRMTImer ???
+                PersistentLoggerState.ps.data.StartRMTimer();
+                AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
+                break;
+            case CMD.TRIGGER:
+                state = STATE.Triggered;
+
+                if (PersistentLoggerState.ps.data.testingmode != 0)
+                {
+                    //Simulate a trigger in the LAX1664
+                    myaio.SimulateTrigger();
+                }
+
+                break;
+            case CMD.SETADC:
+                AsyncText(toolStripStatusLabel1, "ADC set.");
+                break;
+        }
+
+        AsyncText(lblState, state.ToString());
+
+        //should we have a queue to time out unsuccessful async tasks
+    }
+    */
 
         void SendCommand(CMD cmd)
         {
@@ -405,8 +523,9 @@ namespace MultiDeviceAIO
             switch (cmd)
             {
                 case DATATYPES.ACK:
-                    Enums.CMDDecode.TryGetValue(data[1], out CMD ackcmd);
-                    ProcessACK(ackcmd);
+                    //ACK events
+                    Enums.ACKDecode.TryGetValue(data[1], out EVENT ack_event);
+                    sm_motor.Event(ack_event);
                     break;
                 case DATATYPES.GETPULSEDELAY:
                     PersistentLoggerState.ps.data.pulse_delay = int.Parse(data[1]);
@@ -452,7 +571,7 @@ namespace MultiDeviceAIO
                          * But here the Serial Comms is result of an RL command
                          * So if true -> just need to Simulate the ACK of an SU (set unlock)
                          */
-                        ProcessACK(CMD.SETUNLOCK);
+                         sm_motor.Event(EVENT.Do_unlock);
                     }
                     break;
 //NEW
@@ -477,7 +596,8 @@ namespace MultiDeviceAIO
             SendCommand(CMD.SETFREQ);
         }
 
-        int timercycle = 0;
+        //TODO: some_func what is this uncalled func for?
+        /*
         private void some_func(object sender, EventArgs e)
         {
             if (state == STATE.Running)
@@ -503,7 +623,7 @@ namespace MultiDeviceAIO
             }
 
         }
-
+        */
         private void nudP_ValueChanged(object sender, EventArgs e)
         {
             SendCommand(CMD.SETPID);
@@ -582,7 +702,7 @@ namespace MultiDeviceAIO
         private void btnReset_Click(object sender, EventArgs e)
         {
             //Clear anyway in case no ACK
-            ProcessACK(CMD.STOP);
+            sm_motor.Event(EVENT.Do_Stop);
             SendCommand(CMD.STOP);
         }
 
@@ -596,9 +716,11 @@ namespace MultiDeviceAIO
             serialPort1.PortName = cbxPort.SelectedItem.ToString();
         }
 
+        int timercycle = 0;
+
         public void timerarduino_Tick(object sender, EventArgs e)
         {
-            if (state == STATE.Running)
+            if (sm_motor.state == STATE.Running.ToString())
             {
                 //If started but not entered lock cycle yet -> poll to see if lockable
                 SendCommand(CMD.GETLOCKABLE);
@@ -632,8 +754,8 @@ namespace MultiDeviceAIO
             if (PersistentLoggerState.ps.data.IsReadyToSample)
             {
                 cbxOK.Checked = true;
-                ProcessEvent(EVENT.Lock);
-                ProcessEvent(EVENT.Trigger);
+                sm_motor.Event(EVENT.Send_Lock);
+                sm_motor.Event(EVENT.Send_Trigger);
             }
         }
 

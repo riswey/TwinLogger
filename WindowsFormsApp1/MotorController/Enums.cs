@@ -45,8 +45,9 @@ namespace MotorController
     }
 
     //State enums
-    enum STATE { Ready = 0, Running, Lockable, Locked, Triggered }       //2 bit
-    enum EVENT { Start = 0, Stop, Lock, Unlock, Trigger }              //2 bit
+    enum STATE { Ready, Running, Lockable, Locked, Triggered }
+    enum EVENT { Send_Start, Send_Stop, Send_Lock, Send_Unlock, Send_Trigger,
+        Do_Start, Do_Stop, Do_Lock, Do_unlock, Do_Trigger, Do_SetPulseDelay, Do_SetPID, Do_SetFreq, Do_SetADC }
 
     class Enums
     {
@@ -105,5 +106,17 @@ namespace MotorController
             }
         }
 
+        //TODO: check that only these ACKS exist
+        public static readonly Dictionary<string, EVENT> ACKDecode = new Dictionary<string, EVENT>() {
+            {"SB", EVENT.Do_Start },
+            {"SE", EVENT.Do_Stop},
+            {"SS", EVENT.Do_Trigger},
+            {"SF", EVENT.Do_SetFreq},
+            {"ST", EVENT.Do_Lock},
+            {"SU", EVENT.Do_unlock},
+            {"SD", EVENT.Do_SetPulseDelay},
+            {"SP", EVENT.Do_SetPID},
+            {"SA", EVENT.Do_SetADC},
+        };
     }
 }

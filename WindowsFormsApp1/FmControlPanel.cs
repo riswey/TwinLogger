@@ -60,6 +60,7 @@ namespace MultiDeviceAIO
             BindTestParameters();
             BindMotorControls();
 
+            InitMotorStateMachine();
             InitFmCPMotorControl();
 
             //Set up accelerometers
@@ -818,7 +819,7 @@ namespace MultiDeviceAIO
             */
 
             //TODO: hacked. Why does the state auto return to Ready after trigger state?
-            state = STATE.Ready;
+            sm_motor.state = STATE.Ready.ToString();
 
             PersistentLoggerState.ps.data.target_speed += (float)nudFreqStep.Value;
             if (PersistentLoggerState.ps.data.target_speed > (float)nudFreqTo.Value)
@@ -836,7 +837,7 @@ namespace MultiDeviceAIO
 
             PrintLn("Target frequency is " + PersistentLoggerState.ps.data.target_speed, true);
             StartSampling();                //LAX1664 -> Armed State
-            ProcessEvent(EVENT.Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
+            sm_motor.Event(EVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
         }
 
         void StopScheduleRun()
@@ -846,7 +847,7 @@ namespace MultiDeviceAIO
 
         void Abort()
         {
-            ProcessEvent(MotorController.EVENT.Stop);
+            sm_motor.Event(EVENT.Send_Stop);
             //Abort
             timergetdata.Stop();
             myaio.Stop();
