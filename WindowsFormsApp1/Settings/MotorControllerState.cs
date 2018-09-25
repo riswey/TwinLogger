@@ -45,10 +45,18 @@ namespace MultiDeviceAIO
         //TODO: make moving average period dynamic
         //TODO: remove crosses/min/max from trailing window boundary
 
-        [XmlIgnore]
-        MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
         //[XmlIgnore]
-        MotorController.MovingAverage mac = new MotorController.MovingAverageCrosses(METRICWINDOW, TARGETSPEED);        
+        //MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
+        MotorController.MovingStatsCrosses mac = new MotorController.MovingStatsCrosses(METRICWINDOW, TARGETSPEED);
+
+        public float MA { get { return mac.MA; } }
+        public float STD { get { return mac.STD; } }
+        public float Gradient { get { return mac.RegressionB; } }
+        public float Min { get { return mac.Min; } }
+        public float Max { get { return mac.Max; } }
+        public int Crosses { get { return mac.Crosses; } }
+        
+        //TODO: when new stats working anything to remove from old rotor measures?
         [XmlIgnore]
         float _rotor_speed = 0;
         [XmlIgnore]
@@ -64,7 +72,7 @@ namespace MultiDeviceAIO
 
                 dt.Rows.Add(x++, target_speed, upperspeed, lowerspeed, value);
 
-                pa.Add(value);
+                //pa.Add(value);
 
                 mac.Add(value);
             }
@@ -87,8 +95,7 @@ namespace MultiDeviceAIO
         //TODO: expectiment with this
         //if it won't substutide variable, then we do it manually (like with path)
         public string metriccommand = "";
-
-        public bool EvaluateMetricWindow("{}")
+        public bool EvaluateMetricWindow()
         {
             string eval = MergeObjectToString(this, metriccommand);
             return (bool)_dt.Compute(eval, "");
@@ -129,16 +136,18 @@ namespace MultiDeviceAIO
 
         #region LOGGING
 
+
         /*
         public string path { get; set; }
+        
         //Stores the start time (motor logs are recorded relative)
         public void Start(string path = "")
         {
             this.path = path;
-            doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD\tDelay\tMin\tMax");
+            //doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD\tDelay\tMin\tMax");
             start_t = GetTime();
         }
-
+        
         private void doWrite(string str)
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(path + "Log.dat", true))

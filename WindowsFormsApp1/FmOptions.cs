@@ -27,7 +27,7 @@ namespace MultiDeviceAIO
         {
             Dictionary<string, string> dict = LoggerState.MergeDictionary(settings);
 
-            string text = String.Join("}\n{", dict.Keys.ToArray());
+            string text = String.Join("}, {", dict.Keys.ToArray());
 
             MessageBox.Show("{" + text + "}");
         }

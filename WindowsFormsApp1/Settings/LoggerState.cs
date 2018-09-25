@@ -31,7 +31,11 @@ namespace MultiDeviceAIO
 
             return str;
         }
-
+        /// <summary>
+        /// Creates a dictionary of get/set properties (not fields) -> values for object obj
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static Dictionary<string, string> MergeDictionary(object obj)
         {
             Dictionary<string, string> swaps = new Dictionary<string, string>();

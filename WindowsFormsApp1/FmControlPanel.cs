@@ -700,7 +700,6 @@ namespace MultiDeviceAIO
 
         #endregion
 
-
         #region CallBack
 
         /*  NEED A CALLBACK TO KNOW WHEN TRIGGER STARTED
