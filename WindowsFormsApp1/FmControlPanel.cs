@@ -828,7 +828,7 @@ namespace MultiDeviceAIO
 
             //TODO: why don't controls reflect underlying data in async environment?
             AsyncText(nudTargetSpeed, PersistentLoggerState.ps.data.target_speed.ToString());
-            PersistentLoggerState.ps.data.ResetMotorWindow();
+            //PersistentLoggerState.ps.data.ResetMotorWindow();
 
             //TODO: should be bound more closely to change freq state. But only called once so here.
             SendCommand(CMD.SETFREQ);       //Inform Arduino

@@ -116,14 +116,20 @@ namespace MultiDeviceAIO
             nudTolerance.DataBindings.Clear();
             nudTolerance.DataBindings.Add("Value", PersistentLoggerState.ps.data, "tolerance");
 
-            nudStableWindow.DataBindings.Clear();
-            nudStableWindow.DataBindings.Add("Value", PersistentLoggerState.ps.data, "stableperiod");
+            //nudStableWindow.DataBindings.Clear();
+            //nudStableWindow.DataBindings.Add("Value", PersistentLoggerState.ps.data, "stableperiod");
 
             nudTimeout.DataBindings.Clear();
             nudTimeout.DataBindings.Add("Value", PersistentLoggerState.ps.data, "timeout");
 
             txtMetricCommand.DataBindings.Clear();
             txtMetricCommand.DataBindings.Add("Text", PersistentLoggerState.ps.data, "metriccommand");
+
+            //Bind Rotor Stats
+            lblMA.DataBindings.Clear();
+            lblMA.DataBindings.Add("Text", PersistentLoggerState.ps.data, "MA");
+
+            
 
         }
 

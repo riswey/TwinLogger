@@ -185,19 +185,13 @@ namespace MultiDeviceAIO
 
         #endregion
 
-        /////////////////////////////////////////////////////////////////////
-        //
-        // NEW CODE
-        //
-
         //Don't forget period average on rotor speed
 
         public float tolerance { get; set; } = 1.1f;
-        public long stableperiod { get; set; } = 3000;
+        //public long stableperiod { get; set; } = 3000;
 
         //TODO: timeout need to reset
         public long timeout { get; set; } = 60000;    //1min
-
 
         [XmlIgnore]
         private DataTable _dt;
@@ -234,10 +228,12 @@ namespace MultiDeviceAIO
         public long enterrange = 0;
 
         //TODO: really questionable whether enterrange state is a parameter state or a machine state!
+        /*
         public void ResetMotorWindow()
         {
             enterrange = 0;
         }
+        */
 
         [XmlIgnore]
         public bool IsRotorInRange
@@ -246,29 +242,22 @@ namespace MultiDeviceAIO
             {
                 if (rotor_speed > Lower && rotor_speed < Upper)
                 {
-                    if (enterrange == 0)
+                    /*if (enterrange == 0)
                     {
                         //just entered
                         enterrange = GetTime();
-                    }
+                    }*/
                     return true;
                 }
                 else
                 {
-                    enterrange = 0;
+                    //enterrange = 0;
                     return false;
                 }
             }
         }
 
-
-        /*
-         * TODO: This is being replaced with metric window
-         * 
-         * 
-         * 
-         */
-
+         /*
         [XmlIgnore]
         private bool IsRotorStable
         {
@@ -280,21 +269,20 @@ namespace MultiDeviceAIO
                         (enterrange != 0 && GetTime() - enterrange > stableperiod);
             }
         }
-
+        */
         [XmlIgnore]
         public bool IsReadyToSample
         {
             get
             {
-                Debug.WriteLine("Is stable: " + IsRotorStable);
+                //Debug.WriteLine("Is stable: " + IsRotorStable);
                 Debug.WriteLine("merged: " + TriggerMerged);
-                //{UPPER} - {MAX} >0 AND {LOWER} - {MIN} < 0
-                
 
                 bool eval = EvalTrigger;
 
                 Debug.WriteLine(this.Upper + "," + this.Lower + "," + Max + "," + Min + "(" + eval + ")");
-                return eval;
+
+                return eval || (start_t != 0 && GetTime() - start_t > timeout);
 
                 //DOC: Samples after timeout whatever. This is the window for improved motor control
                 //return IsRotorStable;// || (start_t != 0 && GetTime() - start_t > timeout);
@@ -328,8 +316,5 @@ namespace MultiDeviceAIO
         }
 
         #endregion
-
-
-
-        }
+    }
 }
