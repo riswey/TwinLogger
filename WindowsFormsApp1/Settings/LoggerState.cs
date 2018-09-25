@@ -7,6 +7,8 @@ using System.Text;
 
 namespace MultiDeviceAIO
 {
+    public class TestPropertyAttribute : Attribute { }
+
     /// <summary>
     /// Class is a reference type!
     /// Avoids need for ref
@@ -20,9 +22,9 @@ namespace MultiDeviceAIO
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static string MergeObjectToString(object obj, string str)
+        public static string MergeObjectToString<A>(object obj, string str, Attribute atr = null)
         {
-            Dictionary<string, string> swaps = MergeDictionary(obj);
+            Dictionary<string, string> swaps = MergeDictionary<A>(obj);
             //do the map swaps
             foreach (KeyValuePair<string, string> pair in swaps)
             {
@@ -36,11 +38,11 @@ namespace MultiDeviceAIO
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static Dictionary<string, string> MergeDictionary(object obj)
+        public static Dictionary<string, string> MergeDictionary<A>(object obj)
         {
             Dictionary<string, string> swaps = new Dictionary<string, string>();
             //prepare the map
-            PropertyInfo[] properties = obj.GetType().GetProperties();
+            PropertyInfo[] properties = obj.GetType().GetFilteredProperties<A>();
             foreach (var prop in properties)
             {
                 string propName = prop.Name;
@@ -48,6 +50,11 @@ namespace MultiDeviceAIO
             }
 
             return swaps;
+        }
+
+        public LoggerState()
+        {
+            InitMotorControllerState();
         }
 
         //public static string default_xml = @"<?xml version=""1.0"" encoding=""utf-16""?><SettingData xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""><testpath>C:\Users\Alva\Desktop</testpath><frequency>0</frequency><clipsOn>false</clipsOn><mass>0</mass><load>0</load><shakertype>0</shakertype><paddtype>1</paddtype><n_devices>0</n_devices><n_channels>64</n_channels><duration>5</duration><timer_interval>1000</timer_interval><external_trigger>false</external_trigger><external_clock>false</external_clock><path>C:\Users\Alva\Desktop\default.xml</path><modified>false</modified></SettingData>";
@@ -61,27 +68,41 @@ namespace MultiDeviceAIO
         public int testingmode { get; set; } = 0;
 
         //Test parameters
+        [TestProperty]
         public float freq_from { get; set; } = 60;
+        [TestProperty]
         public float freq_to { get; set; } = 65;
+        [TestProperty]
         public float freq_step { get; set; } = 1;
+        [TestProperty]
         public bool clipsOn { get; set; } = false;
+        [TestProperty]
         public int mass { get; set; } = 0;
+        [TestProperty]
         public double load { get; set; } = 0;
+        [TestProperty]
         public int shakertype { get; set; } = 0;
+        [TestProperty]
         public int paddtype { get; set; } = 0;
         //filename mods
+        [TestProperty]
         public string massnum {
             get { return (mass + 1).ToString();  }
         }
+        [TestProperty]
         public string clipsAB
         {
             get { return ((clipsOn) ? "A" : "B") ; }
         }
 
         //Sampling parameters
+        [TestProperty]
         public int n_devices { get; set; } = 0;
+        [TestProperty]
         public short n_channels { get; set; } = 64;
+        [TestProperty]
         public int duration { get; set; } = 5;
+        [TestProperty]
         public int timer_interval
         {
             get
@@ -93,7 +114,9 @@ namespace MultiDeviceAIO
                 sample_frequency = (short)(1E6/ value);
             }
         }
+        [TestProperty]
         public short sample_frequency { get; set; } = 1000;
+        [TestProperty]
         public short n_samples                  //number channels scans before stop
         {
             get
@@ -101,8 +124,9 @@ namespace MultiDeviceAIO
                 return (short)(duration * sample_frequency);
             }
         }
-
+        [TestProperty]
         public bool external_trigger { get; set; }
+        [TestProperty]
         public bool external_clock { get; set; }
 
         public List<List<int>> accsetup { get; set; } = null;

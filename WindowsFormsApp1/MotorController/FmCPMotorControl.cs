@@ -86,6 +86,9 @@ namespace MultiDeviceAIO
 
         void BindMotorControls()
         {
+            nudMetricWindow.DataBindings.Clear();
+            nudMetricWindow.DataBindings.Add("Value", PersistentLoggerState.ps.data, "metric_window");
+
             nudTargetSpeed.DataBindings.Clear();
             nudTargetSpeed.DataBindings.Add("Value", PersistentLoggerState.ps.data, "target_speed");
 
@@ -118,6 +121,9 @@ namespace MultiDeviceAIO
 
             nudTimeout.DataBindings.Clear();
             nudTimeout.DataBindings.Add("Value", PersistentLoggerState.ps.data, "timeout");
+
+            txtMetricCommand.DataBindings.Clear();
+            txtMetricCommand.DataBindings.Add("Text", PersistentLoggerState.ps.data, "metriccommand");
 
         }
 

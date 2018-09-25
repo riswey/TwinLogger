@@ -32,6 +32,21 @@ namespace MotorController
             sum2,
             sumxy,
             regress_denom;
+
+        public MovingStatsOptimal(int size)
+        {
+            sum = 0;
+            this.size = size;
+            head = 0;
+            buffer = new float[size];
+            /*
+             * Simplify:
+             * Sum(x - mean_x)^2
+             * where x = {0,...,n-1}
+             */
+            regress_denom = size / 12 * (size ^ 2 - 1);
+        }
+
         public float MA
         {
             get
@@ -66,20 +81,6 @@ namespace MotorController
             }
         }
 
-        public MovingStatsOptimal(int size)
-        {
-            sum = 0;
-            this.size = size;
-            head = 0;
-            buffer = new float[size];
-            /*
-             * Simplify:
-             * Sum(x - mean_x)^2
-             * where x = {0,...,n-1}
-             */
-            regress_denom = size / 12 * (size^2 - 1);
-        }
-
         public void Add(float value)
         {
             float   old_value = buffer[head],
@@ -100,23 +101,23 @@ namespace MotorController
      */
     class MovingStatsCrosses : MovingStatsOptimal
     {
-        float target { get; set; }
-
+        public delegate float D_GetTarget();
+        D_GetTarget GetTarget;                  //essentially a reference to target
         public int Crosses { get; private set; }
         public float Max { get; private set; } = 0;
         public float Min { get; private set; } = float.MaxValue;
 
-        public MovingStatsCrosses(int size, float target) : base(size)
+        //MovingStatsCrosses(size, () => {return target;} )
+        public MovingStatsCrosses(int size, D_GetTarget gettarget): base(size)
         {
-            target = target;
-            MeasureBuffer();
+            this.GetTarget = new D_GetTarget(gettarget);
         }
 
         private void MeasureBuffer()
         {
             Crosses = 0;
-            Min = 0;
-            Max = float.MaxValue;
+            Min = float.MaxValue;
+            Max = 0;
 
             float v1, v2;
             for (int i = 0; i < size; i++)
@@ -124,9 +125,9 @@ namespace MotorController
                 v1 = buffer[(head + i + 1) % size];
                 v2 = buffer[(head + i + 2) % size];
                 if (
-                (v1 < target && v2 > target)
+                (v1 < GetTarget() && v2 > GetTarget())
                 ||
-                (v1 > target && v2 < target)
+                (v1 > GetTarget() && v2 < GetTarget())
                 )
                 {
                     Crosses++;

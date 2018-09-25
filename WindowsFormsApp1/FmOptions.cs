@@ -25,7 +25,7 @@ namespace MultiDeviceAIO
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Dictionary<string, string> dict = LoggerState.MergeDictionary(settings);
+            Dictionary<string, string> dict = LoggerState.MergeDictionary<TestPropertyAttribute>(settings);
 
             string text = String.Join("}, {", dict.Keys.ToArray());
 

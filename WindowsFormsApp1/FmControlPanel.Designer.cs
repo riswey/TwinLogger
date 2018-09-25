@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmControlPanel));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.chkClips = new System.Windows.Forms.CheckBox();
@@ -177,10 +177,10 @@
             this.label36 = new System.Windows.Forms.Label();
             this.nudTolerance = new System.Windows.Forms.NumericUpDown();
             this.label45 = new System.Windows.Forms.Label();
-            this.txtMetricEval = new System.Windows.Forms.TextBox();
+            this.txtMetricCommand = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
             this.nudTimeout = new System.Windows.Forms.NumericUpDown();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtMetricEval = new System.Windows.Forms.TextBox();
             this.label46 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -1554,16 +1554,16 @@
             // 
             // chart1
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chart1.Legends.Add(legend5);
             this.chart1.Location = new System.Drawing.Point(367, 326);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chart1.Series.Add(series2);
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            this.chart1.Series.Add(series5);
             this.chart1.Size = new System.Drawing.Size(460, 186);
             this.chart1.TabIndex = 56;
             this.chart1.Text = "chart1";
@@ -1624,11 +1624,11 @@
             // 
             this.tabPage4.BackColor = System.Drawing.Color.Gainsboro;
             this.tabPage4.Controls.Add(this.label46);
-            this.tabPage4.Controls.Add(this.textBox1);
+            this.tabPage4.Controls.Add(this.txtMetricEval);
             this.tabPage4.Controls.Add(this.label37);
             this.tabPage4.Controls.Add(this.nudTimeout);
             this.tabPage4.Controls.Add(this.label45);
-            this.tabPage4.Controls.Add(this.txtMetricEval);
+            this.tabPage4.Controls.Add(this.txtMetricCommand);
             this.tabPage4.Controls.Add(this.label44);
             this.tabPage4.Controls.Add(this.nudMetricWindow);
             this.tabPage4.Controls.Add(this.label40);
@@ -1724,25 +1724,25 @@
             // label45
             // 
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(258, 26);
+            this.label45.Location = new System.Drawing.Point(26, 108);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(40, 13);
             this.label45.TabIndex = 72;
             this.label45.Text = "Trigger";
             this.toolTip1.SetToolTip(this.label45, "Expression to determine trigger conditions");
             // 
-            // txtMetricEval
+            // txtMetricCommand
             // 
-            this.txtMetricEval.Location = new System.Drawing.Point(305, 19);
-            this.txtMetricEval.Multiline = true;
-            this.txtMetricEval.Name = "txtMetricEval";
-            this.txtMetricEval.Size = new System.Drawing.Size(151, 74);
-            this.txtMetricEval.TabIndex = 71;
+            this.txtMetricCommand.Location = new System.Drawing.Point(73, 105);
+            this.txtMetricCommand.Name = "txtMetricCommand";
+            this.txtMetricCommand.Size = new System.Drawing.Size(388, 20);
+            this.txtMetricCommand.TabIndex = 71;
+            this.txtMetricCommand.Text = "{UPPER} - {MAX} >0 AND {LOWER} - {MIN} < 0";
             // 
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(26, 99);
+            this.label37.Location = new System.Drawing.Point(312, 21);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(45, 13);
             this.label37.TabIndex = 74;
@@ -1751,7 +1751,7 @@
             // 
             // nudTimeout
             // 
-            this.nudTimeout.Location = new System.Drawing.Point(167, 97);
+            this.nudTimeout.Location = new System.Drawing.Point(368, 19);
             this.nudTimeout.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -1761,17 +1761,17 @@
             this.nudTimeout.Size = new System.Drawing.Size(67, 20);
             this.nudTimeout.TabIndex = 73;
             // 
-            // textBox1
+            // txtMetricEval
             // 
-            this.textBox1.Location = new System.Drawing.Point(305, 100);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(148, 20);
-            this.textBox1.TabIndex = 75;
+            this.txtMetricEval.Location = new System.Drawing.Point(402, 79);
+            this.txtMetricEval.Name = "txtMetricEval";
+            this.txtMetricEval.Size = new System.Drawing.Size(59, 20);
+            this.txtMetricEval.TabIndex = 75;
             // 
             // label46
             // 
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(265, 100);
+            this.label46.Location = new System.Drawing.Point(365, 79);
             this.label46.Name = "label46";
             this.label46.Size = new System.Drawing.Size(31, 13);
             this.label46.TabIndex = 76;
@@ -2000,7 +2000,7 @@
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.NumericUpDown nudTimeout;
         private System.Windows.Forms.Label label45;
-        private System.Windows.Forms.TextBox txtMetricEval;
+        private System.Windows.Forms.TextBox txtMetricCommand;
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.NumericUpDown nudMetricWindow;
         private System.Windows.Forms.Label label40;
@@ -2008,6 +2008,6 @@
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.NumericUpDown nudTolerance;
         private System.Windows.Forms.Label label46;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtMetricEval;
     }
 }

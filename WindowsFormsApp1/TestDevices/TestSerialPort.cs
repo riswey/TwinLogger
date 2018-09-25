@@ -28,7 +28,7 @@ namespace MotorController
             public long max;
         };
 
-        float NOISELEVEL = 5.0f;
+        float NOISELEVEL = 50.0f;
 
         int _PulseDelay = 0;
         public int PulseDelay
@@ -46,9 +46,9 @@ namespace MotorController
         {
             get
             {
-                t += 0.1f;
-                float expected = (int)(state.target_f + 120 * (Math.Cos(t) / (t + 1)) + r.NextDouble());
-                return (int)(_roto_freq += (expected - _roto_freq) / 10 * NOISELEVEL);
+                t += 0.2f;
+                float expected = (int)(state.target_f + 100 * (Math.Cos(t) / (t + 1)) + r.NextDouble());
+                return (int)(_roto_freq += (expected - _roto_freq) / 50 * NOISELEVEL);
             }
         }
 

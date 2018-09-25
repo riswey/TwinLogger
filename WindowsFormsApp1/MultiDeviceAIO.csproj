@@ -84,6 +84,7 @@
     <Compile Include="Settings\RotorMetrics.cs" />
     <Compile Include="Obsolete\AIODeviceException.cs" />
     <Compile Include="Contec\CaioCs.cs" />
+    <Compile Include="Settings\TypeExtensions.cs" />
     <Compile Include="StateMachine.cs" />
     <Compile Include="TestDevices\CaioCsTest.cs" />
     <Compile Include="Device.cs" />

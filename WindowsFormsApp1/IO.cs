@@ -24,7 +24,7 @@ namespace MultiDeviceAIO
         public static string GetFilePathTest(LoggerState settings, string datafileformat, string extension)
         {
             //TODO: chekc its a valid filename
-            return LoggerState.MergeObjectToString(settings, datafileformat) + "." + extension;
+            return LoggerState.MergeObjectToString<TestPropertyAttribute>(settings, datafileformat) + "." + extension;
         }
 
         public static string GetFilePathTemp(LoggerState settings)

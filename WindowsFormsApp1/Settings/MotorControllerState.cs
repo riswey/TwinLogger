@@ -8,9 +8,16 @@ using System.Xml.Serialization;
 
 namespace MultiDeviceAIO
 {
+    public class MotorPropertyAttribute : Attribute { }
+
     public partial class LoggerState
     {
-        
+
+        void InitMotorControllerState()
+        {
+            mac = new MotorController.MovingStatsCrosses(metric_window, () => { return target_speed; } );
+        }
+
         public static long GetTime()   //millisecond time
         {
             return (long)Math.Round(DateTimeOffset.Now.UtcTicks / 10000.0d, 0);
@@ -22,7 +29,7 @@ namespace MultiDeviceAIO
         public int pulse_delay { get; set; }
         public long min_period { get; set; }
         public long max_period { get; set; }
-        
+
         float _target_speed = 50;
         public float target_speed
         {
@@ -39,27 +46,32 @@ namespace MultiDeviceAIO
 
         #region ROTOR METRIC WINDOW
 
-        const int METRICWINDOW = 30;        //Length window in clicks
-        const int TARGETSPEED = 60;        //Length window in clicks
-
         //TODO: make moving average period dynamic
         //TODO: remove crosses/min/max from trailing window boundary
 
         //[XmlIgnore]
         //MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
-        MotorController.MovingStatsCrosses mac = new MotorController.MovingStatsCrosses(METRICWINDOW, TARGETSPEED);
+        MotorController.MovingStatsCrosses mac;
 
+        const int arduinotimertick = 500;
+
+        //In timer ticks. Stable windows is 3000ms (500ms arduinotimer)
+        public int metric_window { get; set; } = 30;        //Length window in arduino_ticks
+
+        [MotorProperty]
         public float MA { get { return mac.MA; } }
+        [MotorProperty]
         public float STD { get { return mac.STD; } }
+        [MotorProperty]
         public float Gradient { get { return mac.RegressionB; } }
+        [MotorProperty]
         public float Min { get { return mac.Min; } }
+        [MotorProperty]
         public float Max { get { return mac.Max; } }
+        [MotorProperty]
         public int Crosses { get { return mac.Crosses; } }
         
-        //TODO: when new stats working anything to remove from old rotor measures?
-        [XmlIgnore]
         float _rotor_speed = 0;
-        [XmlIgnore]
         public float rotor_speed
         {
             get
@@ -69,11 +81,7 @@ namespace MultiDeviceAIO
             set
             {
                 _rotor_speed = value;
-
-                dt.Rows.Add(x++, target_speed, upperspeed, lowerspeed, value);
-
-                //pa.Add(value);
-
+                dt.Rows.Add(x++, target_speed, Upper, Lower, value);
                 mac.Add(value);
             }
         }
@@ -92,14 +100,6 @@ namespace MultiDeviceAIO
          * 
          */
 
-        //TODO: expectiment with this
-        //if it won't substutide variable, then we do it manually (like with path)
-        public string metriccommand = "";
-        public bool EvaluateMetricWindow()
-        {
-            string eval = MergeObjectToString(this, metriccommand);
-            return (bool)_dt.Compute(eval, "");
-        }
         #endregion
 
         #region MinMax_TIMER
@@ -219,12 +219,15 @@ namespace MultiDeviceAIO
             }
         }
 
+        //NOTE: x is in timer ticks (not seconds)
         [XmlIgnore]
         private int x = 0;
         [XmlIgnore]
-        float lowerspeed;
+        [MotorProperty]
+        public float Lower { get; set; }
         [XmlIgnore]
-        float upperspeed;
+        [MotorProperty]
+        public float Upper { get; set; }
         [XmlIgnore]
         public float graphrange = 50;        
         [XmlIgnore]
@@ -241,7 +244,7 @@ namespace MultiDeviceAIO
         {
             get
             {
-                if (rotor_speed > lowerspeed && rotor_speed < upperspeed)
+                if (rotor_speed > Lower && rotor_speed < Upper)
                 {
                     if (enterrange == 0)
                     {
@@ -258,17 +261,20 @@ namespace MultiDeviceAIO
             }
         }
 
+
+        /*
+         * TODO: This is being replaced with metric window
+         * 
+         * 
+         * 
+         */
+
         [XmlIgnore]
         private bool IsRotorStable
         {
             get
             {
                 //NOTE: It calls IsRotorInRange -> ensures enterrange set
-                Debug.WriteLine(IsRotorInRange
-                    &&
-                        (enterrange != 0 && GetTime() - enterrange > stableperiod));
-
-
                 return IsRotorInRange
                     &&
                         (enterrange != 0 && GetTime() - enterrange > stableperiod);
@@ -280,16 +286,50 @@ namespace MultiDeviceAIO
         {
             get
             {
+                Debug.WriteLine("Is stable: " + IsRotorStable);
+                Debug.WriteLine("merged: " + TriggerMerged);
+                //{UPPER} - {MAX} >0 AND {LOWER} - {MIN} < 0
+                
+
+                bool eval = EvalTrigger;
+
+                Debug.WriteLine(this.Upper + "," + this.Lower + "," + Max + "," + Min + "(" + eval + ")");
+                return eval;
+
                 //DOC: Samples after timeout whatever. This is the window for improved motor control
-                return IsRotorStable;// || (start_t != 0 && GetTime() - start_t > timeout);
+                //return IsRotorStable;// || (start_t != 0 && GetTime() - start_t > timeout);
             }
         }
 
         void SetBounds()
         {
-            lowerspeed = target_speed / tolerance;
-            upperspeed = target_speed * tolerance;
+            Lower = target_speed / tolerance;
+            Upper = target_speed * tolerance;
         }
 
-    }
+        #region EVAL TRIGGER 
+        //TODO: expectiment with this
+        //if it won't substutide variable, then we do it manually (like with path)
+        public string metriccommand { get; set; } = "{UPPER} - {MAX} >0 AND {LOWER} - {MIN} < 0";
+
+        public string TriggerMerged
+        {
+            get
+            {
+                string mergestring = MergeObjectToString<MotorPropertyAttribute>(this, metriccommand);
+                return mergestring;
+            }
+        }
+
+        public bool EvalTrigger {
+            get {
+                return (bool)_dt.Compute(TriggerMerged, "");
+            }
+        }
+
+        #endregion
+
+
+
+        }
 }
