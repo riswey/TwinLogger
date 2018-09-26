@@ -48,6 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MACTest.cs" />
     <Compile Include="TestMonitor.cs" />
     <Compile Include="TestSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

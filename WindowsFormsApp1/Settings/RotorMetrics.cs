@@ -24,7 +24,8 @@ namespace MotorController
         }
     }
 
-    class MovingStatsOptimal
+    //TESTED: 26/09/2018
+    public class MovingStatsOptimal
     {
         protected float[] buffer;
         protected int size, head;
@@ -44,9 +45,9 @@ namespace MotorController
              * Sum(x - mean_x)^2
              * where x = {0,...,n-1}
              */
-            regress_denom = size / 12 * (size ^ 2 - 1);
+            regress_denom = (float)(size / 12f * (Math.Pow(size,2) - 1f));
         }
-
+        
         public float MA
         {
             get
@@ -61,7 +62,7 @@ namespace MotorController
             {
                 //N s^2 = Sum[(y - meany)^2]
                 //s^2 = Sum(y^2)/N - meany^2
-                return (float)Math.Sqrt(sum2 / size - (float)Math.Pow(MA, 2));
+                return (float)Math.Sqrt((sum2 - size * (float)Math.Pow(MA, 2))/(size - 1));
             }
         }
         /*
@@ -70,17 +71,30 @@ namespace MotorController
          * 
          * denom = Sum[(x-meanx)^2] = size / 12 * (size^2 - 1)
          *  where x = {0,..,N-1}
-         */
+        */
+
         public float RegressionB
         {
             //TODO: sumxy is wrong!
             get
             {
                 double numerator = sum * (1 - size) / 2 + sumxy;
+                if (regress_denom == 0) return 0;
                 return (float)numerator / regress_denom;
             }
         }
-
+        /*
+         * x  = {0,1,2,3}
+         * y  = {a,b,c,d}
+         * xy = { 0a + 1b + 2c + 3d }
+         * => add e
+         * y' = {b,c,d,e}
+         * xy' ={0b + 1c + 2d + 3e}
+         * everything shifts left = subtract b,c,d,... 
+         * xy - newsum = xy - (b+c+d+e)
+         * add (size - 1) e but already sub e so => size * e
+         * xy = newsum + size * e
+         */
         public void Add(float value)
         {
             float   old_value = buffer[head],
@@ -88,18 +102,14 @@ namespace MotorController
                     diff = value - old_value;
             sum += value - old_value;
             sum2 += value * value - old_value * old_value;
-            sumxy += head * value - head * old_value;           //Woa this doesn't work!
-                                                                //All values need be left-shifted 1!!!!
+            sumxy += -sum + size * value;
             buffer[head] = value;
             head = (++head) % size;
         }
     }
 
-    /*
-     * Optimise!
-     * Calculates entire buffer stats on each add!
-     */
-    class MovingStatsCrosses : MovingStatsOptimal
+    //TESTED: 26/09/2018
+    public class MovingStatsCrosses : MovingStatsOptimal
     {
         public delegate float D_GetTarget();
         D_GetTarget GetTarget;                  //essentially a reference to target
@@ -107,7 +117,7 @@ namespace MotorController
         public float Max { get; private set; } = 0;
         public float Min { get; private set; } = float.MaxValue;
 
-        //MovingStatsCrosses(size, () => {return target;} )
+        //DOC: MovingStatsCrosses(size, () => {return target;} )
         public MovingStatsCrosses(int size, D_GetTarget gettarget) : base(size)
         {
             this.GetTarget = new D_GetTarget(gettarget);
@@ -115,27 +125,43 @@ namespace MotorController
 
         private void MeasureBuffer()
         {
+            float local_target = GetTarget();
             Crosses = 0;
             Min = float.MaxValue;
             Max = 0;
 
+            //Do min/max on position behind head
+            Max = Math.Max(buffer[(head - 1 + size) % size], Max);
+            Min = Math.Min(buffer[(head - 1 + size) % size], Min);
+
             float v1, v2;
-            for (int i = 0; i < size; i++)
+            //size-1 intervals
+            for (int i = 0; i < size - 1; i++)
             {
-                v1 = buffer[(head + i + 1) % size];
-                v2 = buffer[(head + i + 2) % size];
+                //NOTE: start loop from head + 1 (head already at head + 1) i.e. x = 0
+                v1 = buffer[(head + i) % size];
+                v2 = buffer[(head + i + 1) % size];
                 if (
-                (v1 < GetTarget() && v2 > GetTarget())
+                (v1 <= local_target && v2 > local_target)
                 ||
-                (v1 > GetTarget() && v2 < GetTarget())
+                (v1 > local_target && v2 <= local_target)
                 )
                 {
                     Crosses++;
                 }
+                //HACKED
+                //DOC: dot-slash (.5) rule
+                //situation ./ is cross if starts on target, not if ends on target
+                //situation \. is cross if ends on target, not if starts on target
+                //TODO: code 1st order edge case
+                //-> V or n situation = no cross. Only X situation.
+                //if v1 == target then look v0 (if exists)
+                //if v2 == target then look v3 (if exists)
 
                 Max = Math.Max(v1, Max);
                 Min = Math.Min(v1, Min);
             }
+
         }
 
         public new void Add(float item)

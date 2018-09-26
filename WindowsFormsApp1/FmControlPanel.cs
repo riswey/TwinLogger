@@ -326,6 +326,8 @@ namespace MultiDeviceAIO
             StopScheduleRun();
         }
 
+        string startbuttontext = "Ready";
+
         void setStartButtonText(int code)
         {
             if (InvokeRequired)
@@ -424,6 +426,7 @@ namespace MultiDeviceAIO
 
         private void resetToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            //TODO: Is this obsolete?
             PersistentLoggerState.ps.Reload();
             BindTestParameters();
             displayPath(PersistentLoggerState.ps.data.settingspath, PersistentLoggerState.ps.data.modified);
@@ -542,6 +545,7 @@ namespace MultiDeviceAIO
 
                     PersistentLoggerState.ps.Load(filename);
 
+                    //TODO: better way to refresh parameters?
                     BindTestParameters();
 
                     displayPath(filename, PersistentLoggerState.ps.data.modified);
