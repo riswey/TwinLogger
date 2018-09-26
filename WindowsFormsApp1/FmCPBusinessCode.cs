@@ -174,12 +174,6 @@ namespace MultiDeviceAIO
                 || 
                 delta == MyAIO.DEVICESTATEDELTA.READY )         //empty buffers
             {
-                //TODO: May as well do one main thread
-                //but exception handling gets stuck here
-
-                //NOTE: accessviolation
-                //Invoke(new Action(() => RetrieveData()));
-
                 RetrieveData();
 
                 if (myaio.IsTestFinished)

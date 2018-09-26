@@ -31,13 +31,47 @@ namespace MultiDeviceAIO
         {
             return (long)Math.Round(DateTimeOffset.Now.UtcTicks / 10000.0d, 0);
         }
-
-        public float p { get; set; }
-        public float i { get; set; }
-        public float d { get; set; }
-        public int pulse_delay { get; set; }
-        public long min_period { get; set; }
-        public long max_period { get; set; }
+        float _p = 0, _i = 0, _d = 0;
+        int _pulse_delay = 0;
+        public float p { get { return _p; } set { _p = value; InvokePropertyChanged("p"); } }
+        public float i { get { return _i; } set { _i = value; InvokePropertyChanged("i"); } }
+        public float d { get { return _d; } set { _d = value; InvokePropertyChanged("d"); } }
+        public int pulse_delay { get { return _pulse_delay; } set { _pulse_delay = pulse_delay; InvokePropertyChanged("pulse_delay"); } }
+        long _min_period = -1, _max_period = -1;
+        public long min_period {
+            get
+            {
+                return _min_period;
+            }
+            set
+            {
+                //Check that incoming is valid
+                if (value < 1E7)
+                {
+                    _min_period = value;
+                    InvokePropertyChanged("min_period");
+                }
+                else
+                    _min_period = -1;
+            }
+        }
+        public long max_period
+        {
+            get
+            {
+                return _max_period;
+            }
+            set
+            {
+                if (value > 0)
+                {
+                    _max_period = value;
+                    InvokePropertyChanged("max_period");
+                }
+                else
+                    _max_period = -1;
+            }
+        }
 
         float _target_speed = 50;
         public float target_speed
@@ -49,6 +83,7 @@ namespace MultiDeviceAIO
             set
             {
                 _target_speed = value;
+                InvokePropertyChanged("target_speed");
                 SetBounds();
             }
         }
@@ -89,6 +124,7 @@ namespace MultiDeviceAIO
                 _rotor_speed = value;
                 dt.Rows.Add(x++, target_speed, Upper, Lower, value);
                 mac.Add(value);
+                InvokePropertyChanged("rotor_speed");
                 mac.BoundPropertiesForUpdate.ForEach( p => { InvokePropertyChanged(p); } );
             }
         }
@@ -117,12 +153,6 @@ namespace MultiDeviceAIO
         public bool IsRMDisabled()
         {
             return (GetTime() - rm_timer) > RM_TIMER_PERIOD;
-        }
-
-        //Seems this is just for logging
-        public bool IsMMInRange()
-        {
-            return min_period != 1E7 && max_period != 0;
         }
 
         #endregion

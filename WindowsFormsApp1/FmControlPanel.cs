@@ -808,8 +808,10 @@ namespace MultiDeviceAIO
 
         #region Run Control
 
+        const int MAXROTORSPEEDFAILSAFE = 200;
         void NextRun()
         {
+
             /*
             if (InvokeRequired)
             {
@@ -822,13 +824,14 @@ namespace MultiDeviceAIO
             sm_motor.state = STATE.Ready.ToString();
 
             PersistentLoggerState.ps.data.target_speed += (float)nudFreqStep.Value;
-            if (PersistentLoggerState.ps.data.target_speed > (float)nudFreqTo.Value)
+            if (PersistentLoggerState.ps.data.target_speed > (float)nudFreqTo.Value
+                ||
+                PersistentLoggerState.ps.data.target_speed > MAXROTORSPEEDFAILSAFE
+                )
             {
                 StopScheduleRun();
             }
 
-            //TODO: why don't controls reflect underlying data in async environment?
-            AsyncText(nudTargetSpeed, PersistentLoggerState.ps.data.target_speed.ToString());
             //PersistentLoggerState.ps.data.ResetMotorWindow();
 
             //TODO: should be bound more closely to change freq state. But only called once so here.

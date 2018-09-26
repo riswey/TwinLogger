@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmControlPanel));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.chkClips = new System.Windows.Forms.CheckBox();
@@ -154,6 +154,10 @@
             this.lblMinRotorPeriod = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.lblMax = new System.Windows.Forms.Label();
+            this.label48 = new System.Windows.Forms.Label();
+            this.lblMin = new System.Windows.Forms.Label();
+            this.label52 = new System.Windows.Forms.Label();
             this.lblGrad = new System.Windows.Forms.Label();
             this.label53 = new System.Windows.Forms.Label();
             this.lblSTD = new System.Windows.Forms.Label();
@@ -162,8 +166,6 @@
             this.label49 = new System.Windows.Forms.Label();
             this.lblCross = new System.Windows.Forms.Label();
             this.label40 = new System.Windows.Forms.Label();
-            this.label46 = new System.Windows.Forms.Label();
-            this.txtMetricEval = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
             this.nudTimeout = new System.Windows.Forms.NumericUpDown();
             this.label45 = new System.Windows.Forms.Label();
@@ -188,10 +190,6 @@
             this.btnDecRange = new System.Windows.Forms.Button();
             this.timerarduino = new System.Windows.Forms.Timer(this.components);
             this.timergetdata = new System.Windows.Forms.Timer(this.components);
-            this.lblMax = new System.Windows.Forms.Label();
-            this.label48 = new System.Windows.Forms.Label();
-            this.lblMin = new System.Windows.Forms.Label();
-            this.label52 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -596,7 +594,7 @@
             // 
             this.nudFreqFrom.Location = new System.Drawing.Point(21, 101);
             this.nudFreqFrom.Maximum = new decimal(new int[] {
-            5000,
+            200,
             0,
             0,
             0});
@@ -789,7 +787,7 @@
             // 
             this.nudFreqTo.Location = new System.Drawing.Point(113, 101);
             this.nudFreqTo.Maximum = new decimal(new int[] {
-            5000,
+            250,
             0,
             0,
             0});
@@ -1499,8 +1497,6 @@
             this.tabPage4.Controls.Add(this.label49);
             this.tabPage4.Controls.Add(this.lblCross);
             this.tabPage4.Controls.Add(this.label40);
-            this.tabPage4.Controls.Add(this.label46);
-            this.tabPage4.Controls.Add(this.txtMetricEval);
             this.tabPage4.Controls.Add(this.label37);
             this.tabPage4.Controls.Add(this.nudTimeout);
             this.tabPage4.Controls.Add(this.label45);
@@ -1514,6 +1510,42 @@
             this.tabPage4.Size = new System.Drawing.Size(479, 134);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Trigger";
+            // 
+            // lblMax
+            // 
+            this.lblMax.AutoSize = true;
+            this.lblMax.Location = new System.Drawing.Point(412, 33);
+            this.lblMax.Name = "lblMax";
+            this.lblMax.Size = new System.Drawing.Size(41, 13);
+            this.lblMax.TabIndex = 88;
+            this.lblMax.Text = "label50";
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(358, 33);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(27, 13);
+            this.label48.TabIndex = 87;
+            this.label48.Text = "Max";
+            // 
+            // lblMin
+            // 
+            this.lblMin.AutoSize = true;
+            this.lblMin.Location = new System.Drawing.Point(412, 10);
+            this.lblMin.Name = "lblMin";
+            this.lblMin.Size = new System.Drawing.Size(41, 13);
+            this.lblMin.TabIndex = 86;
+            this.lblMin.Text = "label48";
+            // 
+            // label52
+            // 
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(358, 10);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(24, 13);
+            this.label52.TabIndex = 85;
+            this.label52.Text = "Min";
             // 
             // lblGrad
             // 
@@ -1586,22 +1618,6 @@
             this.label40.Size = new System.Drawing.Size(44, 13);
             this.label40.TabIndex = 77;
             this.label40.Text = "Crosses";
-            // 
-            // label46
-            // 
-            this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(365, 79);
-            this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(31, 13);
-            this.label46.TabIndex = 76;
-            this.label46.Text = "Eval:";
-            // 
-            // txtMetricEval
-            // 
-            this.txtMetricEval.Location = new System.Drawing.Point(402, 79);
-            this.txtMetricEval.Name = "txtMetricEval";
-            this.txtMetricEval.Size = new System.Drawing.Size(59, 20);
-            this.txtMetricEval.TabIndex = 75;
             // 
             // label37
             // 
@@ -1774,16 +1790,16 @@
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(367, 326);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(460, 186);
             this.chart1.TabIndex = 56;
             this.chart1.Text = "chart1";
@@ -1839,42 +1855,6 @@
             // 
             this.timergetdata.Interval = 400;
             this.timergetdata.Tick += new System.EventHandler(this.data_Tick);
-            // 
-            // lblMax
-            // 
-            this.lblMax.AutoSize = true;
-            this.lblMax.Location = new System.Drawing.Point(412, 33);
-            this.lblMax.Name = "lblMax";
-            this.lblMax.Size = new System.Drawing.Size(41, 13);
-            this.lblMax.TabIndex = 88;
-            this.lblMax.Text = "label50";
-            // 
-            // label48
-            // 
-            this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(358, 33);
-            this.label48.Name = "label48";
-            this.label48.Size = new System.Drawing.Size(27, 13);
-            this.label48.TabIndex = 87;
-            this.label48.Text = "Max";
-            // 
-            // lblMin
-            // 
-            this.lblMin.AutoSize = true;
-            this.lblMin.Location = new System.Drawing.Point(412, 10);
-            this.lblMin.Name = "lblMin";
-            this.lblMin.Size = new System.Drawing.Size(41, 13);
-            this.lblMin.TabIndex = 86;
-            this.lblMin.Text = "label48";
-            // 
-            // label52
-            // 
-            this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(358, 10);
-            this.label52.Name = "label52";
-            this.label52.Size = new System.Drawing.Size(24, 13);
-            this.label52.TabIndex = 85;
-            this.label52.Text = "Min";
             // 
             // FmControlPanel
             // 
@@ -2103,8 +2083,6 @@
         private System.Windows.Forms.NumericUpDown nudMetricWindow;
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.NumericUpDown nudTolerance;
-        private System.Windows.Forms.Label label46;
-        private System.Windows.Forms.TextBox txtMetricEval;
         private System.Windows.Forms.Label lblGrad;
         private System.Windows.Forms.Label label53;
         private System.Windows.Forms.Label lblSTD;

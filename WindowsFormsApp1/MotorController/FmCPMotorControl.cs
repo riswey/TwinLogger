@@ -200,7 +200,6 @@ namespace MultiDeviceAIO
                     SendCommand(CMD.SETADC);
                     SendCommand(CMD.GETADC);
                     PrintLn("Send Trigger", true);
-                    Debug.WriteLine("Send Trigger" + DateTime.Now.Ticks / 10000);
                     SendCommand(CMD.TRIGGER);
                 }));
 
@@ -268,9 +267,6 @@ namespace MultiDeviceAIO
         }
 
         void ACK_TRIGGER(string idx) {
-
-            Debug.WriteLine("ACK Trigger " + DateTime.Now.Ticks / 10000);
-
             if (PersistentLoggerState.ps.data.testingmode != 0)
             {
                 //Simulate a trigger in the LAX1664
@@ -377,37 +373,21 @@ namespace MultiDeviceAIO
                     break;
                 case DATATYPES.GETPULSEDELAY:
                     PersistentLoggerState.ps.data.pulse_delay = int.Parse(data[1]);
-                    AsyncText(lblPulseDelay, data[1]);
                     break;
                 case DATATYPES.GETTARGETFREQ:
                     PersistentLoggerState.ps.data.target_speed = float.Parse(data[1]);
-                    AsyncText(nudTargetSpeed, data[1]);
                     break;
                 case DATATYPES.GETROTORFREQ:
                     PersistentLoggerState.ps.data.rotor_speed = float.Parse(data[1]);
-                    AsyncText(lblCurrentSpeed, data[1]);
                     break;
                 case DATATYPES.GETMINMAXPERIODS:
                     PersistentLoggerState.ps.data.min_period = long.Parse(data[1]);
                     PersistentLoggerState.ps.data.max_period = long.Parse(data[2]);
-                    if (PersistentLoggerState.ps.data.IsMMInRange())
-                    {
-                        AsyncText(lblMinRotorPeriod, data[1]);
-                        AsyncText(lblMaxRotorPeriod, data[2]);
-                    }
-                    else
-                    {
-                        AsyncText(lblMinRotorPeriod, "-");
-                        AsyncText(lblMaxRotorPeriod, "-");
-                    }
                     break;
                 case DATATYPES.GETPID:
                     PersistentLoggerState.ps.data.p = float.Parse(data[1]);
                     PersistentLoggerState.ps.data.i = float.Parse(data[2]);
                     PersistentLoggerState.ps.data.d = float.Parse(data[3]);
-                    AsyncNUD(nudP, Decimal.Parse(data[1]));
-                    AsyncNUD(nudI, Decimal.Parse(data[2]));
-                    AsyncNUD(nudD, Decimal.Parse(data[3]));
                     break;
                 case DATATYPES.GETLOCKABLE:
                     if (data[1] == "Y")
