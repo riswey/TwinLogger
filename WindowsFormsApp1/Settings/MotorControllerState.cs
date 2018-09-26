@@ -36,7 +36,7 @@ namespace MultiDeviceAIO
         public float p { get { return _p; } set { _p = value; InvokePropertyChanged("p"); } }
         public float i { get { return _i; } set { _i = value; InvokePropertyChanged("i"); } }
         public float d { get { return _d; } set { _d = value; InvokePropertyChanged("d"); } }
-        public int pulse_delay { get { return _pulse_delay; } set { _pulse_delay = pulse_delay; InvokePropertyChanged("pulse_delay"); } }
+        public int pulse_delay { get { return _pulse_delay; } set { _pulse_delay = value; InvokePropertyChanged("pulse_delay"); } }
         long _min_period = -1, _max_period = -1;
         public long min_period {
             get

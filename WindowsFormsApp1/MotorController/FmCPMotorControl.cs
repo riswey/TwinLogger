@@ -424,7 +424,7 @@ namespace MultiDeviceAIO
             SendCommand(CMD.SETFREQ);
         }
 
-        private void nudP_ValueChanged(object sender, EventArgs e)
+        protected void nudP_ValueChanged(object sender, EventArgs e)
         {
             SendCommand(CMD.SETPID);
         }

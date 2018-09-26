@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -101,9 +102,6 @@ namespace MotorController
             switch (cmd)
             {
                 case CMD.START:
-                    state.p = 0;
-                    state.i = 0;
-                    state.d = 0;
                     state.locked = false;
                     state.running = 1;
                     //TODO: This cannot be done in 3.5 Find another way
@@ -151,7 +149,8 @@ namespace MotorController
                     Send("PW " + PulseDelay);
                     break;
                 case CMD.GETPID:
-                    Send(String.Format("PID {0} {1} {2}", state.p, state.i, state.d));
+                    Send(String.Format("PID {0} {1} {2}", (float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble()));
+                    //Send(String.Format("PID {0} {1} {2}", state.p, state.i, state.d));
                     break;
                 case CMD.GETMINMAXPERIODS:
                     if (maxmin++ > 5)
