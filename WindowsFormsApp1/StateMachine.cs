@@ -50,29 +50,23 @@ namespace MultiDeviceAIO
             string index = CreateIndex(stateevent, state);
             string allindex = CreateIndex(stateevent, ALLSTATECODE);
 
-            Console.WriteLine("EVENT: " + stateevent);
-
             if (rules.ContainsKey(index))
             {
                 state = rules[index];
-                Console.WriteLine("EXEC");
             }
             else if (rules.ContainsKey(allindex))
             {
                 state = rules[allindex];
-                Console.WriteLine("EXEC");
             }
 
             //if doesn't exist then null
             if (callbacks.ContainsKey(index))
             {
                 callbacks[index](index);
-                Console.WriteLine("EXEC");
             }
             else if (callbacks.ContainsKey(allindex))
             {
                 callbacks[allindex](index);
-                Console.WriteLine("EXEC");
             }
         }
 
@@ -85,8 +79,6 @@ namespace MultiDeviceAIO
                 foreach (string s in arrS)
                 {
                     string index = CreateIndex(se, s);
-
-                    Console.WriteLine("Add Rule: " + index + "->" + newstate + " : " + func);
                     rules.Add(index, newstate.ToString());
 
                     if (func != null) callbacks.Add(index, func);

@@ -16,18 +16,8 @@ namespace MultiDeviceAIO
         string name;
         public List<int> data = new List<int>();
         public int target { get; set; } = 0;
-        public bool IsFinished
-        {
-            get
-            {
-                Debug.WriteLine("Finished? " + data.Count + "==" + target);
-
-                return data.Count == target;
-            }
-        }
-        public bool IsFailed { get; private set; } = false;
-        //timer_duration / 1000 * sample_freq * num_channels
-        //public int[] buffer = new int[1000];
+        public bool IsFinished {    get{return data.Count == target;}}
+        public bool IsFailed {      get; private set; } = false;
 
         public Device(short id, string name)
         {

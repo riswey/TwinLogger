@@ -19,7 +19,7 @@ namespace MultiDeviceAIO
 
         FmMonitor monitor;
 
-        FmLog fmlog;
+        FmLog fmlog = new FmLog();
 
         public DATA ConcatData
         {
@@ -233,12 +233,13 @@ namespace MultiDeviceAIO
 
         void PrintLn(object msg, bool speak = false, int linebreak = 1)
         {
+            /*
             if (InvokeRequired)
             {
                 this.Invoke(new Action(() => PrintLn(msg, speak, linebreak)));
                 return;
             }
-
+            */
             if (fmlog == null || fmlog.IsDisposed)
             {
                 fmlog = new FmLog();

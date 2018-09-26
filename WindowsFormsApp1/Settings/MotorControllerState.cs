@@ -217,7 +217,7 @@ namespace MultiDeviceAIO
         public float graphrange = 50;        
         
         [XmlIgnore]
-        public bool IsRotorInRange {get {return (rotor_speed > Lower && rotor_speed < Upper)}}
+        public bool IsRotorInRange {get { return (rotor_speed > Lower && rotor_speed < Upper); }}
 
         [XmlIgnore]
         public bool IsReadyToSample { get{return EvalTrigger || (start_t != 0 && GetTime() - start_t > timeout);}}

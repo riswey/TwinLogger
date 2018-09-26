@@ -454,16 +454,10 @@ namespace MultiDeviceAIO
         public bool IsTestFinished {
             get
             {
-                Debug.WriteLine("Check Fnshed: #" + Device.devices.Count);
-
                 foreach (Device d in Device.devices)
                 {
-                    Debug.WriteLine("Check if Finished...");
-
                     if (!d.IsFinished) return false;
                 }
-                Debug.WriteLine("Finished==true");
-
                 return true;
             }
         }

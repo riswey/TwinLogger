@@ -180,7 +180,6 @@ namespace MultiDeviceAIO
 
         void InitMotorStateMachine()
         {
-            Console.WriteLine("set machine");
             sm_motor.AddRule(STATE.Ready, EVENT.Send_Start, new StateMachine.CallBack((string idx) =>
             {
                 //Start
@@ -201,7 +200,7 @@ namespace MultiDeviceAIO
                     SendCommand(CMD.SETADC);
                     SendCommand(CMD.GETADC);
                     PrintLn("Send Trigger", true);
-                    Debug.WriteLine("Send Trigger");
+                    Debug.WriteLine("Send Trigger" + DateTime.Now.Ticks / 10000);
                     SendCommand(CMD.TRIGGER);
                 }));
 
@@ -270,7 +269,7 @@ namespace MultiDeviceAIO
 
         void ACK_TRIGGER(string idx) {
 
-            Debug.WriteLine("ACK Trigger");
+            Debug.WriteLine("ACK Trigger " + DateTime.Now.Ticks / 10000);
 
             if (PersistentLoggerState.ps.data.testingmode != 0)
             {
@@ -570,9 +569,7 @@ namespace MultiDeviceAIO
             chart1.DataBind();
 
             cbxInRange.Checked = PersistentLoggerState.ps.data.IsRotorInRange;
-
-            Debug.WriteLine(PersistentLoggerState.ps.data.IsReadyToSample);
-
+            
             if (PersistentLoggerState.ps.data.IsReadyToSample)
             {
                 cbxOK.Checked = true;

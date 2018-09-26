@@ -193,8 +193,6 @@ namespace CaioCs
                 devicestate[Id] = 0;
             }
 
-            Debug.WriteLine("Remaining: " + targetsize);
-
             //TODO: if devices go to 0 when finished data collecting can use to indicate end the test!!!!!
             if (targetsize[Id] == 0)
             {

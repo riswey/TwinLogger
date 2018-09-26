@@ -81,6 +81,7 @@
     <Compile Include="AboutBox1.Designer.cs">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
+    <Compile Include="BackgroundQueue.cs" />
     <Compile Include="Settings\RotorMetrics.cs" />
     <Compile Include="Obsolete\AIODeviceException.cs" />
     <Compile Include="Contec\CaioCs.cs" />

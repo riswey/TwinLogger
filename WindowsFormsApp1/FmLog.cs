@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Speech.Synthesis;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace MultiDeviceAIO
@@ -14,6 +15,8 @@ namespace MultiDeviceAIO
     public partial class FmLog : Form
     {
         string text = "";
+
+        static BackgroundQueue bgqueue = new BackgroundQueue();
 
         public FmLog()
         {
@@ -50,19 +53,17 @@ namespace MultiDeviceAIO
 
         void SayMessage(string msg)
         {
-            if (InvokeRequired)
+            //Actual speech is very very resource hungry!
+            bgqueue.QueueTask(() =>
             {
-                this.Invoke(new Action(() => SayMessage(msg)));
-                return;
-            }
-
-            // Initialize a new instance of the SpeechSynthesizer.  
-            using (SpeechSynthesizer synth = new SpeechSynthesizer())
-            {
-                synth.SetOutputToDefaultAudioDevice();
-                synth.Volume = 100;  // (0 - 100)
-                synth.Speak(msg);
-            }
+                Thread.CurrentThread.IsBackground = true;
+                using (SpeechSynthesizer synth = new SpeechSynthesizer())
+                {
+                    synth.SetOutputToDefaultAudioDevice();
+                    synth.Volume = 100;  // (0 - 100)
+                    synth.Speak(msg);
+                }
+            });
         }
 
         //Can't close
