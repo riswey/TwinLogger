@@ -201,6 +201,7 @@ namespace MultiDeviceAIO
                     SendCommand(CMD.SETADC);
                     SendCommand(CMD.GETADC);
                     PrintLn("Send Trigger", true);
+                    Debug.WriteLine("Send Trigger");
                     SendCommand(CMD.TRIGGER);
                 }));
 
@@ -226,103 +227,6 @@ namespace MultiDeviceAIO
         {
             SendCommand(CMD.SETUNLOCK);
         }
-        /*
-        private void ProcessEvent(EVENT e)
-        {
-            switch (e)
-            {
-                case EVENT.Start:
-                    switch (state)
-                    {
-                        case STATE.Ready:
-                            ChangeState(EVENT.Start);
-                            break;
-                        case STATE.Lockable:
-                            ChangeState(EVENT.Lock);
-                            break;
-                        case STATE.Locked:
-                            ChangeState(EVENT.Unlock);
-                            break;
-                    }
-                    break;
-
-                case EVENT.Lock:
-                    switch (state)
-                    {
-                        case STATE.Lockable:
-                            ChangeState(EVENT.Lock);
-                            break;
-                    }
-                    break;
-                case EVENT.Unlock:
-                    switch (state)
-                    {
-                        case STATE.Locked:
-                            ChangeState(EVENT.Unlock);
-                            break;
-                    }
-                    break;
-                case EVENT.Stop:
-                    switch (state)
-                    {
-                        case STATE.Running:
-                        case STATE.Lockable:
-                        case STATE.Locked:
-                            ChangeState(EVENT.Stop);
-                            break;
-                        //NEW
-                        case STATE.Triggered:
-                            ChangeState(EVENT.Stop);
-                            break;
-
-                    }
-                    break;
-                case EVENT.Trigger:
-                    switch (state)
-                    {
-                        case STATE.Running:
-                        case STATE.Lockable:
-                        case STATE.Locked:
-                            ChangeState(EVENT.Trigger);
-                            break;
-                    }
-                    break;
-            }
-
-        }
-        */
-        /*
-        private void ChangeState(EVENT e)
-        {
-            PrintLn("Change Motor State: " + e.ToString());
-
-            switch (e)
-            {
-                case EVENT.Start:
-                    SendCommand(CMD.SETFREQ);
-                    SendCommand(CMD.GETTARGETFREQ);
-                    SendCommand(CMD.START);
-                    break;
-                    
-                case EVENT.Stop:
-                    SendCommand(CMD.STOP);
-                    break;
-                case EVENT.Lock:
-                    SendCommand(CMD.SETLOCK);
-                    break;
-                case EVENT.Unlock:
-                    SendCommand(CMD.SETUNLOCK);
-                    break;
-                case EVENT.Trigger:
-                    SendCommand(CMD.SETADC);
-                    SendCommand(CMD.GETADC);
-                    PrintLn("Send Trigger", true);
-                    SendCommand(CMD.TRIGGER);
-                    break;
-            }
-        }
-        */
-
 
         void ACK_START(string idx) {
             //PersistentLoggerState.ps.data.Start();   //Removed Motor Control Logging
@@ -366,6 +270,8 @@ namespace MultiDeviceAIO
 
         void ACK_TRIGGER(string idx) {
 
+            Debug.WriteLine("ACK Trigger");
+
             if (PersistentLoggerState.ps.data.testingmode != 0)
             {
                 //Simulate a trigger in the LAX1664
@@ -381,83 +287,6 @@ namespace MultiDeviceAIO
         {
             AsyncText(lblState, idx.ToString());
         }
-
-
-
-
-        /*
-        private void ProcessACK(CMD cmd)
-    {
-        PrintLn("Process ACK: " + cmd.ToString());
-
-        switch (cmd)
-        {
-            case CMD.START:
-                //PersistentLoggerState.ps.data.Start();   //Removed Motor Control Logging
-                PersistentLoggerState.ps.data.StartRMTimer();
-                state = STATE.Running;
-                setStartButtonText(3);
-                //TODO: need check if lockable before lock when sampling!!!!
-                //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
-                this.Invoke(new Action(() => timerarduino.Start()));
-                break;
-            case CMD.STOP:
-
-                //if (this.task != null)
-                //{
-                //    this.task.Dispose();
-                 //   this.task = null;
-                //}
-
-                this.Invoke(new Action(() => timerarduino.Stop()));
-                state = STATE.Ready;
-                //AsyncDisable(this.btnSetSpeed, false);
-                AsyncColor(btnStart, default(Color));
-                AsyncText(btnStart, "Start");
-                break;
-            case CMD.SETLOCK:
-                state = STATE.Locked;
-                AsyncText(btnStart, "Unlock");
-                AsyncColor(btnStart, Color.Red);
-                //AsyncDisable(this.btnSetSpeed);
-                break;
-            case CMD.SETUNLOCK:
-                state = STATE.Lockable;
-                AsyncText(btnStart, "Lock");
-                AsyncColor(btnStart, Color.Orange);
-                //AsyncDisable(this.btnSetSpeed, false);
-                break;
-            case CMD.SETPULSEDELAY:
-                AsyncText(toolStripStatusLabel1, "Pulse Delay set.");
-                break;
-            case CMD.SETPID:
-                AsyncText(toolStripStatusLabel1, "PID set.");
-                break;
-            case CMD.SETFREQ:
-                //TODO: Should SETFREQ -> StartRMTImer ???
-                PersistentLoggerState.ps.data.StartRMTimer();
-                AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
-                break;
-            case CMD.TRIGGER:
-                state = STATE.Triggered;
-
-                if (PersistentLoggerState.ps.data.testingmode != 0)
-                {
-                    //Simulate a trigger in the LAX1664
-                    myaio.SimulateTrigger();
-                }
-
-                break;
-            case CMD.SETADC:
-                AsyncText(toolStripStatusLabel1, "ADC set.");
-                break;
-        }
-
-        AsyncText(lblState, state.ToString());
-
-        //should we have a queue to time out unsuccessful async tasks
-    }
-    */
 
         void SendCommand(CMD cmd)
         {
@@ -616,34 +445,6 @@ namespace MultiDeviceAIO
             SendCommand(CMD.SETFREQ);
         }
 
-        //TODO: some_func what is this uncalled func for?
-        /*
-        private void some_func(object sender, EventArgs e)
-        {
-            if (state == STATE.Running)
-            {
-                //If started but not entered lock cycle yet -> poll to see if lockable
-                SendCommand(CMD.GETLOCKABLE);
-            }
-
-            SendCommand(CMD.GETROTORFREQ);
-
-            //Log if 4th tick AND Max/Min are meaningful
-            if ((timercycle = (++timercycle) % 4) == 0)
-            {
-                if (PersistentLoggerState.ps.data.IsRMDisabled())
-                {
-                    //RM (min/max) disable period expired
-                    SendCommand(CMD.GETMINMAXPERIODS);
-                    SendCommand(CMD.GETPULSEDELAY);
-                    SendCommand(CMD.GETPID);
-                    //SendCommand(CMD.GETTARGETFREQ); Duh! means can't change!
-                    //PersistentLoggerState.ps.data.Write();
-                }
-            }
-
-        }
-        */
         private void nudP_ValueChanged(object sender, EventArgs e)
         {
             SendCommand(CMD.SETPID);
@@ -700,6 +501,7 @@ namespace MultiDeviceAIO
             MessageBox.Show(msg);
         }
 
+        //TODO: log path
         /* What is this
         private void button1_Click(object sender, EventArgs e)
         {

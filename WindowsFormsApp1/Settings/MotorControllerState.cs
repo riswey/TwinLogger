@@ -6,6 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 
+/*
+ * TODO:
+ * Be able to set the mac metric window when property changes
+ * ? other dynamic changes
+ * 
+ * timerticks are in arduinotimer ticks. When set remember to divide
+ * 
+ */
 namespace MultiDeviceAIO
 {
     public class MotorPropertyAttribute : Attribute { }
@@ -47,9 +55,6 @@ namespace MultiDeviceAIO
 
         #region ROTOR METRIC WINDOW
 
-        //TODO: make moving average period dynamic
-        //TODO: remove crosses/min/max from trailing window boundary
-
         //[XmlIgnore]
         //MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
         MotorController.MovingStatsCrosses mac;
@@ -88,23 +93,9 @@ namespace MultiDeviceAIO
             }
         }
 
-        /*
-         * Metrics used to create rotor constraints
-         * UPPERTARGETBOUNDARY
-         * LOWERTARGETBOUNDARY
-         * TARGET
-         * Current: min_v_target > LOWERTARGETBOUNDARY, max_v_target < UPPERTARGETBOUNDARY
-         * Also
-         * MA (within much tighter bounds of target)
-         * MSTD (< TARGETBOUNDARY)
-         * CROSSES (> n) more crosses -> better stability
-         * ?? Daves Min/Max + Pulse
-         * 
-         */
-
         #endregion
 
-        #region MinMax_TIMER
+        #region Min/Max Rotor Period Request Delay
         //RM (Req. Min/Max) Timer pause
         //Put a timer block on Min/Max calls
         //Start/SetFreq reset min/max which takes 2s to stabilise
@@ -187,8 +178,6 @@ namespace MultiDeviceAIO
 
         #endregion
 
-        //Don't forget period average on rotor speed
-
         public float tolerance { get; set; } = 1.1f;
         //public long stableperiod { get; set; } = 3000;
 
@@ -226,70 +215,12 @@ namespace MultiDeviceAIO
         public float Upper { get; set; }
         [XmlIgnore]
         public float graphrange = 50;        
+        
         [XmlIgnore]
-        public long enterrange = 0;
-
-        //TODO: really questionable whether enterrange state is a parameter state or a machine state!
-        /*
-        public void ResetMotorWindow()
-        {
-            enterrange = 0;
-        }
-        */
+        public bool IsRotorInRange {get {return (rotor_speed > Lower && rotor_speed < Upper)}}
 
         [XmlIgnore]
-        public bool IsRotorInRange
-        {
-            get
-            {
-                if (rotor_speed > Lower && rotor_speed < Upper)
-                {
-                    /*if (enterrange == 0)
-                    {
-                        //just entered
-                        enterrange = GetTime();
-                    }*/
-                    return true;
-                }
-                else
-                {
-                    //enterrange = 0;
-                    return false;
-                }
-            }
-        }
-
-         /*
-        [XmlIgnore]
-        private bool IsRotorStable
-        {
-            get
-            {
-                //NOTE: It calls IsRotorInRange -> ensures enterrange set
-                return IsRotorInRange
-                    &&
-                        (enterrange != 0 && GetTime() - enterrange > stableperiod);
-            }
-        }
-        */
-        [XmlIgnore]
-        public bool IsReadyToSample
-        {
-            get
-            {
-                //Debug.WriteLine("Is stable: " + IsRotorStable);
-                Debug.WriteLine("merged: " + TriggerMerged);
-
-                bool eval = EvalTrigger;
-
-                Debug.WriteLine(this.Upper + "," + this.Lower + "," + Max + "," + Min + "(" + eval + ")");
-
-                return eval || (start_t != 0 && GetTime() - start_t > timeout);
-
-                //DOC: Samples after timeout whatever. This is the window for improved motor control
-                //return IsRotorStable;// || (start_t != 0 && GetTime() - start_t > timeout);
-            }
-        }
+        public bool IsReadyToSample { get{return EvalTrigger || (start_t != 0 && GetTime() - start_t > timeout);}}
 
         void SetBounds()
         {
