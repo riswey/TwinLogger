@@ -154,6 +154,14 @@
             this.lblMinRotorPeriod = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.lblGrad = new System.Windows.Forms.Label();
+            this.label53 = new System.Windows.Forms.Label();
+            this.lblSTD = new System.Windows.Forms.Label();
+            this.label51 = new System.Windows.Forms.Label();
+            this.lblMA = new System.Windows.Forms.Label();
+            this.label49 = new System.Windows.Forms.Label();
+            this.lblCross = new System.Windows.Forms.Label();
+            this.label40 = new System.Windows.Forms.Label();
             this.label46 = new System.Windows.Forms.Label();
             this.txtMetricEval = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
@@ -180,14 +188,10 @@
             this.btnDecRange = new System.Windows.Forms.Button();
             this.timerarduino = new System.Windows.Forms.Timer(this.components);
             this.timergetdata = new System.Windows.Forms.Timer(this.components);
-            this.label40 = new System.Windows.Forms.Label();
-            this.label47 = new System.Windows.Forms.Label();
-            this.lblMA = new System.Windows.Forms.Label();
-            this.label49 = new System.Windows.Forms.Label();
-            this.label50 = new System.Windows.Forms.Label();
-            this.label51 = new System.Windows.Forms.Label();
+            this.lblMax = new System.Windows.Forms.Label();
+            this.label48 = new System.Windows.Forms.Label();
+            this.lblMin = new System.Windows.Forms.Label();
             this.label52 = new System.Windows.Forms.Label();
-            this.label53 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -1483,13 +1487,17 @@
             // tabPage4
             // 
             this.tabPage4.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage4.Controls.Add(this.lblMax);
+            this.tabPage4.Controls.Add(this.label48);
+            this.tabPage4.Controls.Add(this.lblMin);
             this.tabPage4.Controls.Add(this.label52);
+            this.tabPage4.Controls.Add(this.lblGrad);
             this.tabPage4.Controls.Add(this.label53);
-            this.tabPage4.Controls.Add(this.label50);
+            this.tabPage4.Controls.Add(this.lblSTD);
             this.tabPage4.Controls.Add(this.label51);
             this.tabPage4.Controls.Add(this.lblMA);
             this.tabPage4.Controls.Add(this.label49);
-            this.tabPage4.Controls.Add(this.label47);
+            this.tabPage4.Controls.Add(this.lblCross);
             this.tabPage4.Controls.Add(this.label40);
             this.tabPage4.Controls.Add(this.label46);
             this.tabPage4.Controls.Add(this.txtMetricEval);
@@ -1506,6 +1514,78 @@
             this.tabPage4.Size = new System.Drawing.Size(479, 134);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Trigger";
+            // 
+            // lblGrad
+            // 
+            this.lblGrad.AutoSize = true;
+            this.lblGrad.Location = new System.Drawing.Point(292, 55);
+            this.lblGrad.Name = "lblGrad";
+            this.lblGrad.Size = new System.Drawing.Size(41, 13);
+            this.lblGrad.TabIndex = 84;
+            this.lblGrad.Text = "label52";
+            // 
+            // label53
+            // 
+            this.label53.AutoSize = true;
+            this.label53.Location = new System.Drawing.Point(238, 55);
+            this.label53.Name = "label53";
+            this.label53.Size = new System.Drawing.Size(30, 13);
+            this.label53.TabIndex = 83;
+            this.label53.Text = "Grad";
+            // 
+            // lblSTD
+            // 
+            this.lblSTD.AutoSize = true;
+            this.lblSTD.Location = new System.Drawing.Point(292, 33);
+            this.lblSTD.Name = "lblSTD";
+            this.lblSTD.Size = new System.Drawing.Size(41, 13);
+            this.lblSTD.TabIndex = 82;
+            this.lblSTD.Text = "label50";
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Location = new System.Drawing.Point(238, 33);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(46, 13);
+            this.label51.TabIndex = 81;
+            this.label51.Text = "Std Dev";
+            // 
+            // lblMA
+            // 
+            this.lblMA.AutoSize = true;
+            this.lblMA.Location = new System.Drawing.Point(292, 10);
+            this.lblMA.Name = "lblMA";
+            this.lblMA.Size = new System.Drawing.Size(41, 13);
+            this.lblMA.TabIndex = 80;
+            this.lblMA.Text = "label48";
+            // 
+            // label49
+            // 
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(238, 10);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(35, 13);
+            this.label49.TabIndex = 79;
+            this.label49.Text = "MAvg";
+            // 
+            // lblCross
+            // 
+            this.lblCross.AutoSize = true;
+            this.lblCross.Location = new System.Drawing.Point(292, 80);
+            this.lblCross.Name = "lblCross";
+            this.lblCross.Size = new System.Drawing.Size(41, 13);
+            this.lblCross.TabIndex = 78;
+            this.lblCross.Text = "label47";
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(239, 80);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(44, 13);
+            this.label40.TabIndex = 77;
+            this.label40.Text = "Crosses";
             // 
             // label46
             // 
@@ -1760,77 +1840,41 @@
             this.timergetdata.Interval = 400;
             this.timergetdata.Tick += new System.EventHandler(this.data_Tick);
             // 
-            // label40
+            // lblMax
             // 
-            this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(239, 80);
-            this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(44, 13);
-            this.label40.TabIndex = 77;
-            this.label40.Text = "Crosses";
+            this.lblMax.AutoSize = true;
+            this.lblMax.Location = new System.Drawing.Point(412, 33);
+            this.lblMax.Name = "lblMax";
+            this.lblMax.Size = new System.Drawing.Size(41, 13);
+            this.lblMax.TabIndex = 88;
+            this.lblMax.Text = "label50";
             // 
-            // label47
+            // label48
             // 
-            this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(292, 80);
-            this.label47.Name = "label47";
-            this.label47.Size = new System.Drawing.Size(41, 13);
-            this.label47.TabIndex = 78;
-            this.label47.Text = "label47";
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(358, 33);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(27, 13);
+            this.label48.TabIndex = 87;
+            this.label48.Text = "Max";
             // 
-            // lblMA
+            // lblMin
             // 
-            this.lblMA.AutoSize = true;
-            this.lblMA.Location = new System.Drawing.Point(292, 10);
-            this.lblMA.Name = "lblMA";
-            this.lblMA.Size = new System.Drawing.Size(41, 13);
-            this.lblMA.TabIndex = 80;
-            this.lblMA.Text = "label48";
-            // 
-            // label49
-            // 
-            this.label49.AutoSize = true;
-            this.label49.Location = new System.Drawing.Point(238, 10);
-            this.label49.Name = "label49";
-            this.label49.Size = new System.Drawing.Size(44, 13);
-            this.label49.TabIndex = 79;
-            this.label49.Text = "Crosses";
-            // 
-            // label50
-            // 
-            this.label50.AutoSize = true;
-            this.label50.Location = new System.Drawing.Point(292, 33);
-            this.label50.Name = "label50";
-            this.label50.Size = new System.Drawing.Size(41, 13);
-            this.label50.TabIndex = 82;
-            this.label50.Text = "label50";
-            // 
-            // label51
-            // 
-            this.label51.AutoSize = true;
-            this.label51.Location = new System.Drawing.Point(238, 33);
-            this.label51.Name = "label51";
-            this.label51.Size = new System.Drawing.Size(44, 13);
-            this.label51.TabIndex = 81;
-            this.label51.Text = "Crosses";
+            this.lblMin.AutoSize = true;
+            this.lblMin.Location = new System.Drawing.Point(412, 10);
+            this.lblMin.Name = "lblMin";
+            this.lblMin.Size = new System.Drawing.Size(41, 13);
+            this.lblMin.TabIndex = 86;
+            this.lblMin.Text = "label48";
             // 
             // label52
             // 
             this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(292, 55);
+            this.label52.Location = new System.Drawing.Point(358, 10);
             this.label52.Name = "label52";
-            this.label52.Size = new System.Drawing.Size(41, 13);
-            this.label52.TabIndex = 84;
-            this.label52.Text = "label52";
-            // 
-            // label53
-            // 
-            this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(238, 55);
-            this.label53.Name = "label53";
-            this.label53.Size = new System.Drawing.Size(44, 13);
-            this.label53.TabIndex = 83;
-            this.label53.Text = "Crosses";
+            this.label52.Size = new System.Drawing.Size(24, 13);
+            this.label52.TabIndex = 85;
+            this.label52.Text = "Min";
             // 
             // FmControlPanel
             // 
@@ -2061,13 +2105,17 @@
         private System.Windows.Forms.NumericUpDown nudTolerance;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.TextBox txtMetricEval;
-        private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.Label lblGrad;
         private System.Windows.Forms.Label label53;
-        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.Label lblSTD;
         private System.Windows.Forms.Label label51;
         private System.Windows.Forms.Label lblMA;
         private System.Windows.Forms.Label label49;
-        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.Label lblCross;
         private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.Label lblMax;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.Label lblMin;
+        private System.Windows.Forms.Label label52;
     }
 }

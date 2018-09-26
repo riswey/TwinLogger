@@ -108,7 +108,7 @@ namespace MotorController
         public float Min { get; private set; } = float.MaxValue;
 
         //MovingStatsCrosses(size, () => {return target;} )
-        public MovingStatsCrosses(int size, D_GetTarget gettarget): base(size)
+        public MovingStatsCrosses(int size, D_GetTarget gettarget) : base(size)
         {
             this.GetTarget = new D_GetTarget(gettarget);
         }
@@ -143,6 +143,9 @@ namespace MotorController
             base.Add(item);
             MeasureBuffer();
         }
+
+        public List<string> BoundPropertiesForUpdate { get; set; } = new List<string>();
     }
+        
 }
  

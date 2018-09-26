@@ -16,7 +16,8 @@ namespace MultiDeviceAIO
         void InitMotorControllerState()
         {
             mac = new MotorController.MovingStatsCrosses(metric_window, () => { return target_speed; } );
-        }
+            mac.BoundPropertiesForUpdate = new List<string>() { "MA","STD","Gradient", "Min", "Max","Crosses"};
+    }
 
         public static long GetTime()   //millisecond time
         {
@@ -83,6 +84,7 @@ namespace MultiDeviceAIO
                 _rotor_speed = value;
                 dt.Rows.Add(x++, target_speed, Upper, Lower, value);
                 mac.Add(value);
+                mac.BoundPropertiesForUpdate.ForEach( p => { InvokePropertyChanged(p); } );
             }
         }
 

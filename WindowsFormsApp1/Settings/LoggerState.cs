@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,7 +16,7 @@ namespace MultiDeviceAIO
     /// Ensures app holds only 1 settings instance -> perhaps make singleton!
     /// </summary>
     [Serializable]
-    public partial class LoggerState
+    public partial class LoggerState : INotifyPropertyChanged
     {
         /// <summary>
         /// Replaces {KEY} defined by hard coded KEYS mapped to object values.
@@ -51,6 +52,15 @@ namespace MultiDeviceAIO
 
             return swaps;
         }
+        //Update binding
+        //InvokePropertyChanged("property_name");
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void InvokePropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(name));
+        }
+
 
         public LoggerState()
         {

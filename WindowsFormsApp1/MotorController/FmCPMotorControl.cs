@@ -128,8 +128,16 @@ namespace MultiDeviceAIO
             //Bind Rotor Stats
             lblMA.DataBindings.Clear();
             lblMA.DataBindings.Add("Text", PersistentLoggerState.ps.data, "MA");
-
-            
+            lblSTD.DataBindings.Clear();
+            lblSTD.DataBindings.Add("Text", PersistentLoggerState.ps.data, "STD");
+            lblGrad.DataBindings.Clear();
+            lblGrad.DataBindings.Add("Text", PersistentLoggerState.ps.data, "Gradient");
+            lblCross.DataBindings.Clear();
+            lblCross.DataBindings.Add("Text", PersistentLoggerState.ps.data, "Crosses");
+            lblMin.DataBindings.Clear();
+            lblMin.DataBindings.Add("Text", PersistentLoggerState.ps.data, "Min");
+            lblMax.DataBindings.Clear();
+            lblMax.DataBindings.Add("Text", PersistentLoggerState.ps.data, "Max");
 
         }
 
