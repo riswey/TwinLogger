@@ -129,5 +129,19 @@ namespace UnitTestProject1
             Assert.AreEqual(mso.Crosses, 0);
 
         }
+
+        [TestMethod]
+        public void TestBufferSizeChange()
+        {
+            MovingStatsCrosses mso = new MovingStatsCrosses(5, () => { return target; });
+
+            mso.Add(1); mso.Add(2); mso.Add(3); mso.Add(4); mso.Add(5);
+            Assert.AreEqual(mso.MA, 3);
+
+            mso.ResizeBuffer(10);
+            mso.Add(1); mso.Add(2); mso.Add(3); mso.Add(4); mso.Add(5);
+            Assert.AreEqual(mso.MA, 1.5);
+
+        }
     }
 }

@@ -852,6 +852,19 @@ namespace MultiDeviceAIO
             Abort();
         }
 
+        void ResetSampling()
+        {
+            //TODO: Can't this just be nextrun(false) to not increment the
+            //(see the call data_Tick when a run ends.
+            timergetdata.Stop();
+            //Success
+            //SaveData();
+            setStartButtonText(0);
+            //RESTART TIMER (only after end of run)!
+            //TimerMonitorState(true);
+            SetStatus("Ready");
+        }
+
         void Abort()
         {
             sm_motor.Event(EVENT.Send_Stop);

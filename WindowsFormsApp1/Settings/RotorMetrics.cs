@@ -24,30 +24,56 @@ namespace MotorController
         }
     }
 
-    //TESTED: 26/09/2018
+    //TESTED: 26/09/2018 (not resize)
     public class MovingStatsOptimal
     {
         protected float[] buffer;
         protected int size, head;
-        private float sum, 
-            sum2,
-            sumxy,
-            regress_denom;
+        private float sum,sum2,sumxy,regress_denom;
 
         public MovingStatsOptimal(int size)
         {
-            sum = 0;
             this.size = size;
-            head = 0;
             buffer = new float[size];
+            Reset();
+        }
+
+        void Reset()
+        {
+            head = 0;
+            sum = sum2 = sumxy = 0;
             /*
              * Simplify:
              * Sum(x - mean_x)^2
              * where x = {0,...,n-1}
-             */
-            regress_denom = (float)(size / 12f * (Math.Pow(size,2) - 1f));
+            */
+            regress_denom = (float)(size / 12f * (Math.Pow(size, 2) - 1f));
         }
-        
+
+        public void ResizeBuffer(int newsize)
+        {
+            
+            float[] newbuffer = new float[newsize];
+            /*
+            //Trying out new coding style: keep it simple! So splitting into 2 cases
+            if (newsize >= size)
+            {
+                Array.Copy(buffer, 0, newbuffer, newsize - size, size);
+                head += newsize - size;
+            }
+            else
+            {
+                Array.Copy(buffer, size - newsize, newbuffer, 0, newsize);
+                head += (2 * size - newsize) % size;
+            }
+            */
+            //TODO: convert stats to new size! Some would work some not
+            Reset();
+
+            size = newsize;
+            buffer = newbuffer;
+        }
+
         public float MA
         {
             get
@@ -108,7 +134,7 @@ namespace MotorController
         }
     }
 
-    //TESTED: 26/09/2018
+    //TESTED: 26/09/2018 (not resize)
     public class MovingStatsCrosses : MovingStatsOptimal
     {
         public delegate float D_GetTarget();
@@ -121,6 +147,19 @@ namespace MotorController
         public MovingStatsCrosses(int size, D_GetTarget gettarget) : base(size)
         {
             this.GetTarget = new D_GetTarget(gettarget);
+        }
+
+        private void Reset()
+        {
+            Crosses = 0;
+            Max = 0;
+            Min = float.MaxValue;
+        }
+
+        public new void ResizeBuffer(int newsize)
+        {
+            base.ResizeBuffer(newsize);
+            //NOTE: no need to reset as crosses/min/max not effected by size (except trailing edge case!)
         }
 
         private void MeasureBuffer()

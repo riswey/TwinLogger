@@ -112,14 +112,12 @@ namespace MultiDeviceAIO
                 }
             }
             catch (Exception ex) {
-                if (ex is ContecClockSignalError || ex is ContecClockSignalError || ex is TTISamplingFailure)
+                if ( ex is ContecDeviceBufferOverflow || ex is ContecClockSignalError || ex is ContecClockSignalError || ex is TTISamplingFailure)
                 {
                     PrintLn("Sampling Exception", true);
-                    timergetdata.Stop();
-                    Abort();
-                    //TODO: recover from an exception
-                    //StartSampling();
-                    throw;
+                    ResetSampling();
+                    StartSampling();
+                    return;
                 }
                 throw;
             }

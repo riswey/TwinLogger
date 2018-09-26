@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace CaioCs
 {
@@ -20,6 +21,8 @@ namespace CaioCs
                   long lParam   // second message parameter
                   );
         */
+
+        string SIMERROR = "OVERFLOW"; //"CLOCK","DRIVER","CONVERT","NONE"
 
         const int RATEOFSAMPLING = 300;
 
@@ -122,6 +125,19 @@ namespace CaioCs
             if (MultiDeviceAIO.PersistentLoggerState.ps.data.external_trigger)
             {
                 devicestate[Id] = CaioConst.AIS_START_TRG;
+                if (SIMERROR == "OVERFLOW")
+                {
+                    Task.Delay(5000).ContinueWith(t => { SIMERROR = "NONE"; devicestate[Id] = CaioConst.AIS_OFERR; });
+                }
+                if (SIMERROR == "CLOCK")
+                    Task.Delay(5000).ContinueWith(t => { SIMERROR = "NONE"; devicestate[Id] = CaioConst.AIS_SCERR; });
+
+                if (SIMERROR == "DRIVER")
+                    Task.Delay(5000).ContinueWith(t => { SIMERROR = "NONE"; devicestate[Id] = CaioConst.AIS_DRVERR; });
+
+                if (SIMERROR == "CONVERT")
+                    Task.Delay(5000).ContinueWith(t => { SIMERROR = "NONE"; devicestate[Id] = CaioConst.AIS_AIERR; });
+
             }
             else
             {
