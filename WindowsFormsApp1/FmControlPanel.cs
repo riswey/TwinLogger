@@ -102,18 +102,6 @@ namespace MultiDeviceAIO
 
         }
 
-        //TODO: Check advice from code checker
-        //TODO: Dispose pattern
-        ~FmControlPanel()
-        {
-            if (myaio != null)
-            {
-                myaio.Close();
-            }
-
-            MotorCleanUp();
-        }
-
         void SetAIO()
         {
             //so can dynamically change AIO device binding (testing mode)
@@ -181,6 +169,8 @@ namespace MultiDeviceAIO
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            MotorCleanUp();
+
             //Give chance to close
             if (myaio != null)
             {
@@ -188,7 +178,6 @@ namespace MultiDeviceAIO
             }
 
             //Commit final AIOSettings.singleInstance to app state 
-
             PersistentLoggerState.ps.Save("settings.xml");
 
             /*

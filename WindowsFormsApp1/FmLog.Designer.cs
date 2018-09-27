@@ -52,6 +52,7 @@
             this.Name = "FmLog";
             this.Text = "Log";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FmLog_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FmLog_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

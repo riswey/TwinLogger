@@ -71,10 +71,6 @@ namespace MultiDeviceAIO
             ReDraw();
         }
 
-        ~FmMonitor()
-        {
-            g.Dispose();
-        }
 
         public static void LoadAccelometerCalibration()
         {
@@ -390,5 +386,10 @@ namespace MultiDeviceAIO
             base.OnShown(e);
         }
 
+        private void FmMonitor_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            g.Dispose();
+            base.OnClosing(e);
+        }
     }
 }

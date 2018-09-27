@@ -23,12 +23,6 @@ namespace MultiDeviceAIO
             InitializeComponent();
         }
 
-        ~FmLog()
-        {
-            //TODO: really finalize?
-            bgq.Dispose();
-        }
-
         public void PrintLn(object msg, bool speak = false, int linebreak = 1)
         {
             switch (linebreak)
@@ -75,7 +69,15 @@ namespace MultiDeviceAIO
         //Can't close
         private void FmLog_FormClosing(object sender, FormClosingEventArgs e)
         {
+            this.WindowState = FormWindowState.Minimized;
             e.Cancel = false;
+            base.OnFormClosing(e);
+        }
+
+        private void FmLog_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            bgq.Dispose();
+            base.OnFormClosed(e);
         }
     }
 }

@@ -42,7 +42,7 @@
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
-            // Monitor
+            // FmMonitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -50,8 +50,9 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(788, 526);
             this.Controls.Add(this.pictureBox1);
-            this.Name = "Monitor";
+            this.Name = "FmMonitor";
             this.Text = "Monitor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FmMonitor_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
