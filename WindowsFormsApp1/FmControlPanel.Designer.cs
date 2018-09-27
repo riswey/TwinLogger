@@ -99,7 +99,7 @@
             this.label14 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
-            this.timermonitor = new System.Windows.Forms.Timer(this.components);
+            this._timermonitor = new System.Windows.Forms.Timer(this.components);
             this.label24 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
@@ -189,8 +189,8 @@
             this.cbxInRange = new System.Windows.Forms.CheckBox();
             this.btnIncRange = new System.Windows.Forms.Button();
             this.btnDecRange = new System.Windows.Forms.Button();
-            this.timerarduino = new System.Windows.Forms.Timer(this.components);
-            this.timergetdata = new System.Windows.Forms.Timer(this.components);
+            this.serialpoller = new System.Windows.Forms.Timer(this.components);
+            this.contecpoller = new System.Windows.Forms.Timer(this.components);
             this.button1 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -902,8 +902,8 @@
             // 
             // timermonitor
             // 
-            this.timermonitor.Interval = 250;
-            this.timermonitor.Tick += new System.EventHandler(this.timer1_Tick);
+            this._timermonitor.Interval = 250;
+            this._timermonitor.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // label24
             // 
@@ -1862,13 +1862,13 @@
             // 
             // timerarduino
             // 
-            this.timerarduino.Interval = 500;
-            this.timerarduino.Tick += new System.EventHandler(this.timerarduino_Tick);
+            this.serialpoller.Interval = 500;
+            this.serialpoller.Tick += new System.EventHandler(this.timerarduino_Tick);
             // 
             // timergetdata
             // 
-            this.timergetdata.Interval = 400;
-            this.timergetdata.Tick += new System.EventHandler(this.data_Tick);
+            this.contecpoller.Interval = 400;
+            this.contecpoller.Tick += new System.EventHandler(this.contecpoller_Tick);
             // 
             // button1
             // 
@@ -2018,7 +2018,7 @@
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateToolStripMenuItem;
-        private System.Windows.Forms.Timer timermonitor;
+        private System.Windows.Forms.Timer _timermonitor;
         private System.Windows.Forms.PictureBox pbStatus;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem1;
@@ -2092,8 +2092,8 @@
         private System.Windows.Forms.CheckBox cbxInRange;
         private System.Windows.Forms.Button btnIncRange;
         private System.Windows.Forms.Button btnDecRange;
-        private System.Windows.Forms.Timer timerarduino;
-        private System.Windows.Forms.Timer timergetdata;
+        private System.Windows.Forms.Timer serialpoller;
+        private System.Windows.Forms.Timer contecpoller;
         private System.Windows.Forms.NumericUpDown nudTargetSpeed;
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label label43;

@@ -15,8 +15,8 @@ namespace MultiDeviceAIO
     public partial class FmControlPanel : Form
     {
 
-        enum APPSTATE { Ready, MotorRunning, Armed, Sampling };
-        enum APPEVENT { Start, ACKStart, Armed, Trigger, ACKTrigger, SamplingError, EndRun, Stop };
+        enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, WaitTrigger, Sampling };
+        enum APPEVENT { InitRun, ACKRotor, Armed, Trigger, ContecTrigger, SamplingError, EndRun, Stop };
 
         StateMachine appstate = new StateMachine(APPSTATE.Ready);
 
@@ -53,18 +53,9 @@ namespace MultiDeviceAIO
             }
 
             InitializeComponent();
-            //enum APPSTATE { Ready, MotorRunning, Armed, Sampling };
-            //enum APPEVENT { Start, ACKStart, Armed, Trigger, ACKTrigger, SamplingError, EndRun, Stop };
-            /*
-            appstate.AddRule(APPSTATE.Ready, APPEVENT.Start, InitRun);
-            appstate.AddRule(APPSTATE.Ready, APPEVENT.ACKStart, APPSTATE.MotorRunning, ackstart);
-            appstate.AddRule(APPSTATE.MotorRunning, APPEVENT.Armed, APPSTATE.Armed);
-            appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, sendtrigger);
-            appstate.AddRule(APPSTATE.Armed, APPEVENT.ACKTrigger, APPSTATE.Sampling, acktrigger);
-            appstate.AddRule(APPSTATE.Sampling, APPEVENT.SamplingError, APPSTATE.MotorRunning, doerror);
-            appstate.AddRule(APPSTATE.Sampling, APPEVENT.EndRun, APPSTATE.MotorRunning, donext);
-            appstate.AddRule(null, APPEVENT.Stop, APPSTATE.Ready, cleanup);
-            */
+
+            InitAppStateMachine();
+
             setStartButtonText(0);
 
             progressBar1.Maximum = 100;
@@ -92,13 +83,13 @@ namespace MultiDeviceAIO
 
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
-            InteractWithDevices();
+            ProcessDrawContecState();
 
             //TODO: We can work this out exactly from amount of data coming in!
             //timergetdata.Interval = ;
 
-            //TODO: this must be stopped while sampling and restarted at end!!!
-            TimerMonitorState(true);
+            //TODO: this should be stopped while sampling
+            TimerMonitorStateOn(true);
 
         }
 
@@ -306,25 +297,28 @@ namespace MultiDeviceAIO
 
         private void startToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InitRun();
-            //appstate.Event(APPEVENT.Start);
+            //InitRun();
+            appstate.Event(APPEVENT.InitRun);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            InitRun();
-            //appstate.Event(APPEVENT.Start);
+            //InitRun();
+            appstate.Event(APPEVENT.InitRun);
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            StopScheduleRun();
+            appstate.Event(APPEVENT.Stop);
+            //StopScheduleRun();
         }
 
         string startbuttontext = "Ready";
 
         void setStartButtonText(int code)
         {
+            //You can take a APPSTATE parameter
+
             if (InvokeRequired)
             {
                 this.Invoke(new Action(() => setStartButtonText(code)));
@@ -483,25 +477,46 @@ namespace MultiDeviceAIO
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Abort();
+            appstate.Event(APPEVENT.Stop);
+            //Abort();
         }
 
         public void btnIncRange_Click(object sender, EventArgs e)
         {
             PersistentLoggerState.ps.data.graphrange *= 1.1f;
-            UpdateYScale();
+            UpdateChartYScale();
         }
 
         public void btnDecRange_Click(object sender, EventArgs e)
         {
             PersistentLoggerState.ps.data.graphrange /= 1.1f;
-            UpdateYScale();
+            UpdateChartYScale();
         }
 
         private void stopESCToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Abort();
+            appstate.Event(APPEVENT.Stop);
+            //Abort();
         }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Escape)
+            {
+                //Abort
+                appstate.Event(APPEVENT.Stop);
+                //Abort();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            sm_motor.Event(EVENT.Send_Trigger);
+        }
+
 
         #endregion
 
@@ -616,12 +631,12 @@ namespace MultiDeviceAIO
             var snapshot = myaio.ChannelsSnapShotBinary(PersistentLoggerState.ps.data.n_channels);
             Accelerometer.setChannelData(snapshot);
 
-            DrawStatus(Accelerometer.ArrayStatus());
+            DrawAccArrayStatus(Accelerometer.ArrayStatus());
 
             if (monitor != null) monitor.ReDraw();
         }
 
-        private void DrawStatus(int status)
+        private void DrawAccArrayStatus(int status)
         {
             switch (status)
             {
@@ -641,7 +656,7 @@ namespace MultiDeviceAIO
         }
 
         //TODO: these can be passed as an array to the device and have it DrawStatus()
-        private void DrawStatusStrip(int[] status)
+        private void DrawContecStatusStrip(int[] status)
         {
             if (status.Length == 0) return;
 
@@ -685,246 +700,150 @@ namespace MultiDeviceAIO
             }
         }
 
-        private void TimerMonitorState(bool on)
+        private void TimerMonitorStateOn(bool on)
         {
             if (on)
             {
-                timermonitor.Start();
+                _timermonitor.Start();
                 monitorChannelsToolStripMenuItem.Enabled = true;
             }
             else
             {
                 pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
                 monitorChannelsToolStripMenuItem.Enabled = false;
-                timermonitor.Stop();
+                _timermonitor.Stop();
                 if (monitor != null) monitor.Close();
             }
         }
 
         #endregion
 
-        #region CallBack
+        #region AppState
 
-        /*  NEED A CALLBACK TO KNOW WHEN TRIGGER STARTED
-         *  IT WILL NOT ALLOW STATE REQUEST WHILE RUNNING
-         *************************************************/
-        /*
-        static public GCHandle gCh;
-        static public MyAIO.PAICALLBACK pdelegate_func;
-        static public IntPtr pfunc;
-
-        unsafe private void Form_AiCall_Load(object sender, System.EventArgs e)
+        void InitAppStateMachine()
         {
-            // Initialize the delegate for event notification
-            pdelegate_func = new MyAIO.PAICALLBACK(CallBackProc);
-            // Do not release the delegate
-            if (gCh.IsAllocated == false)
+            ///Entry point button
+            appstate.AddRule(APPSTATE.Ready, APPEVENT.InitRun, APPSTATE.WaitRotor, InitRun);                //->Send Start Rotor
+            appstate.AddRule(APPSTATE.WaitRotor, APPEVENT.ACKRotor, APPSTATE.TestRunning, NextRun);                                         //Start next run
+
+            //Entry point device state
+            appstate.AddRule(APPSTATE.TestRunning, APPEVENT.Armed, APPSTATE.Armed, (string index) =>
             {
-                gCh = GCHandle.Alloc(pdelegate_func);
-            }
+                PrintLn("Armed", true);
+                setStartButtonText(1);
+                //DOCS: Auto Trigger to by-pass motorcontol in testing
+                //if (PersistentLoggerState.ps.data.testingmode)
+                //    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
+            });
+            appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.WaitTrigger, (string index) => sm_motor.Event(EVENT.Send_Trigger));
+            appstate.AddRule(APPSTATE.WaitTrigger, APPEVENT.ContecTrigger, APPSTATE.Sampling, (string index) =>
+            {
+                PrintLn("Triggered", true);
+                setStartButtonText(2);
+            });
+            appstate.AddRule(null, APPEVENT.SamplingError, APPSTATE.TestRunning, HandleSamplingError);
+            appstate.AddRule(APPSTATE.Sampling, APPEVENT.EndRun, APPSTATE.TestRunning, (string index) => 
+            {
+                SaveData();
+                RunFinished();
+                NextFreq(index);
+            });
+            appstate.AddRule(null, APPEVENT.Stop, APPSTATE.Ready, StopSeries);
+            appstate.AddRule(APPSTATE.TestRunning, APPEVENT.Stop, APPSTATE.Ready, StopSeries);
+
         }
 
-        private void Form_AiCall_FormClosed(object sender, FormClosedEventArgs e)
+        //Run before series
+        void InitRun(string index)
         {
-            // Release the garbage collection handle of the delegate for event notification
-            if (gCh.IsAllocated == true)
-            {
-                gCh.Free();
-            }
-        }
-
-        //CallBacks
-        unsafe public int CallBackProc(short Id, short Message, int wParam, int lParam, void* Param)
-        {
-            if (InvokeRequired)
-            {
-                //Put on main thread anyway
-                //Invoke(new Action(() => CallBackProc(Id, Message, wParam, lParam, Param)));
-                //return 0;
-            }
-
-            switch ((CaioConst)Message)
-            {
-                case CaioConst.AIOM_AIE_START:
-                    myaio.state = 2;
-                    break;
-            }
-            return 0;
-        }
-        */
-
-        //
-        // USB Notify
-        //
-        /*
-        private const int WM_DEVICECHANGE = 0x0219;  // int = 537
-        private const int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 0x00000004;
-
-        private bool readytodevicechange = false;
-        private int numdeviceschanged = 0;
-
-        protected override void WndProc(ref Message m)
-        {
-            switch(m.Msg)
-            {
-                case WM_DEVICECHANGE:
-                    //msg=0x219 (WM_DEVICECHANGE) hwnd=0x230352 wparam=0x7 lparam=0x0 result=0x0
-                    //multiple fires!
-                    PrintLn(m.ToString());
-                    if (readytodevicechange)
-                    {
-                        readytodevicechange = false;
-                        HandleDeviceChange();
-                    }
-
-                    break;
-            }
-            base.WndProc(ref m);
-        }
-
-        void HandleDeviceChange()
-        {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action(() => HandleDeviceChange() ));
-                return;
-            }
-
-            //This expected 2 devices now!!!
-            numdeviceschanged = (numdeviceschanged + 1) % 2;
-
-            PrintLn("Device Changed");
-
-            if (numdeviceschanged == 0)
-            {
-                PrintLn("Resetting Devices");
-                //TODO or perhaps make resetdevices safe
-                //myaio.ResetDevices(); //it failed in USB transfer
-            }
-
-            readytodevicechange = true;
-        }
-        */
-
-        #endregion
-
-        #region Run Control
-
-        void InitRun()
-        {
-            appstatetemp = 1;
-
-            if (tbDirectory.Text == "")
-            {
-                if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-                {
-                    return;
-                }
-            }
-
+            if (tbDirectory.Text == ""){if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel){return;}}
             PrintLn("----------------------------------------------------\r\nApplied Settings");
             PrintLn(PersistentLoggerState.ps.ToString());
 
-            PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value - (float)nudFreqStep.Value;
-            NextRun();
+            //TODO: for twin this should be 2
+            if (PersistentLoggerState.ps.data.n_devices == 0)
+            {
+                SetStatus("Error: Incorrect Device number. Reset");
+                appstate.Event(APPEVENT.Stop);
+                return;
+            }
+
+            //Start again (too heavy handed)
+            //myaio.ResetDevices();
+            //myaio.CheckDevices();
+
+            PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value;
+
+            //Start motor
+            sm_motor.Event(EVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
+            //Enters wait for ACK
+
+            //TODO: better timer control so that exiting closures ensures they stop/start
+            //STOP Monitor Timer
+            serialpoller.Start();       //Needed to look for serial ACK
+            TimerMonitorStateOn(false);
+            contecpoller.Start();
         }
 
         const int MAXROTORSPEEDFAILSAFE = 200;
-        void NextRun()
+        //At start each run
+        void NextFreq(string index)
         {
-
-            if (appstatetemp == 0) return;
-            /*
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action(() => NextRun() ));
-                return;
-            }
-            */
-
-            //TODO: hacked. Why does the state auto return to Ready after trigger state?
-            sm_motor.state = STATE.Ready.ToString();
-
             PersistentLoggerState.ps.data.target_speed += (float)nudFreqStep.Value;
             if (PersistentLoggerState.ps.data.target_speed > (float)nudFreqTo.Value
                 ||
                 PersistentLoggerState.ps.data.target_speed > MAXROTORSPEEDFAILSAFE
                 )
             {
-                StopScheduleRun();
+                appstate.Event(APPEVENT.Stop);
             }
 
-            //PersistentLoggerState.ps.data.ResetMotorWindow();
+            NextRun(index);
+        }
 
+        void NextRun(string index)
+        {
             //TODO: should be bound more closely to change freq state. But only called once so here.
             SendCommand(CMD.SETFREQ);       //Inform Arduino
-            UpdateYScale();     //DOCS: chart range is auto_updated when data.target_speed changed
-            PrintLn("Target frequency is " + PersistentLoggerState.ps.data.target_speed, true);
-            StartSampling();                //LAX1664 -> Armed State
-            sm_motor.Event(EVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
+            PrintLn("Target frequency " + PersistentLoggerState.ps.data.target_speed, true);
+            //TODO: wait on getfreq!
+            //TODO: this should be on Freq ACK! Use GetFreq data
+            UpdateChartYScale();     //DOCS: chart range is auto_updated when data.target_speed changed
+            myaio.ClearDevices();
+            //var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
+            myaio.SetupTimedSample(PersistentLoggerState.ps.data);
+            PrintLn("Start", true);
+            myaio.Start();
         }
 
-        void StopScheduleRun()
+        void RunFinished()
         {
-            Abort();
-        }
-
-        void ResetSampling()
-        {
-            //TODO: Can't this just be nextrun(false) to not increment the
-            //(see the call data_Tick when a run ends.
-            timergetdata.Stop();
-            //Success
-            //SaveData();
-            setStartButtonText(0);
-            //RESTART TIMER (only after end of run)!
-            //TimerMonitorState(true);
-            SetStatus("Ready");
-        }
-
-        int appstatetemp = 0;
-
-        void Abort()
-        {
-            //TODO: this will be fixed by state machine
-            appstatetemp = 0;
-
-            sm_motor.Event(EVENT.Send_Stop);
-            //Abort
-            timergetdata.Stop();
+            contecpoller.Stop();
             myaio.Stop();
-            //This will cause device inner error if device malfunctioning
-            myaio.ResetTest();
-            //This will hang if the device has failed.
-            myaio.ResetDevices();
-            setStartButtonText(0);
-
-
-
             progressBar1.Value = 0;
+            setStartButtonText(0);
+        }
 
-            timermonitor.Stop();
-            timermonitor.Start();
+        void HandleSamplingError(string index)
+        {
+            PrintLn(index);
+            //Ignore unless sampling -> bad sample -> stop devices, reset data, set up again
+            RunFinished();
+            myaio.ResetDevices();
+            NextRun(index);
+        }
+
+        void StopSeries(string index)
+        {
+            sm_motor.Event(EVENT.Do_Stop);
+            RunFinished();
+            TimerMonitorStateOn(true);
+            serialpoller.Stop();
+            SetStatus("Ready");
             PrintLn("Run Stopped", true);
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == Keys.Escape)
-            {
-                //Abort
-                Abort();
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-
         #endregion
 
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            sm_motor.Event(EVENT.Send_Trigger);
-        }
     }
 }

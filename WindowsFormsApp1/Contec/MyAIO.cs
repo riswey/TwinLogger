@@ -174,7 +174,30 @@ namespace MultiDeviceAIO
 
             return Device.devices.Count();
         }
+        /*    
+        public void CheckDevices()
+        {
+            //TODO: no device check
+            List<int> failedID;
+            if (!myaio.DeviceCheck())
+            {
+                
+                string status = "Error: Devices not responding. Device(s) ";
+                foreach (short f in failedID)
+                {
+                    status += myaio.devicenames[f] + " ";
+                }
 
+                status += "failed.";
+                
+                //SetStatus(status);
+
+                //?Who failed
+                PrintLn("Failed");
+                return;
+            }
+        }
+        */
         public void Close()
         {
             foreach (Device d in Device.devices)
@@ -184,18 +207,13 @@ namespace MultiDeviceAIO
             Device.devices.Clear();
         }
 
-        public void ResetTest()
+        public void ClearDevices()
         {
-            Device.devices.ForEach(d => d.Clear());
-
-            //Reset External Buffers
-            foreach (Device d in Device.devices)
-            {
-                //TODO: this causing problems if the device is frozen
-                //It failed in USB transfer
-                HANDLE_RETURN_VALUES = aio.StopAi(d.id);
-                HANDLE_RETURN_VALUES = aio.ResetAiMemory(d.id);
-            }
+            Device.devices.ForEach(d => {
+                    d.Clear();
+                    HANDLE_RETURN_VALUES = aio.StopAi(d.id);
+                    HANDLE_RETURN_VALUES = aio.ResetAiMemory(d.id);
+            });
         }
 
         public bool DeviceCheck()
@@ -252,25 +270,17 @@ namespace MultiDeviceAIO
 
         public void ResetDevices()
         {
-            //Resets Device.devices and Drivers
-            foreach (Device d in Device.devices)
+            try
             {
-                try
-                {
-                    HANDLE_RETURN_VALUES = aio.ResetDevice(d.id);
-                }
-                catch (Exception ex)
-                {
-                    //It failed in USB transfer.
-                    //TODO low level USB check
-                }
+                Device.devices.ForEach(d => HANDLE_RETURN_VALUES = aio.ResetDevice(d.id));
+            } catch (Exception ex)
+            {
+                Console.WriteLine("Failed Device Reset." + ex.Message);
+                //TODO: how programatically disconnect and reconnect dvices
+                //They show in device manager but not to program
+                //How to debug usb devices? i.e. they show but why not showing up in prog
             }
-
             DiscoverDevices();
-
-            //TODO: how programatically disconnect and reconnect dvices
-            //They show in device manager but not to program
-            //How to debug usb devices? i.e. they show but why not showing up in prog
         }
         /*
         private int GetStatus(DEVICEID id)

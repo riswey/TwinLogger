@@ -6,6 +6,7 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 
 namespace MultiDeviceAIO
 {
+    /*
     class ContecClockSignalError: Exception {
         public ContecClockSignalError(){}
         public ContecClockSignalError(string message): base(message){}
@@ -25,133 +26,50 @@ namespace MultiDeviceAIO
         public TTISamplingFailure(string message) : base(message) { }
         public TTISamplingFailure(string message, Exception inner) : base(message, inner) { }
     }
-
+    */
 
     public partial class FmControlPanel : Form
     {
         
-        void StartSampling()
-        {
-            //TODO: for twin this should be 2
-            if (PersistentLoggerState.ps.data.n_devices == 0)
-            {
-                SetStatus("Error: Incorrect Device number. Reset");
-                return;
-            }
-
-            //Start again (too heavy handed)
-            //myaio.ResetDevices();
-
-            //TODO: no device check
-            /*
-            List<int> failedID;
-            if (!myaio.DeviceCheck())
-            {
-                
-                string status = "Error: Devices not responding. Device(s) ";
-                foreach (short f in failedID)
-                {
-                    status += myaio.devicenames[f] + " ";
-                }
-
-                status += "failed.";
-                
-                //SetStatus(status);
-
-                //?Who failed
-                PrintLn("Failed");
-                return;
-            }
-            */
-
-            var status = new List<int>();
-            myaio.GetStatusAll(ref status);
-
-            ////////////////////////////////////////////////////////////////////
-            // RESET DATA HERE
-            ////////////////////////////////////////////////////////////////////
-
-            myaio.ResetTest();
-
-            var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
-
-            myaio.SetupTimedSample(PersistentLoggerState.ps.data);
-
-            //pfunc = Marshal.GetFunctionPointerForDelegate(pdelegate_func);
-            //myaio.SetAiCallBackProc(pfunc);
-
-
-            //TODO: better timer control so that exiting closures ensures they stop/start
-            //STOP Monitor Timer
-            TimerMonitorState(false);
-
-            PrintLn("Start", true);
-
-            myaio.Start();
-
-            timergetdata.Start();
-        }
-
-        protected void data_Tick(object sender, EventArgs e)
+        protected void contecpoller_Tick(object sender, EventArgs e)
         {
             //This the data collection driver
-            try
-            {
-                if ( InteractWithDevices() )
+            //try
+            //{
+                if ( ProcessDrawContecState() )
                 {
-                    timergetdata.Stop();
-                    //Success
-                    SaveData();
-                    setStartButtonText(0);
-                    //RESTART TIMER (only after end of run)!
-                    //TimerMonitorState(true);
-                    SetStatus("Ready");
-                    //Sampling complete
-                    NextRun();
-                    //Invoke(new Action(() => NextRun()));
-
+                    appstate.Event(APPEVENT.EndRun);
                     return;
                 }
-            }
+            /*}
             catch (Exception ex) {
                 if ( ex is ContecDeviceBufferOverflow || ex is ContecClockSignalError || ex is ContecClockSignalError || ex is TTISamplingFailure)
                 {
-                    PrintLn("Sampling Exception", true);
-                    ResetSampling();
-                    StartSampling();
+                    appstate.Event(APPEVENT.SamplingError);
                     return;
                 }
                 throw;
-            }
+            }*/
         }
 
-        private bool InteractWithDevices()
+        private bool ProcessDrawContecState()
         {
             var status = new List<int>();
 
             myaio.SampleDeviceState(ref status, out int allstatus, out MyAIO.DEVICESTATEDELTA delta);
 
             //Draw status
-            DrawStatusStrip(status.ToArray());
+            DrawContecStatusStrip(status.ToArray());
 
             //Handle delta
             if (delta == MyAIO.DEVICESTATEDELTA.ARMED)
             {
-                //A device just got armed
-                PrintLn("Armed", true);
-                //setStartButtonText(1);
-
-                //DOCS: Auto Trigger to by-pass motorcontol in testing
-                //if (PersistentLoggerState.ps.data.testingmode)
-                //    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
-
+                appstate.Event(APPEVENT.Armed);
             }
 
             if (delta == MyAIO.DEVICESTATEDELTA.SAMPLING)
             {
-                //A device just got triggered
-                PrintLn("Sampling Triggered", true);
-                setStartButtonText(2);
+                appstate.Event(APPEVENT.ContecTrigger);
             }
 
             //Handle bitflags
@@ -159,13 +77,17 @@ namespace MultiDeviceAIO
             //A device got Overflow error
             if (MyAIO.TestBit(allstatus, CaioConst.AIS_OFERR))
             {
-                throw new ContecDeviceBufferOverflow();
+                appstate.Event(APPEVENT.SamplingError);
+                return false;
+                //throw new ContecDeviceBufferOverflow();
             }
 
             //A device got Clock error
             if (MyAIO.TestBit(allstatus, CaioConst.AIS_SCERR))
             {
-                throw new ContecClockSignalError();
+                appstate.Event(APPEVENT.SamplingError);
+                return false;
+                //throw new ContecClockSignalError();
             }
 
             //Collecting data || just got an Idle status after sampling
@@ -180,7 +102,9 @@ namespace MultiDeviceAIO
                 {
                     if (myaio.IsTestFailed)
                     {
-                        throw new TTISamplingFailure();
+                        appstate.Event(APPEVENT.SamplingError);
+                        return false;
+                        //throw new TTISamplingFailure();
                     }
                     return true;
                 }

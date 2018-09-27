@@ -71,7 +71,7 @@ namespace MultiDeviceAIO
 
             chart1.DataSource = PersistentLoggerState.ps.data.dt;
 
-            UpdateYScale();
+            UpdateChartYScale();
 
             //Setup Serial Port
 #if SOFTDEVICE
@@ -199,6 +199,7 @@ namespace MultiDeviceAIO
             sm_motor.AddRule(STATE.Ready, EVENT.Send_Start, new StateMachine.CallBack((string idx) =>
             {
                 //Start
+                //TODO: should wait for freq?
                 SendCommand(CMD.SETFREQ);
                 SendCommand(CMD.GETTARGETFREQ);
                 SendCommand(CMD.START);
@@ -251,11 +252,14 @@ namespace MultiDeviceAIO
             setStartButtonText(3);
             //TODO: need check if lockable before lock when sampling!!!!
             //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
-            this.Invoke(new Action(() => timerarduino.Start()));
+            //this.Invoke(new Action(() => {
+                appstate.Event(APPEVENT.ACKRotor);
+            //}));
         }
 
+        //TODO: Need to move all this btnStart stuffinto main app
+
         void ACK_STOP(string idx) {
-            this.Invoke(new Action(() => timerarduino.Stop()));
             //AsyncDisable(this.btnSetSpeed, false);
             AsyncColor(btnStart, default(Color));
             AsyncText(btnStart, "Start");
@@ -287,14 +291,13 @@ namespace MultiDeviceAIO
 
         void ACK_TRIGGER(string idx) {
             PrintLn("TRIGGER ACK RECEIVED");
-#if SOFTDEVICE
+            #if SOFTDEVICE
             if (PersistentLoggerState.ps.data.testingmode != 0)
             {
-
                 //Simulate a trigger in the LAX1664
                 myaio.SimulateTrigger();
             }
-#endif
+            #endif
         }
 
         void ACK_SETADC(string idx) {
@@ -590,7 +593,7 @@ namespace MultiDeviceAIO
             }
         }
 
-        private void UpdateYScale()
+        private void UpdateChartYScale()
         {
             chart1.ChartAreas[0].AxisY.Maximum = (int)(PersistentLoggerState.ps.data.target_speed + PersistentLoggerState.ps.data.graphrange);
             chart1.ChartAreas[0].AxisY.Minimum = (int)(PersistentLoggerState.ps.data.target_speed - PersistentLoggerState.ps.data.graphrange);
