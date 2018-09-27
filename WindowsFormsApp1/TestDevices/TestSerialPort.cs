@@ -47,7 +47,7 @@ namespace MotorController
         {
             get
             {
-                t += 0.2f;
+                t += 0.8f;
                 float expected = (int)(state.target_f + 100 * (Math.Cos(t) / (t + 1)) + r.NextDouble());
                 return (int)(_roto_freq += (expected - _roto_freq) / 50 * NOISELEVEL);
             }
@@ -64,6 +64,8 @@ namespace MotorController
             min = (long)1E7,
             max = 0
         };
+
+        public void Dispose(){}
 
         Random r = new Random();
 

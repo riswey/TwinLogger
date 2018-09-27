@@ -18,6 +18,7 @@ namespace MultiDeviceAIO
         public int target { get; set; } = 0;
         public bool IsFinished {    get{return data.Count == target;}}
         public bool IsFailed {      get; private set; } = false;
+        public bool HasData { get { return data.Count != 0; } }
 
         public Device(short id, string name)
         {

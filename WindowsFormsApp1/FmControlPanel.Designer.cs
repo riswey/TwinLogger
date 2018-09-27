@@ -190,6 +190,7 @@
             this.btnDecRange = new System.Windows.Forms.Button();
             this.timerarduino = new System.Windows.Forms.Timer(this.components);
             this.timergetdata = new System.Windows.Forms.Timer(this.components);
+            this.stopESCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -348,8 +349,9 @@
             // 
             this.testsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectDirectoryToolStripMenuItem,
+            this.resetDevicesToolStripMenuItem1,
             this.startToolStripMenuItem,
-            this.resetDevicesToolStripMenuItem1});
+            this.stopESCToolStripMenuItem});
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             this.testsToolStripMenuItem.Size = new System.Drawing.Size(45, 20);
             this.testsToolStripMenuItem.Text = "Tests";
@@ -357,21 +359,21 @@
             // selectDirectoryToolStripMenuItem
             // 
             this.selectDirectoryToolStripMenuItem.Name = "selectDirectoryToolStripMenuItem";
-            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.selectDirectoryToolStripMenuItem.Text = "Select Directory...";
             this.selectDirectoryToolStripMenuItem.Click += new System.EventHandler(this.selectDirectoryToolStripMenuItem_Click);
             // 
             // startToolStripMenuItem
             // 
             this.startToolStripMenuItem.Name = "startToolStripMenuItem";
-            this.startToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.startToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.startToolStripMenuItem.Text = "Start";
             this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
             // 
             // resetDevicesToolStripMenuItem1
             // 
             this.resetDevicesToolStripMenuItem1.Name = "resetDevicesToolStripMenuItem1";
-            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(165, 22);
+            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.resetDevicesToolStripMenuItem1.Text = "Reset Devices";
             this.resetDevicesToolStripMenuItem1.Click += new System.EventHandler(this.resetDevicesToolStripMenuItem1_Click);
             // 
@@ -1859,6 +1861,13 @@
             this.timergetdata.Interval = 400;
             this.timergetdata.Tick += new System.EventHandler(this.data_Tick);
             // 
+            // stopESCToolStripMenuItem
+            // 
+            this.stopESCToolStripMenuItem.Name = "stopESCToolStripMenuItem";
+            this.stopESCToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stopESCToolStripMenuItem.Text = "Stop (ESC)";
+            this.stopESCToolStripMenuItem.Click += new System.EventHandler(this.stopESCToolStripMenuItem_Click);
+            // 
             // FmControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2098,5 +2107,6 @@
         private System.Windows.Forms.Label label48;
         private System.Windows.Forms.Label lblMin;
         private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.ToolStripMenuItem stopESCToolStripMenuItem;
     }
 }

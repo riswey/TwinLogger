@@ -74,6 +74,7 @@ namespace MultiDeviceAIO
         }
 
         float _target_speed = 50;
+        [TestProperty]
         public float target_speed
         {
             get
@@ -111,8 +112,9 @@ namespace MultiDeviceAIO
         public float Max { get { return mac.Max; } }
         [MotorProperty]
         public int Crosses { get { return mac.Crosses; } }
-        
+        [XmlIgnore]
         float _rotor_speed = 0;
+        [XmlIgnore]
         public float rotor_speed
         {
             get
@@ -250,7 +252,11 @@ namespace MultiDeviceAIO
         public bool IsRotorInRange {get { return (rotor_speed > Lower && rotor_speed < Upper); }}
 
         [XmlIgnore]
-        public bool IsReadyToSample { get{return EvalTrigger || (start_t != 0 && GetTime() - start_t > timeout);}}
+        public bool IsReadyToSample { get{
+                bool eval = EvalTrigger;
+                Console.WriteLine("Eval T = " + eval);
+                return eval || (start_t != 0 && GetTime() - start_t > timeout);}
+        }
 
         void SetBounds()
         {
@@ -274,7 +280,9 @@ namespace MultiDeviceAIO
 
         public bool EvalTrigger {
             get {
-                return (bool)_dt.Compute(TriggerMerged, "");
+                string smerged = TriggerMerged;
+                Console.WriteLine("SMGE = " + smerged);
+                return (bool)_dt.Compute(smerged, "");
             }
         }
 

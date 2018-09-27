@@ -70,6 +70,7 @@ namespace MultiDeviceAIO
             ////////////////////////////////////////////////////////////////////
             // RESET DATA HERE
             ////////////////////////////////////////////////////////////////////
+
             myaio.ResetTest();
 
             var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
@@ -106,7 +107,8 @@ namespace MultiDeviceAIO
                     //TimerMonitorState(true);
                     SetStatus("Ready");
                     //Sampling complete
-                    Invoke(new Action(() => NextRun()));
+                    NextRun();
+                    //Invoke(new Action(() => NextRun()));
 
                     return;
                 }
@@ -213,14 +215,16 @@ namespace MultiDeviceAIO
         /// <param name="num_samples"></param>
         void SaveData()
         {
-            DATA concatdata = myaio.GetConcatData;
+            myaio._concatdata = new DATA(myaio.GetConcatData());
+
+            scope = new FmScope(myaio._concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration);
 
             //Get new temp and add update AIOSettings.singleInstance
             string filepath = IO.GetFilePathTemp(PersistentLoggerState.ps.data);
 
             filepath = IO.CheckPath(filepath, false);
 
-            IO.SaveDATA(PersistentLoggerState.ps.data, ref filepath, concatdata);
+            IO.SaveDATA(PersistentLoggerState.ps.data, ref filepath, myaio._concatdata);
 
             /*
             //Generate User reports to see what happened

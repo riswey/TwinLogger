@@ -1,5 +1,7 @@
 ﻿NOTES
 =====
+Sample Freq
+500,1000,1500,2000
 
 11.09	Version 2.0 complete (Current Version)
 10.09	Switched from event driven to polling to reduce dependency on unstable devices.
@@ -10,6 +12,11 @@
 18.01	Project Start
 
 
+
+
+
+Finally. Stop/clear devices on exception
+26/9/2018	oops start fired twice! Ensure can't fire when running! (indeed all user events fire at right time)
 
 
 mapping is from local file, switch top setup data.

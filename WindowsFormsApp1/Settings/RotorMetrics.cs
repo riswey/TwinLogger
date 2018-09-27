@@ -140,8 +140,23 @@ namespace MotorController
         public delegate float D_GetTarget();
         D_GetTarget GetTarget;                  //essentially a reference to target
         public int Crosses { get; private set; }
-        public float Max { get; private set; } = 0;
-        public float Min { get; private set; } = float.MaxValue;
+        float _max = 0, _min = float.MaxValue;
+
+        //NOTE public interface must not return false small values, only false large values to avoid false trigger
+        public float Max {
+            get {
+                if (_max == 0) return float.MaxValue;
+                return _max;
+            }
+        }
+        public float Min
+        {
+            get
+            {
+                if (_min == float.MaxValue) return 0;
+                return _min;
+            }
+        }
 
         //DOC: MovingStatsCrosses(size, () => {return target;} )
         public MovingStatsCrosses(int size, D_GetTarget gettarget) : base(size)
@@ -152,8 +167,8 @@ namespace MotorController
         private void Reset()
         {
             Crosses = 0;
-            Max = 0;
-            Min = float.MaxValue;
+            _max = 0;
+            _min = float.MaxValue;
         }
 
         public new void ResizeBuffer(int newsize)
@@ -166,12 +181,12 @@ namespace MotorController
         {
             float local_target = GetTarget();
             Crosses = 0;
-            Min = float.MaxValue;
-            Max = 0;
+            _min = float.MaxValue;
+            _max = 0;
 
             //Do min/max on position behind head
-            Max = Math.Max(buffer[(head - 1 + size) % size], Max);
-            Min = Math.Min(buffer[(head - 1 + size) % size], Min);
+            _max = Math.Max(buffer[(head - 1 + size) % size], _max);
+            _min = Math.Min(buffer[(head - 1 + size) % size], _min);
 
             float v1, v2;
             //size-1 intervals
@@ -197,8 +212,8 @@ namespace MotorController
                 //if v1 == target then look v0 (if exists)
                 //if v2 == target then look v3 (if exists)
 
-                Max = Math.Max(v1, Max);
-                Min = Math.Min(v1, Min);
+                _max = Math.Max(v1, _max);
+                _min = Math.Min(v1, _min);
             }
 
         }

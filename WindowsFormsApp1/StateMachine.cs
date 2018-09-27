@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 //Maps indexes of type: event:state -> newstate, [callback]
 
+//TODO: func return bool indicate whether to change state
+
 namespace MultiDeviceAIO
 {
     class StateMachine

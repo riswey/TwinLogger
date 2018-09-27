@@ -15,21 +15,25 @@ namespace MultiDeviceAIO
     public partial class FmControlPanel : Form
     {
 
+        enum APPSTATE { Ready, MotorRunning, Armed, Sampling };
+        enum APPEVENT { Start, ACKStart, Armed, Trigger, ACKTrigger, SamplingError, EndRun, Stop };
+
+        StateMachine appstate = new StateMachine(APPSTATE.Ready);
+
         MyAIO myaio;
-
         FmMonitor monitor;
-
         FmLog fmlog = new FmLog();
-
+        FmScope scope;
+        /*
         public DATA ConcatData
         {
             get
             {
                 //This is backed by a variable
-                return myaio.GetConcatData;
+                return myaio.GetConcatData();
             }
         }
-
+        */
         //1000hz, 64chan, 5sec
         //
         //int target = 10000;        //sampling freq x duration x 2
@@ -49,7 +53,18 @@ namespace MultiDeviceAIO
             }
 
             InitializeComponent();
-
+            //enum APPSTATE { Ready, MotorRunning, Armed, Sampling };
+            //enum APPEVENT { Start, ACKStart, Armed, Trigger, ACKTrigger, SamplingError, EndRun, Stop };
+            /*
+            appstate.AddRule(APPSTATE.Ready, APPEVENT.Start, InitRun);
+            appstate.AddRule(APPSTATE.Ready, APPEVENT.ACKStart, APPSTATE.MotorRunning, ackstart);
+            appstate.AddRule(APPSTATE.MotorRunning, APPEVENT.Armed, APPSTATE.Armed);
+            appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, sendtrigger);
+            appstate.AddRule(APPSTATE.Armed, APPEVENT.ACKTrigger, APPSTATE.Sampling, acktrigger);
+            appstate.AddRule(APPSTATE.Sampling, APPEVENT.SamplingError, APPSTATE.MotorRunning, doerror);
+            appstate.AddRule(APPSTATE.Sampling, APPEVENT.EndRun, APPSTATE.MotorRunning, donext);
+            appstate.AddRule(null, APPEVENT.Stop, APPSTATE.Ready, cleanup);
+            */
             setStartButtonText(0);
 
             progressBar1.Maximum = 100;
@@ -88,12 +103,15 @@ namespace MultiDeviceAIO
         }
 
         //TODO: Check advice from code checker
+        //TODO: Dispose pattern
         ~FmControlPanel()
         {
             if (myaio != null)
             {
                 myaio.Close();
             }
+
+            MotorCleanUp();
         }
 
         void SetAIO()
@@ -299,26 +317,14 @@ namespace MultiDeviceAIO
 
         private void startToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Who am I?");
-            //StartSampling();
+            InitRun();
+            //appstate.Event(APPEVENT.Start);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            if (tbDirectory.Text == "")
-            {
-                if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-                {
-                    return;
-                }
-            }
-
-            PrintLn("----------------------------------------------------\r\nApplied Settings");
-            PrintLn(PersistentLoggerState.ps.ToString());
-
-            PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value - (float)nudFreqStep.Value;
-            NextRun();
-
+            InitRun();
+            //appstate.Event(APPEVENT.Start);
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -448,17 +454,15 @@ namespace MultiDeviceAIO
 
         private void scopeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO: inefficient as must convert data every time
+            //TODO: very inefficient as must convert data every time, and create a new scope
             //Can scope take the dictionary?
+            
+            scope = new FmScope(myaio._concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration);
 
-            using (FmScope scope = new FmScope(myaio.GetConcatData, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration))
+            if (!scope?.IsDisposed ?? false)
             {
-                if (!scope.IsDisposed)
-                {
-                    scope.Show();
-                }
+                scope.Show();
             }
-
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -503,6 +507,11 @@ namespace MultiDeviceAIO
         {
             PersistentLoggerState.ps.data.graphrange /= 1.1f;
             UpdateYScale();
+        }
+
+        private void stopESCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Abort();
         }
 
         #endregion
@@ -812,6 +821,23 @@ namespace MultiDeviceAIO
 
         #region Run Control
 
+        void InitRun()
+        {
+            if (tbDirectory.Text == "")
+            {
+                if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+
+            PrintLn("----------------------------------------------------\r\nApplied Settings");
+            PrintLn(PersistentLoggerState.ps.ToString());
+
+            PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value - (float)nudFreqStep.Value;
+            NextRun();
+        }
+
         const int MAXROTORSPEEDFAILSAFE = 200;
         void NextRun()
         {
@@ -841,7 +867,6 @@ namespace MultiDeviceAIO
             //TODO: should be bound more closely to change freq state. But only called once so here.
             SendCommand(CMD.SETFREQ);       //Inform Arduino
             UpdateYScale();     //DOCS: chart range is auto_updated when data.target_speed changed
-
             PrintLn("Target frequency is " + PersistentLoggerState.ps.data.target_speed, true);
             StartSampling();                //LAX1664 -> Armed State
             sm_motor.Event(EVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
@@ -897,5 +922,6 @@ namespace MultiDeviceAIO
 
 
         #endregion
+
     }
 }

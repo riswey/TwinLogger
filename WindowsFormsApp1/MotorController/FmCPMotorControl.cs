@@ -14,9 +14,12 @@ namespace MultiDeviceAIO
 {
     public partial class FmControlPanel: Form
     {
-        TestSerialPort serialPort1;
-        //SerialPort serialPort1 = new SerialPort();
 
+#if SOFTDEVICE
+    TestSerialPort serialPort1;
+#else
+        SerialPort serialPort1 = new SerialPort();
+#endif
         string TERMINAL = "\n";
         //STATE state = STATE.Ready;
 
@@ -25,6 +28,12 @@ namespace MultiDeviceAIO
         //Task task = null;
 
         //ParameterState parameters = new ParameterState();
+
+        private void MotorCleanUp()
+        {
+            serialPort1.Close();
+            serialPort1?.Dispose();
+        }
 
         public void InitFmCPMotorControl()
         {
@@ -65,8 +74,11 @@ namespace MultiDeviceAIO
             UpdateYScale();
 
             //Setup Serial Port
+#if SOFTDEVICE
             serialPort1 = new TestSerialPort(this);
-            //serialPort1 = new SerialPort();
+#else
+            serialPort1 = new SerialPort();
+#endif
 
             string pn = SearchPorts();
 
@@ -78,8 +90,12 @@ namespace MultiDeviceAIO
             serialPort1.Open();
             serialPort1.DiscardInBuffer();  //clear anything
 
+
+#if SOFTDEVICE
             //TODO: Testing should really have a delegate handling this!
-            //serialPort1.DataReceived += serialPort1_DataReceived;
+#else
+            serialPort1.DataReceived += serialPort1_DataReceived;
+#endif
 
             //TODO: explicitly/clearly put this in the startup sequence
         }
@@ -187,11 +203,14 @@ namespace MultiDeviceAIO
                 SendCommand(CMD.GETTARGETFREQ);
                 SendCommand(CMD.START);
             }));
+
+            //TODO: can remove Callback
             sm_motor.AddRule(STATE.Lockable, EVENT.Send_Start, new StateMachine.CallBack(SEND_LOCK));
             sm_motor.AddRule(STATE.Locked, EVENT.Send_Start, new StateMachine.CallBack(SEND_UNLOCK));
             sm_motor.AddRule(STATE.Lockable, EVENT.Send_Lock, new StateMachine.CallBack(SEND_LOCK));
             sm_motor.AddRule(STATE.Locked, EVENT.Send_Unlock, new StateMachine.CallBack(SEND_UNLOCK));
-            sm_motor.AddRule(StateMachine.OR(STATE.Running, STATE.Lockable, STATE.Locked), EVENT.Send_Stop, new StateMachine.CallBack((string idx) => { SendCommand(CMD.STOP); }));
+
+            sm_motor.AddRule(null, EVENT.Send_Stop, new StateMachine.CallBack((string idx) => { SendCommand(CMD.STOP); }));
             sm_motor.AddRule(StateMachine.OR(STATE.Running, STATE.Lockable, STATE.Locked),
                 EVENT.Send_Trigger,
                 new StateMachine.CallBack((string idx) =>
@@ -199,6 +218,7 @@ namespace MultiDeviceAIO
                     //Send Trigger
                     SendCommand(CMD.SETADC);
                     SendCommand(CMD.GETADC);
+                    Console.WriteLine("Send Trigger");
                     PrintLn("Send Trigger", true);
                     SendCommand(CMD.TRIGGER);
                 }));
@@ -345,6 +365,14 @@ namespace MultiDeviceAIO
 
         void HandlePacket(string packet)
         {
+            //NOTE: Updating settings -> GUI update and cross thread error 
+            //TODO: can we move the main thread load later in process
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(() => HandlePacket(packet) ));
+                return;
+            }
+
             AsyncText(tbxHistory, packet + "\r\n", -1);
 
             //New - API has no space in ACK
@@ -369,6 +397,7 @@ namespace MultiDeviceAIO
                 case DATATYPES.ACK:
                     //ACK events
                     Enums.ACKDecode.TryGetValue(data[1], out EVENT ack_event);
+                    Console.WriteLine( "Ack event: " + ack_event.ToString() );
                     sm_motor.Event(ack_event);
                     break;
                 case DATATYPES.GETPULSEDELAY:

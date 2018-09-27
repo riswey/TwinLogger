@@ -61,7 +61,6 @@ namespace MultiDeviceAIO
             if (handler != null) handler(this, new PropertyChangedEventArgs(name));
         }
 
-
         public LoggerState()
         {
             InitMotorControllerState();
@@ -72,6 +71,7 @@ namespace MultiDeviceAIO
         public string version { get; } = "2.1";       //Logger content version
 
         //TODO: shouldn't these be null? And test for null in prog. OR doesn't it serialise?
+        [TestProperty]
         public string testpath { get; set; } = "";       //Path to test data
         public string temp_filename {get;set;} = "";  //last temp filename (recover)
         public string datafileformat { get; set; } = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_f{FREQUENCY}";

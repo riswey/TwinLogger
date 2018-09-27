@@ -116,16 +116,14 @@ namespace MultiDeviceAIO
 
         public double testtarget { get; private set; } = 1e5;
 
-        //Ensure you have only one copy of this!
-        public DATA concatdata { get; private set; } = null;      //Keep for Scope
-
-
         public MyAIO(int testing)
         {
             if (testing != 0)
                 aio = new CaioTest();
             else
+            {
                 aio = new Caio();
+            }
         }
 
         ~MyAIO()
@@ -188,11 +186,7 @@ namespace MultiDeviceAIO
 
         public void ResetTest()
         {
-
-            foreach (Device d in Device.devices)
-            {
-                d.Clear();
-            }
+            Device.devices.ForEach(d => d.Clear());
 
             //Reset External Buffers
             foreach (Device d in Device.devices)
@@ -377,18 +371,15 @@ namespace MultiDeviceAIO
                 //d.buffer = new int[TIMERPERIOD / 1000 * settings.sample_frequency * settings.n_channels * 2];
 
             }
-
-            //Reset data state
-            concatdata = null;
-
+            
+            //Moved null to Start
         }
 
         public void Start()
         {
-            foreach (Device d in Device.devices)
-            {
-                HANDLE_RETURN_VALUES = aio.StartAi(d.id);
-            }
+            //Reset data state
+            //_concatdata = null;
+            Device.devices.ForEach(d => HANDLE_RETURN_VALUES = aio.StartAi(d.id) );
         }       
 
         public void Stop()
@@ -482,27 +473,26 @@ namespace MultiDeviceAIO
         /// </summary>
         /// <param name="concatdata"></param>
         /// <returns></returns>
-
-        //TODO: With all this state need to reset object at some stage!!
+        public DATA _concatdata;    //Keep for Scope
+        public DATA GetConcatData()
+        {
+            DATA concat = new DATA();
+            Device.devices.ForEach(d => {if (d.HasData) concat.Add(d.id, d.data); }  );
+            return concat;
+        }
+        /*
         public DATA GetConcatData
         {
             get
             {
-                if (concatdata == null)
+                if (_concatdata == null)
                 {
-                    concatdata = new DATA();
-
-                    Device.devices.ForEach(d => concatdata.Add(d.id, d.data));
-                    /*
-                    foreach (Device d in Device.devices)
-                    {
-                        concatdata.Add(d.id, d.data);
-                    }
-                    */
+                    StoreConcatData();
                 }
-                return concatdata;
+                return _concatdata;
             }
         }
+        */
 
         public List<float[]> ChannelsSnapShot(short n_channels)
         {

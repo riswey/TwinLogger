@@ -89,7 +89,7 @@ namespace MotorController
             {CMD.GETMINMAXPERIODS, "RM" },
             {CMD.GETPID, "RP" },
             {CMD.GETLOCKABLE, "RL" },
-            {CMD.GETADC, "RA" }
+            {CMD.GETADC, "AF" }
         };
 
         //Convert Serial Code to Command (ACK return codes = Calling codes)
