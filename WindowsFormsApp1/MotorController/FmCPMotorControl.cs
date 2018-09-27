@@ -218,7 +218,6 @@ namespace MultiDeviceAIO
                     //Send Trigger
                     SendCommand(CMD.SETADC);
                     SendCommand(CMD.GETADC);
-                    Console.WriteLine("Send Trigger");
                     PrintLn("Send Trigger", true);
                     SendCommand(CMD.TRIGGER);
                 }));
@@ -287,11 +286,15 @@ namespace MultiDeviceAIO
         }
 
         void ACK_TRIGGER(string idx) {
+            PrintLn("TRIGGER ACK RECEIVED");
+#if SOFTDEVICE
             if (PersistentLoggerState.ps.data.testingmode != 0)
             {
+
                 //Simulate a trigger in the LAX1664
                 myaio.SimulateTrigger();
             }
+#endif
         }
 
         void ACK_SETADC(string idx) {

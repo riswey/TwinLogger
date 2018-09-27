@@ -14,10 +14,14 @@ Sample Freq
 
 
 
+start freq/boost other (list in steps)
+
+
+
 
 Finally. Stop/clear devices on exception
 26/9/2018	oops start fired twice! Ensure can't fire when running! (indeed all user events fire at right time)
-
+limit ADC
 
 mapping is from local file, switch top setup data.
 

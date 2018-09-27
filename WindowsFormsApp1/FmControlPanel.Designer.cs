@@ -48,8 +48,9 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetDevicesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopESCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.motorControllerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.monitorChannelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -190,7 +191,7 @@
             this.btnDecRange = new System.Windows.Forms.Button();
             this.timerarduino = new System.Windows.Forms.Timer(this.components);
             this.timergetdata = new System.Windows.Forms.Timer(this.components);
-            this.stopESCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button1 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -359,23 +360,30 @@
             // selectDirectoryToolStripMenuItem
             // 
             this.selectDirectoryToolStripMenuItem.Name = "selectDirectoryToolStripMenuItem";
-            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.selectDirectoryToolStripMenuItem.Text = "Select Directory...";
             this.selectDirectoryToolStripMenuItem.Click += new System.EventHandler(this.selectDirectoryToolStripMenuItem_Click);
-            // 
-            // startToolStripMenuItem
-            // 
-            this.startToolStripMenuItem.Name = "startToolStripMenuItem";
-            this.startToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.startToolStripMenuItem.Text = "Start";
-            this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
             // 
             // resetDevicesToolStripMenuItem1
             // 
             this.resetDevicesToolStripMenuItem1.Name = "resetDevicesToolStripMenuItem1";
-            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(165, 22);
             this.resetDevicesToolStripMenuItem1.Text = "Reset Devices";
             this.resetDevicesToolStripMenuItem1.Click += new System.EventHandler(this.resetDevicesToolStripMenuItem1_Click);
+            // 
+            // startToolStripMenuItem
+            // 
+            this.startToolStripMenuItem.Name = "startToolStripMenuItem";
+            this.startToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.startToolStripMenuItem.Text = "Start";
+            this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
+            // 
+            // stopESCToolStripMenuItem
+            // 
+            this.stopESCToolStripMenuItem.Name = "stopESCToolStripMenuItem";
+            this.stopESCToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.stopESCToolStripMenuItem.Text = "Stop (ESC)";
+            this.stopESCToolStripMenuItem.Click += new System.EventHandler(this.stopESCToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -1250,6 +1258,7 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage1.Controls.Add(this.button1);
             this.tabPage1.Controls.Add(this.label41);
             this.tabPage1.Controls.Add(this.nudTargetSpeed);
             this.tabPage1.Controls.Add(this.lblState);
@@ -1861,12 +1870,15 @@
             this.timergetdata.Interval = 400;
             this.timergetdata.Tick += new System.EventHandler(this.data_Tick);
             // 
-            // stopESCToolStripMenuItem
+            // button1
             // 
-            this.stopESCToolStripMenuItem.Name = "stopESCToolStripMenuItem";
-            this.stopESCToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.stopESCToolStripMenuItem.Text = "Stop (ESC)";
-            this.stopESCToolStripMenuItem.Click += new System.EventHandler(this.stopESCToolStripMenuItem_Click);
+            this.button1.Location = new System.Drawing.Point(234, 100);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 49;
+            this.button1.Text = "Trigger";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // FmControlPanel
             // 
@@ -2108,5 +2120,6 @@
         private System.Windows.Forms.Label lblMin;
         private System.Windows.Forms.Label label52;
         private System.Windows.Forms.ToolStripMenuItem stopESCToolStripMenuItem;
+        private System.Windows.Forms.Button button1;
     }
 }

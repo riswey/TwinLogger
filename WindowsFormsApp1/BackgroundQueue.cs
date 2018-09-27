@@ -7,10 +7,18 @@ using System.Threading.Tasks;
 
 namespace MultiDeviceAIO
 {
-    public class BackgroundQueue
+    public class BackgroundQueue: IDisposable
     {
+
         private Task previousTask = Task.FromResult(true);
         private object key = new object();
+
+        public void Dispose()
+        {
+            //TODO: Race conditions if not allowed to complete?
+            previousTask.Dispose();
+        }
+
         public Task QueueTask(Action action)
         {
             lock (key)
@@ -35,5 +43,6 @@ namespace MultiDeviceAIO
                 return task;
             }
         }
+
     }
 }

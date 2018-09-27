@@ -16,11 +16,17 @@ namespace MultiDeviceAIO
     {
         string text = "";
 
-        static BackgroundQueue bgqueue = new BackgroundQueue();
+        BackgroundQueue bgq = new BackgroundQueue();
 
         public FmLog()
         {
             InitializeComponent();
+        }
+
+        ~FmLog()
+        {
+            //TODO: really finalize?
+            bgq.Dispose();
         }
 
         public void PrintLn(object msg, bool speak = false, int linebreak = 1)
@@ -54,7 +60,7 @@ namespace MultiDeviceAIO
         void SayMessage(string msg)
         {
             //Actual speech is very very resource hungry!
-            bgqueue.QueueTask(() =>
+            bgq.QueueTask(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
                 using (SpeechSynthesizer synth = new SpeechSynthesizer())

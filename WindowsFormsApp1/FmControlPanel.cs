@@ -823,6 +823,8 @@ namespace MultiDeviceAIO
 
         void InitRun()
         {
+            appstatetemp = 1;
+
             if (tbDirectory.Text == "")
             {
                 if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
@@ -842,6 +844,7 @@ namespace MultiDeviceAIO
         void NextRun()
         {
 
+            if (appstatetemp == 0) return;
             /*
             if (InvokeRequired)
             {
@@ -890,8 +893,13 @@ namespace MultiDeviceAIO
             SetStatus("Ready");
         }
 
+        int appstatetemp = 0;
+
         void Abort()
         {
+            //TODO: this will be fixed by state machine
+            appstatetemp = 0;
+
             sm_motor.Event(EVENT.Send_Stop);
             //Abort
             timergetdata.Stop();
@@ -901,6 +909,8 @@ namespace MultiDeviceAIO
             //This will hang if the device has failed.
             myaio.ResetDevices();
             setStartButtonText(0);
+
+
 
             progressBar1.Value = 0;
 
@@ -923,5 +933,9 @@ namespace MultiDeviceAIO
 
         #endregion
 
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            sm_motor.Event(EVENT.Send_Trigger);
+        }
     }
 }
