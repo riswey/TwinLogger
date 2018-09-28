@@ -18,6 +18,13 @@ namespace MultiDeviceAIO
 
         public string state { get; set; }
 
+        //TODO: make this generic
+        //restrict as best to Enum
+        public bool IsState<T>(T enumtype) where T : struct, IConvertible
+        {
+            return state == enumtype.ToString();
+        }
+
         public StateMachine(object state)
         {
             this.state = state.ToString();

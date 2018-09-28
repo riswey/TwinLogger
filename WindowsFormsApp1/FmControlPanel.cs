@@ -50,7 +50,7 @@ namespace MultiDeviceAIO
                 NativeMethods.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
             }
 
-            contecpoller.Interval = CONTECPOLLERSTATE;
+            //contecpoller.Interval = CONTECPOLLERSTATE;
 
             InitializeComponent();
 
@@ -83,7 +83,7 @@ namespace MultiDeviceAIO
 
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
-            ProcessDrawContecState();
+            ProcessDrawContecState(out bool samplingfinished);
 
             //TODO: We can work this out exactly from amount of data coming in!
             //timergetdata.Interval = ;
@@ -731,8 +731,8 @@ namespace MultiDeviceAIO
 
         StateMachine appstate = new StateMachine(APPSTATE.Ready);
 
-        const int CONTECPOLLERSTATE = 1000;
-        const int CONTECPOLLERDATA = 100;
+        //const int CONTECPOLLERSTATE = 1000;
+        //const int CONTECPOLLERDATA = 100;
 
         void InitAppStateMachine()
         {
@@ -756,7 +756,7 @@ namespace MultiDeviceAIO
             });
             appstate.AddRule(APPSTATE.WaitTrigger, APPEVENT.ContecTriggered, APPSTATE.Sampling, (string index) =>
             {
-                contecpoller.Interval = CONTECPOLLERDATA;
+                //contecpoller.Interval = CONTECPOLLERDATA;
                 PrintLn("Triggered", true);
                 setStartButtonText(2);
             });
@@ -839,7 +839,7 @@ namespace MultiDeviceAIO
 
         void RunFinished()
         {
-            contecpoller.Interval = 5000;
+            //contecpoller.Interval = 5000;
             PersistentLoggerState.ps.data.ResetMAC();
             sm_motor.Event(EVENT.Next);
             myaio.Stop();

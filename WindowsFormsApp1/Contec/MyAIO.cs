@@ -70,7 +70,7 @@ namespace MultiDeviceAIO
 
         //TODO: Actually device state is something that devices can manage!!!!!
         //TODO: This will also handle the delta on first || last device event problem 
-        public void SampleDeviceState(ref List<int> status, out int bitflags, out DEVICESTATEDELTA delta)
+        public void MiniContecStateMachine(ref List<int> status, out int bitflags, out DEVICESTATEDELTA delta)
         {
             //set status list
             GetStatusAll(ref status);

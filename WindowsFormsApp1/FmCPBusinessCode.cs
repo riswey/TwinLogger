@@ -40,13 +40,14 @@ namespace MultiDeviceAIO
             AsyncText(lblAppState, appstate.state.ToString());
             AsyncText(lblRotorState, sm_motor.state.ToString());
 
-            if ( ProcessDrawContecState() )
-                {
-                    Debug.WriteLine("Test End A: " + appstate.state);
-                    appstate.Event(APPEVENT.EndRun);
-                    Debug.WriteLine("Test End B: " + appstate.state);
-                return;
-                }
+            ProcessDrawContecState(out bool samplingfinished);
+            if ( samplingfinished )
+            {
+                Debug.WriteLine("Test End A: " + appstate.state);
+                appstate.Event(APPEVENT.EndRun);
+                Debug.WriteLine("Test End B: " + appstate.state);
+            return;
+            }
             /*}
             catch (Exception ex) {
                 if ( ex is ContecDeviceBufferOverflow || ex is ContecClockSignalError || ex is ContecClockSignalError || ex is TTISamplingFailure)
@@ -58,11 +59,21 @@ namespace MultiDeviceAIO
             }*/
         }
 
-        private bool ProcessDrawContecState()
+        private void ProcessDrawContecState(out bool samplingfinished)
         {
+            //DOC: Once sampling keep going until got expected or timeout.
+            //Don't hassle devices with any other requests
+            if (appstate.IsState(APPSTATE.Sampling)) {
+                samplingfinished = DoSampling();
+                return;
+            }
+
+            samplingfinished = false;
+
+            //If not sampling then look at status
             var status = new List<int>();
 
-            myaio.SampleDeviceState(ref status, out int allstatus, out MyAIO.DEVICESTATEDELTA delta);
+            myaio.MiniContecStateMachine(ref status, out int allstatus, out MyAIO.DEVICESTATEDELTA delta);
 
             //Draw status
             DrawContecStatusStrip(status.ToArray());
@@ -71,11 +82,13 @@ namespace MultiDeviceAIO
             if (delta == MyAIO.DEVICESTATEDELTA.ARMED)
             {
                 appstate.Event(APPEVENT.Armed);
+                return;
             }
 
             if (delta == MyAIO.DEVICESTATEDELTA.SAMPLING)
             {
                 appstate.Event(APPEVENT.ContecTriggered);
+                return;
             }
 
             //Handle bitflags
@@ -84,52 +97,60 @@ namespace MultiDeviceAIO
             if (MyAIO.TestBit(allstatus, CaioConst.AIS_OFERR))
             {
                 appstate.Event(APPEVENT.SamplingError);
-                return false;
                 //throw new ContecDeviceBufferOverflow();
+                return;
             }
 
             //A device got Clock error
             if (MyAIO.TestBit(allstatus, CaioConst.AIS_SCERR))
             {
                 appstate.Event(APPEVENT.SamplingError);
-                return false;
                 //throw new ContecClockSignalError();
+                return;
             }
 
             //Collecting data || just got an Idle status after sampling
             if (
                 MyAIO.TestBit(allstatus, CaioConst.AIS_DATA_NUM)
-                || 
-                delta == MyAIO.DEVICESTATEDELTA.READY )         //empty buffers
+                ||
+                delta == MyAIO.DEVICESTATEDELTA.READY)
             {
-                RetrieveData();
+                //Shouldn't be here
+                appstate.Event(APPEVENT.ContecTriggered);
+            }
 
-                //NOTE: if finished then timeout not important
-                if (myaio.IsTestFinished)
-                {
-                    /*
-                    if (myaio.IsTestFailed)
-                    {
-                        appstate.Event(APPEVENT.SamplingError);
-                        return false;
-                        //throw new TTISamplingFailure();
-                    }
-                    */
-                    return true;
-                }
-                else if (myaio.IsTimeout)
+        }
+
+        bool DoSampling()
+        {
+            RetrieveData();
+
+            //NOTE: if finished then timeout not important
+            if (myaio.IsTestFinished)
+            {
+                /*
+                if (myaio.IsTestFailed)
                 {
                     appstate.Event(APPEVENT.SamplingError);
                     return false;
+                    //throw new TTISamplingFailure();
                 }
-
-                {
-
-                }
+                */
+                return true;
             }
-            return false;
+            else if (myaio.IsTimeout)
+            {
+                appstate.Event(APPEVENT.SamplingError);
+                return false;
+            }
+            else
+            {
+                //wait for some more data
+                return false;
+            }
 
         }
+
 
         void ResetUSB()
         {
