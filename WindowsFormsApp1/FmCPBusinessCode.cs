@@ -34,89 +34,65 @@ namespace MultiDeviceAIO
         
         protected void contecpoller_Tick(object sender, EventArgs e)
         {
-            //This the data collection driver
-            //try
-            //{
+            //Data Collection Main
             AsyncText(lblAppState, appstate.state.ToString());
             AsyncText(lblRotorState, sm_motor.state.ToString());
 
-            ProcessDrawContecState(out bool samplingfinished);
-            if ( samplingfinished )
-            {
-                Debug.WriteLine("Test End A: " + appstate.state);
-                appstate.Event(APPEVENT.EndRun);
-                Debug.WriteLine("Test End B: " + appstate.state);
-            return;
-            }
-            /*}
-            catch (Exception ex) {
-                if ( ex is ContecDeviceBufferOverflow || ex is ContecClockSignalError || ex is ContecClockSignalError || ex is TTISamplingFailure)
-                {
-                    appstate.Event(APPEVENT.SamplingError);
-                    return;
-                }
-                throw;
-            }*/
-        }
-
-        private void ProcessDrawContecState(out bool samplingfinished)
-        {
-            //DOC: Once sampling keep going until got expected or timeout.
+            //DOC: Once entered sampling state keep going until got expected or timeout.
             //Don't hassle devices with any other requests
-            if (appstate.IsState(APPSTATE.Sampling)) {
-                samplingfinished = DoSampling();
+            if (appstate.IsState(APPSTATE.DoSampling))
+            {
+                if (DoSampling())
+                {
+                    //Sampling finished
+                    //CRITICAL. Without change of state will hang here!
+                    appstate.Event(APPEVENT.EndRun);
+                }
                 return;
             }
 
-            samplingfinished = false;
-
-            //If not sampling then look at status
-            var status = new List<int>();
-
-            myaio.MiniContecStateMachine(ref status, out int allstatus, out MyAIO.DEVICESTATEDELTA delta);
+            //set status list
+            List<int> status = new List<int>();
+            myaio.GetStatusAll(ref status);
 
             //Draw status
             DrawContecStatusStrip(status.ToArray());
 
-            //Handle delta
-            if (delta == MyAIO.DEVICESTATEDELTA.ARMED)
+            //Process Events
+
+            int bitflags = 0;
+            foreach (int s1 in status)
             {
+                bitflags |= s1;
+            }
+            //0 means idling
+
+            if (((int)CaioConst.AIS_START_TRG & bitflags) != 0)
+            {
+                //Armed
                 appstate.Event(APPEVENT.Armed);
                 return;
             }
 
-            if (delta == MyAIO.DEVICESTATEDELTA.SAMPLING)
+            if (((int)CaioConst.AIS_DATA_NUM & bitflags) != 0)
             {
+                //Got data in buffer
                 appstate.Event(APPEVENT.ContecTriggered);
                 return;
             }
 
-            //Handle bitflags
-
-            //A device got Overflow error
-            if (MyAIO.TestBit(allstatus, CaioConst.AIS_OFERR))
+            if (((int)CaioConst.AIS_OFERR & bitflags) != 0)
             {
+                //Overflow
                 appstate.Event(APPEVENT.SamplingError);
-                //throw new ContecDeviceBufferOverflow();
                 return;
             }
 
-            //A device got Clock error
-            if (MyAIO.TestBit(allstatus, CaioConst.AIS_SCERR))
+            if (((int)CaioConst.AIS_SCERR & bitflags) != 0)
             {
+                //Clock error
                 appstate.Event(APPEVENT.SamplingError);
-                //throw new ContecClockSignalError();
                 return;
-            }
-
-            //Collecting data || just got an Idle status after sampling
-            if (
-                MyAIO.TestBit(allstatus, CaioConst.AIS_DATA_NUM)
-                ||
-                delta == MyAIO.DEVICESTATEDELTA.READY)
-            {
-                //Shouldn't be here
-                appstate.Event(APPEVENT.ContecTriggered);
             }
 
         }

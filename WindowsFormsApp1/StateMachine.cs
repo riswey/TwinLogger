@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,27 +57,40 @@ namespace MultiDeviceAIO
 
         public void Event(object stateevent)
         {
+            string debug = state + "->", match = "";
             string index = CreateIndex(stateevent, state);
             string allindex = CreateIndex(stateevent, ALLSTATECODE);
 
             if (rules.ContainsKey(index))
             {
+                match = rules[index] + "(" + index + ")";
                 state = rules[index];
             }
             else if (rules.ContainsKey(allindex))
             {
+                match = rules[allindex] + "(" + allindex + ")";
                 state = rules[allindex];
+            }
+
+            if (match == "")
+            {
+                match = "nomatch";
             }
 
             //if doesn't exist then null
             if (callbacks.ContainsKey(index))
             {
+                match += "\tEXEC";
                 callbacks[index](index);
             }
             else if (callbacks.ContainsKey(allindex))
             {
+                match += "\tEXECANY";
                 callbacks[allindex](index);
             }
+
+            Debug.WriteLine("#" + this.GetHashCode() + "\t%" + stateevent.ToString() + "%\t" + debug + "\t" + match);
+
         }
 
         public void AddRule(object state, object stateevent, object newstate, CallBack func = null)

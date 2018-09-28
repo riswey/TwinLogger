@@ -54,7 +54,7 @@ namespace MultiDeviceAIO
 
             InitializeComponent();
 
-            InitAppStateMachine();
+            SetupAppStateMachine();
 
             setStartButtonText(0);
 
@@ -168,6 +168,22 @@ namespace MultiDeviceAIO
 
         }
 
+        private void FmControlPanel_Shown(object sender, EventArgs e)
+        {
+            //Now sort Contec devices
+            SetAIO();
+
+            //Draw statusstrip
+            DrawContecStatusStrip();
+
+            //TODO: We can work this out exactly from amount of data coming in!
+            //timergetdata.Interval = ;
+
+            //TODO: this should be stopped while sampling
+            monitorpoller.Start();
+
+        }
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             MotorCleanUp();
@@ -178,13 +194,6 @@ namespace MultiDeviceAIO
             //Commit final AIOSettings.singleInstance to app state 
             PersistentLoggerState.ps.Save("settings.xml");
 
-            /*
-            if (PersistentLoggerState.ps != null && PersistentLoggerState.ps.ExportXML(out string current_xml))
-            {
-                Properties.Settings.Default.processing_settings_current = current_xml;
-                Properties.Settings.Default.Save();
-            }
-            */
             base.OnFormClosing(e);
         }
 
@@ -285,6 +294,11 @@ namespace MultiDeviceAIO
             }
         }
         */
+        private void closeToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
         private void monitorChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             monitor = new FmMonitor(PersistentLoggerState.ps.data.n_channels);
@@ -515,9 +529,8 @@ namespace MultiDeviceAIO
         private void button1_Click_1(object sender, EventArgs e)
         {
             //TODO: overrides app state. Beware!
-            sm_motor.Event(EVENT.Send_Trigger);
+            sm_motor.Event(ARDUINOEVENT.Send_Trigger);
         }
-
 
         #endregion
 
@@ -628,10 +641,17 @@ namespace MultiDeviceAIO
 
         private void monitorPoller_Tick(object sender, EventArgs e)
         {
+            if (!appstate.IsState(APPSTATE.Ready))
+            {
+                pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
+                monitorChannelsToolStripMenuItem.Enabled = false;
+                return;
+            }
+
             if (!myaio.ContecOK())
             {
                 monitorpoller.Stop();
-                if (MessageBox.Show(this, "There is a Contec device error","Contect Error",MessageBoxButtons.RetryCancel,MessageBoxIcon.Error) == DialogResult.Retry)
+                if (MessageBox.Show(this, "There is a Contec device error","Contec Error",MessageBoxButtons.RetryCancel,MessageBoxIcon.Error) == DialogResult.Retry)
                 {
                     myaio.ResetDevices();
                     DiscoverDevices();
@@ -641,13 +661,6 @@ namespace MultiDeviceAIO
                 {
                     this.Close();
                 }
-            }
-
-            if (appstate.IsState(APPSTATE.Sampling))
-            {
-                pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
-                monitorChannelsToolStripMenuItem.Enabled = false;
-                return;
             }
 
             monitorChannelsToolStripMenuItem.Enabled = true;
@@ -680,7 +693,12 @@ namespace MultiDeviceAIO
             }
         }
 
-        //TODO: these can be passed as an array to the device and have it DrawStatus()
+        //TODO: these could be passed as an array to the device and have it DrawStatus()
+        private void DrawContecStatusStrip()
+        {
+            DrawContecStatusStrip(new int[0]);
+        }
+
         private void DrawContecStatusStrip(int[] status)
         {
             if (status.Length == 0) return;
@@ -727,171 +745,5 @@ namespace MultiDeviceAIO
 
         #endregion
 
-        #region AppState
-
-        //Symbols
-        enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, WaitTrigger, Sampling, Error };
-        enum APPEVENT { InitRun, ACKRotor, Armed, Trigger, ContecTriggered, SamplingError, EndRun, Stop };
-
-        StateMachine appstate = new StateMachine(APPSTATE.Ready);
-
-        //const int CONTECPOLLERSTATE = 1000;
-        //const int CONTECPOLLERDATA = 100;
-
-        void InitAppStateMachine()
-        {
-            ///Entry point button
-            appstate.AddRule(APPSTATE.Ready, APPEVENT.InitRun, APPSTATE.WaitRotor, InitRun);                //->Send Start Rotor
-            appstate.AddRule(APPSTATE.WaitRotor, APPEVENT.ACKRotor, APPSTATE.TestRunning, NextRun);                                         //Start next run
-
-            //Entry point device state
-            appstate.AddRule(APPSTATE.TestRunning, APPEVENT.Armed, APPSTATE.Armed, (string index) =>
-            {
-                PrintLn("Armed", true);
-                setStartButtonText(1);
-                //DOCS: Auto Trigger to by-pass motorcontol in testing
-                //if (PersistentLoggerState.ps.data.testingmode)
-                //    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
-            });
-            appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.WaitTrigger, (string index) =>
-            {
-                sm_motor.Event(EVENT.Send_Lock);
-                sm_motor.Event(EVENT.Send_Trigger);
-            });
-            appstate.AddRule(APPSTATE.WaitTrigger, APPEVENT.ContecTriggered, APPSTATE.Sampling, (string index) =>
-            {
-                //contecpoller.Interval = CONTECPOLLERDATA;
-                PrintLn("Triggered", true);
-                setStartButtonText(2);
-            });
-            appstate.AddRule(null, APPEVENT.SamplingError, APPSTATE.TestRunning, HandleSamplingError);
-            appstate.AddRule(APPSTATE.Sampling, APPEVENT.EndRun, APPSTATE.TestRunning, (string index) => 
-            {
-                SaveData();
-                PrintLn("Saved", true);
-                RunFinished();
-                NextFreq(index);
-            });
-            appstate.AddRule(null, APPEVENT.Stop, APPSTATE.Ready, StopSeries);
-            appstate.AddRule(APPSTATE.TestRunning, APPEVENT.Stop, APPSTATE.Ready, StopSeries);
-
-        }
-
-        //Run before series
-        void InitRun(string index)
-        {
-            if (tbDirectory.Text == ""){if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel){return;}}
-            PrintLn("----------------------------------------------------\r\nApplied Settings");
-            PrintLn(PersistentLoggerState.ps.ToString());
-
-            //TODO: for twin this should be 2
-            if (PersistentLoggerState.ps.data.n_devices == 0)
-            {
-                SetStatus("Error: Incorrect Device number. Reset");
-                appstate.Event(APPEVENT.Stop);
-                return;
-            }
-
-            //Start again (too heavy handed)
-            //myaio.ResetDevices();
-            //myaio.CheckDevices();
-
-            PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value;
-
-            //Start motor
-            sm_motor.Event(EVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
-            //Enters wait for ACK
-
-            //TODO: better timer control so that exiting closures ensures they stop/start
-            //STOP Monitor Timer
-            serialpoller.Start();       //Needed to look for serial ACK
-            contecpoller.Start();
-        }
-
-        const int MAXROTORSPEEDFAILSAFE = 200;
-        //At start each run
-        void NextFreq(string index)
-        {
-            PersistentLoggerState.ps.data.target_speed += (float)nudFreqStep.Value;
-            if (PersistentLoggerState.ps.data.target_speed > (float)nudFreqTo.Value
-                ||
-                PersistentLoggerState.ps.data.target_speed > MAXROTORSPEEDFAILSAFE
-                )
-            {
-                appstate.Event(APPEVENT.Stop);
-            }
-
-            NextRun(index);
-        }
-
-        void NextRun(string index)
-        {
-            //TODO: should be bound more closely to change freq state. But only called once so here.
-            SendCommand(CMD.SETFREQ);       //Inform Arduino
-            SendCommand(CMD.GETTARGETFREQ);
-            PrintLn("Target frequency " + PersistentLoggerState.ps.data.target_speed, true);
-            //TODO: wait on getfreq!
-            //TODO: this should be on Freq ACK! Use GetFreq data
-            UpdateChartYScale();            //DOCS: chart range is auto_updated when data.target_speed changed
-            myaio.ClearDevices();
-            //var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
-            myaio.SetupTimedSample(PersistentLoggerState.ps.data);
-            PrintLn("Start", true);
-            myaio.Start();
-        }
-
-        void RunFinished()
-        {
-            //contecpoller.Interval = 5000;
-            PersistentLoggerState.ps.data.ResetMAC();
-            sm_motor.Event(EVENT.Next);
-            myaio.Stop();
-            pbr0.Value = 0;
-            pbr1.Value = 0;
-            setStartButtonText(0);
-        }
-
-        void HandleSamplingError(string index)
-        {
-            PrintLn(index);
-            PrintLn("Error. Reset.", true);
-            //Ignore unless sampling -> bad sample -> stop devices, reset data, set up again
-            RunFinished();
-            myaio.ResetDevices();
-            //contecpoller.Start();
-            //Event which calls NextTest
-            appstate.Event(APPEVENT.ACKRotor);
-        }
-
-        void StopSeries(string index)
-        {
-            sm_motor.Event(EVENT.Send_Stop);
-            RunFinished();
-            serialpoller.Stop();
-            SetStatus("Ready");
-            PrintLn("Run Stopped", true);
-        }
-
-        #endregion
-
-        private void closeToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void FmControlPanel_Shown(object sender, EventArgs e)
-        {
-            //Now sort Contec devices
-            SetAIO();
-
-            ProcessDrawContecState(out bool samplingfinished);
-
-            //TODO: We can work this out exactly from amount of data coming in!
-            //timergetdata.Interval = ;
-
-            //TODO: this should be stopped while sampling
-            monitorpoller.Start();
-
-        }
     }
 }

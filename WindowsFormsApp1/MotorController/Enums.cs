@@ -45,8 +45,8 @@ namespace MotorController
     }
 
     //State enums
-    enum STATE { Ready, Running, Lockable, Locked, Triggered }
-    enum EVENT { Next, Send_Start, Send_Stop, Send_Lock, Send_Unlock, Send_Trigger,
+    enum ARDUINOSTATE { Ready, Running, Lockable, Locked, Triggered }
+    enum ARDUINOEVENT { Next, Send_Start, Send_Stop, Send_Lock, Send_Unlock, Send_Trigger,
         Do_Start, Do_Stop, Do_Lock, Do_unlock, Do_Trigger, Do_SetPulseDelay, Do_SetPID, Do_SetFreq, Do_SetADC }
 
     class Enums
@@ -107,16 +107,16 @@ namespace MotorController
         }
 
         //TODO: check that only these ACKS exist
-        public static readonly Dictionary<string, EVENT> ACKDecode = new Dictionary<string, EVENT>() {
-            {"SB", EVENT.Do_Start },
-            {"SE", EVENT.Do_Stop},
-            {"SS", EVENT.Do_Trigger},
-            {"SF", EVENT.Do_SetFreq},
-            {"ST", EVENT.Do_Lock},
-            {"SU", EVENT.Do_unlock},
-            {"SD", EVENT.Do_SetPulseDelay},
-            {"SP", EVENT.Do_SetPID},
-            {"SA", EVENT.Do_SetADC},
+        public static readonly Dictionary<string, ARDUINOEVENT> ACKDecode = new Dictionary<string, ARDUINOEVENT>() {
+            {"SB", ARDUINOEVENT.Do_Start },
+            {"SE", ARDUINOEVENT.Do_Stop},
+            {"SS", ARDUINOEVENT.Do_Trigger},
+            {"SF", ARDUINOEVENT.Do_SetFreq},
+            {"ST", ARDUINOEVENT.Do_Lock},
+            {"SU", ARDUINOEVENT.Do_unlock},
+            {"SD", ARDUINOEVENT.Do_SetPulseDelay},
+            {"SP", ARDUINOEVENT.Do_SetPID},
+            {"SA", ARDUINOEVENT.Do_SetADC},
         };
     }
 }

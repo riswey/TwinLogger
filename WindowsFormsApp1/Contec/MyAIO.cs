@@ -47,73 +47,6 @@ namespace MultiDeviceAIO
             {CaioConst.AIS_AIERR, "AD conversion error"},
             {CaioConst.AIS_DRVERR, "Driver spec error"}
         };
-
-        public static bool TestBit(object code, object bit)
-        {
-            if ((int)code == 0 && (int)bit == 0)
-            {
-                return true;
-            }
-
-            return ((int)code & (int)bit) != 0;
-        }
-
-
-        public enum DEVICESTATE { READY, ARMED, SAMPLING }
-        public enum DEVICESTATEDELTA { NONE, READY, ARMED, SAMPLING }       //measures boundary events
-
-        private static DEVICESTATE devicestate = DEVICESTATE.READY;
-
-        /*
-         * Delta measures the first device to change state.
-         * TODO: maybe make it measure the last
-         */
-
-        //TODO: Actually device state is something that devices can manage!!!!!
-        //TODO: This will also handle the delta on first || last device event problem 
-        public void MiniContecStateMachine(ref List<int> status, out int bitflags, out DEVICESTATEDELTA delta)
-        {
-            //set status list
-            GetStatusAll(ref status);
-
-            //Prepare bit flags
-            bitflags = 0;
-            foreach (int s1 in status)
-            {
-                bitflags |= s1;
-            }
-
-            //Respond to bigflags
-            //NOTE: 1 == AIS_BUSY (TODO: any use?)
-            delta = DEVICESTATEDELTA.NONE;
-
-            if (TestBit(bitflags, 0))       //Idle
-            {
-                if (devicestate == DEVICESTATE.SAMPLING)
-                    delta = DEVICESTATEDELTA.READY;
-
-                devicestate = DEVICESTATE.READY;
-            }
-
-            //Waiting for trigger
-            if (TestBit(bitflags, CaioConst.AIS_START_TRG))
-            {
-                if (devicestate == DEVICESTATE.READY)
-                    delta = DEVICESTATEDELTA.ARMED;
-
-                devicestate = DEVICESTATE.ARMED;
-            }
-
-            //Started sampling
-            if (TestBit(bitflags, CaioConst.AIS_DATA_NUM))
-            {
-                if (devicestate == DEVICESTATE.ARMED || devicestate == DEVICESTATE.READY)
-                    delta = DEVICESTATEDELTA.SAMPLING;
-
-                devicestate = DEVICESTATE.SAMPLING;
-            }
-
-        }
         
         public double devicetarget { get; private set; } = 1e5;
 
@@ -205,12 +138,14 @@ namespace MultiDeviceAIO
 
         }
 
-        public void ClearDevices()
+        public void RefreshDevices()
         {
             Device.devices.ForEach(d => {
                     d.Clear();
                     HANDLE_RETURN_VALUES = aio.StopAi(d.id);
                     HANDLE_RETURN_VALUES = aio.ResetAiMemory(d.id);
+                    //Resets: sampling clock error + AD conversion error status.
+                    HANDLE_RETURN_VALUES = aio.ResetAiStatus(d.id);
             });
         }
 

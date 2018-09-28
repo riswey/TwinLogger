@@ -12,6 +12,12 @@ Sample Freq
 18.01	Project Start
 
 
+>lock returns power levels (RL)
+(LOCK uses 10s min/max power levels)
+ACK klock -> process if good -> trigger
+Power (0-100) alter as needed
+
+
 >THREAD
 Triggers go in pairs (next experiment triggers immediately then next waits)
 
