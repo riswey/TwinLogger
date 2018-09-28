@@ -447,7 +447,7 @@ namespace MultiDeviceAIO
 
         int timercycle = 0;
 
-        public void serialmonitor_Tick(object sender, EventArgs e)
+        public void serialpoller_Tick(object sender, EventArgs e)
         {
             if (sm_motor.state == ARDUINOSTATE.Running.ToString())
             {
@@ -462,12 +462,13 @@ namespace MultiDeviceAIO
             {
                 if (PersistentLoggerState.ps.data.IsRMDisabled())
                 {
+                    //TODO: ensure that RM min/max period is scrubbed - no longer needed
                     //RM (min/max) disable period expired
 //                    SendCommand(CMD.GETMINMAXPERIODS);
 //                    SendCommand(CMD.GETPULSEDELAY);
                     SendCommand(CMD.GETPID);
                     //SendCommand(CMD.GETTARGETFREQ);
-                    //PersistentLoggerState.ps.data.Write();
+                    PersistentLoggerState.ps.data.LogWrite();
                 }
             }
 

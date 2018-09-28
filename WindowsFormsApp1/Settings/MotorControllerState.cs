@@ -173,52 +173,40 @@ namespace MultiDeviceAIO
 
         #region LOGGING
 
-
-        /*
         public string path { get; set; }
         
         //Stores the start time (motor logs are recorded relative)
-        public void Start(string path = "")
+        public void RotorLogStart(string path = "")
         {
             this.path = path;
-            //doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD\tDelay\tMin\tMax");
-            start_t = GetTime();
+            doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD\tDelay\tMin\tMax");
+            start_t = LoggerState.GetTime_ms;
         }
         
+        public void LogWrite()
+        {
+
+            long millisecs = LoggerState.GetTime_ms - start_t;
+
+            string str = String.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}",
+                millisecs,
+                target_speed,
+                rotor_speed,
+                p,
+                i,
+                d
+            );
+
+            doWrite(str);
+        }
+
         private void doWrite(string str)
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(path + "Log.dat", true))
             {
                 file.WriteLine(str);
             }
-
         }
-
-        public void Write()
-        {
-            if (!IsMMInRange())
-            {
-                //Don't log if min/max still at starting values
-                return;
-            }
-
-            long millisecs = GetTime() - start_t;
-
-            string str = String.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}",
-                millisecs,
-                target_speed,
-                pa.GetPeriodAverage(),
-                p,
-                i,
-                d,
-                pulse_delay,
-                min_period,
-                max_period
-            );
-
-            //doWrite(str);
-        }
-        */
 
         #endregion
 

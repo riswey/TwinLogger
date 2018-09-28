@@ -1905,7 +1905,7 @@
             // serialpoller
             // 
             this.serialpoller.Interval = 500;
-            this.serialpoller.Tick += new System.EventHandler(this.serialmonitor_Tick);
+            this.serialpoller.Tick += new System.EventHandler(this.serialpoller_Tick);
             // 
             // contecpoller
             // 

@@ -13,7 +13,7 @@ namespace MultiDeviceAIO
     {
         //SamplingError:WaitTrigger
 
-#region AppState
+#region     AppState
 
         //Symbols
         enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, TriggerWaitLock, DoSampling, Error };
@@ -110,6 +110,9 @@ namespace MultiDeviceAIO
                 appstate.Event(APPEVENT.Stop);
             }
 
+            //TODO: Also sets start_t!!! Need to formalise this its to important to be a side effect!
+            PersistentLoggerState.ps.data.RotorLogStart();
+            
             NextRun(index);
         }
 
