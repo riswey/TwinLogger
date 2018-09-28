@@ -176,10 +176,9 @@ namespace MultiDeviceAIO
         public string path { get; set; }
         
         //Stores the start time (motor logs are recorded relative)
-        public void RotorLogStart(string path = "")
+        public void RotorLogStart()
         {
-            this.path = path;
-            doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD\tDelay\tMin\tMax");
+            doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD");
             start_t = LoggerState.GetTime_ms;
         }
         
@@ -202,7 +201,7 @@ namespace MultiDeviceAIO
 
         private void doWrite(string str)
         {
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(path + "Log.dat", true))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(testpath + @"\rotor.log", true))
             {
                 file.WriteLine(str);
             }
