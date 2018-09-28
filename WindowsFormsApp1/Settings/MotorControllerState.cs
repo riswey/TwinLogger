@@ -33,10 +33,15 @@ namespace MultiDeviceAIO
             mac.Reset();
         }
 
-        public static long GetTime()   //millisecond time
+        [XmlIgnore]
+        public static long GetTime_ms //millisecond time
         {
-            return (long)Math.Round(DateTimeOffset.Now.UtcTicks / 10000.0d, 0);
+            get 
+            {
+                return (long)Math.Round(DateTimeOffset.Now.UtcTicks / 10000.0d, 0);
+            }
         }
+
         float _p = 0, _i = 0, _d = 0;
         int _pulse_delay = 0;
         public float p { get { return _p; } set { _p = value; InvokePropertyChanged("p"); } }
@@ -156,12 +161,12 @@ namespace MultiDeviceAIO
         {
             //Start/SetFreq events reset the MaxMin buffer
             //Takes time to give meaningful results
-            rm_timer = GetTime();
+            rm_timer = GetTime_ms;
         }
 
         public bool IsRMDisabled()
         {
-            return (GetTime() - rm_timer) > RM_TIMER_PERIOD;
+            return (GetTime_ms - rm_timer) > RM_TIMER_PERIOD;
         }
 
         #endregion
@@ -261,7 +266,7 @@ namespace MultiDeviceAIO
         [XmlIgnore]
         public bool IsReadyToSample { get{
                 bool eval = EvalTrigger;
-                return eval || (start_t != 0 && GetTime() - start_t > timeout);}
+                return eval || (start_t != 0 && GetTime_ms - start_t > timeout);}
         }
 
         void SetBounds()

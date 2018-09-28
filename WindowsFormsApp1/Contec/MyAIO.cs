@@ -382,6 +382,8 @@ namespace MultiDeviceAIO
 
             }
 
+            IsTimeout = false;
+
             devicetarget /= 2;
             //Moved null to Start
         }
@@ -422,6 +424,11 @@ namespace MultiDeviceAIO
          * Won't bubble exceptions into next layer. Using magic number
          * 
          */
+
+        long lastdatatimeout = 0;
+        const long DATATIMEOUT = 5000;
+        public bool IsTimeout { get; private set; } = false;
+
         private int RetrieveData(Device d)
         {
             HANDLE_RETURN_VALUES = aio.GetAiSamplingCount(d.id, out int sampling_count);
@@ -433,9 +440,17 @@ namespace MultiDeviceAIO
 
             if (data_points > 0)
             {
+                lastdatatimeout = LoggerState.GetTime_ms;
                 //NOTE: warning this is where memory problems may occur
                 HANDLE_RETURN_VALUES = aio.GetAiSamplingData(d.id, ref sampling_count, ref buffer);
                 return d.Add(data_points, ref buffer);
+            }
+            else
+            {
+                if (LoggerState.GetTime_ms - lastdatatimeout > DATATIMEOUT)
+                {
+                    IsTimeout = IsTimeout || true;
+                }
             }
 
             return 0;
@@ -462,7 +477,7 @@ namespace MultiDeviceAIO
                 return true;
             }
         }
-
+        /*
         public bool IsTestFailed
         {
             get
@@ -474,7 +489,7 @@ namespace MultiDeviceAIO
                 return false;
             }
         }
-
+        */
         /// <summary>
         /// device lists of int[] are concatenated ->
         /// DeviceX => int[] (index 0)

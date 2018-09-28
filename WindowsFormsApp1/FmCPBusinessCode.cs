@@ -104,15 +104,27 @@ namespace MultiDeviceAIO
             {
                 RetrieveData();
 
+                //NOTE: if finished then timeout not important
                 if (myaio.IsTestFinished)
                 {
+                    /*
                     if (myaio.IsTestFailed)
                     {
                         appstate.Event(APPEVENT.SamplingError);
                         return false;
                         //throw new TTISamplingFailure();
                     }
+                    */
                     return true;
+                }
+                else if (myaio.IsTimeout)
+                {
+                    appstate.Event(APPEVENT.SamplingError);
+                    return false;
+                }
+
+                {
+
                 }
             }
             return false;

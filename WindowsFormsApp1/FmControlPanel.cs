@@ -17,11 +17,7 @@ namespace MultiDeviceAIO
     public partial class FmControlPanel : Form
     {
 
-        enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, WaitTrigger, Sampling, Error };
-        enum APPEVENT { InitRun, ACKRotor, Armed, Trigger, ContecTriggered, SamplingError, EndRun, Stop };
-
-        StateMachine appstate = new StateMachine(APPSTATE.Ready);
-
+        #region INIT
         MyAIO myaio;
         FmMonitor monitor;
         FmLog fmlog = new FmLog();
@@ -53,6 +49,8 @@ namespace MultiDeviceAIO
             {
                 NativeMethods.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
             }
+
+            contecpoller.Interval = CONTECPOLLERSTATE;
 
             InitializeComponent();
 
@@ -116,46 +114,49 @@ namespace MultiDeviceAIO
 
         void BindTestParameters()
         {
-            cbMass.DataBindings.Clear();
+            //TODO: quick way to clear control binding when rebinding values?
+            //TODO: does this crash now?
+
+            //cbMass.DataBindings.Clear();
             cbMass.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "mass");
 
-            chkClips.DataBindings.Clear();
+            //chkClips.DataBindings.Clear();
             chkClips.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "clipsOn");
 
-            tbLoad.DataBindings.Clear();
+            //tbLoad.DataBindings.Clear();
             tbLoad.DataBindings.Add("Text", PersistentLoggerState.ps.data, "load");
 
-            nudChannel.DataBindings.Clear();
+            //nudChannel.DataBindings.Clear();
             nudChannel.DataBindings.Add("Value", PersistentLoggerState.ps.data, "n_channels");
 
-            nudDuration.DataBindings.Clear();
+            //nudDuration.DataBindings.Clear();
             nudDuration.DataBindings.Add("Value", PersistentLoggerState.ps.data, "duration");
 
-            cbShaker.DataBindings.Clear();
+            //cbShaker.DataBindings.Clear();
             cbShaker.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "shakertype");
 
-            cbPad.DataBindings.Clear();
+            //cbPad.DataBindings.Clear();
             cbPad.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "paddtype");
 
-            nudFreqFrom.DataBindings.Clear();
+            //nudFreqFrom.DataBindings.Clear();
             nudFreqFrom.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_from");
 
-            nudFreqTo.DataBindings.Clear();
+            //nudFreqTo.DataBindings.Clear();
             nudFreqTo.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_to");
 
-            nudFreqStep.DataBindings.Clear();
+            //nudFreqStep.DataBindings.Clear();
             nudFreqStep.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_step");
 
-            nudInterval.DataBindings.Clear();
+            //nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", PersistentLoggerState.ps.data, "sample_frequency");
 
-            tbDirectory.DataBindings.Clear();
+            //tbDirectory.DataBindings.Clear();
             tbDirectory.DataBindings.Add("Text", PersistentLoggerState.ps.data, "testpath");
 
-            chkExternalTrigger.DataBindings.Clear();
+            //chkExternalTrigger.DataBindings.Clear();
             chkExternalTrigger.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_trigger");
 
-            chkExternalClock.DataBindings.Clear();
+            //chkExternalClock.DataBindings.Clear();
             chkExternalClock.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_clock");
 
         }
@@ -269,6 +270,7 @@ namespace MultiDeviceAIO
                 }
             }
         }
+        #endregion
 
         #region GUI Events
 
@@ -723,6 +725,15 @@ namespace MultiDeviceAIO
 
         #region AppState
 
+        //Symbols
+        enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, WaitTrigger, Sampling, Error };
+        enum APPEVENT { InitRun, ACKRotor, Armed, Trigger, ContecTriggered, SamplingError, EndRun, Stop };
+
+        StateMachine appstate = new StateMachine(APPSTATE.Ready);
+
+        const int CONTECPOLLERSTATE = 1000;
+        const int CONTECPOLLERDATA = 100;
+
         void InitAppStateMachine()
         {
             ///Entry point button
@@ -745,6 +756,7 @@ namespace MultiDeviceAIO
             });
             appstate.AddRule(APPSTATE.WaitTrigger, APPEVENT.ContecTriggered, APPSTATE.Sampling, (string index) =>
             {
+                contecpoller.Interval = CONTECPOLLERDATA;
                 PrintLn("Triggered", true);
                 setStartButtonText(2);
             });
@@ -827,7 +839,7 @@ namespace MultiDeviceAIO
 
         void RunFinished()
         {
-            //contecpoller.Stop();
+            contecpoller.Interval = 5000;
             PersistentLoggerState.ps.data.ResetMAC();
             sm_motor.Event(EVENT.Next);
             myaio.Stop();

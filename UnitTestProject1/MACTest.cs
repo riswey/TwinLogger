@@ -129,7 +129,7 @@ namespace UnitTestProject1
             Assert.AreEqual(mso.Crosses, 0);
 
         }
-
+        /*
         [TestMethod]
         public void TestBufferSizeChange()
         {
@@ -143,5 +143,6 @@ namespace UnitTestProject1
             Assert.AreEqual(mso.MA, 1.5);
 
         }
+        */
     }
 }

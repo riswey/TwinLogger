@@ -128,6 +128,7 @@
             this.pb1ok = new System.Windows.Forms.PictureBox();
             this.pbr0 = new System.Windows.Forms.ProgressBar();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.pbr1 = new System.Windows.Forms.ProgressBar();
             this.label43 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
             this.label39 = new System.Windows.Forms.Label();
@@ -194,7 +195,6 @@
             this.btnDecRange = new System.Windows.Forms.Button();
             this.serialpoller = new System.Windows.Forms.Timer(this.components);
             this.contecpoller = new System.Windows.Forms.Timer(this.components);
-            this.pbr1 = new System.Windows.Forms.ProgressBar();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -1217,6 +1217,13 @@
             this.panel6.Size = new System.Drawing.Size(487, 119);
             this.panel6.TabIndex = 42;
             // 
+            // pbr1
+            // 
+            this.pbr1.Location = new System.Drawing.Point(287, 84);
+            this.pbr1.Name = "pbr1";
+            this.pbr1.Size = new System.Drawing.Size(173, 23);
+            this.pbr1.TabIndex = 66;
+            // 
             // label43
             // 
             this.label43.AutoSize = true;
@@ -1901,14 +1908,8 @@
             // 
             // contecpoller
             // 
+            this.contecpoller.Interval = 500;
             this.contecpoller.Tick += new System.EventHandler(this.contecpoller_Tick);
-            // 
-            // pbr1
-            // 
-            this.pbr1.Location = new System.Drawing.Point(287, 84);
-            this.pbr1.Name = "pbr1";
-            this.pbr1.Size = new System.Drawing.Size(173, 23);
-            this.pbr1.TabIndex = 66;
             // 
             // FmControlPanel
             // 

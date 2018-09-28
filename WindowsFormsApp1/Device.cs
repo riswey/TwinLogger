@@ -6,6 +6,10 @@ using System.Text;
 
 namespace MultiDeviceAIO
 {
+    /// <summary>
+    /// 28.09.2018  AG  Changed to Timeout. Removed IsFailed (i.e. got zero data but not finished)
+    ///                 Reason: So that device not monitored during sampling.
+    /// </summary>
     public class Device
     {
         public static string DEVICENAMEROOT = "Aio00";
@@ -17,7 +21,7 @@ namespace MultiDeviceAIO
         public List<int> data = new List<int>();
         public int target { get; set; } = 0;
         public bool IsFinished {    get{return data.Count == target;}}
-        public bool IsFailed {      get; private set; } = false;
+        //public bool IsFailed {      get; private set; } = false;
         public bool HasData { get { return data.Count != 0; } }
 
         public Device(short id, string name)
@@ -29,7 +33,7 @@ namespace MultiDeviceAIO
         public void Clear()
         {
             data.Clear();
-            IsFailed = false;
+            //IsFailed = false;
         }
 
         //Returns the current device buffer size
@@ -52,7 +56,7 @@ namespace MultiDeviceAIO
                 Array.Copy(buf, newArray, datapointcount);
                 data.AddRange(newArray);
                 
-            }
+            }/*
             else
             {
                 //TODO: check logic. If gets zero data but not complete then fail it
@@ -63,7 +67,7 @@ namespace MultiDeviceAIO
                     IsFailed = true;
                 }
             }
-            
+            */
             return data.Count;
         }
 
