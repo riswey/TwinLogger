@@ -133,9 +133,12 @@
             this.label39 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label46 = new System.Windows.Forms.Label();
+            this.lblAppState = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.label41 = new System.Windows.Forms.Label();
             this.nudTargetSpeed = new System.Windows.Forms.NumericUpDown();
-            this.lblState = new System.Windows.Forms.Label();
+            this.lblRotorState = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
             this.lblCurrentSpeed = new System.Windows.Forms.Label();
@@ -191,7 +194,6 @@
             this.btnDecRange = new System.Windows.Forms.Button();
             this.serialpoller = new System.Windows.Forms.Timer(this.components);
             this.contecpoller = new System.Windows.Forms.Timer(this.components);
-            this.button1 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -900,10 +902,10 @@
             this.label13.TabIndex = 34;
             this.label13.Text = "Calibration Mode";
             // 
-            // timermonitor
+            // _timermonitor
             // 
             this._timermonitor.Interval = 250;
-            this._timermonitor.Tick += new System.EventHandler(this.timer1_Tick);
+            this._timermonitor.Tick += new System.EventHandler(this.monitorPoller_Tick);
             // 
             // label24
             // 
@@ -1258,10 +1260,12 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage1.Controls.Add(this.label46);
+            this.tabPage1.Controls.Add(this.lblAppState);
             this.tabPage1.Controls.Add(this.button1);
             this.tabPage1.Controls.Add(this.label41);
             this.tabPage1.Controls.Add(this.nudTargetSpeed);
-            this.tabPage1.Controls.Add(this.lblState);
+            this.tabPage1.Controls.Add(this.lblRotorState);
             this.tabPage1.Controls.Add(this.label30);
             this.tabPage1.Controls.Add(this.label31);
             this.tabPage1.Controls.Add(this.lblCurrentSpeed);
@@ -1274,14 +1278,42 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Motor Control";
             // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Location = new System.Drawing.Point(338, 12);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(57, 13);
+            this.label46.TabIndex = 51;
+            this.label46.Text = "App State:";
+            // 
+            // lblAppState
+            // 
+            this.lblAppState.AutoSize = true;
+            this.lblAppState.Location = new System.Drawing.Point(401, 12);
+            this.lblAppState.Name = "lblAppState";
+            this.lblAppState.Size = new System.Drawing.Size(36, 13);
+            this.lblAppState.TabIndex = 50;
+            this.lblAppState.Text = "(state)";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(234, 100);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 49;
+            this.button1.Text = "Trigger";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
             // label41
             // 
             this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(331, 23);
+            this.label41.Location = new System.Drawing.Point(321, 32);
             this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(64, 13);
+            this.label41.Size = new System.Drawing.Size(74, 13);
             this.label41.TabIndex = 48;
-            this.label41.Text = "Rotor State:";
+            this.label41.Text = "Arduino State:";
             // 
             // nudTargetSpeed
             // 
@@ -1295,14 +1327,14 @@
             this.nudTargetSpeed.Size = new System.Drawing.Size(59, 20);
             this.nudTargetSpeed.TabIndex = 47;
             // 
-            // lblState
+            // lblRotorState
             // 
-            this.lblState.AutoSize = true;
-            this.lblState.Location = new System.Drawing.Point(394, 23);
-            this.lblState.Name = "lblState";
-            this.lblState.Size = new System.Drawing.Size(36, 13);
-            this.lblState.TabIndex = 46;
-            this.lblState.Text = "(state)";
+            this.lblRotorState.AutoSize = true;
+            this.lblRotorState.Location = new System.Drawing.Point(401, 32);
+            this.lblRotorState.Name = "lblRotorState";
+            this.lblRotorState.Size = new System.Drawing.Size(36, 13);
+            this.lblRotorState.TabIndex = 46;
+            this.lblRotorState.Text = "(state)";
             // 
             // label30
             // 
@@ -1860,25 +1892,15 @@
             this.btnDecRange.UseVisualStyleBackColor = true;
             this.btnDecRange.Click += new System.EventHandler(this.btnDecRange_Click);
             // 
-            // timerarduino
+            // serialpoller
             // 
             this.serialpoller.Interval = 500;
-            this.serialpoller.Tick += new System.EventHandler(this.timerarduino_Tick);
+            this.serialpoller.Tick += new System.EventHandler(this.serialmonitor_Tick);
             // 
-            // timergetdata
+            // contecpoller
             // 
             this.contecpoller.Interval = 400;
             this.contecpoller.Tick += new System.EventHandler(this.contecpoller_Tick);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(234, 100);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 49;
-            this.button1.Text = "Trigger";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // FmControlPanel
             // 
@@ -2066,7 +2088,7 @@
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.NumericUpDown nudFreqTo;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.Label lblState;
+        private System.Windows.Forms.Label lblRotorState;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.Label lblCurrentSpeed;
@@ -2121,5 +2143,7 @@
         private System.Windows.Forms.Label label52;
         private System.Windows.Forms.ToolStripMenuItem stopESCToolStripMenuItem;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.Label lblAppState;
     }
 }

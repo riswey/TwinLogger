@@ -183,56 +183,56 @@ namespace MultiDeviceAIO
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            //TODO: stop motor then close serial port
+            StopSeries("Closing");
             //if (task != null) task.Dispose();
-            if (serialPort1 != null) serialPort1.Close();
+            //if (serialPort1 != null) serialPort1.Close();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             //Get current device state
             SendCommand(CMD.GETPID);
-            AsyncText(lblState, sm_motor.state.ToString());
         }
 
         void InitMotorStateMachine()
         {
-            sm_motor.AddRule(STATE.Ready, EVENT.Send_Start, new StateMachine.CallBack((string idx) =>
+
+            sm_motor.AddRule(StateMachine.OR(STATE.Ready, STATE.Triggered), EVENT.Send_Start, (string idx) =>
             {
                 //Start
                 //TODO: should wait for freq?
-                SendCommand(CMD.SETFREQ);
-                SendCommand(CMD.GETTARGETFREQ);
+                //SendCommand(CMD.SETFREQ);
+                //SendCommand(CMD.GETTARGETFREQ);
                 SendCommand(CMD.START);
-            }));
+            });
 
             //TODO: can remove Callback
-            sm_motor.AddRule(STATE.Lockable, EVENT.Send_Start, new StateMachine.CallBack(SEND_LOCK));
-            sm_motor.AddRule(STATE.Locked, EVENT.Send_Start, new StateMachine.CallBack(SEND_UNLOCK));
-            sm_motor.AddRule(STATE.Lockable, EVENT.Send_Lock, new StateMachine.CallBack(SEND_LOCK));
-            sm_motor.AddRule(STATE.Locked, EVENT.Send_Unlock, new StateMachine.CallBack(SEND_UNLOCK));
+            sm_motor.AddRule(STATE.Lockable, EVENT.Send_Start, SEND_LOCK);
+            sm_motor.AddRule(STATE.Locked, EVENT.Send_Start, SEND_UNLOCK);
+            sm_motor.AddRule(STATE.Lockable, EVENT.Send_Lock, SEND_LOCK);
+            sm_motor.AddRule(STATE.Locked, EVENT.Send_Unlock, SEND_UNLOCK);
 
-            sm_motor.AddRule(null, EVENT.Send_Stop, new StateMachine.CallBack((string idx) => { SendCommand(CMD.STOP); }));
-            sm_motor.AddRule(StateMachine.OR(STATE.Running, STATE.Lockable, STATE.Locked),
-                EVENT.Send_Trigger,
-                new StateMachine.CallBack((string idx) =>
-                {
-                    //Send Trigger
-                    SendCommand(CMD.SETADC);
-                    SendCommand(CMD.GETADC);
-                    PrintLn("Send Trigger", true);
-                    SendCommand(CMD.TRIGGER);
-                }));
+            sm_motor.AddRule(null, EVENT.Send_Stop, (string idx) => { SendCommand(CMD.STOP); });
+            sm_motor.AddRule(StateMachine.OR(STATE.Running, STATE.Lockable, STATE.Locked),EVENT.Send_Trigger, (string idx) =>
+            {
+                //Send Trigger
+                SendCommand(CMD.SETADC);
+                SendCommand(CMD.GETADC);
+                SendCommand(CMD.TRIGGER);
+            });
 
             //These events match any state (series shouldn't be returning events to wrong state)
-            sm_motor.AddRule(null, EVENT.Do_Start, STATE.Running, new StateMachine.CallBack(ACK_START));
-            sm_motor.AddRule(null, EVENT.Do_Stop, STATE.Ready, new StateMachine.CallBack(ACK_STOP));
-            sm_motor.AddRule(null, EVENT.Do_Lock, STATE.Locked, new StateMachine.CallBack(ACK_LOCK));
-            sm_motor.AddRule(null, EVENT.Do_unlock, STATE.Lockable, new StateMachine.CallBack(ACK_UNLOCK));
-            sm_motor.AddRule(null, EVENT.Do_SetPulseDelay, new StateMachine.CallBack(ACK_SETPULSEDELAY));
-            sm_motor.AddRule(null, EVENT.Do_SetPID, new StateMachine.CallBack(ACK_SETPID));
-            sm_motor.AddRule(null, EVENT.Do_SetFreq, new StateMachine.CallBack(ACK_SETFREQ));
-            sm_motor.AddRule(null, EVENT.Do_Trigger, STATE.Triggered, new StateMachine.CallBack(ACK_TRIGGER));
-            sm_motor.AddRule(null, EVENT.Do_SetADC, new StateMachine.CallBack(ACK_SETADC));
+            sm_motor.AddRule(null, EVENT.Do_Start, STATE.Running, ACK_START);
+            sm_motor.AddRule(null, EVENT.Do_Stop, STATE.Ready, ACK_STOP);
+            sm_motor.AddRule(null, EVENT.Do_Lock, STATE.Locked, ACK_LOCK);
+            sm_motor.AddRule(null, EVENT.Do_unlock, STATE.Lockable, ACK_UNLOCK);
+            sm_motor.AddRule(null, EVENT.Do_SetPulseDelay, ACK_SETPULSEDELAY);
+            sm_motor.AddRule(null, EVENT.Do_SetPID, ACK_SETPID);
+            sm_motor.AddRule(null, EVENT.Do_SetFreq, ACK_SETFREQ);
+            sm_motor.AddRule(null, EVENT.Do_Trigger, STATE.Triggered, ACK_TRIGGER);
+            sm_motor.AddRule(null, EVENT.Do_SetADC, ACK_SETADC);
+            sm_motor.AddRule(STATE.Triggered, EVENT.Next, STATE.Running);
         }
 
 
@@ -290,7 +290,6 @@ namespace MultiDeviceAIO
         }
 
         void ACK_TRIGGER(string idx) {
-            PrintLn("TRIGGER ACK RECEIVED");
             #if SOFTDEVICE
             if (PersistentLoggerState.ps.data.testingmode != 0)
             {
@@ -306,7 +305,7 @@ namespace MultiDeviceAIO
 
         void SET_LABEL(string idx)
         {
-            AsyncText(lblState, idx.ToString());
+            AsyncText(lblRotorState, idx.ToString());
         }
 
         void SendCommand(CMD cmd)
@@ -403,7 +402,6 @@ namespace MultiDeviceAIO
                 case DATATYPES.ACK:
                     //ACK events
                     Enums.ACKDecode.TryGetValue(data[1], out EVENT ack_event);
-                    Console.WriteLine( "Ack event: " + ack_event.ToString() );
                     sm_motor.Event(ack_event);
                     break;
                 case DATATYPES.GETPULSEDELAY:
@@ -554,7 +552,7 @@ namespace MultiDeviceAIO
 
         int timercycle = 0;
 
-        public void timerarduino_Tick(object sender, EventArgs e)
+        public void serialmonitor_Tick(object sender, EventArgs e)
         {
             if (sm_motor.state == STATE.Running.ToString())
             {
@@ -584,13 +582,14 @@ namespace MultiDeviceAIO
             chart1.DataBind();
 
             cbxInRange.Checked = PersistentLoggerState.ps.data.IsRotorInRange;
-            
+
             if (PersistentLoggerState.ps.data.IsReadyToSample)
             {
                 cbxOK.Checked = true;
-                sm_motor.Event(EVENT.Send_Lock);
-                sm_motor.Event(EVENT.Send_Trigger);
+                appstate.Event(APPEVENT.Trigger);
             }
+            else
+                cbxOK.Checked = false;
         }
 
         private void UpdateChartYScale()

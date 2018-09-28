@@ -46,7 +46,7 @@ namespace MotorController
 
     //State enums
     enum STATE { Ready, Running, Lockable, Locked, Triggered }
-    enum EVENT { Send_Start, Send_Stop, Send_Lock, Send_Unlock, Send_Trigger,
+    enum EVENT { Next, Send_Start, Send_Stop, Send_Lock, Send_Unlock, Send_Trigger,
         Do_Start, Do_Stop, Do_Lock, Do_unlock, Do_Trigger, Do_SetPulseDelay, Do_SetPID, Do_SetFreq, Do_SetADC }
 
     class Enums

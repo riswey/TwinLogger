@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
@@ -36,10 +37,15 @@ namespace MultiDeviceAIO
             //This the data collection driver
             //try
             //{
-                if ( ProcessDrawContecState() )
+            AsyncText(lblAppState, appstate.state.ToString());
+            AsyncText(lblRotorState, sm_motor.state.ToString());
+
+            if ( ProcessDrawContecState() )
                 {
+                    Debug.WriteLine("Test End A: " + appstate.state);
                     appstate.Event(APPEVENT.EndRun);
-                    return;
+                    Debug.WriteLine("Test End B: " + appstate.state);
+                return;
                 }
             /*}
             catch (Exception ex) {
@@ -69,7 +75,7 @@ namespace MultiDeviceAIO
 
             if (delta == MyAIO.DEVICESTATEDELTA.SAMPLING)
             {
-                appstate.Event(APPEVENT.ContecTrigger);
+                appstate.Event(APPEVENT.ContecTriggered);
             }
 
             //Handle bitflags

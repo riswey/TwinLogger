@@ -38,7 +38,7 @@ namespace MotorController
             Reset();
         }
 
-        void Reset()
+        public void Reset()
         {
             head = 0;
             sum = sum2 = sumxy = 0;
@@ -164,8 +164,9 @@ namespace MotorController
             this.GetTarget = new D_GetTarget(gettarget);
         }
 
-        private void Reset()
+        public new void Reset()
         {
+            base.Reset();
             Crosses = 0;
             _max = 0;
             _min = float.MaxValue;

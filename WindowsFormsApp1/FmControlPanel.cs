@@ -15,8 +15,8 @@ namespace MultiDeviceAIO
     public partial class FmControlPanel : Form
     {
 
-        enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, WaitTrigger, Sampling };
-        enum APPEVENT { InitRun, ACKRotor, Armed, Trigger, ContecTrigger, SamplingError, EndRun, Stop };
+        enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, WaitTrigger, Sampling, Error };
+        enum APPEVENT { InitRun, ACKRotor, Armed, Trigger, ContecTriggered, SamplingError, EndRun, Stop };
 
         StateMachine appstate = new StateMachine(APPSTATE.Ready);
 
@@ -514,6 +514,7 @@ namespace MultiDeviceAIO
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            //TODO: overrides app state. Beware!
             sm_motor.Event(EVENT.Send_Trigger);
         }
 
@@ -625,7 +626,7 @@ namespace MultiDeviceAIO
 
         #region LEDs
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void monitorPoller_Tick(object sender, EventArgs e)
         {
             //Do status stuff
             var snapshot = myaio.ChannelsSnapShotBinary(PersistentLoggerState.ps.data.n_channels);
@@ -735,8 +736,12 @@ namespace MultiDeviceAIO
                 //if (PersistentLoggerState.ps.data.testingmode)
                 //    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
             });
-            appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.WaitTrigger, (string index) => sm_motor.Event(EVENT.Send_Trigger));
-            appstate.AddRule(APPSTATE.WaitTrigger, APPEVENT.ContecTrigger, APPSTATE.Sampling, (string index) =>
+            appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.WaitTrigger, (string index) =>
+            {
+                sm_motor.Event(EVENT.Send_Lock);
+                sm_motor.Event(EVENT.Send_Trigger);
+            });
+            appstate.AddRule(APPSTATE.WaitTrigger, APPEVENT.ContecTriggered, APPSTATE.Sampling, (string index) =>
             {
                 PrintLn("Triggered", true);
                 setStartButtonText(2);
@@ -745,6 +750,7 @@ namespace MultiDeviceAIO
             appstate.AddRule(APPSTATE.Sampling, APPEVENT.EndRun, APPSTATE.TestRunning, (string index) => 
             {
                 SaveData();
+                PrintLn("Saved", true);
                 RunFinished();
                 NextFreq(index);
             });
@@ -805,10 +811,11 @@ namespace MultiDeviceAIO
         {
             //TODO: should be bound more closely to change freq state. But only called once so here.
             SendCommand(CMD.SETFREQ);       //Inform Arduino
+            SendCommand(CMD.GETTARGETFREQ);
             PrintLn("Target frequency " + PersistentLoggerState.ps.data.target_speed, true);
             //TODO: wait on getfreq!
             //TODO: this should be on Freq ACK! Use GetFreq data
-            UpdateChartYScale();     //DOCS: chart range is auto_updated when data.target_speed changed
+            UpdateChartYScale();            //DOCS: chart range is auto_updated when data.target_speed changed
             myaio.ClearDevices();
             //var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
             myaio.SetupTimedSample(PersistentLoggerState.ps.data);
@@ -818,7 +825,9 @@ namespace MultiDeviceAIO
 
         void RunFinished()
         {
-            contecpoller.Stop();
+            //contecpoller.Stop();
+            PersistentLoggerState.ps.data.ResetMAC();
+            sm_motor.Event(EVENT.Next);
             myaio.Stop();
             progressBar1.Value = 0;
             setStartButtonText(0);
@@ -827,15 +836,18 @@ namespace MultiDeviceAIO
         void HandleSamplingError(string index)
         {
             PrintLn(index);
+            PrintLn("Error. Reset.", true);
             //Ignore unless sampling -> bad sample -> stop devices, reset data, set up again
             RunFinished();
             myaio.ResetDevices();
-            NextRun(index);
+            //contecpoller.Start();
+            //Event which calls NextTest
+            appstate.Event(APPEVENT.ACKRotor);
         }
 
         void StopSeries(string index)
         {
-            sm_motor.Event(EVENT.Do_Stop);
+            sm_motor.Event(EVENT.Send_Stop);
             RunFinished();
             TimerMonitorStateOn(true);
             serialpoller.Stop();

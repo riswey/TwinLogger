@@ -275,7 +275,7 @@ namespace MultiDeviceAIO
                 Device.devices.ForEach(d => HANDLE_RETURN_VALUES = aio.ResetDevice(d.id));
             } catch (Exception ex)
             {
-                Console.WriteLine("Failed Device Reset." + ex.Message);
+                Debug.WriteLine("Failed Device Reset." + ex.Message);
                 //TODO: how programatically disconnect and reconnect dvices
                 //They show in device manager but not to program
                 //How to debug usb devices? i.e. they show but why not showing up in prog

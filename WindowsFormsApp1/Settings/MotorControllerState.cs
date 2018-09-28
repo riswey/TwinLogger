@@ -25,7 +25,13 @@ namespace MultiDeviceAIO
         {
             mac = new MotorController.MovingStatsCrosses(metric_window, () => { return target_speed; } );
             mac.BoundPropertiesForUpdate = new List<string>() { "MA","STD","Gradient", "Min", "Max","Crosses"};
-    }
+        }
+
+        public void ResetMAC()
+        {
+            //New tests must start history again
+            mac.Reset();
+        }
 
         public static long GetTime()   //millisecond time
         {
@@ -86,6 +92,7 @@ namespace MultiDeviceAIO
                 _target_speed = value;
                 InvokePropertyChanged("target_speed");
                 SetBounds();
+                graphrange = target_speed * 0.2f;
             }
         }
 
@@ -254,7 +261,6 @@ namespace MultiDeviceAIO
         [XmlIgnore]
         public bool IsReadyToSample { get{
                 bool eval = EvalTrigger;
-                Console.WriteLine("Eval T = " + eval);
                 return eval || (start_t != 0 && GetTime() - start_t > timeout);}
         }
 
@@ -281,7 +287,6 @@ namespace MultiDeviceAIO
         public bool EvalTrigger {
             get {
                 string smerged = TriggerMerged;
-                Console.WriteLine("SMGE = " + smerged);
                 return (bool)_dt.Compute(smerged, "");
             }
         }
