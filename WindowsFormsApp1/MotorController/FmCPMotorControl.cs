@@ -316,9 +316,9 @@ namespace MultiDeviceAIO
                 case CMD.SETFREQ:
                     data = nudTargetSpeed.Value.ToString();
                     break;
-                case CMD.SETPULSEDELAY:
+/*                case CMD.SETPULSEDELAY:
                     //data = nudDesireSpeed.Value.ToString();
-                    break;
+                    break;*/
                 case CMD.SETPID:
                     data = nudP.Value.ToString();
                     data += " " + nudI.Value.ToString();
@@ -372,6 +372,7 @@ namespace MultiDeviceAIO
         {
             //NOTE: Updating settings -> GUI update and cross thread error 
             //TODO: can we move the main thread load later in process
+
             if (InvokeRequired)
             {
                 this.Invoke(new Action(() => HandlePacket(packet) ));
@@ -568,8 +569,8 @@ namespace MultiDeviceAIO
                 if (PersistentLoggerState.ps.data.IsRMDisabled())
                 {
                     //RM (min/max) disable period expired
-                    SendCommand(CMD.GETMINMAXPERIODS);
-                    SendCommand(CMD.GETPULSEDELAY);
+//                    SendCommand(CMD.GETMINMAXPERIODS);
+//                    SendCommand(CMD.GETPULSEDELAY);
                     SendCommand(CMD.GETPID);
                     //SendCommand(CMD.GETTARGETFREQ);
                     //PersistentLoggerState.ps.data.Write();

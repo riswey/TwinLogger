@@ -99,7 +99,7 @@
             this.label14 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
-            this._timermonitor = new System.Windows.Forms.Timer(this.components);
+            this.monitorpoller = new System.Windows.Forms.Timer(this.components);
             this.label24 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
@@ -311,6 +311,7 @@
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click_1);
             // 
             // editToolStripMenuItem1
             // 
@@ -903,10 +904,10 @@
             this.label13.TabIndex = 34;
             this.label13.Text = "Calibration Mode";
             // 
-            // _timermonitor
+            // monitorpoller
             // 
-            this._timermonitor.Interval = 250;
-            this._timermonitor.Tick += new System.EventHandler(this.monitorPoller_Tick);
+            this.monitorpoller.Interval = 500;
+            this.monitorpoller.Tick += new System.EventHandler(this.monitorPoller_Tick);
             // 
             // label24
             // 
@@ -1932,6 +1933,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FmControlPanel";
             this.Text = "Main";
+            this.Shown += new System.EventHandler(this.FmControlPanel_Shown);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -2049,7 +2051,7 @@
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateToolStripMenuItem;
-        private System.Windows.Forms.Timer _timermonitor;
+        private System.Windows.Forms.Timer monitorpoller;
         private System.Windows.Forms.PictureBox pbStatus;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem1;

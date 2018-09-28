@@ -125,10 +125,10 @@ namespace MotorController
                         state.locked = false;
                     SendACK(cmd);
                     break;
-                case CMD.SETPULSEDELAY:
+/*                case CMD.SETPULSEDELAY:
                     _PulseDelay = int.Parse(data[1]);
                     SendACK(cmd);
-                    break;
+                    break;*/
                 case CMD.SETPID:
                     state.p = float.Parse(data[1]);
                     state.i = float.Parse(data[2]);
@@ -147,14 +147,14 @@ namespace MotorController
                 case CMD.GETROTORFREQ:
                     Send("CF " + RotorFreq);
                     break;
-                case CMD.GETPULSEDELAY:
+/*                case CMD.GETPULSEDELAY:
                     Send("PW " + PulseDelay);
-                    break;
+                    break;*/
                 case CMD.GETPID:
                     Send(String.Format("PID {0} {1} {2}", (float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble()));
                     //Send(String.Format("PID {0} {1} {2}", state.p, state.i, state.d));
                     break;
-                case CMD.GETMINMAXPERIODS:
+/*                case CMD.GETMINMAXPERIODS:
                     if (maxmin++ > 5)
                     {
                         state.min = r.Next(0, 10);
@@ -163,7 +163,7 @@ namespace MotorController
 
                     Send(String.Format("MM {0} {1}", state.min, state.max));
 
-                    break;
+                    break;*/
                 case CMD.GETLOCKABLE:
                     //If state.running = 2 then lockable. Answer true
                     Send(String.Format("TL {0}", state.running == 2));

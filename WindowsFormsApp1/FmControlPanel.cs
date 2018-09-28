@@ -60,8 +60,6 @@ namespace MultiDeviceAIO
 
             pbr0.Maximum = pbr1.Maximum = 100;
 
-            SetAIO();
-
             //Bindings
             BindTestParameters();
             BindMotorControls();
@@ -83,14 +81,6 @@ namespace MultiDeviceAIO
 
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
-            ProcessDrawContecState(out bool samplingfinished);
-
-            //TODO: We can work this out exactly from amount of data coming in!
-            //timergetdata.Interval = ;
-
-            //TODO: this should be stopped while sampling
-            TimerMonitorStateOn(true);
-
         }
 
         void SetAIO()
@@ -105,11 +95,8 @@ namespace MultiDeviceAIO
             myaio = new MyAIO(PersistentLoggerState.ps.data.testingmode);
 
             //Load Devices
-            int devices_count = myaio.DiscoverDevices();
+            DiscoverDevices();
 
-            PersistentLoggerState.ps.data.n_devices = devices_count;
-
-            SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
         }
 
         void BindTestParameters()
@@ -161,15 +148,32 @@ namespace MultiDeviceAIO
 
         }
 
+        void DiscoverDevices()
+        {
+            int devices_count = myaio.DiscoverDevices();
+
+            PersistentLoggerState.ps.data.n_devices = devices_count;
+
+            SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
+
+            if (PersistentLoggerState.ps.data.n_devices < 2)
+            {
+                if (MessageBox.Show(this, "Not all devices are connected. Try Auto-Reset?", "Contec Error", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    myaio.ResetDevices();
+                    DiscoverDevices();
+                    return;
+                }
+            }
+
+        }
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             MotorCleanUp();
 
-            //Give chance to close
-            if (myaio != null)
-            {
-                myaio.Close();
-            }
+            //Give chance to close  
+            myaio?.Dispose();
 
             //Commit final AIOSettings.singleInstance to app state 
             PersistentLoggerState.ps.Save("settings.xml");
@@ -234,13 +238,6 @@ namespace MultiDeviceAIO
 
         void PrintLn(object msg, bool speak = false, int linebreak = 1)
         {
-            /*
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action(() => PrintLn(msg, speak, linebreak)));
-                return;
-            }
-            */
             if (fmlog == null || fmlog.IsDisposed)
             {
                 fmlog = new FmLog();
@@ -321,7 +318,7 @@ namespace MultiDeviceAIO
 
         void setStartButtonText(int code)
         {
-            //You can take a APPSTATE parameter
+            //TODO: You can take a APPSTATE parameter
 
             if (InvokeRequired)
             {
@@ -427,11 +424,10 @@ namespace MultiDeviceAIO
 
         private void resetDevicesToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            monitorpoller.Stop();
             myaio.ResetDevices();
-
-            PersistentLoggerState.ps.data.n_devices = myaio.DiscoverDevices();
-
-            SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
+            DiscoverDevices();
+            monitorpoller.Start();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -632,7 +628,31 @@ namespace MultiDeviceAIO
 
         private void monitorPoller_Tick(object sender, EventArgs e)
         {
-            //Do status stuff
+            if (!myaio.ContecOK())
+            {
+                monitorpoller.Stop();
+                if (MessageBox.Show(this, "There is a Contec device error","Contect Error",MessageBoxButtons.RetryCancel,MessageBoxIcon.Error) == DialogResult.Retry)
+                {
+                    myaio.ResetDevices();
+                    DiscoverDevices();
+                    monitorpoller.Start();
+                    return;
+                } else
+                {
+                    this.Close();
+                }
+            }
+
+            if (appstate.IsState(APPSTATE.Sampling))
+            {
+                pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
+                monitorChannelsToolStripMenuItem.Enabled = false;
+                return;
+            }
+
+            monitorChannelsToolStripMenuItem.Enabled = true;
+
+            //Do accelermonter status stuff
             var snapshot = myaio.ChannelsSnapShotBinary(PersistentLoggerState.ps.data.n_channels);
             Accelerometer.setChannelData(snapshot);
 
@@ -702,22 +722,6 @@ namespace MultiDeviceAIO
                     pb.Image = Properties.Resources.green;
                 else
                     pb.Image = Properties.Resources.red;
-            }
-        }
-
-        private void TimerMonitorStateOn(bool on)
-        {
-            if (on)
-            {
-                _timermonitor.Start();
-                monitorChannelsToolStripMenuItem.Enabled = true;
-            }
-            else
-            {
-                pbStatus.Image = MultiDeviceAIO.Properties.Resources.grey;
-                monitorChannelsToolStripMenuItem.Enabled = false;
-                _timermonitor.Stop();
-                if (monitor != null) monitor.Close();
             }
         }
 
@@ -801,7 +805,6 @@ namespace MultiDeviceAIO
             //TODO: better timer control so that exiting closures ensures they stop/start
             //STOP Monitor Timer
             serialpoller.Start();       //Needed to look for serial ACK
-            TimerMonitorStateOn(false);
             contecpoller.Start();
         }
 
@@ -864,7 +867,6 @@ namespace MultiDeviceAIO
         {
             sm_motor.Event(EVENT.Send_Stop);
             RunFinished();
-            TimerMonitorStateOn(true);
             serialpoller.Stop();
             SetStatus("Ready");
             PrintLn("Run Stopped", true);
@@ -872,5 +874,24 @@ namespace MultiDeviceAIO
 
         #endregion
 
+        private void closeToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void FmControlPanel_Shown(object sender, EventArgs e)
+        {
+            //Now sort Contec devices
+            SetAIO();
+
+            ProcessDrawContecState(out bool samplingfinished);
+
+            //TODO: We can work this out exactly from amount of data coming in!
+            //timergetdata.Interval = ;
+
+            //TODO: this should be stopped while sampling
+            monitorpoller.Start();
+
+        }
     }
 }

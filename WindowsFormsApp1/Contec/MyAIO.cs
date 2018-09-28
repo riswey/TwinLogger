@@ -27,11 +27,12 @@ using DEVICEID = System.Int16;
 //The data structure is a dictionary; K: device id V:raw list of data for device
 //K: device id :. data imported by id
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
+using System.Threading.Tasks;
 
 namespace MultiDeviceAIO
 {
 
-    public class MyAIO
+    public class MyAIO: IDisposable
     {
         //TODO: this will crash if not installed. Check
         public Caio aio;
@@ -126,11 +127,6 @@ namespace MultiDeviceAIO
             }
         }
 
-        ~MyAIO()
-        {
-            Close();
-        }
-
         public long HANDLE_RETURN_VALUES
         {
             set
@@ -198,13 +194,15 @@ namespace MultiDeviceAIO
             }
         }
         */
-        public void Close()
+        public void Dispose()
         {
             foreach (Device d in Device.devices)
             {
+                aio.StopAi(d.id);
                 aio.Exit(d.id);
             }
             Device.devices.Clear();
+
         }
 
         public void ClearDevices()
@@ -216,9 +214,44 @@ namespace MultiDeviceAIO
             });
         }
 
-        public bool DeviceCheck()
+        public bool ContecOK()
         {
+            //Run in thread and return false if timesout
+            var task = Task.Run(() => DeviceCheck() );
+            if (task.Wait(TimeSpan.FromSeconds(10)))
+                return task.Result;
+            else
+                return false;
+        }
+
+        private bool DeviceCheck() {
+            List<int> status = new List<int>();
+            GetStatusAll(ref status);
+
+            int bitflags = 0;
+            status.ForEach(s => s |= bitflags);
+
+            //See manual for : AioGetAiStatus
+            if (bitflags >= 65536)
+            {
+                return false;
+            }
+
+            //first 3 channels == 0 assume its failed
+            int sum;
+            foreach (Device d in Device.devices)
+            {
+                sum = 0;
+                for (short i = 0; i < 3; i++)
+                {
+                    aio.SingleAi(d.id, i, out int AiData);
+                    sum += AiData;
+                }
+                if (sum == 0) return false;
+            }
+
             return true;
+    
             //this happens each click now!
             /*
             foreach(Device d in Device.devices)

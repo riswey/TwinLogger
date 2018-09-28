@@ -19,14 +19,14 @@ namespace MotorController
         SETFREQ,
         SETLOCK,
         SETUNLOCK,
-        SETPULSEDELAY,
+        //SETPULSEDELAY,
         SETPID,
         SETADC,
         //Respond with "GetCode data"
-        GETPULSEDELAY,      //PW
+        //GETPULSEDELAY,      //PW
         GETROTORFREQ,       //CF
         GETTARGETFREQ,      //FW
-        GETMINMAXPERIODS,   //MM
+        //GETMINMAXPERIODS,   //MM
         GETPID,             //PID
         GETLOCKABLE,
         GETADC              //RA         
@@ -59,11 +59,11 @@ namespace MotorController
         public static readonly Dictionary<string, DATATYPES> DATATYPEDecode = new Dictionary<string, DATATYPES>()
         {
             { "ACK", DATATYPES.ACK },
-            { "PW", DATATYPES.GETPULSEDELAY },
+            //{ "PW", DATATYPES.GETPULSEDELAY },
             { "CF", DATATYPES.GETROTORFREQ },
             { "FW", DATATYPES.GETTARGETFREQ },
             { "PID", DATATYPES.GETPID },
-            { "MM", DATATYPES.GETMINMAXPERIODS },
+            //{ "MM", DATATYPES.GETMINMAXPERIODS },
             { "TL", DATATYPES.GETLOCKABLE },
             { "RA", DATATYPES.GETADC },
             //TL/RL
@@ -79,14 +79,14 @@ namespace MotorController
             {CMD.SETFREQ, "SF" },
             {CMD.SETLOCK, "ST" },
             {CMD.SETUNLOCK, "SU" },
-            {CMD.SETPULSEDELAY, "SD" },
+            //{CMD.SETPULSEDELAY, "SD" },
             {CMD.SETPID, "SP" },
             {CMD.SETADC, "SA" },
 
-            {CMD.GETPULSEDELAY, "RD" },
+//            {CMD.GETPULSEDELAY, "RD" },
             {CMD.GETROTORFREQ, "RC" },
             {CMD.GETTARGETFREQ, "RF" },
-            {CMD.GETMINMAXPERIODS, "RM" },
+            //{CMD.GETMINMAXPERIODS, "RM" },
             {CMD.GETPID, "RP" },
             {CMD.GETLOCKABLE, "RL" },
             {CMD.GETADC, "AF" }

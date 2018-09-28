@@ -366,6 +366,8 @@ namespace MultiDeviceAIO
         //externally trigger redraw
         public void ReDraw()
         {
+            if (this.IsDisposed) return;
+
             g.Clear(Color.Transparent);
 
             //DrawGrid(g);
@@ -388,8 +390,8 @@ namespace MultiDeviceAIO
 
         private void FmMonitor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            g.Dispose();
             base.OnClosing(e);
+            g.Dispose();
         }
     }
 }
