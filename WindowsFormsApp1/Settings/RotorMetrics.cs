@@ -34,14 +34,17 @@ namespace MotorController
         public MovingStatsOptimal(int size)
         {
             this.size = size;
-            buffer = new float[size];
             Reset();
         }
 
-        public void Reset()
+        public void Reset(Nullable<int> newsize = null)
         {
+            size = newsize ?? size;
+
+            buffer = new float[size];
             head = 0;
             sum = sum2 = sumxy = 0;
+
             /*
              * Simplify:
              * Sum(x - mean_x)^2
@@ -49,12 +52,12 @@ namespace MotorController
             */
             regress_denom = (float)(size / 12f * (Math.Pow(size, 2) - 1f));
         }
-
+        /*
         public void ResizeBuffer(int newsize)
         {
             
             float[] newbuffer = new float[newsize];
-            /*
+            
             //Trying out new coding style: keep it simple! So splitting into 2 cases
             if (newsize >= size)
             {
@@ -66,14 +69,14 @@ namespace MotorController
                 Array.Copy(buffer, size - newsize, newbuffer, 0, newsize);
                 head += (2 * size - newsize) % size;
             }
-            */
+            
             //TODO: convert stats to new size! Some would work some not
             Reset();
 
             size = newsize;
             buffer = newbuffer;
         }
-
+        */
         public float MA
         {
             get
@@ -164,20 +167,20 @@ namespace MotorController
             this.GetTarget = new D_GetTarget(gettarget);
         }
 
-        public new void Reset()
+        public new void Reset(Nullable<int> newsize)
         {
-            base.Reset();
+            base.Reset(newsize);
             Crosses = 0;
             _max = 0;
             _min = float.MaxValue;
         }
-
+        /*
         public new void ResizeBuffer(int newsize)
         {
             base.ResizeBuffer(newsize);
             //NOTE: no need to reset as crosses/min/max not effected by size (except trailing edge case!)
         }
-
+        */
         private void MeasureBuffer()
         {
             float local_target = GetTarget();

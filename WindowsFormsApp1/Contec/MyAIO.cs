@@ -113,8 +113,8 @@ namespace MultiDeviceAIO
             }
 
         }
-
-        public double testtarget { get; private set; } = 1e5;
+        
+        public double devicetarget { get; private set; } = 1e5;
 
         public MyAIO(int testing)
         {
@@ -343,7 +343,7 @@ namespace MultiDeviceAIO
             }
             */
 
-            testtarget = 0;
+            devicetarget = 0;
 
             //Setting the 
             foreach (Device d in Device.devices)
@@ -375,13 +375,14 @@ namespace MultiDeviceAIO
                 }
 
                 //This is the expected number of samples per device
-                testtarget += d.target = settings.sample_frequency * settings.duration * settings.n_channels;
+                devicetarget += d.target = settings.sample_frequency * settings.duration * settings.n_channels;
 
                 //timer_duration / 1000 * sample_freq * num_channels *2 (no chance of overflow!)
                 //d.buffer = new int[TIMERPERIOD / 1000 * settings.sample_frequency * settings.n_channels * 2];
 
             }
-            
+
+            devicetarget /= 2;
             //Moved null to Start
         }
 
@@ -403,15 +404,14 @@ namespace MultiDeviceAIO
         /*
          *   Returns total size of combined device buffers so far
          */
-        public int RetrieveAllData()
+        public void RetrieveAllData(out List<int> progress)
         {
-            int t = 0;
+            progress = new List<int>();
             //Added ToList() :. single random collection mod error 
             foreach (Device d in Device.devices.ToList())
             {
-                t += RetrieveData(d);
+                progress.Add( RetrieveData(d) );
             }
-            return t;
         }
 
         /*

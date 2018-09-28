@@ -126,12 +126,12 @@ namespace MultiDeviceAIO
 
         private void RetrieveData()
         {
-            double percent = myaio.RetrieveAllData() / myaio.testtarget * 100;
+            myaio.RetrieveAllData(out List<int> progress);
 
-            progressBar1.Value = (int)Math.Round(percent, 0);
+            pbr0.Value = (int)Math.Round(progress[0] / myaio.devicetarget * 100, 0);
+            pbr1.Value = (int)Math.Round(progress[1] / myaio.devicetarget * 100, 0);
 
-            PrintLn(String.Format("{0:0.00}%", percent), false, -1);
-            
+            PrintLn(String.Format("A:{0:0.00}% B:{0:0.00}%", pbr0.Value, pbr1.Value), false, -1);
         }
 
         /// <summary>
@@ -145,6 +145,7 @@ namespace MultiDeviceAIO
         /// <param name="num_samples"></param>
         void SaveData()
         {
+            //Make a copy into storage 
             myaio._concatdata = new DATA(myaio.GetConcatData());
 
             scope = new FmScope(myaio._concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration);
@@ -192,7 +193,6 @@ namespace MultiDeviceAIO
             }
 
             RenameTempFile(fn);
-            PrintLn("Saved", true);
 
         }
 

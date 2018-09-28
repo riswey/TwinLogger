@@ -9,6 +9,8 @@ using DEVICEID = System.Int16;
 //The data structure is a dictionary; K: device id V:raw list of data for device
 //K: device id :. data imported by id
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
+using System.Diagnostics;
+using System.Threading;
 
 namespace MultiDeviceAIO
 {
@@ -58,7 +60,7 @@ namespace MultiDeviceAIO
 
             setStartButtonText(0);
 
-            progressBar1.Maximum = 100;
+            pbr0.Maximum = pbr1.Maximum = 100;
 
             SetAIO();
 
@@ -829,7 +831,8 @@ namespace MultiDeviceAIO
             PersistentLoggerState.ps.data.ResetMAC();
             sm_motor.Event(EVENT.Next);
             myaio.Stop();
-            progressBar1.Value = 0;
+            pbr0.Value = 0;
+            pbr1.Value = 0;
             setStartButtonText(0);
         }
 

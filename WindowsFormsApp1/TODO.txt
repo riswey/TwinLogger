@@ -12,6 +12,23 @@ Sample Freq
 18.01	Project Start
 
 
+>THREAD
+Triggers go in pairs (next experiment triggers immediately then next waits)
+
+>Serial
+.Check ADC being sent
+.Really should wait for Freq to return to ensure we agree on what we are aiming for
+
+GUI
+.Pancake/vertical (hard code the M1-6)
+.Daves improved freq selection (at least bump up lowest + interval a selection based on range)
+
+>DRIVER
+.Check caio on toughbook
+
+
+
+
 
 
 start freq/boost other (list in steps)

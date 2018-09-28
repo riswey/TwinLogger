@@ -126,7 +126,7 @@
             this.pb1arm = new System.Windows.Forms.PictureBox();
             this.pb1busy = new System.Windows.Forms.PictureBox();
             this.pb1ok = new System.Windows.Forms.PictureBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.pbr0 = new System.Windows.Forms.ProgressBar();
             this.panel6 = new System.Windows.Forms.Panel();
             this.label43 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
@@ -194,6 +194,7 @@
             this.btnDecRange = new System.Windows.Forms.Button();
             this.serialpoller = new System.Windows.Forms.Timer(this.components);
             this.contecpoller = new System.Windows.Forms.Timer(this.components);
+            this.pbr1 = new System.Windows.Forms.ProgressBar();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -1165,24 +1166,25 @@
             this.pb1ok.TabIndex = 37;
             this.pb1ok.TabStop = false;
             // 
-            // progressBar1
+            // pbr0
             // 
-            this.progressBar1.Location = new System.Drawing.Point(110, 84);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(359, 23);
-            this.progressBar1.TabIndex = 40;
+            this.pbr0.Location = new System.Drawing.Point(110, 84);
+            this.pbr0.Name = "pbr0";
+            this.pbr0.Size = new System.Drawing.Size(173, 23);
+            this.pbr0.TabIndex = 40;
             // 
             // panel6
             // 
             this.panel6.BackColor = System.Drawing.Color.Transparent;
             this.panel6.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel6.BackgroundImage")));
             this.panel6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel6.Controls.Add(this.pbr1);
             this.panel6.Controls.Add(this.label43);
             this.panel6.Controls.Add(this.label42);
             this.panel6.Controls.Add(this.label39);
             this.panel6.Controls.Add(this.pbStatusOut);
             this.panel6.Controls.Add(this.label24);
-            this.panel6.Controls.Add(this.progressBar1);
+            this.panel6.Controls.Add(this.pbr0);
             this.panel6.Controls.Add(this.pbStatus);
             this.panel6.Controls.Add(this.label23);
             this.panel6.Controls.Add(this.label14);
@@ -1899,8 +1901,14 @@
             // 
             // contecpoller
             // 
-            this.contecpoller.Interval = 400;
             this.contecpoller.Tick += new System.EventHandler(this.contecpoller_Tick);
+            // 
+            // pbr1
+            // 
+            this.pbr1.Location = new System.Drawing.Point(287, 84);
+            this.pbr1.Name = "pbr1";
+            this.pbr1.Size = new System.Drawing.Size(173, 23);
+            this.pbr1.TabIndex = 66;
             // 
             // FmControlPanel
             // 
@@ -2072,7 +2080,7 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ToolStripMenuItem motorControllerToolStripMenuItem;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ProgressBar pbr0;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage2;
@@ -2145,5 +2153,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.Label lblAppState;
+        private System.Windows.Forms.ProgressBar pbr1;
     }
 }
