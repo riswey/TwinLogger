@@ -350,8 +350,6 @@ namespace MultiDeviceAIO
 
             }
 
-            IsTimeout = false;
-
             devicetarget /= 2;
             //Moved null to Start
         }
@@ -369,6 +367,15 @@ namespace MultiDeviceAIO
             {
                 aio.StopAi(d.id);
             }
+        }
+
+        /// <summary>
+        /// Call this on trigger before start collecting data
+        /// </summary>
+        public void InitDataCollectionTimeout()
+        {
+            IsTimeout = false;
+            lastdatatimeout = LoggerState.GetTime_ms;
         }
 
         /*
@@ -394,7 +401,7 @@ namespace MultiDeviceAIO
          */
 
         long lastdatatimeout = 0;
-        const long DATATIMEOUT = 5000;
+        const long DATATIMEOUT = 10000;
         public bool IsTimeout { get; private set; } = false;
 
         private int RetrieveData(Device d)
@@ -418,6 +425,7 @@ namespace MultiDeviceAIO
                 if (LoggerState.GetTime_ms - lastdatatimeout > DATATIMEOUT)
                 {
                     IsTimeout = IsTimeout || true;
+                    Debug.WriteLine("IsTimeout: " + IsTimeout);
                 }
             }
 

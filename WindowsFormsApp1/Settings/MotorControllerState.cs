@@ -253,6 +253,7 @@ namespace MultiDeviceAIO
         [XmlIgnore]
         public bool IsReadyToSample { get{
                 bool eval = EvalTrigger;
+                Debug.WriteLine("Run time: " + (GetTime_ms - start_t).ToString() );
                 return eval || (start_t != 0 && GetTime_ms - start_t > timeout);}
         }
 

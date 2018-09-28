@@ -39,18 +39,23 @@ namespace MultiDeviceAIO
                 //if (PersistentLoggerState.ps.data.testingmode)
                 //    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
             });
-            appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.TriggerWaitLock, (string index) =>
+            
+            //TODO: need to timeout events (send event - stored by marshal and alternative executed if timeout (retry)
+            //Removed TriggerWaitLock (not important if lock doesn't take)
+            //appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.TriggerWaitLock, (string index) =>
+            appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.DoSampling, (string index) =>
             {
                 sm_motor.Event(ARDUINOEVENT.Send_Lock);
-                //sm_motor.Event(ARDUINOEVENT.Send_Trigger);
+                sm_motor.Event(ARDUINOEVENT.Send_Trigger);
+                myaio.InitDataCollectionTimeout();
             });
-
-//Place: Send Trigger from lock
+            /*
             appstate.AddRule(APPSTATE.TriggerWaitLock, APPEVENT.Lock, APPSTATE.DoSampling, (string index) =>
             {
                 sm_motor.Event(ARDUINOEVENT.Send_Trigger);
                 //TODO: check that contecpolling_Tick starts polling now (when sampling)
             });
+            */
             /*
             appstate.AddRule(APPSTATE.Sampling, APPEVENT.ContecTriggered, (string index) =>
             {
@@ -111,13 +116,13 @@ namespace MultiDeviceAIO
             }
 
             //TODO: Also sets start_t!!! Need to formalise this its to important to be a side effect!
-            PersistentLoggerState.ps.data.RotorLogStart();
             
             NextRun(index);
         }
 
         void NextRun(string index)
         {
+            PersistentLoggerState.ps.data.RotorLogStart();
             //TODO: should be bound more closely to change freq state. But only called once so here.
             SendCommand(CMD.SETFREQ);       //Inform Arduino
             SendCommand(CMD.GETTARGETFREQ);
@@ -137,6 +142,7 @@ namespace MultiDeviceAIO
             //contecpoller.Interval = 5000;
             myaio.Stop();
             myaio.RefreshDevices();
+            myaio.ResetDevices();
             PersistentLoggerState.ps.data.ResetMAC();
             sm_motor.Event(ARDUINOEVENT.Next);
             pbr0.Value = 0;

@@ -70,7 +70,7 @@ namespace MultiDeviceAIO
             if (((int)CaioConst.AIS_START_TRG & bitflags) != 0)
             {
                 //Armed
-                appstate.Event(APPEVENT.Armed);
+                if (!appstate.IsState(APPSTATE.Armed)) appstate.Event(APPEVENT.Armed);
                 return;
             }
 
