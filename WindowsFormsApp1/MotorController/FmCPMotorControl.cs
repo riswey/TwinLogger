@@ -23,7 +23,7 @@ namespace MultiDeviceAIO
         string TERMINAL = "\n";
         //STATE state = STATE.Ready;
 
-        StateMachine sm_motor = new StateMachine(ARDUINOSTATE.Ready);
+        StateMachine sm_motor = new StateMachine("ArduinoState", ARDUINOSTATE.Ready);
 
         //Task task = null;
 
@@ -227,6 +227,13 @@ namespace MultiDeviceAIO
 
             }
 
+            doSend(cmd, data);
+
+        }
+
+        //Means can hijack for meta motor ctrl
+        void doSend(CMD cmd, string data)
+        {
             Enums.CMDEncode.TryGetValue(cmd, out string strcmd);
             string packet = strcmd + " " + data + TERMINAL;
 
@@ -299,19 +306,22 @@ namespace MultiDeviceAIO
                     Enums.ACKDecode.TryGetValue(data[1], out ARDUINOEVENT ack_event);
                     sm_motor.Event(ack_event);
                     break;
+                    /*
                 case DATATYPES.GETPULSEDELAY:
                     PersistentLoggerState.ps.data.pulse_delay = int.Parse(data[1]);
                     break;
+                    */
                 case DATATYPES.GETTARGETFREQ:
                     PersistentLoggerState.ps.data.target_speed = float.Parse(data[1]);
                     break;
                 case DATATYPES.GETROTORFREQ:
                     PersistentLoggerState.ps.data.rotor_speed = float.Parse(data[1]);
                     break;
-                case DATATYPES.GETMINMAXPERIODS:
+/*                case DATATYPES.GETMINMAXPERIODS:
                     PersistentLoggerState.ps.data.min_period = long.Parse(data[1]);
                     PersistentLoggerState.ps.data.max_period = long.Parse(data[2]);
                     break;
+                    */
                 case DATATYPES.GETPID:
                     PersistentLoggerState.ps.data.p = float.Parse(data[1]);
                     PersistentLoggerState.ps.data.i = float.Parse(data[2]);

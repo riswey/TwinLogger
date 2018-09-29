@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,11 +13,14 @@ namespace MultiDeviceAIO
 {
     class StateMachine
     {
+        private string log = "";
+
         public delegate void CallBack(string index);
 
         private const string ALLSTATECODE = "#######";     //any state matches
 
         public string state { get; set; }
+        string name;
 
         //TODO: make this generic
         //restrict as best to Enum
@@ -26,9 +29,20 @@ namespace MultiDeviceAIO
             return state == enumtype.ToString();
         }
 
-        public StateMachine(object state)
+        public StateMachine(string name, object state)
         {
+            this.name = name;
             this.state = state.ToString();
+        }
+
+        public void Save()
+        {
+            File.WriteAllText(PersistentLoggerState.ps.data.testpath + @"\" + name + "_state.txt", log);
+        }
+
+        void WriteLine(string line)
+        {
+            log += line + "\n";
         }
 
         Dictionary<string, string> rules = new Dictionary<string, string>();
@@ -89,7 +103,7 @@ namespace MultiDeviceAIO
                 callbacks[allindex](index);
             }
 
-            Debug.WriteLine("#" + this.GetHashCode() + "\t%" + stateevent.ToString() + "%\t" + debug + "\t" + match);
+            WriteLine("#" + this.GetHashCode() + "\t%" + stateevent.ToString() + "%\t" + debug + "\t" + match);
 
         }
 

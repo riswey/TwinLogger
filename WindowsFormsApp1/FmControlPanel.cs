@@ -64,6 +64,7 @@ namespace MultiDeviceAIO
             BindTestParameters();
             BindMotorControls();
 
+            serialpoller.Interval = PersistentLoggerState.ps.data.arduinotick;
             InitMotorStateMachine();
             InitFmCPMotorControl();
 
@@ -187,6 +188,9 @@ namespace MultiDeviceAIO
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             MotorCleanUp();
+
+            appstate.Save();
+            sm_motor.Save();
 
             //Give chance to close  
             myaio?.Dispose();
@@ -439,6 +443,7 @@ namespace MultiDeviceAIO
         private void resetDevicesToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             monitorpoller.Stop();
+            myaio.RefreshDevices();
             myaio.ResetDevices();
             DiscoverDevices();
             monitorpoller.Start();
@@ -745,5 +750,15 @@ namespace MultiDeviceAIO
 
         #endregion
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            doSend(CMD.SETFREQ, "30");
+            SendCommand(CMD.START);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            SendCommand(CMD.STOP);
+        }
     }
 }

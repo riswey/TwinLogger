@@ -19,7 +19,7 @@ namespace MultiDeviceAIO
         enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, TriggerWaitLock, DoSampling, Error };
         enum APPEVENT { InitRun, ACKRotor, Armed, Lock, Trigger, ContecTriggered, SamplingError, EndRun, Stop };
 
-        StateMachine appstate = new StateMachine(APPSTATE.Ready);
+        StateMachine appstate = new StateMachine("Appstate", APPSTATE.Ready);
 
         //const int CONTECPOLLERSTATE = 1000;
         //const int CONTECPOLLERDATA = 100;
@@ -95,6 +95,8 @@ namespace MultiDeviceAIO
 
             //Start motor
             sm_motor.Event(ARDUINOEVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
+            //Set rotor 0
+            PersistentLoggerState.ps.data.Rotor0 = 0;
             //Enters wait for ACK
 
             //TODO: better timer control so that exiting closures ensures they stop/start

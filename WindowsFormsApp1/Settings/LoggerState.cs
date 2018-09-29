@@ -70,6 +70,8 @@ namespace MultiDeviceAIO
 
         public string version { get; } = "2.1";       //Logger content version
 
+        public int arduinotick { get; set; } = 500;
+
         //TODO: shouldn't these be null? And test for null in prog. OR doesn't it serialise?
         [TestProperty]
         public string testpath { get; set; } = "";       //Path to test data

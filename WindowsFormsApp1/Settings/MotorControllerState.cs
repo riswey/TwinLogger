@@ -23,7 +23,8 @@ namespace MultiDeviceAIO
 
         void InitMotorControllerState()
         {
-            mac = new MotorController.MovingStatsCrosses(metric_window, () => { return target_speed; } );
+            int tickpermetricwindow = (int)Math.Ceiling((double)metric_window / arduinotick);
+            mac = new MotorController.MovingStatsCrosses(tickpermetricwindow, () => { return target_speed; } );
             mac.BoundPropertiesForUpdate = new List<string>() { "MA","STD","Gradient", "Min", "Max","Crosses"};
         }
 
@@ -43,12 +44,13 @@ namespace MultiDeviceAIO
         }
 
         float _p = 0, _i = 0, _d = 0;
-        int _pulse_delay = 0;
+        //int _pulse_delay = 0;
         public float p { get { return _p; } set { _p = value; InvokePropertyChanged("p"); } }
         public float i { get { return _i; } set { _i = value; InvokePropertyChanged("i"); } }
         public float d { get { return _d; } set { _d = value; InvokePropertyChanged("d"); } }
-        public int pulse_delay { get { return _pulse_delay; } set { _pulse_delay = value; InvokePropertyChanged("pulse_delay"); } }
-        long _min_period = -1, _max_period = -1;
+        //public int pulse_delay { get { return _pulse_delay; } set { _pulse_delay = value; InvokePropertyChanged("pulse_delay"); } }
+        //long _min_period = -1, _max_period = -1;
+        /*
         public long min_period {
             get
             {
@@ -83,7 +85,7 @@ namespace MultiDeviceAIO
                     _max_period = -1;
             }
         }
-
+        */
         float _target_speed = 50;
         [TestProperty]
         public float target_speed
@@ -194,7 +196,6 @@ namespace MultiDeviceAIO
         public void RotorLogStart()
         {
             doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD");
-            Rotor0 = 0;
         }
         
         public void LogWrite()
@@ -267,8 +268,9 @@ namespace MultiDeviceAIO
         public bool IsReadyToSample {
             get
             {
+
                 bool eval = EvalTrigger;
-                Debug.WriteLine("Run time: " + TestX.ToString() );
+                Debug.WriteLine("TEval: " + eval);
                 return (eval && TestX > metric_window)                  //allow full metrics to be processes 
                     || (TestX > timeout);                               //timeout
             }
@@ -297,6 +299,9 @@ namespace MultiDeviceAIO
         public bool EvalTrigger {
             get {
                 string smerged = TriggerMerged;
+
+                Debug.WriteLine("Merged: " + smerged);
+
                 return (bool)_dt.Compute(smerged, "");
             }
         }

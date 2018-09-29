@@ -425,7 +425,6 @@ namespace MultiDeviceAIO
                 if (LoggerState.GetTime_ms - lastdatatimeout > DATATIMEOUT)
                 {
                     IsTimeout = IsTimeout || true;
-                    Debug.WriteLine("IsTimeout: " + IsTimeout);
                 }
             }
 
