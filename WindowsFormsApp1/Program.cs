@@ -38,7 +38,7 @@ namespace MultiDeviceAIO
 #else
             try
             {
-                Application.Run(new Main());
+                Application.Run(new FmControlPanel());
             }
             catch (Exception ex)
             {

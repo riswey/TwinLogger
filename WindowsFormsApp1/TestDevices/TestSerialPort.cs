@@ -125,16 +125,17 @@ namespace MotorController
                         state.locked = false;
                     SendACK(cmd);
                     break;
-/*                case CMD.SETPULSEDELAY:
+                /*case CMD.SETPULSEDELAY:
                     _PulseDelay = int.Parse(data[1]);
                     SendACK(cmd);
                     break;*/
-                case CMD.SETPID:
+                /*case CMD.SETPID:
                     state.p = float.Parse(data[1]);
                     state.i = float.Parse(data[2]);
                     state.d = float.Parse(data[3]);
                     SendACK(cmd);
                     break;
+                    */
                 case CMD.SETFREQ:
                     state.target_f = int.Parse(data[1]);
                     SendACK(cmd);

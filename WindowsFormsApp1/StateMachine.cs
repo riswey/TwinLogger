@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -42,7 +43,8 @@ namespace MultiDeviceAIO
 
         void WriteLine(string line)
         {
-            log += line + "\n";
+            Debug.WriteLine(line);
+            //log += line + "\n";
         }
 
         Dictionary<string, string> rules = new Dictionary<string, string>();
@@ -77,18 +79,18 @@ namespace MultiDeviceAIO
 
             if (rules.ContainsKey(index))
             {
-                match = rules[index] + "(" + index + ")";
+                match = rules[index] + "\t[" + index + "]";
                 state = rules[index];
             }
             else if (rules.ContainsKey(allindex))
             {
-                match = rules[allindex] + "(" + allindex + ")";
+                match = rules[allindex] + "\t[" + allindex + "]";
                 state = rules[allindex];
             }
 
             if (match == "")
             {
-                match = "nomatch";
+                match = "\t[nomatch]";
             }
 
             //if doesn't exist then null
@@ -103,7 +105,8 @@ namespace MultiDeviceAIO
                 callbacks[allindex](index);
             }
 
-            WriteLine("#" + this.GetHashCode() + "\t%" + stateevent.ToString() + "%\t" + debug + "\t" + match);
+            //"#" + this.GetHashCode() + "\t
+            WriteLine("%" + stateevent.ToString() + "%\t" + debug + "\t" + match);
 
         }
 

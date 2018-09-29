@@ -88,6 +88,7 @@ namespace MultiDeviceAIO
         */
         float _target_speed = 50;
         [TestProperty]
+        [MotorProperty]
         public float target_speed
         {
             get
@@ -98,8 +99,6 @@ namespace MultiDeviceAIO
             {
                 _target_speed = value;
                 InvokePropertyChanged("target_speed");
-                SetBounds();
-                graphrange = target_speed * 0.2f;
             }
         }
 
@@ -121,9 +120,15 @@ namespace MultiDeviceAIO
         
         //Test t
         [XmlIgnore]
-        private long _test_0 { get; set; }                      //Marker for start of rotor run
+        private long _test_0 { get; set; }                      //Marker for start of test run
         [XmlIgnore]
-        public long Test0 { get { return _test_0; } set { _test_0 = LoggerState.GetTime_ms; } }
+        public long Test0 { get { return _test_0; } set {
+                _test_0 = LoggerState.GetTime_ms;
+            } }
+        /// <summary>
+        /// Used to determine trigger timeout
+        /// Zero at start of test, before first trigger eval!
+        /// </summary>
         [XmlIgnore]
         public long TestX { get { return LoggerState.GetTime_ms - Test0; } }
 
@@ -152,7 +157,7 @@ namespace MultiDeviceAIO
             set
             {
                 _rotor_speed = value;
-                dt.Rows.Add((int)RotorX, target_speed, Upper, Lower, value);
+                dt.Rows.Add((int)RotorX, target_speed, target_speed + 5, target_speed - 5, value);
                 mac.Add(value);
                 InvokePropertyChanged("rotor_speed");
                 mac.BoundPropertiesForUpdate.ForEach( p => { InvokePropertyChanged(p); } );
@@ -215,6 +220,7 @@ namespace MultiDeviceAIO
 
         private void doWrite(string str)
         {
+            //TODO: need smart write which creates folder!
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(testpath + @"\rotor.log", true))
             {
                 file.WriteLine(str);
@@ -222,9 +228,6 @@ namespace MultiDeviceAIO
         }
 
         #endregion
-
-        public float tolerance { get; set; } = 1.1f;
-        //public long stableperiod { get; set; } = 3000;
 
         //TODO: timeout need to reset
         public long timeout { get; set; } = 60000;    //1min
@@ -248,22 +251,7 @@ namespace MultiDeviceAIO
                 return _dt;
             }
         }
-
-        //NOTE: x is in timer ticks (not seconds)
-        [XmlIgnore]
-        private int x = 0;
-        [XmlIgnore]
-        [MotorProperty]
-        public float Lower { get; set; }
-        [XmlIgnore]
-        [MotorProperty]
-        public float Upper { get; set; }
-        [XmlIgnore]
-        public float graphrange = 50;        
         
-        [XmlIgnore]
-        public bool IsRotorInRange {get { return (rotor_speed > Lower && rotor_speed < Upper); }}
-
         [XmlIgnore]
         public bool IsReadyToSample {
             get
@@ -271,15 +259,12 @@ namespace MultiDeviceAIO
 
                 bool eval = EvalTrigger;
                 Debug.WriteLine("TEval: " + eval);
+                Debug.WriteLine("TX>MW: " + TestX + ">" + metric_window);
+                Debug.WriteLine("TX>TO: " + TestX + ">" + timeout);
+
                 return (eval && TestX > metric_window)                  //allow full metrics to be processes 
                     || (TestX > timeout);                               //timeout
             }
-        }
-
-        void SetBounds()
-        {
-            Lower = target_speed / tolerance;
-            Upper = target_speed * tolerance;
         }
 
         #region EVAL TRIGGER 

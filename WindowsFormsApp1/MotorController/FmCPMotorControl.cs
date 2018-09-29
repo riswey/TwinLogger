@@ -112,15 +112,6 @@ namespace MultiDeviceAIO
             lblCurrentSpeed.DataBindings.Clear();
             lblCurrentSpeed.DataBindings.Add("Text", PersistentLoggerState.ps.data, "rotor_speed");
 
-            lblMinRotorPeriod.DataBindings.Clear();
-            lblMinRotorPeriod.DataBindings.Add("Text", PersistentLoggerState.ps.data, "min_period");
-
-            lblMaxRotorPeriod.DataBindings.Clear();
-            lblMaxRotorPeriod.DataBindings.Add("Text", PersistentLoggerState.ps.data, "max_period");
-
-            lblPulseDelay.DataBindings.Clear();
-            lblPulseDelay.DataBindings.Add("Text", PersistentLoggerState.ps.data, "pulse_delay");
-
             nudP.DataBindings.Clear();
             nudP.DataBindings.Add("Value", PersistentLoggerState.ps.data, "p");
 
@@ -129,12 +120,6 @@ namespace MultiDeviceAIO
 
             nudD.DataBindings.Clear();
             nudD.DataBindings.Add("Value", PersistentLoggerState.ps.data, "d");
-
-            nudTolerance.DataBindings.Clear();
-            nudTolerance.DataBindings.Add("Value", PersistentLoggerState.ps.data, "tolerance");
-
-            //nudStableWindow.DataBindings.Clear();
-            //nudStableWindow.DataBindings.Add("Value", PersistentLoggerState.ps.data, "stableperiod");
 
             nudTimeout.DataBindings.Clear();
             nudTimeout.DataBindings.Add("Value", PersistentLoggerState.ps.data, "timeout");
@@ -213,11 +198,13 @@ namespace MultiDeviceAIO
 /*                case CMD.SETPULSEDELAY:
                     //data = nudDesireSpeed.Value.ToString();
                     break;*/
+                    /*
                 case CMD.SETPID:
                     data = nudP.Value.ToString();
                     data += " " + nudI.Value.ToString();
                     data += " " + nudD.Value.ToString();
                     break;
+                    */
 //NEW
                 case CMD.SETADC:
                     //TODO: get the value of the clock freq
@@ -364,17 +351,17 @@ namespace MultiDeviceAIO
 
         protected void nudP_ValueChanged(object sender, EventArgs e)
         {
-            SendCommand(CMD.SETPID);
+            //SendCommand(CMD.SETPID);
         }
 
         private void nudI_ValueChanged(object sender, EventArgs e)
         {
-            SendCommand(CMD.SETPID);
+            //SendCommand(CMD.SETPID);
         }
 
         private void nudD_ValueChanged(object sender, EventArgs e)
         {
-            SendCommand(CMD.SETPID);
+            //SendCommand(CMD.SETPID);
         }
 
         private void AsyncText(Control obj, string text, int append = 0)
@@ -487,8 +474,6 @@ namespace MultiDeviceAIO
             
             chart1.DataBind();
 
-            cbxInRange.Checked = PersistentLoggerState.ps.data.IsRotorInRange;
-
             if (!appstate.IsState(APPSTATE.DoSampling) && PersistentLoggerState.ps.data.IsReadyToSample)
             {
                 cbxOK.Checked = true;
@@ -500,8 +485,8 @@ namespace MultiDeviceAIO
 
         private void UpdateChartYScale()
         {
-            chart1.ChartAreas[0].AxisY.Maximum = (int)(PersistentLoggerState.ps.data.target_speed + PersistentLoggerState.ps.data.graphrange);
-            chart1.ChartAreas[0].AxisY.Minimum = (int)(PersistentLoggerState.ps.data.target_speed - PersistentLoggerState.ps.data.graphrange);
+            chart1.ChartAreas[0].AxisY.Maximum = PersistentLoggerState.ps.data.target_speed + graphrange;
+            chart1.ChartAreas[0].AxisY.Minimum = PersistentLoggerState.ps.data.target_speed - graphrange;
         }
 
     }

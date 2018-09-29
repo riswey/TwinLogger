@@ -20,7 +20,7 @@ namespace MotorController
         SETLOCK,
         SETUNLOCK,
         //SETPULSEDELAY,
-        SETPID,
+        //SETPID,
         SETADC,
         //Respond with "GetCode data"
         //GETPULSEDELAY,      //PW
@@ -80,7 +80,7 @@ namespace MotorController
             {CMD.SETLOCK, "ST" },
             {CMD.SETUNLOCK, "SU" },
             //{CMD.SETPULSEDELAY, "SD" },
-            {CMD.SETPID, "SP" },
+            //{CMD.SETPID, "SP" },
             {CMD.SETADC, "SA" },
 
 //            {CMD.GETPULSEDELAY, "RD" },

@@ -11,6 +11,9 @@ using DEVICEID = System.Int16;
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
 using System.Diagnostics;
 using System.Threading;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace MultiDeviceAIO
 {
@@ -18,6 +21,9 @@ namespace MultiDeviceAIO
     {
 
         #region INIT
+
+        bool probationLoadedstate = false;
+
         MyAIO myaio;
         FmMonitor monitor;
         FmLog fmlog = new FmLog();
@@ -93,8 +99,8 @@ namespace MultiDeviceAIO
                 //need to implement Dispose!
                 //myaio.Dispose();
             }
-            myaio = new MyAIO(PersistentLoggerState.ps.data.testingmode);
 
+            myaio = new MyAIO(PersistentLoggerState.ps.data.testingmode);
             //Load Devices
             DiscoverDevices();
 
@@ -102,68 +108,84 @@ namespace MultiDeviceAIO
 
         void BindTestParameters()
         {
-            //TODO: quick way to clear control binding when rebinding values?
-            //TODO: does this crash now?
+            //TODO: Need to clear before rebinding! Quicker way
 
-            //cbMass.DataBindings.Clear();
+            cbMass.DataBindings.Clear();
             cbMass.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "mass");
 
-            //chkClips.DataBindings.Clear();
+            chkClips.DataBindings.Clear();
             chkClips.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "clipsOn");
 
-            //tbLoad.DataBindings.Clear();
+            tbLoad.DataBindings.Clear();
             tbLoad.DataBindings.Add("Text", PersistentLoggerState.ps.data, "load");
 
-            //nudChannel.DataBindings.Clear();
+            nudChannel.DataBindings.Clear();
             nudChannel.DataBindings.Add("Value", PersistentLoggerState.ps.data, "n_channels");
 
-            //nudDuration.DataBindings.Clear();
+            nudDuration.DataBindings.Clear();
             nudDuration.DataBindings.Add("Value", PersistentLoggerState.ps.data, "duration");
 
-            //cbShaker.DataBindings.Clear();
+            cbShaker.DataBindings.Clear();
             cbShaker.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "shakertype");
 
-            //cbPad.DataBindings.Clear();
+            cbPad.DataBindings.Clear();
             cbPad.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "paddtype");
 
-            //nudFreqFrom.DataBindings.Clear();
+            nudFreqFrom.DataBindings.Clear();
             nudFreqFrom.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_from");
 
-            //nudFreqTo.DataBindings.Clear();
+            nudFreqTo.DataBindings.Clear();
             nudFreqTo.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_to");
 
-            //nudFreqStep.DataBindings.Clear();
+            nudFreqStep.DataBindings.Clear();
             nudFreqStep.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_step");
 
-            //nudInterval.DataBindings.Clear();
+            nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", PersistentLoggerState.ps.data, "sample_frequency");
 
-            //tbDirectory.DataBindings.Clear();
+            tbDirectory.DataBindings.Clear();
             tbDirectory.DataBindings.Add("Text", PersistentLoggerState.ps.data, "testpath");
 
-            //chkExternalTrigger.DataBindings.Clear();
+            chkExternalTrigger.DataBindings.Clear();
             chkExternalTrigger.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_trigger");
 
-            //chkExternalClock.DataBindings.Clear();
+            chkExternalClock.DataBindings.Clear();
             chkExternalClock.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_clock");
 
         }
 
         void DiscoverDevices()
         {
-            int devices_count = myaio.DiscoverDevices();
 
-            PersistentLoggerState.ps.data.n_devices = devices_count;
-
-            SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
-
-            if (PersistentLoggerState.ps.data.n_devices < 2)
+            //NEW CODE: hanging on this alot
+            Cursor = Cursors.WaitCursor; // change cursor to hourglass type
+            var task = Task.Run(() =>
             {
-                if (MessageBox.Show(this, "Not all devices are connected. Try Auto-Reset?", "Contec Error", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                int devices_count = myaio.DiscoverDevices();
+                PersistentLoggerState.ps.data.n_devices = devices_count;
+            });
+            if (task.Wait(TimeSpan.FromSeconds(30)))
+            {
+                Cursor = Cursors.Arrow; // change cursor to normal type
+                SetStatus(PersistentLoggerState.ps.data.n_devices + " Devices Connected");
+                if (PersistentLoggerState.ps.data.n_devices < 2)
                 {
-                    myaio.ResetDevices();
-                    DiscoverDevices();
-                    return;
+                    if (MessageBox.Show(this, "Not all devices are connected. Try Auto-Reset?", "Device Error", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        myaio.ResetDevices();
+                        DiscoverDevices();
+                        return;
+                    }
+                }
+                return;
+            }
+            else
+            {
+                if (MessageBox.Show(this, "Unable to initialise Contec devices.", "Device Error", MessageBoxButtons.OK, MessageBoxIcon.Error) == DialogResult.OK)
+                {
+                    //null so that it doesn't interact with devices anymore in OnClosing
+                    myaio = null;
+                    Close();
                 }
             }
 
@@ -500,15 +522,16 @@ namespace MultiDeviceAIO
             //Abort();
         }
 
+        float graphrange = 1;
         public void btnIncRange_Click(object sender, EventArgs e)
         {
-            PersistentLoggerState.ps.data.graphrange *= 1.1f;
+            graphrange *= 2.0f;
             UpdateChartYScale();
         }
 
         public void btnDecRange_Click(object sender, EventArgs e)
         {
-            PersistentLoggerState.ps.data.graphrange /= 1.1f;
+            graphrange /= 2.0f;
             UpdateChartYScale();
         }
 
@@ -653,18 +676,20 @@ namespace MultiDeviceAIO
                 return;
             }
 
-            if (!myaio.ContecOK())
+            int rtncode;
+            if ((rtncode = myaio.ContecOK()) != 0)
             {
                 monitorpoller.Stop();
-                if (MessageBox.Show(this, "There is a Contec device error","Contec Error",MessageBoxButtons.RetryCancel,MessageBoxIcon.Error) == DialogResult.Retry)
+                switch (MessageBox.Show(this, "Contec device error. Returned code " + rtncode + "\nReentry?, Ignore or Close", "Contec Error", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error))
                 {
-                    myaio.ResetDevices();
-                    DiscoverDevices();
-                    monitorpoller.Start();
-                    return;
-                } else
-                {
-                    this.Close();
+                    case DialogResult.Yes:
+                        myaio.ResetDevices();
+                        DiscoverDevices();
+                        monitorpoller.Start();
+                        return;
+                    case DialogResult.Cancel:
+                        this.Close();
+                        return;
                 }
             }
 
@@ -759,6 +784,13 @@ namespace MultiDeviceAIO
         private void button5_Click(object sender, EventArgs e)
         {
             SendCommand(CMD.STOP);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            Dictionary<string, string> dict = LoggerState.MergeDictionary<MotorPropertyAttribute>(PersistentLoggerState.ps.data);
+            string text = String.Join("}, {", dict.Keys.ToArray());
+            MessageBox.Show("{" + text + "}");
         }
     }
 }

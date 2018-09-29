@@ -149,17 +149,22 @@ namespace MultiDeviceAIO
             });
         }
 
-        public bool ContecOK()
+        public int ContecOK()
         {
+            //0 ok
+            //1 state error
+            //2 returning 0s
+            //3 timeout
+
             //Run in thread and return false if timesout
             var task = Task.Run(() => DeviceCheck() );
             if (task.Wait(TimeSpan.FromSeconds(10)))
                 return task.Result;
             else
-                return false;
+                return 3;
         }
 
-        private bool DeviceCheck() {
+        private int DeviceCheck() {
             List<int> status = new List<int>();
             GetStatusAll(ref status);
 
@@ -169,7 +174,7 @@ namespace MultiDeviceAIO
             //See manual for : AioGetAiStatus
             if (bitflags >= 65536)
             {
-                return false;
+                return 1;
             }
 
             //first 3 channels == 0 assume its failed
@@ -182,10 +187,10 @@ namespace MultiDeviceAIO
                     aio.SingleAi(d.id, i, out int AiData);
                     sum += AiData;
                 }
-                if (sum == 0) return false;
+                if (sum == 0) return 2;
             }
 
-            return true;
+            return 0;
     
             //this happens each click now!
             /*

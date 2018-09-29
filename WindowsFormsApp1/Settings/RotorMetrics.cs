@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -91,7 +92,21 @@ namespace MotorController
             {
                 //N s^2 = Sum[(y - meany)^2]
                 //s^2 = Sum(y^2)/N - meany^2
-                return (float)Math.Sqrt((sum2 - size * (float)Math.Pow(MA, 2))/(size - 1));
+                double sum2_ma2 = (sum2 - size * (float)Math.Pow(MA, 2));
+                if (sum2_ma2 < 0)
+                {
+                    Debug.WriteLine("MAC Error: STD sum2 - ma2 < 0 (probably rounding error): " + sum2_ma2);
+                    return 0;
+                }
+
+                double eval = Math.Sqrt(sum2_ma2 / (size - 1));
+
+                Debug.WriteLine("STD: sum2=" + sum2 + "-" + (size * (float)Math.Pow(MA, 2)).ToString() + " MA=" + MA.ToString());
+
+                if (eval == double.NaN) {
+                    throw new NotFiniteNumberException("STD error. Denom = " + (size - 1));
+                }
+                return (float) eval;
             }
         }
         /*

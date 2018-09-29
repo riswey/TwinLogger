@@ -47,8 +47,7 @@ namespace MultiDeviceAIO
             {
                 sm_motor.Event(ARDUINOEVENT.Send_Lock);
                 sm_motor.Event(ARDUINOEVENT.Send_Trigger);
-                myaio.InitDataCollectionTimeout();
-                PersistentLoggerState.ps.data.Test0 = 0;
+                myaio.InitDataCollectionTimeout();                
             });
             /*
             appstate.AddRule(APPSTATE.TriggerWaitLock, APPEVENT.Lock, APPSTATE.DoSampling, (string index) =>
@@ -96,13 +95,14 @@ namespace MultiDeviceAIO
             //Start motor
             sm_motor.Event(ARDUINOEVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
             //Set rotor 0
-            PersistentLoggerState.ps.data.Rotor0 = 0;
+            //HERE: Test0 must be before serialpoller start (else triggers: Test0 is 0 so timeouts!)
+            PersistentLoggerState.ps.data.Rotor0 = PersistentLoggerState.ps.data.Test0 = 0;
             //Enters wait for ACK
 
-            //TODO: better timer control so that exiting closures ensures they stop/start
-            //STOP Monitor Timer
             serialpoller.Start();       //Needed to look for serial ACK
             contecpoller.Start();
+
+            PersistentLoggerState.ps.data.dt.Clear();
         }
 
         const int MAXROTORSPEEDFAILSAFE = 200;
@@ -116,6 +116,7 @@ namespace MultiDeviceAIO
                 )
             {
                 appstate.Event(APPEVENT.Stop);
+                return;
             }
 
             //TODO: Also sets start_t!!! Need to formalise this its to important to be a side effect!
@@ -137,6 +138,8 @@ namespace MultiDeviceAIO
             myaio.SetupTimedSample(PersistentLoggerState.ps.data);
             PrintLn("Start", true);
             PersistentLoggerState.ps.data.RotorLogStart();
+            //Set T0 - 
+            PersistentLoggerState.ps.data.Test0 = 0;
             myaio.Start();
         }
 
@@ -146,7 +149,7 @@ namespace MultiDeviceAIO
             myaio.RefreshDevices();
             myaio.ResetDevices();
             PersistentLoggerState.ps.data.ResetMAC();
-            sm_motor.Event(ARDUINOEVENT.Next);
+            sm_motor.Event(ARDUINOEVENT.Next);              //Returns the arduino state to running
             pbr0.Value = 0;
             pbr1.Value = 0;
             setStartButtonText(0);
@@ -171,13 +174,14 @@ namespace MultiDeviceAIO
             serialpoller.Stop();
             SetStatus("Ready");
             PrintLn("Run Stopped", true);
+
         }
 
         #endregion
 
 
 
-        #region ROTOR CONTROL
+#region ROTOR CONTROL
 
         void InitMotorStateMachine()
         {

@@ -155,12 +155,8 @@
             this.nudD = new System.Windows.Forms.NumericUpDown();
             this.nudI = new System.Windows.Forms.NumericUpDown();
             this.nudP = new System.Windows.Forms.NumericUpDown();
-            this.lblPulseDelay = new System.Windows.Forms.Label();
-            this.label28 = new System.Windows.Forms.Label();
-            this.lblMaxRotorPeriod = new System.Windows.Forms.Label();
-            this.lblMinRotorPeriod = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.button6 = new System.Windows.Forms.Button();
             this.lblMax = new System.Windows.Forms.Label();
             this.label48 = new System.Windows.Forms.Label();
             this.lblMin = new System.Windows.Forms.Label();
@@ -179,8 +175,6 @@
             this.txtMetricCommand = new System.Windows.Forms.TextBox();
             this.label44 = new System.Windows.Forms.Label();
             this.nudMetricWindow = new System.Windows.Forms.NumericUpDown();
-            this.label36 = new System.Windows.Forms.Label();
-            this.nudTolerance = new System.Windows.Forms.NumericUpDown();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label38 = new System.Windows.Forms.Label();
             this.label32 = new System.Windows.Forms.Label();
@@ -192,7 +186,6 @@
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.cbxOK = new System.Windows.Forms.CheckBox();
-            this.cbxInRange = new System.Windows.Forms.CheckBox();
             this.btnIncRange = new System.Windows.Forms.Button();
             this.btnDecRange = new System.Windows.Forms.Button();
             this.serialpoller = new System.Windows.Forms.Timer(this.components);
@@ -238,7 +231,6 @@
             this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMetricWindow)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).BeginInit();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
@@ -1429,11 +1421,6 @@
             // 
             this.tabPage3.BackColor = System.Drawing.Color.Gainsboro;
             this.tabPage3.Controls.Add(this.groupBox1);
-            this.tabPage3.Controls.Add(this.lblPulseDelay);
-            this.tabPage3.Controls.Add(this.label28);
-            this.tabPage3.Controls.Add(this.lblMaxRotorPeriod);
-            this.tabPage3.Controls.Add(this.lblMinRotorPeriod);
-            this.tabPage3.Controls.Add(this.label29);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
@@ -1511,60 +1498,10 @@
             this.nudP.TabIndex = 29;
             this.nudP.ValueChanged += new System.EventHandler(this.nudP_ValueChanged);
             // 
-            // lblPulseDelay
-            // 
-            this.lblPulseDelay.AutoSize = true;
-            this.lblPulseDelay.BackColor = System.Drawing.Color.White;
-            this.lblPulseDelay.Location = new System.Drawing.Point(175, 75);
-            this.lblPulseDelay.MinimumSize = new System.Drawing.Size(30, 18);
-            this.lblPulseDelay.Name = "lblPulseDelay";
-            this.lblPulseDelay.Size = new System.Drawing.Size(30, 18);
-            this.lblPulseDelay.TabIndex = 49;
-            this.lblPulseDelay.Text = "    ";
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(33, 75);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(81, 13);
-            this.label28.TabIndex = 48;
-            this.label28.Text = "Pulse delay (us)";
-            // 
-            // lblMaxRotorPeriod
-            // 
-            this.lblMaxRotorPeriod.AutoSize = true;
-            this.lblMaxRotorPeriod.BackColor = System.Drawing.Color.White;
-            this.lblMaxRotorPeriod.Location = new System.Drawing.Point(211, 31);
-            this.lblMaxRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
-            this.lblMaxRotorPeriod.Name = "lblMaxRotorPeriod";
-            this.lblMaxRotorPeriod.Size = new System.Drawing.Size(30, 18);
-            this.lblMaxRotorPeriod.TabIndex = 47;
-            this.lblMaxRotorPeriod.Text = "     ";
-            // 
-            // lblMinRotorPeriod
-            // 
-            this.lblMinRotorPeriod.AutoSize = true;
-            this.lblMinRotorPeriod.BackColor = System.Drawing.Color.White;
-            this.lblMinRotorPeriod.Location = new System.Drawing.Point(175, 31);
-            this.lblMinRotorPeriod.MinimumSize = new System.Drawing.Size(30, 18);
-            this.lblMinRotorPeriod.Name = "lblMinRotorPeriod";
-            this.lblMinRotorPeriod.Size = new System.Drawing.Size(30, 18);
-            this.lblMinRotorPeriod.TabIndex = 46;
-            this.lblMinRotorPeriod.Text = "      ";
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(32, 31);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(131, 13);
-            this.label29.TabIndex = 45;
-            this.label29.Text = "Min/Max Rotor Period (us)";
-            // 
             // tabPage4
             // 
             this.tabPage4.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage4.Controls.Add(this.button6);
             this.tabPage4.Controls.Add(this.lblMax);
             this.tabPage4.Controls.Add(this.label48);
             this.tabPage4.Controls.Add(this.lblMin);
@@ -1583,13 +1520,21 @@
             this.tabPage4.Controls.Add(this.txtMetricCommand);
             this.tabPage4.Controls.Add(this.label44);
             this.tabPage4.Controls.Add(this.nudMetricWindow);
-            this.tabPage4.Controls.Add(this.label36);
-            this.tabPage4.Controls.Add(this.nudTolerance);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(479, 134);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Trigger";
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(445, 103);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(31, 23);
+            this.button6.TabIndex = 89;
+            this.button6.Text = "K";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // lblMax
             // 
@@ -1702,7 +1647,7 @@
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(26, 74);
+            this.label37.Location = new System.Drawing.Point(26, 46);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(45, 13);
             this.label37.TabIndex = 74;
@@ -1711,9 +1656,9 @@
             // 
             // nudTimeout
             // 
-            this.nudTimeout.Location = new System.Drawing.Point(142, 72);
+            this.nudTimeout.Location = new System.Drawing.Point(142, 44);
             this.nudTimeout.Maximum = new decimal(new int[] {
-            100000,
+            1000000,
             0,
             0,
             0});
@@ -1735,14 +1680,14 @@
             // 
             this.txtMetricCommand.Location = new System.Drawing.Point(73, 105);
             this.txtMetricCommand.Name = "txtMetricCommand";
-            this.txtMetricCommand.Size = new System.Drawing.Size(388, 20);
+            this.txtMetricCommand.Size = new System.Drawing.Size(380, 20);
             this.txtMetricCommand.TabIndex = 71;
             this.txtMetricCommand.Text = "{UPPER} - {MAX} >0 AND {LOWER} - {MIN} < 0";
             // 
             // label44
             // 
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(26, 46);
+            this.label44.Location = new System.Drawing.Point(26, 12);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(78, 13);
             this.label44.TabIndex = 70;
@@ -1756,7 +1701,7 @@
             0,
             0,
             0});
-            this.nudMetricWindow.Location = new System.Drawing.Point(142, 44);
+            this.nudMetricWindow.Location = new System.Drawing.Point(142, 10);
             this.nudMetricWindow.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -1766,30 +1711,6 @@
             this.nudMetricWindow.Size = new System.Drawing.Size(67, 20);
             this.nudMetricWindow.TabIndex = 69;
             this.toolTip1.SetToolTip(this.nudMetricWindow, "Length of rotor history to provide statistics for");
-            // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(26, 19);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(108, 13);
-            this.label36.TabIndex = 66;
-            this.label36.Text = "Frequency Tolerance";
-            this.toolTip1.SetToolTip(this.label36, "Rotor tolerance within which can trigger");
-            // 
-            // nudTolerance
-            // 
-            this.nudTolerance.DecimalPlaces = 2;
-            this.nudTolerance.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.nudTolerance.Location = new System.Drawing.Point(142, 17);
-            this.nudTolerance.Name = "nudTolerance";
-            this.nudTolerance.Size = new System.Drawing.Size(67, 20);
-            this.nudTolerance.TabIndex = 65;
-            this.toolTip1.SetToolTip(this.nudTolerance, "Range that rotor must fall within before trigger");
             // 
             // tabPage2
             // 
@@ -1895,17 +1816,6 @@
             this.cbxOK.Text = "OK";
             this.cbxOK.UseVisualStyleBackColor = true;
             // 
-            // cbxInRange
-            // 
-            this.cbxInRange.Appearance = System.Windows.Forms.Appearance.Button;
-            this.cbxInRange.AutoSize = true;
-            this.cbxInRange.Location = new System.Drawing.Point(833, 422);
-            this.cbxInRange.Name = "cbxInRange";
-            this.cbxInRange.Size = new System.Drawing.Size(28, 23);
-            this.cbxInRange.TabIndex = 59;
-            this.cbxInRange.Text = "IN";
-            this.cbxInRange.UseVisualStyleBackColor = true;
-            // 
             // btnIncRange
             // 
             this.btnIncRange.Location = new System.Drawing.Point(833, 392);
@@ -1943,7 +1853,6 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(866, 537);
             this.Controls.Add(this.cbxOK);
-            this.Controls.Add(this.cbxInRange);
             this.Controls.Add(this.btnIncRange);
             this.Controls.Add(this.btnDecRange);
             this.Controls.Add(this.tabControl1);
@@ -1999,7 +1908,6 @@
             this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudTargetSpeed)).EndInit();
             this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudD)).EndInit();
@@ -2009,7 +1917,6 @@
             this.tabPage4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudTimeout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMetricWindow)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTolerance)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
@@ -2136,17 +2043,11 @@
         private System.Windows.Forms.NumericUpDown nudD;
         private System.Windows.Forms.NumericUpDown nudI;
         private System.Windows.Forms.NumericUpDown nudP;
-        private System.Windows.Forms.Label lblPulseDelay;
-        private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.Label lblMaxRotorPeriod;
-        private System.Windows.Forms.Label lblMinRotorPeriod;
-        private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label38;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.CheckBox cbxOK;
-        private System.Windows.Forms.CheckBox cbxInRange;
         private System.Windows.Forms.Button btnIncRange;
         private System.Windows.Forms.Button btnDecRange;
         private System.Windows.Forms.Timer serialpoller;
@@ -2162,8 +2063,6 @@
         private System.Windows.Forms.TextBox txtMetricCommand;
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.NumericUpDown nudMetricWindow;
-        private System.Windows.Forms.Label label36;
-        private System.Windows.Forms.NumericUpDown nudTolerance;
         private System.Windows.Forms.Label lblGrad;
         private System.Windows.Forms.Label label53;
         private System.Windows.Forms.Label lblSTD;
@@ -2183,5 +2082,6 @@
         private System.Windows.Forms.ProgressBar pbr1;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button6;
     }
 }
