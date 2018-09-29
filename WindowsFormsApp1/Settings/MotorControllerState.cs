@@ -107,10 +107,24 @@ namespace MultiDeviceAIO
         //MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
         MotorController.MovingStatsCrosses mac;
 
-        const int arduinotimertick = 500;
+        public int metric_window { get; set; } = 3000;          //Length metric window
+        
+        //Motor t
+        [XmlIgnore]
+        private long _rotor_0 { get; set; }                      //Marker for start of rotor run
+        [XmlIgnore]
+        public long Rotor0 { get { return _rotor_0; } set { _rotor_0 = LoggerState.GetTime_ms; } }
+        [XmlIgnore]
+        public long RotorX { get { return LoggerState.GetTime_ms - Rotor0;  } }
+        
+        //Test t
+        [XmlIgnore]
+        private long _test_0 { get; set; }                      //Marker for start of rotor run
+        [XmlIgnore]
+        public long Test0 { get { return _test_0; } set { _test_0 = LoggerState.GetTime_ms; } }
+        [XmlIgnore]
+        public long TestX { get { return LoggerState.GetTime_ms - Test0; } }
 
-        //In timer ticks. Stable windows is 3000ms (500ms arduinotimer)
-        public int metric_window { get; set; } = 30;        //Length window in arduino_ticks
 
         [MotorProperty]
         public float MA { get { return mac.MA; } }
@@ -136,7 +150,7 @@ namespace MultiDeviceAIO
             set
             {
                 _rotor_speed = value;
-                dt.Rows.Add(x++, target_speed, Upper, Lower, value);
+                dt.Rows.Add((int)RotorX, target_speed, Upper, Lower, value);
                 mac.Add(value);
                 InvokePropertyChanged("rotor_speed");
                 mac.BoundPropertiesForUpdate.ForEach( p => { InvokePropertyChanged(p); } );
@@ -145,6 +159,8 @@ namespace MultiDeviceAIO
 
         #endregion
 
+        /*
+        //No Min/Max period calls anymore
         #region Min/Max Rotor Period Request Delay
         //RM (Req. Min/Max) Timer pause
         //Put a timer block on Min/Max calls
@@ -152,8 +168,6 @@ namespace MultiDeviceAIO
         [XmlIgnore]
         const long RM_TIMER_PERIOD = 2000;
 
-        [XmlIgnore]
-        private long start_t { get; set; }      //Marker for start of rotor run
         [XmlIgnore]
         long rm_timer { get; set; } = 0;        //Marker for delay in Min/Max calls
 
@@ -168,27 +182,26 @@ namespace MultiDeviceAIO
         {
             return (GetTime_ms - rm_timer) > RM_TIMER_PERIOD;
         }
-
+        
         #endregion
+        */
 
         #region LOGGING
 
         public string path { get; set; }
         
-        //Stores the start time (motor logs are recorded relative)
+        //Stores the text start time, preps log file
         public void RotorLogStart()
         {
             doWrite("-------------------------------------------\r\nt\tTarget\tActual\tP\tI\tD");
-            start_t = LoggerState.GetTime_ms;
+            Rotor0 = 0;
         }
         
         public void LogWrite()
         {
 
-            long millisecs = LoggerState.GetTime_ms - start_t;
-
             string str = String.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}",
-                millisecs,
+                RotorX,
                 target_speed,
                 rotor_speed,
                 p,
@@ -251,10 +264,14 @@ namespace MultiDeviceAIO
         public bool IsRotorInRange {get { return (rotor_speed > Lower && rotor_speed < Upper); }}
 
         [XmlIgnore]
-        public bool IsReadyToSample { get{
+        public bool IsReadyToSample {
+            get
+            {
                 bool eval = EvalTrigger;
-                Debug.WriteLine("Run time: " + (GetTime_ms - start_t).ToString() );
-                return eval || (start_t != 0 && GetTime_ms - start_t > timeout);}
+                Debug.WriteLine("Run time: " + TestX.ToString() );
+                return (eval && TestX > metric_window)                  //allow full metrics to be processes 
+                    || (TestX > timeout);                               //timeout
+            }
         }
 
         void SetBounds()

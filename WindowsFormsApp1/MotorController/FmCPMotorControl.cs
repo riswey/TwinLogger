@@ -460,8 +460,8 @@ namespace MultiDeviceAIO
             //Log if 4th tick AND Max/Min are meaningful
             if ((timercycle = (++timercycle) % 4) == 0)
             {
-                if (PersistentLoggerState.ps.data.IsRMDisabled())
-                {
+                //if (PersistentLoggerState.ps.data.IsRMDisabled())
+                //{
                     //TODO: ensure that RM min/max period is scrubbed - no longer needed
                     //RM (min/max) disable period expired
 //                    SendCommand(CMD.GETMINMAXPERIODS);
@@ -469,7 +469,7 @@ namespace MultiDeviceAIO
                     SendCommand(CMD.GETPID);
                     //SendCommand(CMD.GETTARGETFREQ);
                     PersistentLoggerState.ps.data.LogWrite();
-                }
+                //}
             }
 
             //New

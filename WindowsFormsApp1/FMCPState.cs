@@ -48,6 +48,7 @@ namespace MultiDeviceAIO
                 sm_motor.Event(ARDUINOEVENT.Send_Lock);
                 sm_motor.Event(ARDUINOEVENT.Send_Trigger);
                 myaio.InitDataCollectionTimeout();
+                PersistentLoggerState.ps.data.Test0 = 0;
             });
             /*
             appstate.AddRule(APPSTATE.TriggerWaitLock, APPEVENT.Lock, APPSTATE.DoSampling, (string index) =>
@@ -122,7 +123,6 @@ namespace MultiDeviceAIO
 
         void NextRun(string index)
         {
-            PersistentLoggerState.ps.data.RotorLogStart();
             //TODO: should be bound more closely to change freq state. But only called once so here.
             SendCommand(CMD.SETFREQ);       //Inform Arduino
             SendCommand(CMD.GETTARGETFREQ);
@@ -134,12 +134,12 @@ namespace MultiDeviceAIO
             //var num_samples = nudDuration.Value * (decimal)1E6 / nudInterval.Value;
             myaio.SetupTimedSample(PersistentLoggerState.ps.data);
             PrintLn("Start", true);
+            PersistentLoggerState.ps.data.RotorLogStart();
             myaio.Start();
         }
 
         void RunFinished()
         {
-            //contecpoller.Interval = 5000;
             myaio.Stop();
             myaio.RefreshDevices();
             myaio.ResetDevices();
@@ -230,7 +230,7 @@ namespace MultiDeviceAIO
         void ACK_START(string idx)
         {
             //PersistentLoggerState.ps.data.Start();   //Removed Motor Control Logging
-            PersistentLoggerState.ps.data.StartRMTimer();
+            //PersistentLoggerState.ps.data.StartRMTimer();
             setStartButtonText(3);
             //TODO: need check if lockable before lock when sampling!!!!
             //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
@@ -274,7 +274,7 @@ namespace MultiDeviceAIO
         void ACK_SETFREQ(string idx)
         {
             //TODO: Should SETFREQ -> StartRMTImer ???
-            PersistentLoggerState.ps.data.StartRMTimer();
+            //PersistentLoggerState.ps.data.StartRMTimer();
             AsyncText(toolStripStatusLabel1, "Target Rotor Frequency set.");
         }
 

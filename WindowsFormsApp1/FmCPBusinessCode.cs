@@ -7,27 +7,6 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 
 namespace MultiDeviceAIO
 {
-    /*
-    class ContecClockSignalError: Exception {
-        public ContecClockSignalError(){}
-        public ContecClockSignalError(string message): base(message){}
-        public ContecClockSignalError(string message, Exception inner): base(message, inner){}
-    }
-
-    class ContecDeviceBufferOverflow: Exception
-    {
-        public ContecDeviceBufferOverflow() { }
-        public ContecDeviceBufferOverflow(string message) : base(message) { }
-        public ContecDeviceBufferOverflow(string message, Exception inner) : base(message, inner) { }
-    }
-
-    class TTISamplingFailure : Exception
-    {
-        public TTISamplingFailure() { }
-        public TTISamplingFailure(string message) : base(message) { }
-        public TTISamplingFailure(string message, Exception inner) : base(message, inner) { }
-    }
-    */
 
     public partial class FmControlPanel : Form
     {
