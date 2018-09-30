@@ -51,15 +51,16 @@ namespace MultiDeviceAIO
 
         public FmControlPanel()
         {
+
+            //contecpoller.Interval = CONTECPOLLERSTATE;
+            /*
             if (!NativeMethods.CheckLibrary(@".\caio.dll"))
             {
                 NativeMethods.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
             }
-
-            //contecpoller.Interval = CONTECPOLLERSTATE;
-
+            */
             InitializeComponent();
-
+            /*
             SetupAppStateMachine();
 
             setStartButtonText(0);
@@ -87,7 +88,7 @@ namespace MultiDeviceAIO
             }
 
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
-
+            */
         }
 
         void SetAIO()
