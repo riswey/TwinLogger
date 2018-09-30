@@ -762,7 +762,7 @@ namespace CaioCs
         }
         public override int ResetAiStatus(short Id)
         {
-            int ret = NOTIMPLEMENTED;//AioResetAiStatus(Id);
+            int ret = 0;//AioResetAiStatus(Id);
             return ret;
         }
 

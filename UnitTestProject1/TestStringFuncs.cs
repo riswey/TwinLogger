@@ -112,7 +112,7 @@ namespace UnitTestProject1
         public void transmod()
         {
             string fn = @"C:\Users\Alva\Desktop\dummytest\0A\M3_100.jdd";
-            fn = IO.CheckPath(fn, false);
+            fn = IO.PreparePath(fn, false);
             Debug.WriteLine(fn);
         }
     }

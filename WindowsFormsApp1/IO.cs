@@ -82,7 +82,7 @@ namespace MultiDeviceAIO
             string data = File.ReadAllText(filename);
             string header = settings.GetHeader();
 
-            filepath = CheckPath(filepath);
+            filepath = PreparePath(filepath);
 
             File.WriteAllText(filepath, header + "\r\n" + data);
             //Clean up
@@ -127,11 +127,17 @@ namespace MultiDeviceAIO
             return 0;
         }
 
-        public static string CheckPath(string path, bool overwrite = false)
+        public static bool DirExists(string path)
+        {
+            //keep IO stuff here + ensure this works
+            return Directory.Exists(path);
+        }
+
+        public static string PreparePath(string path, bool overwrite = false)
         {
             FileInfo fileInfo = new FileInfo(path);
-            if (!Directory.Exists(fileInfo.DirectoryName))
-                Directory.CreateDirectory(fileInfo.Directory.FullName);
+            //if not exists will be created
+            Directory.CreateDirectory(fileInfo.Directory.FullName);
 
             if (!overwrite)
             {
@@ -142,7 +148,6 @@ namespace MultiDeviceAIO
             }
 
             return path;
-
         }
 
         public static string transformToFreeFilename(string filepath)

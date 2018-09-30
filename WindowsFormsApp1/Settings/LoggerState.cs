@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace MultiDeviceAIO
 {
@@ -57,8 +54,7 @@ namespace MultiDeviceAIO
         public event PropertyChangedEventHandler PropertyChanged;
         public void InvokePropertyChanged(string name)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(name));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public LoggerState()
@@ -73,8 +69,21 @@ namespace MultiDeviceAIO
         public int arduinotick { get; set; } = 500;
 
         //TODO: shouldn't these be null? And test for null in prog. OR doesn't it serialise?
+        //Path to test data
+        string _testpath = "";
         [TestProperty]
-        public string testpath { get; set; } = "";       //Path to test data
+        public string testpath
+        {
+            get
+            {
+                return _testpath;
+            }
+            set
+            {
+                _testpath = (IO.DirExists(value)) ? value : @".\";
+                InvokePropertyChanged("testpath");
+            }
+        }
         public string temp_filename {get;set;} = "";  //last temp filename (recover)
         public string datafileformat { get; set; } = "{TESTPATH}\\{LOAD}{CLIPSAB}\\M{MASSNUM}_f{FREQUENCY}";
         public int testingmode { get; set; } = 0;

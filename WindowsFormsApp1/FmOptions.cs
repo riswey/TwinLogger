@@ -19,7 +19,7 @@ namespace MultiDeviceAIO
 
             InitializeComponent();
 
-            nudTestingMode.Value = settings.testingmode;
+            //nudTestingMode.Value = settings.testingmode;
             tbFileFormat.Text = settings.datafileformat;
         }
 
@@ -34,7 +34,7 @@ namespace MultiDeviceAIO
 
         private void button1_Click(object sender, EventArgs e)
         {
-            settings.testingmode = (int)nudTestingMode.Value;
+            //settings.testingmode = (int)nudTestingMode.Value;
             settings.datafileformat = tbFileFormat.Text;
             this.DialogResult = DialogResult.OK;
             this.Close();

@@ -1,8 +1,9 @@
 ﻿NOTES
 =====
-Sample Freq
-500,1000,1500,2000
 
+27.09	Better Exception handling + full statemachine
+25.09	Working in soft
+18.09	Combined Device/Rotor control into single app (v3)
 11.09	Version 2.0 complete (Current Version)
 10.09	Switched from event driven to polling to reduce dependency on unstable devices.
 28.06	Monitor -> object oriented
@@ -11,7 +12,14 @@ Sample Freq
 09.03	TwinLogger Start
 18.01	Project Start
 
+>NOTE
+TESTING, SOFTDEVICE (Remove from live versions!)
 
+
+
+
+
+>FUTURE
 >lock returns power levels (RL)
 (LOCK uses 10s min/max power levels)
 ACK klock -> process if good -> trigger
@@ -28,6 +36,8 @@ Triggers go in pairs (next experiment triggers immediately then next waits)
 GUI
 .Pancake/vertical (hard code the M1-6)
 .Daves improved freq selection (at least bump up lowest + interval a selection based on range)
+.Limit Sample Freq 500,1000,1500,2000
+
 
 >DRIVER
 .Check caio on toughbook

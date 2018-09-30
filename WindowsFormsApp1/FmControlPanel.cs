@@ -51,7 +51,7 @@ namespace MultiDeviceAIO
 
         public FmControlPanel()
         {
-            if (!NativeMethods.CheckLibrary("caio.dll"))
+            if (!NativeMethods.CheckLibrary(@".\caio.dll"))
             {
                 NativeMethods.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
             }
@@ -100,7 +100,7 @@ namespace MultiDeviceAIO
                 //myaio.Dispose();
             }
 
-            myaio = new MyAIO(PersistentLoggerState.ps.data.testingmode);
+            myaio = new MyAIO();
             //Load Devices
             DiscoverDevices();
 
@@ -143,8 +143,8 @@ namespace MultiDeviceAIO
             nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", PersistentLoggerState.ps.data, "sample_frequency");
 
-            tbDirectory.DataBindings.Clear();
-            tbDirectory.DataBindings.Add("Text", PersistentLoggerState.ps.data, "testpath");
+            lblTestPath.DataBindings.Clear();
+            lblTestPath.DataBindings.Add("Text", PersistentLoggerState.ps.data, "testpath");
 
             chkExternalTrigger.DataBindings.Clear();
             chkExternalTrigger.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_trigger");
@@ -298,7 +298,6 @@ namespace MultiDeviceAIO
                 if (result == DialogResult.OK && !fbd.SelectedPath.IsNullOrWhiteSpace())
                 {
                     PersistentLoggerState.ps.data.testpath = fbd.SelectedPath;
-                    BindTestParameters();
                 }
             }
         }
@@ -481,6 +480,7 @@ namespace MultiDeviceAIO
             //TODO: very inefficient as must convert data every time, and create a new scope
             //Can scope take the dictionary?
             
+
             scope = new FmScope(myaio._concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration);
 
             if (!scope?.IsDisposed ?? false)
@@ -491,6 +491,8 @@ namespace MultiDeviceAIO
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MessageBox.Show("No longer dynamic.");
+            /*
             int originalTesting = PersistentLoggerState.ps.data.testingmode;
             using (var form = new FmOptions(PersistentLoggerState.ps.data))
             {
@@ -504,6 +506,7 @@ namespace MultiDeviceAIO
                     }
                 }
             }
+            */
         }
 
         private void calibrateToolStripMenuItem_Click(object sender, EventArgs e)
@@ -792,5 +795,6 @@ namespace MultiDeviceAIO
             string text = String.Join("}, {", dict.Keys.ToArray());
             MessageBox.Show("{" + text + "}");
         }
+
     }
 }

@@ -136,12 +136,18 @@ namespace MultiDeviceAIO
             //Make a copy into storage 
             myaio._concatdata = new DATA(myaio.GetConcatData());
 
-            scope = new FmScope(myaio._concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration);
+            //TODO: scope Import(Dictionary, Int32 duration)
+            //Sys.Coll.Generic.Dictionary`2.getItem(TKey key)
+            //not found key exception. The given key not present
+            //Sys,ThrowHelper.ThrowKeyNotFoundException()
+            //scope = new FmScope(myaio._concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration);
+
+
 
             //Get new temp and add update AIOSettings.singleInstance
             string filepath = IO.GetFilePathTemp(PersistentLoggerState.ps.data);
 
-            filepath = IO.CheckPath(filepath, false);
+            filepath = IO.PreparePath(filepath, false);
 
             IO.SaveDATA(PersistentLoggerState.ps.data, ref filepath, myaio._concatdata);
 
@@ -177,7 +183,7 @@ namespace MultiDeviceAIO
                 string extension = "jdd";
                 //awesome: this is recursive if you want :-)
                 fn = IO.GetFilePathTest(PersistentLoggerState.ps.data, DATAFILEFORMAT, extension);
-                fn = IO.CheckPath(fn, false);
+                fn = IO.PreparePath(fn, false);
             }
 
             RenameTempFile(fn);

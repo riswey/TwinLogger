@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmControlPanel));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.chkClips = new System.Windows.Forms.CheckBox();
@@ -76,7 +76,6 @@
             this.label10 = new System.Windows.Forms.Label();
             this.nudFreqFrom = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
-            this.tbDirectory = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -87,6 +86,7 @@
             this.chkExternalClock = new System.Windows.Forms.CheckBox();
             this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblTestPath = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
             this.nudFreqStep = new System.Windows.Forms.NumericUpDown();
             this.label34 = new System.Windows.Forms.Label();
@@ -134,11 +134,8 @@
             this.label39 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.label46 = new System.Windows.Forms.Label();
             this.lblAppState = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.label41 = new System.Windows.Forms.Label();
             this.nudTargetSpeed = new System.Windows.Forms.NumericUpDown();
             this.lblRotorState = new System.Windows.Forms.Label();
@@ -190,6 +187,10 @@
             this.btnDecRange = new System.Windows.Forms.Button();
             this.serialpoller = new System.Windows.Forms.Timer(this.components);
             this.contecpoller = new System.Windows.Forms.Timer(this.components);
+            this.button5 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label28 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -613,18 +614,11 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(19, 202);
+            this.label9.Location = new System.Drawing.Point(19, 203);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(51, 13);
+            this.label9.Size = new System.Drawing.Size(56, 13);
             this.label9.TabIndex = 31;
-            this.label9.Text = "Save To:";
-            // 
-            // tbDirectory
-            // 
-            this.tbDirectory.Location = new System.Drawing.Point(72, 199);
-            this.tbDirectory.Name = "tbDirectory";
-            this.tbDirectory.Size = new System.Drawing.Size(215, 20);
-            this.tbDirectory.TabIndex = 28;
+            this.label9.Text = "Test Path:";
             // 
             // button3
             // 
@@ -737,6 +731,7 @@
             this.panel1.BackColor = System.Drawing.Color.Transparent;
             this.panel1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel1.BackgroundImage")));
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel1.Controls.Add(this.lblTestPath);
             this.panel1.Controls.Add(this.label35);
             this.panel1.Controls.Add(this.nudFreqStep);
             this.panel1.Controls.Add(this.label34);
@@ -752,7 +747,6 @@
             this.panel1.Controls.Add(this.chkClips);
             this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.tbDirectory);
             this.panel1.Controls.Add(this.tbLoad);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label6);
@@ -760,6 +754,19 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(325, 244);
             this.panel1.TabIndex = 36;
+            // 
+            // lblTestPath
+            // 
+            this.lblTestPath.AutoSize = true;
+            this.lblTestPath.BackColor = System.Drawing.Color.White;
+            this.lblTestPath.Location = new System.Drawing.Point(75, 201);
+            this.lblTestPath.MaximumSize = new System.Drawing.Size(210, 0);
+            this.lblTestPath.MinimumSize = new System.Drawing.Size(210, 18);
+            this.lblTestPath.Name = "lblTestPath";
+            this.lblTestPath.Size = new System.Drawing.Size(210, 18);
+            this.lblTestPath.TabIndex = 39;
+            this.lblTestPath.Text = "label28";
+            this.lblTestPath.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label35
             // 
@@ -1264,11 +1271,8 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Gainsboro;
-            this.tabPage1.Controls.Add(this.button5);
-            this.tabPage1.Controls.Add(this.button2);
             this.tabPage1.Controls.Add(this.label46);
             this.tabPage1.Controls.Add(this.lblAppState);
-            this.tabPage1.Controls.Add(this.button1);
             this.tabPage1.Controls.Add(this.label41);
             this.tabPage1.Controls.Add(this.nudTargetSpeed);
             this.tabPage1.Controls.Add(this.lblRotorState);
@@ -1283,26 +1287,6 @@
             this.tabPage1.Size = new System.Drawing.Size(479, 134);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Motor Control";
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(134, 105);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 53;
-            this.button5.Text = "Stop";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(134, 80);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 52;
-            this.button2.Text = "Warmup";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label46
             // 
@@ -1321,16 +1305,6 @@
             this.lblAppState.Size = new System.Drawing.Size(36, 13);
             this.lblAppState.TabIndex = 50;
             this.lblAppState.Text = "(state)";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(234, 100);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 49;
-            this.button1.Text = "Trigger";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // label41
             // 
@@ -1374,7 +1348,7 @@
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(168, 12);
+            this.label31.Location = new System.Drawing.Point(164, 33);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(116, 13);
             this.label31.TabIndex = 36;
@@ -1385,7 +1359,7 @@
             this.lblCurrentSpeed.AutoSize = true;
             this.lblCurrentSpeed.BackColor = System.Drawing.Color.White;
             this.lblCurrentSpeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCurrentSpeed.Location = new System.Drawing.Point(164, 32);
+            this.lblCurrentSpeed.Location = new System.Drawing.Point(160, 53);
             this.lblCurrentSpeed.MaximumSize = new System.Drawing.Size(130, 0);
             this.lblCurrentSpeed.MinimumSize = new System.Drawing.Size(130, 0);
             this.lblCurrentSpeed.Name = "lblCurrentSpeed";
@@ -1420,6 +1394,10 @@
             // tabPage3
             // 
             this.tabPage3.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage3.Controls.Add(this.label28);
+            this.tabPage3.Controls.Add(this.button5);
+            this.tabPage3.Controls.Add(this.button2);
+            this.tabPage3.Controls.Add(this.button1);
             this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
@@ -1727,7 +1705,7 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(479, 134);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Settings";
+            this.tabPage2.Text = "Serial";
             // 
             // label38
             // 
@@ -1791,16 +1769,16 @@
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chart1.Legends.Add(legend5);
             this.chart1.Location = new System.Drawing.Point(367, 326);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            this.chart1.Series.Add(series5);
             this.chart1.Size = new System.Drawing.Size(460, 186);
             this.chart1.TabIndex = 56;
             this.chart1.Text = "chart1";
@@ -1845,6 +1823,43 @@
             // 
             this.contecpoller.Interval = 500;
             this.contecpoller.Tick += new System.EventHandler(this.contecpoller_Tick);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(42, 56);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 56;
+            this.button5.Text = "Stop";
+            this.button5.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(42, 30);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 55;
+            this.button2.Text = "Warmup";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(42, 84);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 54;
+            this.button1.Text = "Trigger";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label28.Location = new System.Drawing.Point(41, 11);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(92, 13);
+            this.label28.TabIndex = 57;
+            this.label28.Text = "Manual Control";
             // 
             // FmControlPanel
             // 
@@ -1908,6 +1923,7 @@
             this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudTargetSpeed)).EndInit();
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudD)).EndInit();
@@ -1954,7 +1970,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox tbDirectory;
         private System.Windows.Forms.NumericUpDown nudInterval;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.NumericUpDown nudDuration;
@@ -2076,12 +2091,14 @@
         private System.Windows.Forms.Label lblMin;
         private System.Windows.Forms.Label label52;
         private System.Windows.Forms.ToolStripMenuItem stopESCToolStripMenuItem;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.Label lblAppState;
         private System.Windows.Forms.ProgressBar pbr1;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Label lblTestPath;
+        private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button1;
     }
 }

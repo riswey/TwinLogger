@@ -83,7 +83,7 @@ namespace MultiDeviceAIO
         {            
             InitializeComponent();
 
-            if (concatdata == null)
+            if (concatdata == null || concatdata.Count < 2)
             {
                 MessageBox.Show("No data");
                 this.Close();

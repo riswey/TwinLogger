@@ -82,7 +82,7 @@ namespace MultiDeviceAIO
         //Run before series
         void InitRun(string index)
         {
-            if (tbDirectory.Text == "") { if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel) { return; } }
+            if (lblTestPath.Text == "") { if (MessageBox.Show("Warning", "No filename set", MessageBoxButtons.OKCancel) == DialogResult.Cancel) { return; } }
             PrintLn("----------------------------------------------------\r\nApplied Settings");
             PrintLn(PersistentLoggerState.ps.ToString());
 
@@ -176,10 +176,7 @@ namespace MultiDeviceAIO
             PrintLn("Run Stopped", true);
 
         }
-
         #endregion
-
-
 
 #region ROTOR CONTROL
 
@@ -287,11 +284,11 @@ namespace MultiDeviceAIO
         void ACK_TRIGGER(string idx)
         {
 #if SOFTDEVICE
-            if (PersistentLoggerState.ps.data.testingmode != 0)
-            {
+            //if (PersistentLoggerState.ps.data.testingmode != 0)
+            //{
                 //Simulate a trigger in the LAX1664
                 myaio.SimulateTrigger();
-            }
+            //}
 #endif
         }
 

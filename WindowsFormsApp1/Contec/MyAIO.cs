@@ -50,14 +50,17 @@ namespace MultiDeviceAIO
         
         public double devicetarget { get; private set; } = 1e5;
 
-        public MyAIO(int testing)
+        public MyAIO()
         {
-            if (testing != 0)
+#if SOFTDEVICE
+            //if (testing != 0)
                 aio = new CaioTest();
-            else
-            {
+            //else
+#else
+            //{
                 aio = new Caio();
-            }
+            //}
+#endif
         }
 
         public long HANDLE_RETURN_VALUES
@@ -155,6 +158,10 @@ namespace MultiDeviceAIO
             //1 state error
             //2 returning 0s
             //3 timeout
+
+#if SOFTDEVICE
+            return 0;
+#endif
 
             //Run in thread and return false if timesout
             var task = Task.Run(() => DeviceCheck() );
@@ -550,7 +557,7 @@ namespace MultiDeviceAIO
        }
        */
 
-        #region TESTING
+#region TESTING
 
         public void SimulateTrigger()
         {
@@ -578,7 +585,7 @@ namespace MultiDeviceAIO
         }
 
 
-        #endregion
+#endregion
 
 
 

@@ -33,7 +33,7 @@ namespace MultiDeviceAIO
                 }
             }
 
-#if TESTING
+#if NOHANDLING
             Application.Run(new FmControlPanel());
 #else
             try
