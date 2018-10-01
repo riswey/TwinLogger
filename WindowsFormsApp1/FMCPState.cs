@@ -180,9 +180,11 @@ namespace MultiDeviceAIO
             rotorstate.AddRule(null, ARDUINOEVENT.Send_Stop, (string idx) => { SendCommand(CMD.STOP); });
             rotorstate.AddRule(StateMachine.OR(ARDUINOSTATE.Running, ARDUINOSTATE.Lockable, ARDUINOSTATE.Locked), ARDUINOEVENT.Send_Trigger, (string idx) =>
             {
-                //Send Trigger
+                //Sync Frequency
                 SendCommand(CMD.SETADC);
                 SendCommand(CMD.GETADC);
+                //Send Trigger
+                myaio.InitDataCollectionTimeout();
                 SendCommand(CMD.TRIGGER);
             });
 

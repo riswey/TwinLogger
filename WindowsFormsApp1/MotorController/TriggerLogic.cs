@@ -33,7 +33,7 @@ namespace MotorController
             this.state = state;  //state holds this object
         }
 
-        //TestRunning + Armed -> hand over to TriggerLogic
+        //Rotor:Running + App:Armed -> hand over to TriggerLogic
         //Finish by DoSampling
         public void AddEvents(FmControlPanel app)
         {
@@ -46,7 +46,6 @@ namespace MotorController
             {
                 app.rotorstate.Event(ARDUINOEVENT.Send_Lock);
                 app.rotorstate.Event(ARDUINOEVENT.Send_Trigger);
-                app.myaio.InitDataCollectionTimeout();
             });
             /*
             appstate.AddRule(APPSTATE.TriggerWaitLock, APPEVENT.Lock, APPSTATE.DoSampling, (string index) =>
