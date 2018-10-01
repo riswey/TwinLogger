@@ -14,7 +14,15 @@ namespace MultiDeviceAIO
 {
     public partial class FmScope : Form
     {
-        public static FmScope me = new FmScope();
+        static FmScope _me;
+        public static FmScope me {
+            get {
+                return (_me ==null) ? new FmScope() : _me;
+            }
+            set {
+                _me = value;
+            }
+        }    
 
         string filename;
 
