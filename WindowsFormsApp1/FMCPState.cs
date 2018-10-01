@@ -9,6 +9,9 @@ using MotorController;
 
 namespace MultiDeviceAIO
 {
+    enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, TriggerWaitLock, DoSampling, Error };
+    enum APPEVENT { InitRun, ACKRotor, Armed, Lock, Trigger, ContecTriggered, SamplingError, EndRun, Stop };
+
     public partial class FmControlPanel: Form
     {
         //SamplingError:WaitTrigger
@@ -16,10 +19,8 @@ namespace MultiDeviceAIO
 #region     AppState
 
         //Symbols
-        enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, TriggerWaitLock, DoSampling, Error };
-        enum APPEVENT { InitRun, ACKRotor, Armed, Lock, Trigger, ContecTriggered, SamplingError, EndRun, Stop };
 
-        StateMachine appstate = new StateMachine("Appstate", APPSTATE.Ready);
+        public StateMachine appstate = new StateMachine("Appstate", APPSTATE.Ready);
 
         //const int CONTECPOLLERSTATE = 1000;
         //const int CONTECPOLLERDATA = 100;
@@ -39,32 +40,11 @@ namespace MultiDeviceAIO
                 //if (PersistentLoggerState.ps.data.testingmode)
                 //    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
             });
-            
-            //TODO: need to timeout events (send event - stored by marshal and alternative executed if timeout (retry)
-            //Removed TriggerWaitLock (not important if lock doesn't take)
-            //appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.TriggerWaitLock, (string index) =>
-            appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.DoSampling, (string index) =>
-            {
-                rotorstate.Event(ARDUINOEVENT.Send_Lock);
-                rotorstate.Event(ARDUINOEVENT.Send_Trigger);
-                myaio.InitDataCollectionTimeout();                
-            });
-            /*
-            appstate.AddRule(APPSTATE.TriggerWaitLock, APPEVENT.Lock, APPSTATE.DoSampling, (string index) =>
-            {
-                sm_motor.Event(ARDUINOEVENT.Send_Trigger);
-                //TODO: check that contecpolling_Tick starts polling now (when sampling)
-            });
-            */
-            /*
-            appstate.AddRule(APPSTATE.Sampling, APPEVENT.ContecTriggered, (string index) =>
-            {
-                //Confirm Contec
-                //contecpoller.Interval = CONTECPOLLERDATA;
-                PrintLn("Triggered", true);
-                setStartButtonText(2);
-            });
-            */
+
+
+            //TestRunning + Armed -> hand over to TriggerLogic
+            trigger.AddEvents(this);
+
             //Wait 
             appstate.AddRule(null, APPEVENT.SamplingError, APPSTATE.WaitRotor, HandleSamplingError);
             appstate.AddRule(APPSTATE.DoSampling, APPEVENT.EndRun, APPSTATE.TestRunning, (string index) =>
@@ -91,7 +71,7 @@ namespace MultiDeviceAIO
             //myaio.CheckDevices();
 
             PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value;
-
+            
             //Start motor
             rotorstate.Event(ARDUINOEVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
             //Set rotor 0
@@ -207,6 +187,7 @@ namespace MultiDeviceAIO
             });
 
             //These events match any state (series shouldn't be returning events to wrong state)
+            //Automatically called by returning ACKs 
             rotorstate.AddRule(null, ARDUINOEVENT.Do_Start, ARDUINOSTATE.Running, ACK_START);
             rotorstate.AddRule(null, ARDUINOEVENT.Do_Stop, ARDUINOSTATE.Ready, ACK_STOP);
             rotorstate.AddRule(null, ARDUINOEVENT.Do_Lock, ARDUINOSTATE.Locked, ACK_LOCK);

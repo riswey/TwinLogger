@@ -22,7 +22,7 @@ namespace MultiDeviceAIO
 #endif
         string TERMINAL = "\n";
 
-        StateMachine rotorstate = new StateMachine("ArduinoState", ARDUINOSTATE.Ready);
+        public StateMachine rotorstate = new StateMachine("ArduinoState", ARDUINOSTATE.Ready);
 
         private DataTable _dt;
         public DataTable dt
@@ -60,7 +60,7 @@ namespace MultiDeviceAIO
             //Called by LoggerState constructor
             int tickpermetricwindow = (int)Math.Ceiling((double)ls.metric_window / ls.arduinotick);
             MovingStatsCrosses mac = new MovingStatsCrosses(tickpermetricwindow, () => { return ls.target_speed; });
-            trigger = new TriggerLogic(mac, appstate, rotorstate, ls);
+            trigger = new TriggerLogic(mac, ls);
 
             //Setup Chart
             chart1.Titles.Add("Rotor Trajectory");
@@ -150,7 +150,7 @@ namespace MultiDeviceAIO
 
             txtMetricCommand.DataBindings.Clear();
             txtMetricCommand.DataBindings.Add("Text", PersistentLoggerState.ps.data, "metriccommand");
-
+            
             //Bind MAC Stats
             lblMA.DataBindings.Clear();
             lblMA.DataBindings.Add("Text", trigger.mac, "MA");
@@ -309,7 +309,7 @@ namespace MultiDeviceAIO
                 AsyncText(tbxHistory, "Output: " + packet + "\r\n", -1);
                 return;
             }
-
+            
             switch (cmd)
             {
                 case DATATYPES.ACK:

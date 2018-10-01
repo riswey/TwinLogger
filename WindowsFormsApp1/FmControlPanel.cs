@@ -22,9 +22,10 @@ namespace MultiDeviceAIO
 
         #region INIT
 
+        //TODO: what is this?
         bool probationLoadedstate = false;
 
-        MyAIO myaio;
+        public MyAIO myaio;
         FmMonitor monitor;
         FmLog fmlog = new FmLog();
         FmScope scope;
@@ -58,17 +59,16 @@ namespace MultiDeviceAIO
             {
                 NativeMethods.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
             }
-            
-            InitializeComponent();
-            
-            SetupAppStateMachine();
 
+            InitializeComponent();
+            InitFmCPMotorControl();     //inits the mac object needed for binding, + trigger which adds state rules
+
+            SetupAppStateMachine();
             setStartButtonText(0);
 
             pbr0.Maximum = pbr1.Maximum = 100;
 
             InitMotorStateMachine();    //Inits sms used by trigger
-            InitFmCPMotorControl();     //inits the mac object needed for binding
             //Bindings
             BindTestParameters();
             BindMotorControls();

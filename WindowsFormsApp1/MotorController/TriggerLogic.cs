@@ -24,16 +24,47 @@ namespace MotorController
     public class TriggerLogic
     {
         public MovingStatsCrosses mac { get; set; }
-        StateMachine appsm, rsm;
         LoggerState state;
         DataTable dt = new DataTable();     //For Compute
 
-        public TriggerLogic(MovingStatsCrosses mac, StateMachine appsm, StateMachine rsm, LoggerState state)
+        public TriggerLogic(MovingStatsCrosses mac, LoggerState state)
         {
             this.mac = mac;      //holds a reference to target_freq
-            this.appsm = appsm;
-            this.rsm = rsm;
             this.state = state;  //state holds this object
+        }
+
+        //TestRunning + Armed -> hand over to TriggerLogic
+        //Finish by DoSampling
+        public void AddEvents(FmControlPanel app)
+        {
+            //TODO: need to timeout events (send event - stored by marshal and alternative executed if timeout (retry)
+            //Removed TriggerWaitLock (not important if lock doesn't take)
+            //appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.TriggerWaitLock, (string index) =>
+            
+            //TODO: This is wrong. Send_trigger should set the appstate to DoSampling!
+            app.appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.DoSampling, (string index) =>
+            {
+                app.rotorstate.Event(ARDUINOEVENT.Send_Lock);
+                app.rotorstate.Event(ARDUINOEVENT.Send_Trigger);
+                app.myaio.InitDataCollectionTimeout();
+            });
+            /*
+            appstate.AddRule(APPSTATE.TriggerWaitLock, APPEVENT.Lock, APPSTATE.DoSampling, (string index) =>
+            {
+                sm_motor.Event(ARDUINOEVENT.Send_Trigger);
+                //TODO: check that contecpolling_Tick starts polling now (when sampling)
+            });
+            */
+            /*
+            appstate.AddRule(APPSTATE.Sampling, APPEVENT.ContecTriggered, (string index) =>
+            {
+                //Confirm Contec
+                //contecpoller.Interval = CONTECPOLLERDATA;
+                PrintLn("Triggered", true);
+                setStartButtonText(2);
+            });
+            */
+
         }
 
         public void Reset()
