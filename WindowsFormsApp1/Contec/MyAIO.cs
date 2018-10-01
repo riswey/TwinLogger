@@ -171,6 +171,8 @@ namespace MultiDeviceAIO
                 return 3;
         }
 
+        public static readonly string[] CONTECCODE = new string[3] { "OK", "Device status error", "Devices returning 0"};
+
         private int DeviceCheck() {
             List<int> status = new List<int>();
             GetStatusAll(ref status);
@@ -186,7 +188,7 @@ namespace MultiDeviceAIO
 
             //first 3 channels == 0 assume its failed
             int sum;
-            foreach (Device d in Device.devices)
+            foreach (Device d in Device.devices.ToArray())
             {
                 sum = 0;
                 for (short i = 0; i < 3; i++)

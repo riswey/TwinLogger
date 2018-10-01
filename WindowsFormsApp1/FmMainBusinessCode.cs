@@ -8,7 +8,7 @@ using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collecti
 namespace MultiDeviceAIO
 {
 
-    public partial class FmControlPanel : Form
+    public partial class FmMain : Form
     {
         
         protected void contecpoller_Tick(object sender, EventArgs e)
@@ -49,29 +49,25 @@ namespace MultiDeviceAIO
             if (((int)CaioConst.AIS_START_TRG & bitflags) != 0)
             {
                 //Armed
-                if (!appstate.IsState(APPSTATE.Armed)) appstate.Event(APPEVENT.Armed);
-                return;
+                if (!appstate.IsState(APPSTATE.Armed)) appstate.Event(APPEVENT.Arm);
             }
 
             if (((int)CaioConst.AIS_DATA_NUM & bitflags) != 0)
             {
                 //Got data in buffer
                 appstate.Event(APPEVENT.ContecTriggered);
-                return;
             }
 
             if (((int)CaioConst.AIS_OFERR & bitflags) != 0)
             {
                 //Overflow
                 appstate.Event(APPEVENT.SamplingError);
-                return;
             }
 
             if (((int)CaioConst.AIS_SCERR & bitflags) != 0)
             {
                 //Clock error
                 appstate.Event(APPEVENT.SamplingError);
-                return;
             }
 
         }

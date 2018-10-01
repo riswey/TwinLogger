@@ -74,8 +74,9 @@ namespace MultiDeviceAIO
             }
         }
         */
-
-        float _rotor_speed;
+        [XmlIgnore]
+        float _rotor_speed = 0;
+        [XmlIgnore]
         public float rotor_speed {
             get
             {
@@ -88,7 +89,7 @@ namespace MultiDeviceAIO
             }
         }
 
-        float _target_speed = 50;
+        float _target_speed = 20;
         [TestProperty]
         [MotorProperty]
         public float target_speed

@@ -69,14 +69,14 @@ namespace MotorController
 
         Random r = new Random();
 
-        private MultiDeviceAIO.FmControlPanel parentfm;
+        private MultiDeviceAIO.FmMain parentfm;
 
         private string buffer = "";
 
         public int BaudRate { get; set; }
         public string PortName { get; set; }
 
-        public TestSerialPort(MultiDeviceAIO.FmControlPanel parentfm)
+        public TestSerialPort(MultiDeviceAIO.FmMain parentfm)
         {
             this.parentfm = parentfm;
         }

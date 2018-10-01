@@ -84,11 +84,11 @@ namespace MultiDeviceAIO
 
         //Test parameters
         [TestProperty]
-        public float freq_from { get; set; } = 60;
+        public int freq_from { get; set; } = 0;
         [TestProperty]
-        public float freq_to { get; set; } = 65;
+        public int freq_to { get; set; } = 0;
         [TestProperty]
-        public float freq_step { get; set; } = 1;
+        public int freq_step { get; set; } = 0;
         [TestProperty]
         public bool clipsOn { get; set; } = false;
         [TestProperty]

@@ -1,5 +1,5 @@
 ﻿using System;
-
+/*
 namespace MotorController
 {
     class SerialEventsController
@@ -12,9 +12,9 @@ namespace MotorController
             return SIGNATURE + (char)cmd + data + TERMINAL;
         }
 
-        /*
-         * @return  false if packet is not recognised
-         */
+        
+        // @return  false if packet is not recognised
+         
         public static int DecodePacket(string packet, out byte cmd, out string data)
         {
             cmd = 0; data = "";
@@ -29,3 +29,4 @@ namespace MotorController
 
     }
 }
+*/

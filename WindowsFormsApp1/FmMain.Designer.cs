@@ -1,6 +1,6 @@
 ﻿namespace MultiDeviceAIO
 {
-    partial class FmControlPanel
+    partial class FmMain
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmControlPanel));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmMain));
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
@@ -73,7 +73,6 @@
             this.cbOrientation = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.nudFreqFrom = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -85,11 +84,12 @@
             this.chkExternalClock = new System.Windows.Forms.CheckBox();
             this.chkExternalTrigger = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.cbxFreqStep = new System.Windows.Forms.ComboBox();
+            this.cbxFreqTo = new System.Windows.Forms.ComboBox();
+            this.cbxFreqFrom = new System.Windows.Forms.ComboBox();
             this.lblTestPath = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
-            this.nudFreqStep = new System.Windows.Forms.NumericUpDown();
             this.label34 = new System.Windows.Forms.Label();
-            this.nudFreqTo = new System.Windows.Forms.NumericUpDown();
             this.label11 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label12 = new System.Windows.Forms.Label();
@@ -192,13 +192,10 @@
             this.contecpoller = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudInterval)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).BeginInit();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreqStep)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreqTo)).BeginInit();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatusOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatus)).BeginInit();
@@ -321,20 +318,20 @@
             this.setupToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.calibrateToolStripMenuItem});
             this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
-            this.setupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setupToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.setupToolStripMenuItem.Text = "Accelerometers";
             // 
             // calibrateToolStripMenuItem
             // 
             this.calibrateToolStripMenuItem.Name = "calibrateToolStripMenuItem";
-            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.calibrateToolStripMenuItem.Text = "Calibrate";
             this.calibrateToolStripMenuItem.Click += new System.EventHandler(this.calibrateToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -352,28 +349,28 @@
             // selectDirectoryToolStripMenuItem
             // 
             this.selectDirectoryToolStripMenuItem.Name = "selectDirectoryToolStripMenuItem";
-            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.selectDirectoryToolStripMenuItem.Text = "Select Directory...";
             this.selectDirectoryToolStripMenuItem.Click += new System.EventHandler(this.selectDirectoryToolStripMenuItem_Click);
             // 
             // resetDevicesToolStripMenuItem1
             // 
             this.resetDevicesToolStripMenuItem1.Name = "resetDevicesToolStripMenuItem1";
-            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(165, 22);
             this.resetDevicesToolStripMenuItem1.Text = "Reset Devices";
             this.resetDevicesToolStripMenuItem1.Click += new System.EventHandler(this.resetDevicesToolStripMenuItem1_Click);
             // 
             // startToolStripMenuItem
             // 
             this.startToolStripMenuItem.Name = "startToolStripMenuItem";
-            this.startToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.startToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.startToolStripMenuItem.Text = "Start";
             this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
             // 
             // stopESCToolStripMenuItem
             // 
             this.stopESCToolStripMenuItem.Name = "stopESCToolStripMenuItem";
-            this.stopESCToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stopESCToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.stopESCToolStripMenuItem.Text = "Stop (ESC)";
             this.stopESCToolStripMenuItem.Click += new System.EventHandler(this.stopESCToolStripMenuItem_Click);
             // 
@@ -390,20 +387,20 @@
             // motorControllerToolStripMenuItem
             // 
             this.motorControllerToolStripMenuItem.Name = "motorControllerToolStripMenuItem";
-            this.motorControllerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.motorControllerToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.motorControllerToolStripMenuItem.Text = "Motor Controller";
             // 
             // monitorChannelsToolStripMenuItem
             // 
             this.monitorChannelsToolStripMenuItem.Name = "monitorChannelsToolStripMenuItem";
-            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.monitorChannelsToolStripMenuItem.Text = "Monitor";
             this.monitorChannelsToolStripMenuItem.Click += new System.EventHandler(this.monitorChannelsToolStripMenuItem_Click);
             // 
             // scopeToolStripMenuItem
             // 
             this.scopeToolStripMenuItem.Name = "scopeToolStripMenuItem";
-            this.scopeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.scopeToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.scopeToolStripMenuItem.Text = "Scope";
             this.scopeToolStripMenuItem.Click += new System.EventHandler(this.scopeToolStripMenuItem_Click);
             // 
@@ -473,15 +470,16 @@
             "M6",
             "M7",
             "M8"});
-            this.cbMass.Location = new System.Drawing.Point(22, 55);
+            this.cbMass.Location = new System.Drawing.Point(25, 55);
             this.cbMass.Name = "cbMass";
-            this.cbMass.Size = new System.Drawing.Size(121, 21);
+            this.cbMass.Size = new System.Drawing.Size(71, 21);
             this.cbMass.TabIndex = 18;
+            this.cbMass.SelectedIndexChanged += new System.EventHandler(this.cbMass_SelectedIndexChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(18, 39);
+            this.label2.Location = new System.Drawing.Point(21, 39);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(32, 13);
             this.label2.TabIndex = 19;
@@ -507,7 +505,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(182, 137);
+            this.label7.Location = new System.Drawing.Point(23, 139);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(129, 13);
             this.label7.TabIndex = 22;
@@ -520,10 +518,11 @@
             "Pancake (80mm)",
             "Vertical (53mm)",
             "Electromagnetic"});
-            this.cbShaker.Location = new System.Drawing.Point(185, 153);
+            this.cbShaker.Location = new System.Drawing.Point(26, 155);
             this.cbShaker.Name = "cbShaker";
             this.cbShaker.Size = new System.Drawing.Size(121, 21);
             this.cbShaker.TabIndex = 23;
+            this.cbShaker.SelectedIndexChanged += new System.EventHandler(this.cbShaker_SelectedIndexChanged);
             // 
             // cbPad
             // 
@@ -532,7 +531,7 @@
             "Hard",
             "Medium",
             "Soft"});
-            this.cbPad.Location = new System.Drawing.Point(21, 153);
+            this.cbPad.Location = new System.Drawing.Point(185, 155);
             this.cbPad.Name = "cbPad";
             this.cbPad.Size = new System.Drawing.Size(121, 21);
             this.cbPad.TabIndex = 24;
@@ -540,7 +539,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(19, 137);
+            this.label8.Location = new System.Drawing.Point(183, 139);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(53, 13);
             this.label8.TabIndex = 25;
@@ -591,18 +590,6 @@
             this.label10.TabIndex = 33;
             this.label10.Text = "Sequence Frequency";
             this.toolTip1.SetToolTip(this.label10, "Define start, end and interval frequencies for the test sequence");
-            // 
-            // nudFreqFrom
-            // 
-            this.nudFreqFrom.Location = new System.Drawing.Point(21, 101);
-            this.nudFreqFrom.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.nudFreqFrom.Name = "nudFreqFrom";
-            this.nudFreqFrom.Size = new System.Drawing.Size(70, 20);
-            this.nudFreqFrom.TabIndex = 32;
             // 
             // label9
             // 
@@ -724,15 +711,15 @@
             this.panel1.BackColor = System.Drawing.Color.Transparent;
             this.panel1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel1.BackgroundImage")));
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel1.Controls.Add(this.cbxFreqStep);
+            this.panel1.Controls.Add(this.cbxFreqTo);
+            this.panel1.Controls.Add(this.cbxFreqFrom);
             this.panel1.Controls.Add(this.lblTestPath);
             this.panel1.Controls.Add(this.label35);
-            this.panel1.Controls.Add(this.nudFreqStep);
             this.panel1.Controls.Add(this.label34);
-            this.panel1.Controls.Add(this.nudFreqTo);
             this.panel1.Controls.Add(this.label11);
             this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.cbMass);
-            this.panel1.Controls.Add(this.nudFreqFrom);
             this.panel1.Controls.Add(this.cbPad);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.cbShaker);
@@ -747,6 +734,66 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(325, 244);
             this.panel1.TabIndex = 36;
+            // 
+            // cbxFreqStep
+            // 
+            this.cbxFreqStep.FormattingEnabled = true;
+            this.cbxFreqStep.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "5",
+            "10"});
+            this.cbxFreqStep.Location = new System.Drawing.Point(242, 106);
+            this.cbxFreqStep.Name = "cbxFreqStep";
+            this.cbxFreqStep.Size = new System.Drawing.Size(49, 21);
+            this.cbxFreqStep.TabIndex = 42;
+            this.cbxFreqStep.SelectedIndexChanged += new System.EventHandler(this.cbxFreqStep_SelectedIndexChanged);
+            // 
+            // cbxFreqTo
+            // 
+            this.cbxFreqTo.FormattingEnabled = true;
+            this.cbxFreqTo.Items.AddRange(new object[] {
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28"});
+            this.cbxFreqTo.Location = new System.Drawing.Point(121, 104);
+            this.cbxFreqTo.Name = "cbxFreqTo";
+            this.cbxFreqTo.Size = new System.Drawing.Size(49, 21);
+            this.cbxFreqTo.TabIndex = 41;
+            this.cbxFreqTo.SelectedIndexChanged += new System.EventHandler(this.cbxFreqTo_SelectedIndexChanged);
+            // 
+            // cbxFreqFrom
+            // 
+            this.cbxFreqFrom.FormattingEnabled = true;
+            this.cbxFreqFrom.Items.AddRange(new object[] {
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28"});
+            this.cbxFreqFrom.Location = new System.Drawing.Point(26, 104);
+            this.cbxFreqFrom.Name = "cbxFreqFrom";
+            this.cbxFreqFrom.Size = new System.Drawing.Size(49, 21);
+            this.cbxFreqFrom.TabIndex = 40;
+            this.cbxFreqFrom.SelectedIndexChanged += new System.EventHandler(this.cbxFreqFrom_SelectedIndexChanged);
             // 
             // lblTestPath
             // 
@@ -764,44 +811,20 @@
             // label35
             // 
             this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(188, 104);
+            this.label35.Location = new System.Drawing.Point(188, 109);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(43, 13);
             this.label35.TabIndex = 38;
             this.label35.Text = "in steps";
             // 
-            // nudFreqStep
-            // 
-            this.nudFreqStep.Location = new System.Drawing.Point(235, 100);
-            this.nudFreqStep.Maximum = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-            this.nudFreqStep.Name = "nudFreqStep";
-            this.nudFreqStep.Size = new System.Drawing.Size(45, 20);
-            this.nudFreqStep.TabIndex = 37;
-            // 
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(95, 104);
+            this.label34.Location = new System.Drawing.Point(100, 108);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(16, 13);
             this.label34.TabIndex = 36;
             this.label34.Text = "to";
-            // 
-            // nudFreqTo
-            // 
-            this.nudFreqTo.Location = new System.Drawing.Point(113, 101);
-            this.nudFreqTo.Maximum = new decimal(new int[] {
-            250,
-            0,
-            0,
-            0});
-            this.nudFreqTo.Name = "nudFreqTo";
-            this.nudFreqTo.Size = new System.Drawing.Size(68, 20);
-            this.nudFreqTo.TabIndex = 35;
             // 
             // label11
             // 
@@ -1879,14 +1902,11 @@
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudInterval)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudChannel)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreqStep)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreqTo)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbStatusOut)).EndInit();
@@ -1978,7 +1998,6 @@
         private System.Windows.Forms.ToolStripMenuItem resetDevicesToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem scopeToolStripMenuItem;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.NumericUpDown nudFreqFrom;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label11;
@@ -2033,9 +2052,7 @@
         private System.Windows.Forms.TextBox tbxHistory;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.NumericUpDown nudFreqStep;
         private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.NumericUpDown nudFreqTo;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.Label lblRotorState;
         private System.Windows.Forms.Label label30;
@@ -2092,5 +2109,8 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ComboBox cbxFreqStep;
+        private System.Windows.Forms.ComboBox cbxFreqTo;
+        private System.Windows.Forms.ComboBox cbxFreqFrom;
     }
 }

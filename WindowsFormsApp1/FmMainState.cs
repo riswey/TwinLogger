@@ -10,9 +10,9 @@ using MotorController;
 namespace MultiDeviceAIO
 {
     enum APPSTATE { Ready, WaitRotor, TestRunning, Armed, TriggerWaitLock, DoSampling, Error };
-    enum APPEVENT { InitRun, ACKRotor, Armed, Lock, Trigger, ContecTriggered, SamplingError, EndRun, Stop };
+    enum APPEVENT { InitRun, ACKRotor, Arm, Lock, Trigger, ContecTriggered, SamplingError, EndRun, Stop };
 
-    public partial class FmControlPanel: Form
+    public partial class FmMain: Form
     {
         //SamplingError:WaitTrigger
 
@@ -32,7 +32,7 @@ namespace MultiDeviceAIO
             appstate.AddRule(APPSTATE.WaitRotor, APPEVENT.ACKRotor, APPSTATE.TestRunning, NextRun);                                         //Start next run
 
             //Entry point device state
-            appstate.AddRule(APPSTATE.TestRunning, APPEVENT.Armed, APPSTATE.Armed, (string index) =>
+            appstate.AddRule(APPSTATE.TestRunning, APPEVENT.Arm, APPSTATE.Armed, (string index) =>
             {
                 PrintLn("Armed", true);
                 setStartButtonText(1);
@@ -54,8 +54,13 @@ namespace MultiDeviceAIO
                 RunFinished();
                 NextFreq(index);
             });
-            appstate.AddRule(null, APPEVENT.Stop, APPSTATE.Ready, StopSeries);
-            appstate.AddRule(APPSTATE.TestRunning, APPEVENT.Stop, APPSTATE.Ready, StopSeries);
+
+            appstate.AddRule(null, APPEVENT.Stop, APPSTATE.Ready, (string idx) =>
+            {
+                rotorstate.Event(ARDUINOEVENT.Send_Stop);
+                rotorstate.Event(ARDUINOEVENT.Do_Stop);     //Incase ACK not returned
+                StopSeries(idx);
+            });
 
         }
 
@@ -70,8 +75,9 @@ namespace MultiDeviceAIO
             //myaio.ResetDevices();
             //myaio.CheckDevices();
 
-            PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value;
-            
+            PersistentLoggerState.ps.data.target_speed = float.Parse(cbxFreqFrom.SelectedValue.ToString());
+            PersistentLoggerState.ps.data.rotor_speed = 0;
+
             //Start motor
             rotorstate.Event(ARDUINOEVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
             //Set rotor 0
@@ -83,14 +89,27 @@ namespace MultiDeviceAIO
             contecpoller.Start();
 
             dt.Clear();
+
+            Task.Delay(5000).ContinueWith(t =>
+            {
+                if (PersistentLoggerState.ps.data.rotor_speed == 0) {
+                    FmMain.ActiveForm.Invoke(new Action(() =>
+                    {
+                        appstate.Event(APPEVENT.Stop);
+                        MessageBox.Show("Rotor is not running");
+                        return;
+                    }));
+                }
+            });
+
         }
 
         const int MAXROTORSPEEDFAILSAFE = 200;
         //At start each run
         void NextFreq(string index)
         {
-            PersistentLoggerState.ps.data.target_speed += (float)nudFreqStep.Value;
-            if (PersistentLoggerState.ps.data.target_speed > (float)nudFreqTo.Value
+            PersistentLoggerState.ps.data.target_speed += float.Parse(cbxFreqStep.SelectedValue.ToString());
+            if (PersistentLoggerState.ps.data.target_speed > float.Parse(cbxFreqTo.SelectedValue.ToString())
                 ||
                 PersistentLoggerState.ps.data.target_speed > MAXROTORSPEEDFAILSAFE
                 )
@@ -149,7 +168,6 @@ namespace MultiDeviceAIO
 
         void StopSeries(string index)
         {
-            rotorstate.Event(ARDUINOEVENT.Send_Stop);
             RunFinished();
             serialpoller.Stop();
             SetStatus("Ready");

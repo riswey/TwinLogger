@@ -34,7 +34,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;SOFTDEVICE;NOHANDLING</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;CODE_ANALYSIS;NOHANDLING</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -106,10 +106,11 @@
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
     <Compile Include="BackgroundQueue.cs" />
-    <Compile Include="FMCPState.cs">
+    <Compile Include="FmMainState.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MotorController\RotorMetrics.cs" />
+    <Compile Include="MotorController\SerialLayer.cs" />
     <Compile Include="Obsolete\AIODeviceException.cs" />
     <Compile Include="Contec\CaioCs.cs" />
     <Compile Include="Settings\TypeExtensions.cs" />
@@ -117,12 +118,12 @@
     <Compile Include="TestDevices\CaioCsTest.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="MotorController\Enums.cs" />
-    <Compile Include="MotorController\FmCPMotorControl.cs">
+    <Compile Include="MotorController\FmMainMotorControl.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GraphicsExtensions.cs" />
     <Compile Include="AccelerometerClasses.cs" />
-    <Compile Include="FmCPBusinessCode.cs">
+    <Compile Include="FmMainBusinessCode.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="HardwareHelper.cs" />
@@ -133,7 +134,7 @@
       <DependentUpon>FmLog.cs</DependentUpon>
     </Compile>
     <Compile Include="Obsolete\Parameters.cs" />
-    <Compile Include="MotorController\SerialEventsController.cs" />
+    <Compile Include="Obsolete\SerialEventsController.cs" />
     <Compile Include="TestDevices\TestSerialPort.cs" />
     <Compile Include="FmScope.cs">
       <SubType>Form</SubType>
@@ -145,11 +146,11 @@
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Sys.cs" />
     <Compile Include="IO.cs" />
-    <Compile Include="FmControlPanel.cs">
+    <Compile Include="FmMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FmControlPanel.Designer.cs">
-      <DependentUpon>FmControlPanel.cs</DependentUpon>
+    <Compile Include="FmMain.Designer.cs">
+      <DependentUpon>FmMain.cs</DependentUpon>
     </Compile>
     <Compile Include="FmMonitor.cs">
       <SubType>Form</SubType>
@@ -179,8 +180,8 @@
     <EmbeddedResource Include="FmScope.resx">
       <DependentUpon>FmScope.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FmControlPanel.resx">
-      <DependentUpon>FmControlPanel.cs</DependentUpon>
+    <EmbeddedResource Include="FmMain.resx">
+      <DependentUpon>FmMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FmMonitor.resx">
       <DependentUpon>FmMonitor.cs</DependentUpon>

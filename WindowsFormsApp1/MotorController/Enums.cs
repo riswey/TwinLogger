@@ -10,7 +10,7 @@ using System.Text;
 namespace MotorController
 {
     //packet enums
-    enum CMD                //sent packets
+    public enum CMD                //sent packets
     {
         //Respond with "ACK CallingCMD"
         START,
@@ -32,7 +32,7 @@ namespace MotorController
         GETADC              //RA         
     };
 
-    enum DATATYPES          //return packets
+    public enum DATATYPES          //return packets
     {
         ACK,                //ACK (response to S commands)
         GETPULSEDELAY,      //PW
@@ -45,11 +45,11 @@ namespace MotorController
     }
 
     //State enums
-    enum ARDUINOSTATE { Ready, Running, Lockable, Locked, Triggered }
-    enum ARDUINOEVENT { Next, Send_Start, Send_Stop, Send_Lock, Send_Unlock, Send_Trigger,
+    public enum ARDUINOSTATE { Ready, Running, Lockable, Locked, Triggered }
+    public enum ARDUINOEVENT { Next, Send_Start, Send_Stop, Send_Lock, Send_Unlock, Send_Trigger,
         Do_Start, Do_Stop, Do_Lock, Do_unlock, Do_Trigger, Do_SetPulseDelay, Do_SetPID, Do_SetFreq, Do_SetADC }
 
-    class Enums
+    public class Enums
     {
         //Should split into get/set commands
         //then dictionary translated the get commands to their returning code

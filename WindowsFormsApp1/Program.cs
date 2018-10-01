@@ -34,7 +34,7 @@ namespace MultiDeviceAIO
             }
 
 #if NOHANDLING
-            Application.Run(new FmControlPanel());
+            Application.Run(new FmMain());
 #else
             try
             {

@@ -12,13 +12,15 @@ using MotorController;
 
 namespace MultiDeviceAIO
 {
-    public partial class FmControlPanel: Form
+    public partial class FmMain: Form
     {
 
 #if SOFTDEVICE
     TestSerialPort serialPort1;
 #else
         SerialPort serialPort1 = new SerialPort();
+
+        SerialLayer serial = new SerialLayer();
 #endif
         string TERMINAL = "\n";
 
@@ -458,9 +460,8 @@ namespace MultiDeviceAIO
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            //Clear anyway in case no ACK
+            rotorstate.Event(ARDUINOEVENT.Send_Stop);
             rotorstate.Event(ARDUINOEVENT.Do_Stop);
-            SendCommand(CMD.STOP);
         }
 
         private void graphToolStripMenuItem_Click(object sender, EventArgs e)

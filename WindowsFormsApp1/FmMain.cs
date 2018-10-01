@@ -17,40 +17,25 @@ using System.Xml.Serialization;
 
 namespace MultiDeviceAIO
 {
-    partial class FmControlPanel : Form
+    partial class FmMain : Form
     {
 
         #region INIT
-
-        //TODO: what is this?
-        bool probationLoadedstate = false;
 
         MyAIO myaio;
         FmMonitor monitor;
         FmLog fmlog = new FmLog();
         FmScope scope;
-        /*
-        public DATA ConcatData
-        {
-            get
-            {
-                //This is backed by a variable
-                return myaio.GetConcatData();
-            }
-        }
-        */
+
         //1000hz, 64chan, 5sec
         //
         //int target = 10000;        //sampling freq x duration x 2
         //TODO: make per device
-
-
         //if returns 0 then its over for that device (end)
-
         //If target not met then can see who didn't get enough. Flag error
         //reset
 
-        public FmControlPanel()
+        public FmMain()
         {
 
             //contecpoller.Interval = CONTECPOLLERSTATE;
@@ -142,14 +127,14 @@ namespace MultiDeviceAIO
             cbPad.DataBindings.Clear();
             cbPad.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "paddtype");
 
-            nudFreqFrom.DataBindings.Clear();
-            nudFreqFrom.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_from");
+            cbxFreqFrom.DataBindings.Clear();
+            cbxFreqFrom.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "freq_from");
 
-            nudFreqTo.DataBindings.Clear();
-            nudFreqTo.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_to");
+            cbxFreqTo.DataBindings.Clear();
+            cbxFreqTo.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "freq_to");
 
-            nudFreqStep.DataBindings.Clear();
-            nudFreqStep.DataBindings.Add("Value", PersistentLoggerState.ps.data, "freq_step");
+            cbxFreqStep.DataBindings.Clear();
+            cbxFreqStep.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "freq_step");
 
             nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", PersistentLoggerState.ps.data, "sample_frequency");
@@ -361,7 +346,6 @@ namespace MultiDeviceAIO
         private void btnStop_Click(object sender, EventArgs e)
         {
             appstate.Event(APPEVENT.Stop);
-            //StopScheduleRun();
         }
 
         string startbuttontext = "Ready";
@@ -528,7 +512,6 @@ namespace MultiDeviceAIO
         private void button1_Click(object sender, EventArgs e)
         {
             appstate.Event(APPEVENT.Stop);
-            //Abort();
         }
 
         float graphrange = 1;
@@ -547,16 +530,13 @@ namespace MultiDeviceAIO
         private void stopESCToolStripMenuItem_Click(object sender, EventArgs e)
         {
             appstate.Event(APPEVENT.Stop);
-            //Abort();
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
             {
-                //Abort
                 appstate.Event(APPEVENT.Stop);
-                //Abort();
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
@@ -687,11 +667,15 @@ namespace MultiDeviceAIO
                 return;
             }
 
+
+
             int rtncode;
             if ((rtncode = myaio.ContecOK()) != 0)
             {
                 monitorpoller.Stop();
-                switch (MessageBox.Show(this, "Contec device error. Returned code " + rtncode + "\nReentry?, Ignore or Close", "Contec Error", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error))
+                switch (MessageBox.Show(this, "Contec device error. Returned code " + rtncode + " (" + MyAIO.CONTECCODE[rtncode] + ")" +
+                    "\n Unplug and replug devices." +
+                    "\nReentry?, Ignore or Close", "Contec Error", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error))
                 {
                     case DialogResult.Yes:
                         myaio.ResetDevices();
@@ -804,5 +788,87 @@ namespace MultiDeviceAIO
             MessageBox.Show("{" + text + "}");
         }
 
+        readonly string[] pancakemass = new string[5] { "M1", "M2", "M3", "M5", "M7" };
+        readonly string[] verticalmass = new string[5] { "M1", "M2", "M3", "M4", "M5" };
+
+        readonly Dictionary<int, int[]> pancakemassspeeds = new Dictionary<int, int[]>() {
+            { 0, new int[2] { 16, 28 } },
+            { 1, new int[2] { 29, 42 } },
+            { 2, new int[2] { 43, 52 } },
+            { 3, new int[2] { 53, 80 } },
+            { 4, new int[2] { 81, 100 } }
+        };
+
+        readonly Dictionary<int, int[]> verticalmassspeeds = new Dictionary<int, int[]>() {
+            { 0, new int[2] { 16, 28 } },
+            { 1, new int[2] { 29, 41 } },
+            { 2, new int[2] { 42, 58 } },
+            { 3, new int[2] { 59, 76 } },
+            { 4, new int[2] { 77, 100 } }
+        };
+
+        void ReCalcFreqOptions()
+        {
+
+            if (cbShaker.SelectedIndex == -1) cbShaker.SelectedIndex = 0;
+            if (cbMass.SelectedIndex == -1) cbMass.SelectedIndex = 0;
+
+            cbMass.DataSource = (cbShaker.SelectedIndex == 0) ? pancakemass : verticalmass;
+
+            int[] range;
+
+            if (cbShaker.SelectedIndex == 0)
+                pancakemassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
+            else
+                verticalmassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
+
+            int step = int.Parse(cbxFreqStep.SelectedItem.ToString());
+
+            List<int> dsfrom = new List<int>();
+            List<int> dsto = new List<int>();
+            for (int i = range[0]; i <= range[1]; i += step)
+            {
+                dsfrom.Add(i);
+                dsto.Add(i);
+                //TODO: make to >= from
+                //Only add to "to" if it is greater or equal to from 
+                //if (int.Parse(cbxFreqFrom?.SelectedItem.ToString() ?? "0")  <= i)
+                //{
+                //    dsto.Add(i);
+                //}
+            }
+
+            cbxFreqFrom.DataSource = dsfrom;
+            cbxFreqTo.DataSource = dsto;
+
+        }
+
+        private void cbMass_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ReCalcFreqOptions();
+        }
+
+        private void cbxFreqStep_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ReCalcFreqOptions();
+        }
+
+        private void cbShaker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ReCalcFreqOptions();
+        }
+
+        private void cbxFreqFrom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbxFreqFrom.SelectedIndex > cbxFreqTo.SelectedIndex)
+                cbxFreqTo.SelectedIndex = cbxFreqFrom.SelectedIndex;
+        }
+
+        private void cbxFreqTo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbxFreqTo.SelectedIndex < cbxFreqFrom.SelectedIndex)
+                cbxFreqFrom.SelectedIndex = cbxFreqTo.SelectedIndex;
+
+        }
     }
 }
