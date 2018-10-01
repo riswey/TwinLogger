@@ -133,23 +133,14 @@ namespace MultiDeviceAIO
         /// <param name="num_samples"></param>
         void SaveData()
         {
-            //Make a copy into storage 
-            myaio._concatdata = new DATA(myaio.GetConcatData());
-
-            //TODO: scope Import(Dictionary, Int32 duration)
-            //Sys.Coll.Generic.Dictionary`2.getItem(TKey key)
-            //not found key exception. The given key not present
-            //Sys,ThrowHelper.ThrowKeyNotFoundException()
-            //scope = new FmScope(myaio._concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration);
-
-
+            myaio.ConcatDataFromDevices();
 
             //Get new temp and add update AIOSettings.singleInstance
             string filepath = IO.GetFilePathTemp(PersistentLoggerState.ps.data);
 
             filepath = IO.PreparePath(filepath, false);
 
-            IO.SaveDATA(PersistentLoggerState.ps.data, ref filepath, myaio._concatdata);
+            IO.SaveDATA(PersistentLoggerState.ps.data, ref filepath, myaio.ConcatData);
 
             /*
             //Generate User reports to see what happened

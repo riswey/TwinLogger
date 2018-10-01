@@ -485,12 +485,26 @@ namespace MultiDeviceAIO
         /// </summary>
         /// <param name="concatdata"></param>
         /// <returns></returns>
-        public DATA _concatdata;    //Keep for Scope
-        public DATA GetConcatData()
+        private DATA _concatdata;    //Keep for Scope
+
+        public void ConcatDataFromDevices()
         {
-            DATA concat = new DATA();
-            Device.devices.ForEach(d => {if (d.HasData) concat.Add(d.id, d.data); }  );
-            return concat;
+            DATA concatdata = new DATA();
+            Device.devices.ForEach(d => { if (d.HasData) concatdata.Add(d.id, d.data); });
+            ConcatData = concatdata;
+        }
+
+        public DATA ConcatData
+        {
+            private set
+            {
+                //make a copy to ensure this is not deleted when devices reset
+                _concatdata = new DATA(value);
+            }
+            get
+            {
+                return _concatdata;
+            }
         }
         /*
         public DATA GetConcatData

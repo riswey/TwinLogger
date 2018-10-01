@@ -46,8 +46,9 @@ namespace MultiDeviceAIO
         }
 
         //FILE SAVING
-        static public void SaveDATA(LoggerState settings, ref string filepath, DATA concatdata)
+        static public bool SaveDATA(LoggerState settings, ref string filepath, DATA concatdata)
         {
+            if (concatdata == null) return false;
             //try
             {
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(filepath))
@@ -68,9 +69,9 @@ namespace MultiDeviceAIO
             }
             //catch
             {
-            //    throw;
+                return false;
             }
-
+            return true;
         }
 
         public static bool MoveTempFileAddHeader(PersistentLoggerState settings, string filepath)

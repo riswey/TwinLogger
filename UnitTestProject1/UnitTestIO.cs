@@ -17,7 +17,7 @@ namespace UnitTestProject1
         {
             string path = @"c:\Users\Alva\Desktop\dummytest";
 
-            Assert.IsTrue(Dir.Exists(path));
+            Assert.IsTrue(IO.DirExists(path));
 
 
         }

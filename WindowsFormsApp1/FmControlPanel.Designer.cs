@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FmControlPanel));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.chkClips = new System.Windows.Forms.CheckBox();
@@ -44,7 +44,6 @@
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.setupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.setupToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -145,6 +144,10 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label28 = new System.Windows.Forms.Label();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label25 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
@@ -187,10 +190,6 @@
             this.btnDecRange = new System.Windows.Forms.Button();
             this.serialpoller = new System.Windows.Forms.Timer(this.components);
             this.contecpoller = new System.Windows.Forms.Timer(this.components);
-            this.button5 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label28 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreqFrom)).BeginInit();
@@ -320,28 +319,22 @@
             // setupToolStripMenuItem
             // 
             this.setupToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.calibrateToolStripMenuItem,
-            this.setupToolStripMenuItem1});
+            this.calibrateToolStripMenuItem});
             this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
-            this.setupToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.setupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setupToolStripMenuItem.Text = "Accelerometers";
             // 
             // calibrateToolStripMenuItem
             // 
             this.calibrateToolStripMenuItem.Name = "calibrateToolStripMenuItem";
-            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.calibrateToolStripMenuItem.Text = "Calibrate";
             this.calibrateToolStripMenuItem.Click += new System.EventHandler(this.calibrateToolStripMenuItem_Click);
-            // 
-            // setupToolStripMenuItem1
-            // 
-            this.setupToolStripMenuItem1.Name = "setupToolStripMenuItem1";
-            this.setupToolStripMenuItem1.Size = new System.Drawing.Size(121, 22);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -359,28 +352,28 @@
             // selectDirectoryToolStripMenuItem
             // 
             this.selectDirectoryToolStripMenuItem.Name = "selectDirectoryToolStripMenuItem";
-            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.selectDirectoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.selectDirectoryToolStripMenuItem.Text = "Select Directory...";
             this.selectDirectoryToolStripMenuItem.Click += new System.EventHandler(this.selectDirectoryToolStripMenuItem_Click);
             // 
             // resetDevicesToolStripMenuItem1
             // 
             this.resetDevicesToolStripMenuItem1.Name = "resetDevicesToolStripMenuItem1";
-            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(165, 22);
+            this.resetDevicesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.resetDevicesToolStripMenuItem1.Text = "Reset Devices";
             this.resetDevicesToolStripMenuItem1.Click += new System.EventHandler(this.resetDevicesToolStripMenuItem1_Click);
             // 
             // startToolStripMenuItem
             // 
             this.startToolStripMenuItem.Name = "startToolStripMenuItem";
-            this.startToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.startToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.startToolStripMenuItem.Text = "Start";
             this.startToolStripMenuItem.Click += new System.EventHandler(this.startToolStripMenuItem_Click);
             // 
             // stopESCToolStripMenuItem
             // 
             this.stopESCToolStripMenuItem.Name = "stopESCToolStripMenuItem";
-            this.stopESCToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.stopESCToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.stopESCToolStripMenuItem.Text = "Stop (ESC)";
             this.stopESCToolStripMenuItem.Click += new System.EventHandler(this.stopESCToolStripMenuItem_Click);
             // 
@@ -397,20 +390,20 @@
             // motorControllerToolStripMenuItem
             // 
             this.motorControllerToolStripMenuItem.Name = "motorControllerToolStripMenuItem";
-            this.motorControllerToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.motorControllerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.motorControllerToolStripMenuItem.Text = "Motor Controller";
             // 
             // monitorChannelsToolStripMenuItem
             // 
             this.monitorChannelsToolStripMenuItem.Name = "monitorChannelsToolStripMenuItem";
-            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.monitorChannelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.monitorChannelsToolStripMenuItem.Text = "Monitor";
             this.monitorChannelsToolStripMenuItem.Click += new System.EventHandler(this.monitorChannelsToolStripMenuItem_Click);
             // 
             // scopeToolStripMenuItem
             // 
             this.scopeToolStripMenuItem.Name = "scopeToolStripMenuItem";
-            this.scopeToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.scopeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.scopeToolStripMenuItem.Text = "Scope";
             this.scopeToolStripMenuItem.Click += new System.EventHandler(this.scopeToolStripMenuItem_Click);
             // 
@@ -1406,6 +1399,43 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Parameters";
             // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label28.Location = new System.Drawing.Point(41, 11);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(92, 13);
+            this.label28.TabIndex = 57;
+            this.label28.Text = "Manual Control";
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(42, 56);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 56;
+            this.button5.Text = "Stop";
+            this.button5.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(42, 30);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 55;
+            this.button2.Text = "Warmup";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(42, 84);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 54;
+            this.button1.Text = "Trigger";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.LightGray;
@@ -1517,7 +1547,7 @@
             // lblMax
             // 
             this.lblMax.AutoSize = true;
-            this.lblMax.Location = new System.Drawing.Point(412, 33);
+            this.lblMax.Location = new System.Drawing.Point(391, 33);
             this.lblMax.Name = "lblMax";
             this.lblMax.Size = new System.Drawing.Size(41, 13);
             this.lblMax.TabIndex = 88;
@@ -1535,7 +1565,7 @@
             // lblMin
             // 
             this.lblMin.AutoSize = true;
-            this.lblMin.Location = new System.Drawing.Point(412, 10);
+            this.lblMin.Location = new System.Drawing.Point(388, 12);
             this.lblMin.Name = "lblMin";
             this.lblMin.Size = new System.Drawing.Size(41, 13);
             this.lblMin.TabIndex = 86;
@@ -1769,16 +1799,16 @@
             // 
             // chart1
             // 
-            chartArea5.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chart1.Legends.Add(legend5);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(367, 326);
             this.chart1.Name = "chart1";
-            series5.ChartArea = "ChartArea1";
-            series5.Legend = "Legend1";
-            series5.Name = "Series1";
-            this.chart1.Series.Add(series5);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(460, 186);
             this.chart1.TabIndex = 56;
             this.chart1.Text = "chart1";
@@ -1823,43 +1853,6 @@
             // 
             this.contecpoller.Interval = 500;
             this.contecpoller.Tick += new System.EventHandler(this.contecpoller_Tick);
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(42, 56);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 56;
-            this.button5.Text = "Stop";
-            this.button5.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(42, 30);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 55;
-            this.button2.Text = "Warmup";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(42, 84);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 54;
-            this.button1.Text = "Trigger";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label28.Location = new System.Drawing.Point(41, 11);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(92, 13);
-            this.label28.TabIndex = 57;
-            this.label28.Text = "Manual Control";
             // 
             // FmControlPanel
             // 
@@ -2000,7 +1993,6 @@
         private System.Windows.Forms.Timer monitorpoller;
         private System.Windows.Forms.PictureBox pbStatus;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem1;
         private System.Windows.Forms.PictureBox pbStatusOut;
         private System.Windows.Forms.PictureBox pb2device;
         private System.Windows.Forms.PictureBox pb2convert;

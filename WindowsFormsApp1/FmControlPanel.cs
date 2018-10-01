@@ -53,14 +53,14 @@ namespace MultiDeviceAIO
         {
 
             //contecpoller.Interval = CONTECPOLLERSTATE;
-            /*
+            
             if (!NativeMethods.CheckLibrary(@".\caio.dll"))
             {
                 NativeMethods.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
             }
-            */
+            
             InitializeComponent();
-            /*
+            
             SetupAppStateMachine();
 
             setStartButtonText(0);
@@ -88,7 +88,17 @@ namespace MultiDeviceAIO
             }
 
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
-            */
+            
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;    // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
         }
 
         void SetAIO()
@@ -480,14 +490,9 @@ namespace MultiDeviceAIO
         {
             //TODO: very inefficient as must convert data every time, and create a new scope
             //Can scope take the dictionary?
-            
 
-            scope = new FmScope(myaio._concatdata, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration);
-
-            if (!scope?.IsDisposed ?? false)
-            {
-                scope.Show();
-            }
+            FmScope.me.SetData(myaio.ConcatData, PersistentLoggerState.ps.data.n_channels, PersistentLoggerState.ps.data.duration);
+            FmScope.me.Show();
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -583,7 +588,9 @@ namespace MultiDeviceAIO
 
                 string filename = openFileDialog1.FileName;
 
-                (new FmScope(filename)).Show();
+                //TODO: add this option
+                //scope = new FmScope(filename);
+                //scope.Show();
             }
         }
 

@@ -8,22 +8,48 @@ using DEVICEID = System.Int16;
 //The data structure is a dictionary; K: device id V:raw list of data for device
 //K: device id :. data imported by id
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
+using System.Collections;
 
 namespace MultiDeviceAIO
 {
     public partial class FmScope : Form
     {
-        //Display
-        NPlot.LinePlot npplot;
+        public static FmScope me = new FmScope();
 
-        DATA data;
+        string filename;
+
+        DATA concatdata;
         int n_channels;
         int n_samples;
+        int duration;
 
         //Data
         float[] dataX;
         float[] dataY;
-        
+
+        //Display
+        NPlot.LinePlot npplot;
+
+        public FmScope()
+        {
+            InitializeComponent();
+        }
+
+        public void SetData(DATA concatdata, int n_channels, int duration)
+        {
+            this.filename = null;
+            this.n_channels = n_channels;
+            this.concatdata = concatdata;
+            this.n_channels = n_channels;
+            this.duration = duration;
+
+            if (concatdata == null) return;
+
+            Import();
+        }
+
+        //Not tested
+        /*
         public FmScope(string filename)
         {
             //Isolate importing from main program.
@@ -69,70 +95,60 @@ namespace MultiDeviceAIO
             //Should match header ?check
             if (System.Math.Floor(n_devices) != n_devices) return;       //devices not multiple of data width
 
-            Import(concatdata, sd.duration);
+            Import(sd.duration);
 
         }
+        */
 
-        public FmScope(DATA concatdata, int n_channels, int duration)
-        {
-            this.n_channels = n_channels;
-            Import(concatdata, duration);
-        }
-
-        protected void Import(DATA concatdata, int duration)
+        protected void Import()
         {            
-            InitializeComponent();
 
-            if (concatdata == null || concatdata.Count < 2)
+            //assume both devices same size
+
+            //get first series and get n_samples (assume same for all series)
+            IEnumerator enumerator = concatdata.Keys.GetEnumerator();
+            enumerator.MoveNext();
+            short first = (short)enumerator.Current;
+            concatdata.TryGetValue(first, out List<int> series);
+            this.n_samples = ((concatdata?.Count ?? 0) == 0 ) ? 0 : concatdata[first].Count / n_channels;
+
+            if (this.n_samples == 0) return;        //was null or 0
+
+            npplot = new LinePlot();
+            dataX = new float[n_samples];
+            dataY = new float[n_samples];
+
+            //Combo items
+            List<string> options = new List<string>();
+            for (int i = 0; i < n_channels; i++)
             {
-                MessageBox.Show("No data");
-                this.Close();
+                options.Add("Channel " + (i + 1));
             }
-            else
+            comboBox1.DataSource = options;
+            comboBox1.SelectedIndex = 0;
+
+            List<string> devices = new List<string>();
+            for (int i = 0; i < concatdata.Count; i++)
             {
-
-                this.data = concatdata;
-                //assume both devices same size
-                this.n_samples = (concatdata.Count == 0) ? 0 : concatdata[0].Count / n_channels;
-
-                if (this.n_samples == 0) return;
-
-                npplot = new LinePlot();
-                dataX = new float[n_samples];
-                dataY = new float[n_samples];
-
-                //Combo items
-                List<string> options = new List<string>();
-                for (int i = 0; i < n_channels; i++)
-                {
-                    options.Add("Channel " + (i + 1));
-                }
-                comboBox1.DataSource = options;
-                comboBox1.SelectedIndex = 0;
-
-                List<string> devices = new List<string>();
-                for (int i = 0; i < concatdata.Count; i++)
-                {
-                    devices.Add("Device " + (i + 1));
-                }
-                comboBox2.DataSource = devices;
-                comboBox2.SelectedIndex = 0;
-
-                //Add event handler here to stop being called before initialised
-                comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
-                comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
-
-                //X values
-                float scale = (float)duration / (float)n_samples;
-                for (int i = 0; i < n_samples; i++)
-                {
-                    dataX[i] = i * scale;
-                }
-
-                SetChannel(0, 0);
-
-                Cursor.Current = Cursors.Arrow;
+                devices.Add("Device " + (i + 1));
             }
+            comboBox2.DataSource = devices;
+            comboBox2.SelectedIndex = 0;
+
+            //Add event handler here to stop being called before initialised
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
+
+            //X values
+            float scale = (float)duration / (float)n_samples;
+            for (int i = 0; i < n_samples; i++)
+            {
+                dataX[i] = i * scale;
+            }
+
+            SetChannel(0, 0);
+
+            Cursor.Current = Cursors.Arrow;
         }
 
         void SetChannel(DEVICEID device, int channel)
@@ -141,9 +157,9 @@ namespace MultiDeviceAIO
             float max = -10;
 
             int c = 0;
-            for (int i = channel; i < data[device].Count; i+=n_channels)
+            for (int i = channel; i < concatdata[device].Count; i+=n_channels)
             {
-                dataY[c] = (float)data[device][i] / 65535 * 20 - 10;
+                dataY[c] = (float)concatdata[device][i] / 65535 * 20 - 10;
                 if (dataY[c] > max) max = dataY[c];
                 if (dataY[c] < min) min = dataY[c];
                 c++;
@@ -208,9 +224,9 @@ namespace MultiDeviceAIO
             Response.End();
             */
 
-        }
+    }
 
-        private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             SetChannel((DEVICEID) comboBox2.SelectedIndex, comboBox1.SelectedIndex);
 
@@ -222,6 +238,14 @@ namespace MultiDeviceAIO
             SetChannel((DEVICEID) comboBox2.SelectedIndex, comboBox1.SelectedIndex);
 
             npSurface.Refresh();
+        }
+
+        private void FmScope_Shown(object sender, System.EventArgs e)
+        {
+            if (concatdata == null)
+            {
+                MessageBox.Show(this, "No data");
+            }
         }
     }
 }

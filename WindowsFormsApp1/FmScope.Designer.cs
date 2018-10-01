@@ -92,7 +92,7 @@
             this.comboBox2.Size = new System.Drawing.Size(150, 21);
             this.comboBox2.TabIndex = 38;
             // 
-            // Scope
+            // FmScope
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -102,8 +102,9 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.npSurface);
-            this.Name = "Scope";
+            this.Name = "FmScope";
             this.Text = "Scope";
+            this.Shown += new System.EventHandler(this.FmScope_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
