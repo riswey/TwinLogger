@@ -35,17 +35,17 @@ namespace MotorController
 
         //Rotor:Running + App:Armed -> hand over to TriggerLogic
         //Finish by DoSampling
-        public void AddEvents(FmControlPanel app)
+        public void AddEvents(StateMachine smapp, StateMachine smrotor)
         {
             //TODO: need to timeout events (send event - stored by marshal and alternative executed if timeout (retry)
             //Removed TriggerWaitLock (not important if lock doesn't take)
             //appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.TriggerWaitLock, (string index) =>
             
             //TODO: This is wrong. Send_trigger should set the appstate to DoSampling!
-            app.appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.DoSampling, (string index) =>
+            smapp.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.DoSampling, (string index) =>
             {
-                app.rotorstate.Event(ARDUINOEVENT.Send_Lock);
-                app.rotorstate.Event(ARDUINOEVENT.Send_Trigger);
+                smrotor.Event(ARDUINOEVENT.Send_Lock);
+                smrotor.Event(ARDUINOEVENT.Send_Trigger);
             });
             /*
             appstate.AddRule(APPSTATE.TriggerWaitLock, APPEVENT.Lock, APPSTATE.DoSampling, (string index) =>

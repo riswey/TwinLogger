@@ -20,7 +20,7 @@ namespace MultiDeviceAIO
 
         //Symbols
 
-        public StateMachine appstate = new StateMachine("Appstate", APPSTATE.Ready);
+        StateMachine appstate = new StateMachine("Appstate", APPSTATE.Ready);
 
         //const int CONTECPOLLERSTATE = 1000;
         //const int CONTECPOLLERDATA = 100;
@@ -43,7 +43,7 @@ namespace MultiDeviceAIO
 
 
             //TestRunning + Armed -> hand over to TriggerLogic
-            trigger.AddEvents(this);
+            trigger.AddEvents(appstate, rotorstate);
 
             //Wait 
             appstate.AddRule(null, APPEVENT.SamplingError, APPSTATE.WaitRotor, HandleSamplingError);

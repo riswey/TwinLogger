@@ -17,7 +17,7 @@ using System.Xml.Serialization;
 
 namespace MultiDeviceAIO
 {
-    public partial class FmControlPanel : Form
+    partial class FmControlPanel : Form
     {
 
         #region INIT
@@ -25,7 +25,7 @@ namespace MultiDeviceAIO
         //TODO: what is this?
         bool probationLoadedstate = false;
 
-        public MyAIO myaio;
+        MyAIO myaio;
         FmMonitor monitor;
         FmLog fmlog = new FmLog();
         FmScope scope;

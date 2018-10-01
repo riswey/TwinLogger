@@ -22,7 +22,7 @@ namespace MultiDeviceAIO
 #endif
         string TERMINAL = "\n";
 
-        public StateMachine rotorstate = new StateMachine("ArduinoState", ARDUINOSTATE.Ready);
+        StateMachine rotorstate = new StateMachine("ArduinoState", ARDUINOSTATE.Ready);
 
         private DataTable _dt;
         public DataTable dt
