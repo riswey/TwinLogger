@@ -52,7 +52,6 @@ namespace MultiDeviceAIO
         //Encapsulating all trigger activity and event calls here
         //Control is handed to Rotor when appstate = Armed, rotorstate = Running
         TriggerLogic trigger;
-        MovingStatsCrosses mac;
 
         //called by ControlPanel constructor
         public void InitFmCPMotorControl()
@@ -60,7 +59,7 @@ namespace MultiDeviceAIO
             LoggerState ls = PersistentLoggerState.ps.data;
             //Called by LoggerState constructor
             int tickpermetricwindow = (int)Math.Ceiling((double)ls.metric_window / ls.arduinotick);
-            mac = new MovingStatsCrosses(tickpermetricwindow, () => { return ls.target_speed; });
+            MovingStatsCrosses mac = new MovingStatsCrosses(tickpermetricwindow, () => { return ls.target_speed; });
             trigger = new TriggerLogic(mac, appstate, rotorstate, ls);
 
             //Setup Chart
@@ -154,17 +153,17 @@ namespace MultiDeviceAIO
 
             //Bind MAC Stats
             lblMA.DataBindings.Clear();
-            lblMA.DataBindings.Add("Text", mac, "MA");
+            lblMA.DataBindings.Add("Text", trigger.mac, "MA");
             lblSTD.DataBindings.Clear();
-            lblSTD.DataBindings.Add("Text", mac, "STD");
+            lblSTD.DataBindings.Add("Text", trigger.mac, "STD");
             lblGrad.DataBindings.Clear();
-            lblGrad.DataBindings.Add("Text", mac, "Gradient");
+            lblGrad.DataBindings.Add("Text", trigger.mac, "Gradient");
             lblCross.DataBindings.Clear();
-            lblCross.DataBindings.Add("Text", mac, "Crosses");
+            lblCross.DataBindings.Add("Text", trigger.mac, "Crosses");
             lblMin.DataBindings.Clear();
-            lblMin.DataBindings.Add("Text", mac, "Min");
+            lblMin.DataBindings.Add("Text", trigger.mac, "Min");
             lblMax.DataBindings.Clear();
-            lblMax.DataBindings.Add("Text", mac, "Max");
+            lblMax.DataBindings.Add("Text", trigger.mac, "Max");
 
         }
 
