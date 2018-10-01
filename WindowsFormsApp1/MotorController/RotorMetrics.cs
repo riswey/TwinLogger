@@ -1,5 +1,7 @@
-﻿using System;
+﻿using MultiDeviceAIO;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -26,11 +28,26 @@ namespace MotorController
     }
 
     //TESTED: 26/09/2018 (not resize)
-    public class MovingStatsOptimal
+    public class MovingStatsOptimal : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void InvokePropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        void UpdateBindings()
+        {
+            var p2update = new List<string>() { "MA", "STD", "Gradient", "Min", "Max", "Crosses" };
+            p2update.ForEach(p => { InvokePropertyChanged(p); });
+        }
+
+
+        [MotorProperty]
+        public float rotor_speed { get; set; }      //needed to complete trigger string merge variables
         protected float[] buffer;
         protected int size, head;
-        private float sum,sum2,sumxy,regress_denom;
+        private float sum,sum2,sumxy, regress_denom;
+        public bool bufferfull = false;
 
         public MovingStatsOptimal(int size)
         {
@@ -78,6 +95,7 @@ namespace MotorController
             buffer = newbuffer;
         }
         */
+        [MotorProperty]
         public float MA
         {
             get
@@ -86,6 +104,7 @@ namespace MotorController
                 return sum / size;
             }
         }
+        [MotorProperty]
         public float STD
         {
             get
@@ -116,10 +135,9 @@ namespace MotorController
          * denom = Sum[(x-meanx)^2] = size / 12 * (size^2 - 1)
          *  where x = {0,..,N-1}
         */
-
-        public float RegressionB
+        [MotorProperty]
+        public float Gradient           //Regression B
         {
-            //TODO: sumxy is wrong!
             get
             {
                 double numerator = sum * (1 - size) / 2 + sumxy;
@@ -141,6 +159,7 @@ namespace MotorController
          */
         public void Add(float value)
         {
+            rotor_speed = value;
             float   old_value = buffer[head],
                     old_average = MA,
                     diff = value - old_value;
@@ -149,6 +168,8 @@ namespace MotorController
             sumxy += -sum + size * value;
             buffer[head] = value;
             head = (++head) % size;
+            bufferfull = bufferfull || (head == 0);
+            UpdateBindings();
         }
     }
 
@@ -156,19 +177,30 @@ namespace MotorController
     public class MovingStatsCrosses : MovingStatsOptimal
     {
         public delegate float D_GetTarget();
-        D_GetTarget GetTarget;                  //essentially a reference to target
+        D_GetTarget dtargetspeed;                  //essentially a reference to target wrapped in a function block
+        [MotorProperty]
+        public float target_speed { get
+            {
+                return dtargetspeed();
+            }
+        }
+        [MotorProperty]
         public int Crosses { get; private set; }
         float _max = 0, _min = float.MaxValue;
 
         //NOTE public interface must not return false small values, only false large values to avoid false trigger
+        [MotorProperty]
         public float Max {
             get {
                 if (_max == 0) return float.MaxValue;
                 return _max;
             }
         }
+        [MotorProperty]
         public float Min
         {
+            //NOTE: this will remain at zero until buffer full :. unfilled buffer values = 0
+            //The alternative is to set to float.MaxValue and have max = this until buffer full.
             get
             {
                 if (_min == float.MaxValue) return 0;
@@ -179,7 +211,7 @@ namespace MotorController
         //DOC: MovingStatsCrosses(size, () => {return target;} )
         public MovingStatsCrosses(int size, D_GetTarget gettarget) : base(size)
         {
-            this.GetTarget = new D_GetTarget(gettarget);
+            this.dtargetspeed = new D_GetTarget(gettarget);
         }
 
         public new void Reset(Nullable<int> newsize)
@@ -188,6 +220,7 @@ namespace MotorController
             Crosses = 0;
             _max = 0;
             _min = float.MaxValue;
+            bufferfull = false;
         }
         /*
         public new void ResizeBuffer(int newsize)
@@ -198,7 +231,6 @@ namespace MotorController
         */
         private void MeasureBuffer()
         {
-            float local_target = GetTarget();
             Crosses = 0;
             _min = float.MaxValue;
             _max = 0;
@@ -215,9 +247,9 @@ namespace MotorController
                 v1 = buffer[(head + i) % size];
                 v2 = buffer[(head + i + 1) % size];
                 if (
-                (v1 <= local_target && v2 > local_target)
+                (v1 <= target_speed && v2 > target_speed)
                 ||
-                (v1 > local_target && v2 <= local_target)
+                (v1 > target_speed && v2 <= target_speed)
                 )
                 {
                     Crosses++;
@@ -243,7 +275,7 @@ namespace MotorController
             MeasureBuffer();
         }
 
-        public List<string> BoundPropertiesForUpdate { get; set; } = new List<string>();
+
     }
         
 }

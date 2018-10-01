@@ -21,13 +21,26 @@ namespace MultiDeviceAIO
         SerialPort serialPort1 = new SerialPort();
 #endif
         string TERMINAL = "\n";
-        //STATE state = STATE.Ready;
 
-        StateMachine sm_motor = new StateMachine("ArduinoState", ARDUINOSTATE.Ready);
+        StateMachine rotorstate = new StateMachine("ArduinoState", ARDUINOSTATE.Ready);
 
-        //Task task = null;
-
-        //ParameterState parameters = new ParameterState();
+        private DataTable _dt;
+        public DataTable dt
+        {
+            get
+            {
+                if (_dt == null)
+                {
+                    _dt = new DataTable();
+                    _dt.Columns.Add("X_Value", typeof(long));
+                    _dt.Columns.Add("Target", typeof(float));
+                    _dt.Columns.Add("Upper", typeof(float));
+                    _dt.Columns.Add("Lower", typeof(float));
+                    _dt.Columns.Add("Y_Value", typeof(float));
+                }
+                return _dt;
+            }
+        }
 
         private void MotorCleanUp()
         {
@@ -36,8 +49,20 @@ namespace MultiDeviceAIO
             serialPort1?.Dispose();
         }
 
+        //Encapsulating all trigger activity and event calls here
+        //Control is handed to Rotor when appstate = Armed, rotorstate = Running
+        TriggerLogic trigger;
+        MovingStatsCrosses mac;
+
+        //called by ControlPanel constructor
         public void InitFmCPMotorControl()
         {
+            LoggerState ls = PersistentLoggerState.ps.data;
+            //Called by LoggerState constructor
+            int tickpermetricwindow = (int)Math.Ceiling((double)ls.metric_window / ls.arduinotick);
+            mac = new MovingStatsCrosses(tickpermetricwindow, () => { return ls.target_speed; });
+            trigger = new TriggerLogic(mac, appstate, rotorstate, ls);
+
             //Setup Chart
             chart1.Titles.Add("Rotor Trajectory");
 
@@ -70,7 +95,7 @@ namespace MultiDeviceAIO
             chart1.ChartAreas[0].AxisX.Minimum = 0;
             //chart1.ChartAreas[0].AxisX.Maximum = 100;
 
-            chart1.DataSource = PersistentLoggerState.ps.data.dt;
+            chart1.DataSource = dt;
 
             UpdateChartYScale();
 
@@ -127,19 +152,19 @@ namespace MultiDeviceAIO
             txtMetricCommand.DataBindings.Clear();
             txtMetricCommand.DataBindings.Add("Text", PersistentLoggerState.ps.data, "metriccommand");
 
-            //Bind Rotor Stats
+            //Bind MAC Stats
             lblMA.DataBindings.Clear();
-            lblMA.DataBindings.Add("Text", PersistentLoggerState.ps.data, "MA");
+            lblMA.DataBindings.Add("Text", mac, "MA");
             lblSTD.DataBindings.Clear();
-            lblSTD.DataBindings.Add("Text", PersistentLoggerState.ps.data, "STD");
+            lblSTD.DataBindings.Add("Text", mac, "STD");
             lblGrad.DataBindings.Clear();
-            lblGrad.DataBindings.Add("Text", PersistentLoggerState.ps.data, "Gradient");
+            lblGrad.DataBindings.Add("Text", mac, "Gradient");
             lblCross.DataBindings.Clear();
-            lblCross.DataBindings.Add("Text", PersistentLoggerState.ps.data, "Crosses");
+            lblCross.DataBindings.Add("Text", mac, "Crosses");
             lblMin.DataBindings.Clear();
-            lblMin.DataBindings.Add("Text", PersistentLoggerState.ps.data, "Min");
+            lblMin.DataBindings.Add("Text", mac, "Min");
             lblMax.DataBindings.Clear();
-            lblMax.DataBindings.Add("Text", PersistentLoggerState.ps.data, "Max");
+            lblMax.DataBindings.Add("Text", mac, "Max");
 
         }
 
@@ -291,7 +316,7 @@ namespace MultiDeviceAIO
                 case DATATYPES.ACK:
                     //ACK events
                     Enums.ACKDecode.TryGetValue(data[1], out ARDUINOEVENT ack_event);
-                    sm_motor.Event(ack_event);
+                    rotorstate.Event(ack_event);
                     break;
                     /*
                 case DATATYPES.GETPULSEDELAY:
@@ -302,7 +327,14 @@ namespace MultiDeviceAIO
                     PersistentLoggerState.ps.data.target_speed = float.Parse(data[1]);
                     break;
                 case DATATYPES.GETROTORFREQ:
-                    PersistentLoggerState.ps.data.rotor_speed = float.Parse(data[1]);
+                    //NOTE: Rotor is set here
+                    float rs = float.Parse(data[1]);
+                    float ts = PersistentLoggerState.ps.data.target_speed;
+                    int rx = (int)PersistentLoggerState.ps.data.RotorX;
+                    //Rotor Speed fork in storage (guaranteed sync as flows from here only)
+                    PersistentLoggerState.ps.data.rotor_speed = rs;             //bound the controls
+                    trigger.mac.Add(rs);                                        //meta data + trigger
+                    dt.Rows.Add(rx, ts, ts + 5, ts - 5, rs);
                     break;
 /*                case DATATYPES.GETMINMAXPERIODS:
                     PersistentLoggerState.ps.data.min_period = long.Parse(data[1]);
@@ -324,7 +356,7 @@ namespace MultiDeviceAIO
                          * But here the Serial Comms is result of an RL command
                          * So if true -> just need to Simulate the ACK of an SU (set unlock)
                          */
-                         sm_motor.Event(ARDUINOEVENT.Do_unlock);
+                         rotorstate.Event(ARDUINOEVENT.Do_unlock);
                     }
                     break;
 //NEW
@@ -428,7 +460,7 @@ namespace MultiDeviceAIO
         private void btnReset_Click(object sender, EventArgs e)
         {
             //Clear anyway in case no ACK
-            sm_motor.Event(ARDUINOEVENT.Do_Stop);
+            rotorstate.Event(ARDUINOEVENT.Do_Stop);
             SendCommand(CMD.STOP);
         }
 
@@ -446,7 +478,7 @@ namespace MultiDeviceAIO
 
         public void serialpoller_Tick(object sender, EventArgs e)
         {
-            if (sm_motor.state == ARDUINOSTATE.Running.ToString())
+            if (rotorstate.state == ARDUINOSTATE.Running.ToString())
             {
                 //If started but not entered lock cycle yet -> poll to see if lockable
                 SendCommand(CMD.GETLOCKABLE);
@@ -474,7 +506,7 @@ namespace MultiDeviceAIO
             
             chart1.DataBind();
 
-            if (!appstate.IsState(APPSTATE.DoSampling) && PersistentLoggerState.ps.data.IsReadyToSample)
+            if (!appstate.IsState(APPSTATE.DoSampling) && trigger.IsReadyToSample)
             {
                 cbxOK.Checked = true;
                 appstate.Event(APPEVENT.Trigger);

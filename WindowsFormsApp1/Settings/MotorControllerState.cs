@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MotorController;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -20,19 +21,6 @@ namespace MultiDeviceAIO
 
     public partial class LoggerState
     {
-
-        void InitMotorControllerState()
-        {
-            int tickpermetricwindow = (int)Math.Ceiling((double)metric_window / arduinotick);
-            mac = new MotorController.MovingStatsCrosses(tickpermetricwindow, () => { return target_speed; } );
-            mac.BoundPropertiesForUpdate = new List<string>() { "MA","STD","Gradient", "Min", "Max","Crosses"};
-        }
-
-        public void ResetMAC()
-        {
-            //New tests must start history again
-            mac.Reset();
-        }
 
         [XmlIgnore]
         public static long GetTime_ms //millisecond time
@@ -86,6 +74,20 @@ namespace MultiDeviceAIO
             }
         }
         */
+
+        float _rotor_speed;
+        public float rotor_speed {
+            get
+            {
+                return _rotor_speed;
+            }
+            set
+            {
+                _rotor_speed = value;
+                InvokePropertyChanged("rotor_speed");
+            }
+        }
+
         float _target_speed = 50;
         [TestProperty]
         [MotorProperty]
@@ -103,10 +105,6 @@ namespace MultiDeviceAIO
         }
 
         #region ROTOR METRIC WINDOW
-
-        //[XmlIgnore]
-        //MotorController.PeriodAverage pa = new MotorController.PeriodAverage();
-        MotorController.MovingStatsCrosses mac;
 
         public int metric_window { get; set; } = 3000;          //Length metric window
         
@@ -131,38 +129,22 @@ namespace MultiDeviceAIO
         /// </summary>
         [XmlIgnore]
         public long TestX { get { return LoggerState.GetTime_ms - Test0; } }
-
-
+        /*
         [MotorProperty]
-        public float MA { get { return mac.MA; } }
+        public float MA { get { trigger.TryGetTarget(out TriggerLogic tl); return tl?.mac.MA ?? 0; } }
         [MotorProperty]
-        public float STD { get { return mac.STD; } }
+        public float STD { get { trigger.TryGetTarget(out TriggerLogic tl); return tl?.mac.STD ?? 0; } }
         [MotorProperty]
-        public float Gradient { get { return mac.RegressionB; } }
+        public float Gradient { get { trigger.TryGetTarget(out TriggerLogic tl); return tl?.mac.RegressionB ?? 0; } }
         [MotorProperty]
-        public float Min { get { return mac.Min; } }
+        public float Min { get { trigger.TryGetTarget(out TriggerLogic tl); return tl?.mac.Min ?? 0; } }
         [MotorProperty]
-        public float Max { get { return mac.Max; } }
+        public float Max { get { trigger.TryGetTarget(out TriggerLogic tl); return tl?.mac.Max ?? 0; } }
         [MotorProperty]
-        public int Crosses { get { return mac.Crosses; } }
+        public int Crosses { get { trigger.TryGetTarget(out TriggerLogic tl); return tl?.mac.Crosses ?? 0; } }
         [XmlIgnore]
         float _rotor_speed = 0;
-        [XmlIgnore]
-        public float rotor_speed
-        {
-            get
-            {
-                return _rotor_speed;
-            }
-            set
-            {
-                _rotor_speed = value;
-                dt.Rows.Add((int)RotorX, target_speed, target_speed + 5, target_speed - 5, value);
-                mac.Add(value);
-                InvokePropertyChanged("rotor_speed");
-                mac.BoundPropertiesForUpdate.ForEach( p => { InvokePropertyChanged(p); } );
-            }
-        }
+        */
 
         #endregion
 
@@ -232,65 +214,7 @@ namespace MultiDeviceAIO
         //TODO: timeout need to reset
         public long timeout { get; set; } = 60000;    //1min
 
-        [XmlIgnore]
-        private DataTable _dt;
-        [XmlIgnore]
-        public DataTable dt
-        {
-            get
-            {
-                if (_dt == null)
-                {
-                    _dt = new DataTable();
-                    _dt.Columns.Add("X_Value", typeof(long));
-                    _dt.Columns.Add("Target", typeof(float));
-                    _dt.Columns.Add("Upper", typeof(float));
-                    _dt.Columns.Add("Lower", typeof(float));
-                    _dt.Columns.Add("Y_Value", typeof(float));
-                }
-                return _dt;
-            }
-        }
-        
-        [XmlIgnore]
-        public bool IsReadyToSample {
-            get
-            {
+        public string metriccommand { get; set; } = "{MAX} - {TARGET_SPEED} <0.05 AND {TARGET_SPEED} - {MIN}<0.05";
 
-                bool eval = EvalTrigger;
-                Debug.WriteLine("TEval: " + eval);
-                Debug.WriteLine("TX>MW: " + TestX + ">" + metric_window);
-                Debug.WriteLine("TX>TO: " + TestX + ">" + timeout);
-
-                return (eval && TestX > metric_window)                  //allow full metrics to be processes 
-                    || (TestX > timeout);                               //timeout
-            }
-        }
-
-        #region EVAL TRIGGER 
-        //TODO: expectiment with this
-        //if it won't substutide variable, then we do it manually (like with path)
-        public string metriccommand { get; set; } = "{UPPER} - {MAX} >0 AND {LOWER} - {MIN} < 0";
-
-        public string TriggerMerged
-        {
-            get
-            {
-                string mergestring = MergeObjectToString<MotorPropertyAttribute>(this, metriccommand);
-                return mergestring;
-            }
-        }
-
-        public bool EvalTrigger {
-            get {
-                string smerged = TriggerMerged;
-
-                Debug.WriteLine("Merged: " + smerged);
-
-                return (bool)_dt.Compute(smerged, "");
-            }
-        }
-
-        #endregion
     }
 }

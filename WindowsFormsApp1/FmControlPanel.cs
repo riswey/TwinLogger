@@ -67,13 +67,13 @@ namespace MultiDeviceAIO
 
             pbr0.Maximum = pbr1.Maximum = 100;
 
+            InitMotorStateMachine();    //Inits sms used by trigger
+            InitFmCPMotorControl();     //inits the mac object needed for binding
             //Bindings
             BindTestParameters();
             BindMotorControls();
 
             serialpoller.Interval = PersistentLoggerState.ps.data.arduinotick;
-            InitMotorStateMachine();
-            InitFmCPMotorControl();
 
             //Set up accelerometers
             try
@@ -223,7 +223,7 @@ namespace MultiDeviceAIO
             MotorCleanUp();
 
             appstate.Save();
-            sm_motor.Save();
+            rotorstate.Save();
 
             //Give chance to close  
             myaio?.Dispose();
@@ -566,7 +566,7 @@ namespace MultiDeviceAIO
         private void button1_Click_1(object sender, EventArgs e)
         {
             //TODO: overrides app state. Beware!
-            sm_motor.Event(ARDUINOEVENT.Send_Trigger);
+            rotorstate.Event(ARDUINOEVENT.Send_Trigger);
         }
 
         #endregion
@@ -799,7 +799,7 @@ namespace MultiDeviceAIO
 
         private void button6_Click(object sender, EventArgs e)
         {
-            Dictionary<string, string> dict = LoggerState.MergeDictionary<MotorPropertyAttribute>(PersistentLoggerState.ps.data);
+            Dictionary<string, string> dict = LoggerState.MergeDictionary<Attribute>(trigger.mac);
             string text = String.Join("}, {", dict.Keys.ToArray());
             MessageBox.Show("{" + text + "}");
         }

@@ -23,37 +23,37 @@ namespace UnitTestProject1
 
             Assert.IsTrue(mso.MA == 0);
             Assert.IsTrue(mso.STD == 0);
-            Assert.IsTrue(mso.RegressionB == 0);
+            Assert.IsTrue(mso.Gradient == 0);
 
             mso.Add(1);
             Assert.AreEqual(mso.MA, 0.2, 0.0001);
             Assert.AreEqual(mso.STD, 0.447214, 0.0001);
-            Assert.AreEqual(mso.RegressionB, 0.2, 0.0001);
+            Assert.AreEqual(mso.Gradient, 0.2, 0.0001);
 
             mso.Add(8);
             Assert.AreEqual(mso.MA, 1.8, 0.0001);
             Assert.AreEqual(mso.STD, 3.49285, 0.0001);
-            Assert.AreEqual(mso.RegressionB, 1.7, 0.0001);
+            Assert.AreEqual(mso.Gradient, 1.7, 0.0001);
 
             mso.Add(-3);
             Assert.AreEqual(mso.MA, 1.2, 0.0001);
             Assert.AreEqual(mso.STD, 4.08656, 0.0001);
-            Assert.AreEqual(mso.RegressionB, 0.2, 0.0001);
+            Assert.AreEqual(mso.Gradient, 0.2, 0.0001);
 
             mso.Add(-5);
             Assert.AreEqual(mso.MA, 0.2, 0.0001);
             Assert.AreEqual(mso.STD, 4.96991, 0.0001);
-            Assert.AreEqual(mso.RegressionB, -1.4, 0.0001);
+            Assert.AreEqual(mso.Gradient, -1.4, 0.0001);
 
             mso.Add(2);
             Assert.AreEqual(mso.MA, 0.6, 0.0001);
             Assert.AreEqual(mso.STD, 5.02991, 0.0001);
-            Assert.AreEqual(mso.RegressionB, -1.1, 0.0001);
+            Assert.AreEqual(mso.Gradient, -1.1, 0.0001);
 
             mso.Add(2);
             Assert.AreEqual(mso.MA, 0.8, 0.0001);
             Assert.AreEqual(mso.STD, 5.06952, 0.0001);
-            Assert.AreEqual(mso.RegressionB, -0.7, 0.0001);
+            Assert.AreEqual(mso.Gradient, -0.7, 0.0001);
 
         }
 

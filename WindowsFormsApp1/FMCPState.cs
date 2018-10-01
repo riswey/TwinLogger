@@ -45,8 +45,8 @@ namespace MultiDeviceAIO
             //appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.TriggerWaitLock, (string index) =>
             appstate.AddRule(APPSTATE.Armed, APPEVENT.Trigger, APPSTATE.DoSampling, (string index) =>
             {
-                sm_motor.Event(ARDUINOEVENT.Send_Lock);
-                sm_motor.Event(ARDUINOEVENT.Send_Trigger);
+                rotorstate.Event(ARDUINOEVENT.Send_Lock);
+                rotorstate.Event(ARDUINOEVENT.Send_Trigger);
                 myaio.InitDataCollectionTimeout();                
             });
             /*
@@ -93,7 +93,7 @@ namespace MultiDeviceAIO
             PersistentLoggerState.ps.data.target_speed = (float)nudFreqFrom.Value;
 
             //Start motor
-            sm_motor.Event(ARDUINOEVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
+            rotorstate.Event(ARDUINOEVENT.Send_Start);      //MotorControl -> Start -> Trigger -> LAX1664 (externally) - simulated by call to test device
             //Set rotor 0
             //HERE: Test0 must be before serialpoller start (else triggers: Test0 is 0 so timeouts!)
             PersistentLoggerState.ps.data.Rotor0 = PersistentLoggerState.ps.data.Test0 = 0;
@@ -102,7 +102,7 @@ namespace MultiDeviceAIO
             serialpoller.Start();       //Needed to look for serial ACK
             contecpoller.Start();
 
-            PersistentLoggerState.ps.data.dt.Clear();
+            dt.Clear();
         }
 
         const int MAXROTORSPEEDFAILSAFE = 200;
@@ -148,8 +148,8 @@ namespace MultiDeviceAIO
             myaio.Stop();
             myaio.RefreshDevices();
             myaio.ResetDevices();
-            PersistentLoggerState.ps.data.ResetMAC();
-            sm_motor.Event(ARDUINOEVENT.Next);              //Returns the arduino state to running
+            trigger.Reset();
+            rotorstate.Event(ARDUINOEVENT.Next);              //Returns the arduino state to running
             pbr0.Value = 0;
             pbr1.Value = 0;
             setStartButtonText(0);
@@ -169,7 +169,7 @@ namespace MultiDeviceAIO
 
         void StopSeries(string index)
         {
-            sm_motor.Event(ARDUINOEVENT.Send_Stop);
+            rotorstate.Event(ARDUINOEVENT.Send_Stop);
             RunFinished();
             serialpoller.Stop();
             SetStatus("Ready");
@@ -182,7 +182,7 @@ namespace MultiDeviceAIO
 
         void InitMotorStateMachine()
         {
-            sm_motor.AddRule(StateMachine.OR(ARDUINOSTATE.Ready, ARDUINOSTATE.Triggered), ARDUINOEVENT.Send_Start, (string idx) =>
+            rotorstate.AddRule(StateMachine.OR(ARDUINOSTATE.Ready, ARDUINOSTATE.Triggered), ARDUINOEVENT.Send_Start, (string idx) =>
             {
                 //Start
                 //TODO: should wait for freq?
@@ -192,13 +192,13 @@ namespace MultiDeviceAIO
             });
 
             //TODO: can remove Callback
-            sm_motor.AddRule(ARDUINOSTATE.Lockable, ARDUINOEVENT.Send_Start, SEND_LOCK);
-            sm_motor.AddRule(ARDUINOSTATE.Locked, ARDUINOEVENT.Send_Start, SEND_UNLOCK);
-            sm_motor.AddRule(ARDUINOSTATE.Lockable, ARDUINOEVENT.Send_Lock, SEND_LOCK);
-            sm_motor.AddRule(ARDUINOSTATE.Locked, ARDUINOEVENT.Send_Unlock, SEND_UNLOCK);
+            rotorstate.AddRule(ARDUINOSTATE.Lockable, ARDUINOEVENT.Send_Start, SEND_LOCK);
+            rotorstate.AddRule(ARDUINOSTATE.Locked, ARDUINOEVENT.Send_Start, SEND_UNLOCK);
+            rotorstate.AddRule(ARDUINOSTATE.Lockable, ARDUINOEVENT.Send_Lock, SEND_LOCK);
+            rotorstate.AddRule(ARDUINOSTATE.Locked, ARDUINOEVENT.Send_Unlock, SEND_UNLOCK);
 
-            sm_motor.AddRule(null, ARDUINOEVENT.Send_Stop, (string idx) => { SendCommand(CMD.STOP); });
-            sm_motor.AddRule(StateMachine.OR(ARDUINOSTATE.Running, ARDUINOSTATE.Lockable, ARDUINOSTATE.Locked), ARDUINOEVENT.Send_Trigger, (string idx) =>
+            rotorstate.AddRule(null, ARDUINOEVENT.Send_Stop, (string idx) => { SendCommand(CMD.STOP); });
+            rotorstate.AddRule(StateMachine.OR(ARDUINOSTATE.Running, ARDUINOSTATE.Lockable, ARDUINOSTATE.Locked), ARDUINOEVENT.Send_Trigger, (string idx) =>
             {
                 //Send Trigger
                 SendCommand(CMD.SETADC);
@@ -207,16 +207,16 @@ namespace MultiDeviceAIO
             });
 
             //These events match any state (series shouldn't be returning events to wrong state)
-            sm_motor.AddRule(null, ARDUINOEVENT.Do_Start, ARDUINOSTATE.Running, ACK_START);
-            sm_motor.AddRule(null, ARDUINOEVENT.Do_Stop, ARDUINOSTATE.Ready, ACK_STOP);
-            sm_motor.AddRule(null, ARDUINOEVENT.Do_Lock, ARDUINOSTATE.Locked, ACK_LOCK);
-            sm_motor.AddRule(null, ARDUINOEVENT.Do_unlock, ARDUINOSTATE.Lockable, ACK_UNLOCK);
+            rotorstate.AddRule(null, ARDUINOEVENT.Do_Start, ARDUINOSTATE.Running, ACK_START);
+            rotorstate.AddRule(null, ARDUINOEVENT.Do_Stop, ARDUINOSTATE.Ready, ACK_STOP);
+            rotorstate.AddRule(null, ARDUINOEVENT.Do_Lock, ARDUINOSTATE.Locked, ACK_LOCK);
+            rotorstate.AddRule(null, ARDUINOEVENT.Do_unlock, ARDUINOSTATE.Lockable, ACK_UNLOCK);
             //sm_motor.AddRule(null, ARDUINOEVENT.Do_SetPulseDelay, ACK_SETPULSEDELAY);
-            sm_motor.AddRule(null, ARDUINOEVENT.Do_SetPID, ACK_SETPID);
-            sm_motor.AddRule(null, ARDUINOEVENT.Do_SetFreq, ACK_SETFREQ);
-            sm_motor.AddRule(null, ARDUINOEVENT.Do_Trigger, ARDUINOSTATE.Triggered, ACK_TRIGGER);
-            sm_motor.AddRule(null, ARDUINOEVENT.Do_SetADC, ACK_SETADC);
-            sm_motor.AddRule(ARDUINOSTATE.Triggered, ARDUINOEVENT.Next, ARDUINOSTATE.Running);
+            rotorstate.AddRule(null, ARDUINOEVENT.Do_SetPID, ACK_SETPID);
+            rotorstate.AddRule(null, ARDUINOEVENT.Do_SetFreq, ACK_SETFREQ);
+            rotorstate.AddRule(null, ARDUINOEVENT.Do_Trigger, ARDUINOSTATE.Triggered, ACK_TRIGGER);
+            rotorstate.AddRule(null, ARDUINOEVENT.Do_SetADC, ACK_SETADC);
+            rotorstate.AddRule(ARDUINOSTATE.Triggered, ARDUINOEVENT.Next, ARDUINOSTATE.Running);
         }
 
 

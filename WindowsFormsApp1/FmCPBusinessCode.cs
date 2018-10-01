@@ -15,7 +15,7 @@ namespace MultiDeviceAIO
         {
             //Data Collection Main
             AsyncText(lblAppState, appstate.state.ToString());
-            AsyncText(lblRotorState, sm_motor.state.ToString());
+            AsyncText(lblRotorState, rotorstate.state.ToString());
 
             //DOC: Once entered sampling state keep going until got expected or timeout.
             //Don't hassle devices with any other requests

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MultiDeviceAIO
 {
-    class StateMachine
+    public class StateMachine
     {
         private string log = "";
 
