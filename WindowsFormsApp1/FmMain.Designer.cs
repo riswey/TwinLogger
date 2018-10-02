@@ -156,6 +156,8 @@
             this.nudI = new System.Windows.Forms.NumericUpDown();
             this.nudP = new System.Windows.Forms.NumericUpDown();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.lblMax = new System.Windows.Forms.Label();
             this.label48 = new System.Windows.Forms.Label();
@@ -1532,6 +1534,8 @@
             // tabPage4
             // 
             this.tabPage4.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabPage4.Controls.Add(this.button8);
+            this.tabPage4.Controls.Add(this.button7);
             this.tabPage4.Controls.Add(this.button6);
             this.tabPage4.Controls.Add(this.lblMax);
             this.tabPage4.Controls.Add(this.label48);
@@ -1556,6 +1560,25 @@
             this.tabPage4.Size = new System.Drawing.Size(479, 134);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Trigger";
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(365, 82);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(75, 23);
+            this.button8.TabIndex = 91;
+            this.button8.Text = "Validate";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(0, 0);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(75, 23);
+            this.button7.TabIndex = 90;
+            this.button7.Text = "button7";
+            this.button7.UseVisualStyleBackColor = true;
             // 
             // button6
             // 
@@ -1709,11 +1732,10 @@
             // 
             // txtMetricCommand
             // 
-            this.txtMetricCommand.Location = new System.Drawing.Point(73, 105);
+            this.txtMetricCommand.Location = new System.Drawing.Point(66, 105);
             this.txtMetricCommand.Name = "txtMetricCommand";
-            this.txtMetricCommand.Size = new System.Drawing.Size(380, 20);
+            this.txtMetricCommand.Size = new System.Drawing.Size(379, 20);
             this.txtMetricCommand.TabIndex = 71;
-            this.txtMetricCommand.Text = "{UPPER} - {MAX} >0 AND {LOWER} - {MIN} < 0";
             // 
             // label44
             // 
@@ -1877,7 +1899,7 @@
             this.contecpoller.Interval = 500;
             this.contecpoller.Tick += new System.EventHandler(this.contecpoller_Tick);
             // 
-            // FmControlPanel
+            // FmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1895,7 +1917,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "FmControlPanel";
+            this.Name = "FmMain";
             this.Text = "Main";
             this.Shown += new System.EventHandler(this.FmControlPanel_Shown);
             this.statusStrip1.ResumeLayout(false);
@@ -2112,5 +2134,7 @@
         private System.Windows.Forms.ComboBox cbxFreqStep;
         private System.Windows.Forms.ComboBox cbxFreqTo;
         private System.Windows.Forms.ComboBox cbxFreqFrom;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button7;
     }
 }

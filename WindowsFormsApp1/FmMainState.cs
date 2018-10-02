@@ -43,7 +43,7 @@ namespace MultiDeviceAIO
 
 
             //TestRunning + Armed -> hand over to TriggerLogic
-            trigger.AddEvents(appstate, rotorstate);
+            TriggerLogic.AddEvents(appstate, rotorstate);
 
             //Wait 
             appstate.AddRule(null, APPEVENT.SamplingError, APPSTATE.WaitRotor, HandleSamplingError);

@@ -95,8 +95,24 @@ namespace MultiDeviceAIO
                 //need to implement Dispose!
                 //myaio.Dispose();
             }
-
-            myaio = new MyAIO();
+            try
+            {
+                myaio = new MyAIO();
+            } catch (AioContecException ex)
+            {
+                switch (MessageBox.Show(this, ex.Message + "\nTry to auto-recover, ignore, exit application?"
+                    , "Contec Error", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error))
+                {
+                    case DialogResult.Yes:
+                        myaio.ResetDevices();
+                        DiscoverDevices();
+                        monitorpoller.Start();
+                        return;
+                    case DialogResult.Cancel:
+                        this.Close();
+                        return;
+                }
+            }
             //Load Devices
             DiscoverDevices();
 
@@ -670,6 +686,10 @@ namespace MultiDeviceAIO
             int rtncode;
             if ((rtncode = myaio.ContecOK()) != 0)
             {
+                throw new AioContecException();
+                
+                
+                /*
                 monitorpoller.Stop();
                 switch (MessageBox.Show(this, "Contec device error: Code " + rtncode + " (" + MyAIO.CONTECCODE[rtncode] + ")" +
                     "\nUnplug and replug devices." +
@@ -684,6 +704,7 @@ namespace MultiDeviceAIO
                         this.Close();
                         return;
                 }
+                */
             }
 
             monitorChannelsToolStripMenuItem.Enabled = true;
@@ -867,6 +888,21 @@ namespace MultiDeviceAIO
             if (cbxFreqTo.SelectedIndex < cbxFreqFrom.SelectedIndex)
                 cbxFreqFrom.SelectedIndex = cbxFreqTo.SelectedIndex;
 
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            bool ok = false;
+            try
+            {
+                txtMetricCommand.Update();
+                ok = trigger.EvalTrigger;
+                MessageBox.Show("Syntax Ok");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "There is an error in the trigger string. " + ex.Message, "Syntax Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
     }
 }

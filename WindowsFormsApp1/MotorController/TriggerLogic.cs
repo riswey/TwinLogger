@@ -35,7 +35,7 @@ namespace MotorController
 
         //Rotor:Running + App:Armed -> hand over to TriggerLogic
         //Finish by DoSampling
-        public void AddEvents(StateMachine smapp, StateMachine smrotor)
+        static public void AddEvents(StateMachine smapp, StateMachine smrotor)
         {
             //TODO: need to timeout events (send event - stored by marshal and alternative executed if timeout (retry)
             //Removed TriggerWaitLock (not important if lock doesn't take)
@@ -79,6 +79,8 @@ namespace MotorController
             Debug.WriteLine("add: ma=" + mac.MA + ",sd=" + mac.STD);
         }
 
+        #region EVAL TRIGGER 
+
         public bool IsReadyToSample
         {
             get
@@ -86,12 +88,9 @@ namespace MotorController
                 if (!mac.bufferfull) return false;                  //not reliable stats if only processes a few rotors. Means also the rotor must conform over the period to fill buffer.
                 if (state.TestX > state.timeout) return true;       //timeout
                 return EvalTrigger;
-                //Debug.WriteLine("TEval: " + eval);
-                //Debug.WriteLine("TX>TO: " + state.TestX + ">" + state.timeout);
             }
         }
 
-        #region EVAL TRIGGER 
 
         public string TriggerMerged
         {
@@ -104,10 +103,11 @@ namespace MotorController
 
         public bool EvalTrigger
         {
+            //Need this to fail well. However encode the failure state for the correct client.
             get
             {
                 string smerged = TriggerMerged;
-                return (bool)dt.Compute(smerged, "");
+                return (bool) dt.Compute(smerged, "");
             }
         }
 

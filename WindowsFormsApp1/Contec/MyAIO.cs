@@ -31,6 +31,23 @@ using System.Threading.Tasks;
 
 namespace MultiDeviceAIO
 {
+    public class AioContecException : Exception
+    {
+        public AioContecException()
+        {
+        }
+
+        public AioContecException(string message)
+            : base(message)
+        {
+        }
+
+        public AioContecException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+    }
+
 
     public class MyAIO: IDisposable
     {
@@ -72,15 +89,19 @@ namespace MultiDeviceAIO
                     case 0:
                         return;
                     case 7:
-                        //You got a code 7!
-                        throw new Exception("Got a 7 from Device (wake from idle)");
+                        //You got a code 7! Debugging only.
+                        //throw new Exception("Got a 7 from Device (wake from idle)");
                         //TODO ResetDevices();
                         return;
+#if SOFTDEVICE
                     case CaioTest.NOTIMPLEMENTED:
                         throw new NotImplementedException("CaioTest method");
+#endif
                     default:
-                        aio.GetErrorString((int)value, out string ErrorString);
-                        throw new Exception(ErrorString);
+                        {
+                            aio.GetErrorString((int)value, out string ErrorString);
+                            throw new AioContecException(ErrorString);
+                        }
                 }
 
             }
