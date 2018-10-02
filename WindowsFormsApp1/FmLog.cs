@@ -15,6 +15,7 @@ namespace MultiDeviceAIO
     public partial class FmLog : Form
     {
         string text = "";
+        int atomic_count = 0;       //If speaking too slow, forget a few things
 
         BackgroundQueue bgq = new BackgroundQueue();
 
@@ -53,6 +54,11 @@ namespace MultiDeviceAIO
 
         void SayMessage(string msg)
         {
+            if (atomic_count > 4)
+            {
+                return;
+            }
+            atomic_count++;
             //Actual speech is very very resource hungry!
             bgq.QueueTask(() =>
             {
@@ -62,6 +68,7 @@ namespace MultiDeviceAIO
                     synth.SetOutputToDefaultAudioDevice();
                     synth.Volume = 100;  // (0 - 100)
                     synth.Speak(msg);
+                    atomic_count--;
                 }
             });
         }

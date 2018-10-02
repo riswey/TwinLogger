@@ -350,36 +350,34 @@ namespace MultiDeviceAIO
 
         string startbuttontext = "Ready";
 
-        void setStartButtonText(int code)
+        void setStartButtonText(APPSTATE state)
         {
-            //TODO: You can take a APPSTATE parameter
-
             if (InvokeRequired)
             {
-                this.Invoke(new Action(() => setStartButtonText(code)));
+                this.Invoke(new Action(() => setStartButtonText(state)));
                 return;
             }
 
             Button b = this.btnStart;
 
-            switch (code)
+            switch (state)
             {
-                case 0:
-                    b.Text = "Start Sequence";
+                case APPSTATE.Ready:
+                    b.Text = "Start";
                     b.BackColor = Color.Transparent;
                     b.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Regular);
                     break;
-                case 1:
+                case APPSTATE.Armed:
                     b.Text = "Armed";
                     b.BackColor = Color.Orange;
                     b.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Bold);
                     break;
-                case 2:
+                case APPSTATE.DoSampling:
                     b.Text = "Sampling...";
                     b.BackColor = Color.Orange;
                     b.Font = new Font("Microsoft Sans Serif", 10.25F, FontStyle.Bold);
                     break;
-                case 3:
+                case APPSTATE.TestRunning:
                     b.Text = "Running";
                     b.BackColor = Color.Orange;
                     b.Font = new Font("Microsoft Sans Serif", 10.25F, FontStyle.Bold);
@@ -673,8 +671,8 @@ namespace MultiDeviceAIO
             if ((rtncode = myaio.ContecOK()) != 0)
             {
                 monitorpoller.Stop();
-                switch (MessageBox.Show(this, "Contec device error. Returned code " + rtncode + " (" + MyAIO.CONTECCODE[rtncode] + ")" +
-                    "\n Unplug and replug devices." +
+                switch (MessageBox.Show(this, "Contec device error: Code " + rtncode + " (" + MyAIO.CONTECCODE[rtncode] + ")" +
+                    "\nUnplug and replug devices." +
                     "\nReentry?, Ignore or Close", "Contec Error", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error))
                 {
                     case DialogResult.Yes:

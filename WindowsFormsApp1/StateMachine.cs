@@ -43,7 +43,7 @@ namespace MultiDeviceAIO
 
         void WriteLine(string line)
         {
-            Debug.WriteLine(line);
+            //Debug.WriteLine(line);
             //log += line + "\n";
         }
 

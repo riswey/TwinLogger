@@ -35,7 +35,7 @@ namespace MultiDeviceAIO
             appstate.AddRule(APPSTATE.TestRunning, APPEVENT.Arm, APPSTATE.Armed, (string index) =>
             {
                 PrintLn("Armed", true);
-                setStartButtonText(1);
+                setStartButtonText(APPSTATE.Armed);
                 //DOCS: Auto Trigger to by-pass motorcontol in testing
                 //if (PersistentLoggerState.ps.data.testingmode)
                 //    Task.Delay(5000).ContinueWith(t => myaio.TestTrigger() );
@@ -101,7 +101,6 @@ namespace MultiDeviceAIO
                     }));
                 }
             });
-
         }
 
         const int MAXROTORSPEEDFAILSAFE = 200;
@@ -235,7 +234,7 @@ namespace MultiDeviceAIO
         {
             //PersistentLoggerState.ps.data.Start();   //Removed Motor Control Logging
             //PersistentLoggerState.ps.data.StartRMTimer();
-            setStartButtonText(3);
+            setStartButtonText(APPSTATE.TestRunning);
             //TODO: need check if lockable before lock when sampling!!!!
             //Task task = Task.Delay(5000).ContinueWith(t => ProcessEvent(EVENT.Lock));
             //this.Invoke(new Action(() => {
@@ -249,7 +248,7 @@ namespace MultiDeviceAIO
         {
             //AsyncDisable(this.btnSetSpeed, false);
             AsyncColor(btnStart, default(Color));
-            AsyncText(btnStart, "Start");
+            setStartButtonText(0);
         }
 
         void ACK_LOCK(string idx)

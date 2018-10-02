@@ -10,9 +10,24 @@ namespace MultiDeviceAIO
 
     public partial class FmMain : Form
     {
-        
+        static long[] lasterrorcount = new long[2];
+
         protected void contecpoller_Tick(object sender, EventArgs e)
         {
+            Debug.WriteLine("###### " + lasterrorcount[1]);
+
+            if (lasterrorcount[1] > 5)
+            {
+                //Fail this
+                if (MessageBox.Show(this, "Devices unstable. Terminating series.","Contec Error",MessageBoxButtons.OK,MessageBoxIcon.Asterisk) == DialogResult.OK)
+                {
+                    //TODO: why doesn't APPEVENT.Stop do this?
+                    contecpoller.Stop();
+                    appstate.Event(APPEVENT.Stop);
+                }
+                return;
+            }
+
             //Data Collection Main
             AsyncText(lblAppState, appstate.state.ToString());
             AsyncText(lblRotorState, rotorstate.state.ToString());
@@ -44,8 +59,32 @@ namespace MultiDeviceAIO
             {
                 bitflags |= s1;
             }
-            //0 means idling
 
+            Debug.WriteLine("Bit: " + bitflags);
+
+            //Do count of frequent errors
+            long now = LoggerState.GetTime_ms;
+
+            if (bitflags > 65535)
+            {
+                if (now - lasterrorcount[0] < 15000)  //0x10000+
+                {
+                    lasterrorcount[1]++;
+                }
+                else
+                {
+                    lasterrorcount[1] = 0;
+                }
+                lasterrorcount[0] = now;
+            }
+
+            if (bitflags > 65535)
+            {
+                appstate.Event(APPEVENT.SamplingError);
+                return;
+            }
+
+            //0 means idling
             if (((int)CaioConst.AIS_START_TRG & bitflags) != 0)
             {
                 //Armed
@@ -58,6 +97,9 @@ namespace MultiDeviceAIO
                 appstate.Event(APPEVENT.ContecTriggered);
             }
 
+            //Device errors
+            //Keep this fine as they can be treated differently!
+            /*
             if (((int)CaioConst.AIS_OFERR & bitflags) != 0)
             {
                 //Overflow
@@ -70,7 +112,20 @@ namespace MultiDeviceAIO
                 appstate.Event(APPEVENT.SamplingError);
             }
 
+            if (((int)CaioConst.AIS_DRVERR & bitflags) != 0)
+            {
+                //Driver
+                appstate.Event(APPEVENT.SamplingError);
+            }
+
+            if (((int)CaioConst.AIS_AIERR & bitflags) != 0)
+            {
+                //Conversion error
+                appstate.Event(APPEVENT.SamplingError);
+            }
+            */
         }
+
 
         bool DoSampling()
         {

@@ -120,11 +120,6 @@ namespace MotorController
 
                 double eval = Math.Sqrt(sum2_ma2 / (size - 1));
 
-                Debug.WriteLine("STD: sum2=" + sum2 + "-" + (size * (float)Math.Pow(MA, 2)).ToString() + " MA=" + MA.ToString());
-
-                if (eval == double.NaN) {
-                    throw new NotFiniteNumberException("STD error. Denom = " + (size - 1));
-                }
                 return (float) eval;
             }
         }

@@ -107,9 +107,6 @@ namespace MotorController
             get
             {
                 string smerged = TriggerMerged;
-
-                Debug.WriteLine("Merged: " + smerged);
-
                 return (bool)dt.Compute(smerged, "");
             }
         }
