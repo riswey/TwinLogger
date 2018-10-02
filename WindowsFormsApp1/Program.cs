@@ -42,9 +42,14 @@ namespace MultiDeviceAIO
             }
             catch (Exception ex)
             {
-                NativeMethods.FailApplication("Game Over", "Problem encountered. App needs to close.\n\n" + ex.Message + "\n" + ex.GetType());
+                Close(ex);
             }
 #endif
+        }
+
+        public static void Close(Exception ex)
+        {
+            NativeMethods.FailApplication("Game Over", "Problem encountered. App needs to close.\n\n" + ex.Message + "\n" + ex.GetType());
         }
     }
 }

@@ -28,6 +28,7 @@ using DEVICEID = System.Int16;
 //K: device id :. data imported by id
 using DATA = System.Collections.Generic.Dictionary<System.Int16, System.Collections.Generic.List<int>>;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace MultiDeviceAIO
 {
@@ -53,7 +54,7 @@ namespace MultiDeviceAIO
     {
         //TODO: this will crash if not installed. Check
         public Caio aio;
-
+        /*
         public static readonly Dictionary<CaioConst, string> AIOSTATUS = new Dictionary<CaioConst, string>() {
             {0, "Ready" },
             {CaioConst.AIS_BUSY, "Device is running"},
@@ -64,7 +65,7 @@ namespace MultiDeviceAIO
             {CaioConst.AIS_AIERR, "AD conversion error"},
             {CaioConst.AIS_DRVERR, "Driver spec error"}
         };
-        
+        */
         public double devicetarget { get; private set; } = 1e5;
 
         public MyAIO()
@@ -79,6 +80,11 @@ namespace MultiDeviceAIO
             //}
 #endif
         }
+
+
+        /*
+         * The plan here is to filter contex error (basically they all go thru at moment) and ask user whether to recover or cancel on unknown one.
+         */
 
         public long HANDLE_RETURN_VALUES
         {
@@ -96,12 +102,24 @@ namespace MultiDeviceAIO
 #if SOFTDEVICE
                     case CaioTest.NOTIMPLEMENTED:
                         throw new NotImplementedException("CaioTest method");
+                        break;
 #endif
                     default:
+                        //This is going to be a contec error
+                        aio.GetErrorString((int)value, out string ErrorString);
+                        //Ask user if they wish to recover
+                        switch (MessageBox.Show(ErrorString + "\n Try to Auto-recover, Shutdown or Ignore", "Contec Error", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error | MessageBoxIcon.Question))
                         {
-                            aio.GetErrorString((int)value, out string ErrorString);
-                            throw new AioContecException(ErrorString);
+                            case DialogResult.Yes:
+                                ResetRediscoverDevices();
+                                return;
+                            case DialogResult.No:
+                                Program.Close(new AioContecException(ErrorString));
+                                return;
+                            case DialogResult.Cancel:
+                                return;
                         }
+                        break;
                 }
 
             }
@@ -127,30 +145,6 @@ namespace MultiDeviceAIO
 
             return Device.devices.Count();
         }
-        /*    
-        public void CheckDevices()
-        {
-            //TODO: no device check
-            List<int> failedID;
-            if (!myaio.DeviceCheck())
-            {
-                
-                string status = "Error: Devices not responding. Device(s) ";
-                foreach (short f in failedID)
-                {
-                    status += myaio.devicenames[f] + " ";
-                }
-
-                status += "failed.";
-                
-                //SetStatus(status);
-
-                //?Who failed
-                PrintLn("Failed");
-                return;
-            }
-        }
-        */
         public void Dispose()
         {
             foreach (Device d in Device.devices)
@@ -271,7 +265,7 @@ namespace MultiDeviceAIO
          * 
          */
 
-        public void ResetDevices()
+        public void ResetRediscoverDevices()
         {
             try
             {

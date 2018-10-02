@@ -145,7 +145,7 @@ namespace MultiDeviceAIO
         {
             myaio.Stop();
             myaio.RefreshDevices();
-            myaio.ResetDevices();
+            myaio.ResetRediscoverDevices();
             trigger.Reset();
             rotorstate.Event(ARDUINOEVENT.Next);              //Returns the arduino state to running
             pbr0.Value = 0;

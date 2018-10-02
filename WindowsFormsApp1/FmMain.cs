@@ -39,7 +39,7 @@ namespace MultiDeviceAIO
         {
 
             //contecpoller.Interval = CONTECPOLLERSTATE;
-            
+
             if (!NativeMethods.CheckLibrary(@".\caio.dll"))
             {
                 NativeMethods.FailApplication("Driver error", "caio.dll\nNot found. Please install drivers.");
@@ -73,7 +73,7 @@ namespace MultiDeviceAIO
             }
 
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
-            
+
         }
 
         protected override CreateParams CreateParams
@@ -88,31 +88,15 @@ namespace MultiDeviceAIO
 
         void SetAIO()
         {
-            //so can dynamically change AIO device binding (testing mode)
             if (myaio != null)
             {
                 myaio = null;
                 //need to implement Dispose!
                 //myaio.Dispose();
             }
-            try
-            {
-                myaio = new MyAIO();
-            } catch (AioContecException ex)
-            {
-                switch (MessageBox.Show(this, ex.Message + "\nTry to auto-recover, ignore, exit application?"
-                    , "Contec Error", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error))
-                {
-                    case DialogResult.Yes:
-                        myaio.ResetDevices();
-                        DiscoverDevices();
-                        monitorpoller.Start();
-                        return;
-                    case DialogResult.Cancel:
-                        this.Close();
-                        return;
-                }
-            }
+
+            myaio = new MyAIO();
+
             //Load Devices
             DiscoverDevices();
 
@@ -176,6 +160,7 @@ namespace MultiDeviceAIO
                 int devices_count = myaio.DiscoverDevices();
                 PersistentLoggerState.ps.data.n_devices = devices_count;
             });
+
             if (task.Wait(TimeSpan.FromSeconds(30)))
             {
                 Cursor = Cursors.Arrow; // change cursor to normal type
@@ -184,8 +169,7 @@ namespace MultiDeviceAIO
                 {
                     if (MessageBox.Show(this, "Not all devices are connected. Try Auto-Reset?", "Device Error", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
-                        myaio.ResetDevices();
-                        DiscoverDevices();
+                        myaio.ResetRediscoverDevices();                        
                         return;
                     }
                 }
@@ -474,7 +458,7 @@ namespace MultiDeviceAIO
         {
             monitorpoller.Stop();
             myaio.RefreshDevices();
-            myaio.ResetDevices();
+            myaio.ResetRediscoverDevices();
             DiscoverDevices();
             monitorpoller.Start();
         }
@@ -561,6 +545,122 @@ namespace MultiDeviceAIO
         {
             //TODO: overrides app state. Beware!
             rotorstate.Event(ARDUINOEVENT.Send_Trigger);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            doSend(CMD.SETFREQ, "30");
+            SendCommand(CMD.START);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            SendCommand(CMD.STOP);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            Dictionary<string, string> dict = LoggerState.MergeDictionary<Attribute>(trigger.mac);
+            string text = String.Join("}, {", dict.Keys.ToArray());
+            MessageBox.Show("{" + text + "}");
+        }
+
+        readonly string[] pancakemass = new string[5] { "M1", "M2", "M3", "M5", "M7" };
+        readonly string[] verticalmass = new string[5] { "M1", "M2", "M3", "M4", "M5" };
+
+        readonly Dictionary<int, int[]> pancakemassspeeds = new Dictionary<int, int[]>() {
+            { 0, new int[2] { 16, 28 } },
+            { 1, new int[2] { 29, 42 } },
+            { 2, new int[2] { 43, 52 } },
+            { 3, new int[2] { 53, 80 } },
+            { 4, new int[2] { 81, 100 } }
+        };
+
+        readonly Dictionary<int, int[]> verticalmassspeeds = new Dictionary<int, int[]>() {
+            { 0, new int[2] { 16, 28 } },
+            { 1, new int[2] { 29, 41 } },
+            { 2, new int[2] { 42, 58 } },
+            { 3, new int[2] { 59, 76 } },
+            { 4, new int[2] { 77, 100 } }
+        };
+
+        void ReCalcFreqOptions()
+        {
+
+            if (cbShaker.SelectedIndex == -1) cbShaker.SelectedIndex = 0;
+            if (cbMass.SelectedIndex == -1) cbMass.SelectedIndex = 0;
+
+            cbMass.DataSource = (cbShaker.SelectedIndex == 0) ? pancakemass : verticalmass;
+
+            int[] range;
+
+            if (cbShaker.SelectedIndex == 0)
+                pancakemassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
+            else
+                verticalmassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
+
+            int step = int.Parse(cbxFreqStep.SelectedItem.ToString());
+
+            List<int> dsfrom = new List<int>();
+            List<int> dsto = new List<int>();
+            for (int i = range[0]; i <= range[1]; i += step)
+            {
+                dsfrom.Add(i);
+                dsto.Add(i);
+                //TODO: make to >= from
+                //Only add to "to" if it is greater or equal to from 
+                //if (int.Parse(cbxFreqFrom?.SelectedItem.ToString() ?? "0")  <= i)
+                //{
+                //    dsto.Add(i);
+                //}
+            }
+
+            cbxFreqFrom.DataSource = dsfrom;
+            cbxFreqTo.DataSource = dsto;
+
+        }
+
+        private void cbMass_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ReCalcFreqOptions();
+        }
+
+        private void cbxFreqStep_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ReCalcFreqOptions();
+        }
+
+        private void cbShaker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ReCalcFreqOptions();
+        }
+
+        private void cbxFreqFrom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbxFreqFrom.SelectedIndex > cbxFreqTo.SelectedIndex)
+                cbxFreqTo.SelectedIndex = cbxFreqFrom.SelectedIndex;
+        }
+
+        private void cbxFreqTo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbxFreqTo.SelectedIndex < cbxFreqFrom.SelectedIndex)
+                cbxFreqFrom.SelectedIndex = cbxFreqTo.SelectedIndex;
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            bool ok = false;
+            try
+            {
+                txtMetricCommand.Update();
+                ok = trigger.EvalTrigger;
+                MessageBox.Show("Syntax Ok");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "There is an error in the trigger string. " + ex.Message, "Syntax Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
 
         #endregion
@@ -681,30 +781,24 @@ namespace MultiDeviceAIO
                 return;
             }
 
-
-
             int rtncode;
             if ((rtncode = myaio.ContecOK()) != 0)
             {
-                throw new AioContecException();
-                
-                
-                /*
+                //TODO: This is the exact same reovery code used by HANDLERETURNCODE in MyAIO.
+                //Can we turn these into exceptions and handle at the base of a tree?
                 monitorpoller.Stop();
                 switch (MessageBox.Show(this, "Contec device error: Code " + rtncode + " (" + MyAIO.CONTECCODE[rtncode] + ")" +
                     "\nUnplug and replug devices." +
                     "\nReentry?, Ignore or Close", "Contec Error", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Error))
                 {
                     case DialogResult.Yes:
-                        myaio.ResetDevices();
-                        DiscoverDevices();
+                        myaio.ResetRediscoverDevices();
                         monitorpoller.Start();
                         return;
                     case DialogResult.Cancel:
                         this.Close();
                         return;
                 }
-                */
             }
 
             monitorChannelsToolStripMenuItem.Enabled = true;
@@ -788,121 +882,5 @@ namespace MultiDeviceAIO
         }
 
         #endregion
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            doSend(CMD.SETFREQ, "30");
-            SendCommand(CMD.START);
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            SendCommand(CMD.STOP);
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            Dictionary<string, string> dict = LoggerState.MergeDictionary<Attribute>(trigger.mac);
-            string text = String.Join("}, {", dict.Keys.ToArray());
-            MessageBox.Show("{" + text + "}");
-        }
-
-        readonly string[] pancakemass = new string[5] { "M1", "M2", "M3", "M5", "M7" };
-        readonly string[] verticalmass = new string[5] { "M1", "M2", "M3", "M4", "M5" };
-
-        readonly Dictionary<int, int[]> pancakemassspeeds = new Dictionary<int, int[]>() {
-            { 0, new int[2] { 16, 28 } },
-            { 1, new int[2] { 29, 42 } },
-            { 2, new int[2] { 43, 52 } },
-            { 3, new int[2] { 53, 80 } },
-            { 4, new int[2] { 81, 100 } }
-        };
-
-        readonly Dictionary<int, int[]> verticalmassspeeds = new Dictionary<int, int[]>() {
-            { 0, new int[2] { 16, 28 } },
-            { 1, new int[2] { 29, 41 } },
-            { 2, new int[2] { 42, 58 } },
-            { 3, new int[2] { 59, 76 } },
-            { 4, new int[2] { 77, 100 } }
-        };
-
-        void ReCalcFreqOptions()
-        {
-
-            if (cbShaker.SelectedIndex == -1) cbShaker.SelectedIndex = 0;
-            if (cbMass.SelectedIndex == -1) cbMass.SelectedIndex = 0;
-
-            cbMass.DataSource = (cbShaker.SelectedIndex == 0) ? pancakemass : verticalmass;
-
-            int[] range;
-
-            if (cbShaker.SelectedIndex == 0)
-                pancakemassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
-            else
-                verticalmassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
-
-            int step = int.Parse(cbxFreqStep.SelectedItem.ToString());
-
-            List<int> dsfrom = new List<int>();
-            List<int> dsto = new List<int>();
-            for (int i = range[0]; i <= range[1]; i += step)
-            {
-                dsfrom.Add(i);
-                dsto.Add(i);
-                //TODO: make to >= from
-                //Only add to "to" if it is greater or equal to from 
-                //if (int.Parse(cbxFreqFrom?.SelectedItem.ToString() ?? "0")  <= i)
-                //{
-                //    dsto.Add(i);
-                //}
-            }
-
-            cbxFreqFrom.DataSource = dsfrom;
-            cbxFreqTo.DataSource = dsto;
-
-        }
-
-        private void cbMass_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ReCalcFreqOptions();
-        }
-
-        private void cbxFreqStep_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ReCalcFreqOptions();
-        }
-
-        private void cbShaker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ReCalcFreqOptions();
-        }
-
-        private void cbxFreqFrom_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cbxFreqFrom.SelectedIndex > cbxFreqTo.SelectedIndex)
-                cbxFreqTo.SelectedIndex = cbxFreqFrom.SelectedIndex;
-        }
-
-        private void cbxFreqTo_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cbxFreqTo.SelectedIndex < cbxFreqFrom.SelectedIndex)
-                cbxFreqFrom.SelectedIndex = cbxFreqTo.SelectedIndex;
-
-        }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-            bool ok = false;
-            try
-            {
-                txtMetricCommand.Update();
-                ok = trigger.EvalTrigger;
-                MessageBox.Show("Syntax Ok");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, "There is an error in the trigger string. " + ex.Message, "Syntax Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-        }
     }
 }
