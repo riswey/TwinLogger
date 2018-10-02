@@ -19,12 +19,10 @@ namespace MultiDeviceAIO
             if (lasterrorcount[1] > 5)
             {
                 //Fail this
-                if (MessageBox.Show(this, "Devices unstable. Terminating series.","Contec Error",MessageBoxButtons.OK,MessageBoxIcon.Asterisk) == DialogResult.OK)
-                {
-                    //TODO: why doesn't APPEVENT.Stop do this?
-                    contecpoller.Stop();
-                    appstate.Event(APPEVENT.Stop);
-                }
+                contecpoller.Stop();        //TODO: why doesn't this stop in EVENT.Stop?
+                appstate.Event(APPEVENT.Stop);
+                MessageBox.Show(this, "Device unstable. Trigger interference. Terminating series.", "Contec Error", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                lasterrorcount[1] = 0;
                 return;
             }
 
