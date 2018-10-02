@@ -22,14 +22,19 @@ namespace MotorController
         //SETPULSEDELAY,
         //SETPID,
         SETADC,
+        SETPOWER,
+        
         //Respond with "GetCode data"
-        //GETPULSEDELAY,      //PW
-        GETROTORFREQ,       //CF
-        GETTARGETFREQ,      //FW
-        //GETMINMAXPERIODS,   //MM
-        GETPID,             //PID
+        //GETPULSEDELAY,        //PW
+        GETROTORFREQ,           //CF
+        GETTARGETFREQ,          //FW
+        //GETMINMAXPERIODS,     //MM
+        GETPID,                 //PID
         GETLOCKABLE,
-        GETADC              //RA         
+        GETADC,                 //RA
+        GETHALLNO,              //0,1 which motor, 2 null
+        GETPOWER                //current prev %power
+
     };
 
     public enum DATATYPES          //return packets
@@ -64,7 +69,7 @@ namespace MotorController
             { "FW", DATATYPES.GETTARGETFREQ },
             { "PID", DATATYPES.GETPID },
             //{ "MM", DATATYPES.GETMINMAXPERIODS },
-            { "TL", DATATYPES.GETLOCKABLE },
+            { "TL", DATATYPES.GETLOCKABLE },            //
             { "RA", DATATYPES.GETADC },
             //TL/RL
 
@@ -80,16 +85,20 @@ namespace MotorController
             {CMD.SETLOCK, "ST" },
             {CMD.SETUNLOCK, "SU" },
             //{CMD.SETPULSEDELAY, "SD" },
-            //{CMD.SETPID, "SP" },
+            //{CMD.SETPID, "SP" },              //could cut I,D when stable and bump the p
             {CMD.SETADC, "SA" },
+            {CMD.SETPOWER, "SW" },              //%
 
 //            {CMD.GETPULSEDELAY, "RD" },
             {CMD.GETROTORFREQ, "RC" },
             {CMD.GETTARGETFREQ, "RF" },
             //{CMD.GETMINMAXPERIODS, "RM" },
             {CMD.GETPID, "RP" },
-            {CMD.GETLOCKABLE, "RL" },
-            {CMD.GETADC, "AF" }
+            {CMD.GETLOCKABLE, "RL" },           //Y min max %power over last 10secs
+            {CMD.GETADC, "RA" },
+            {CMD.GETHALLNO, "RH" },
+            {CMD.GETPOWER, "RW" }               //current prev power levels
+
         };
 
         //Convert Serial Code to Command (ACK return codes = Calling codes)
