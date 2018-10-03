@@ -14,7 +14,6 @@ namespace MultiDeviceAIO
 
         protected void contecpoller_Tick(object sender, EventArgs e)
         {
-            Debug.WriteLine("###### " + lasterrorcount[1]);
 
             if (lasterrorcount[1] > 5)
             {
@@ -57,8 +56,6 @@ namespace MultiDeviceAIO
             {
                 bitflags |= s1;
             }
-
-            Debug.WriteLine("Bit: " + bitflags);
 
             //Do count of frequent errors
             long now = LoggerState.GetTime_ms;

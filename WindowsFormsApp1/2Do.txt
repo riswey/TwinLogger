@@ -15,8 +15,8 @@
 >NOTE
 TESTING, SOFTDEVICE (Remove from live versions!)
 
-
-
+>Device Stability
+Supposed to be thread safe. Perhaps should marshal the calls (especially from accelerometer poller). See bool mutex in myaio
 
 
 >FUTURE

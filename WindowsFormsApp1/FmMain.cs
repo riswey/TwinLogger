@@ -46,6 +46,7 @@ namespace MultiDeviceAIO
             }
 
             InitializeComponent();
+
             InitFmCPMotorControl();     //inits the mac object needed for binding, + trigger which adds state rules
 
             SetupAppStateMachine();
@@ -75,7 +76,9 @@ namespace MultiDeviceAIO
             Accelerometer.ImportCalibration(PersistentLoggerState.ps.data.caldata);
 
         }
-
+        /// <summary>
+        /// Double buffer the form
+        /// </summary>
         protected override CreateParams CreateParams
         {
             get
@@ -102,13 +105,69 @@ namespace MultiDeviceAIO
 
         }
 
+        #region SETUP FREQ PULLDOWNS
+
+        readonly string[] pancakemass = new string[5] { "M1", "M2", "M3", "M5", "M7" };
+        readonly string[] verticalmass = new string[5] { "M1", "M2", "M3", "M4", "M5" };
+
+        readonly Dictionary<int, int[]> pancakemassspeeds = new Dictionary<int, int[]>() {
+            { 0, new int[2] { 16, 28 } },
+            { 1, new int[2] { 29, 42 } },
+            { 2, new int[2] { 43, 52 } },
+            { 3, new int[2] { 53, 80 } },
+            { 4, new int[2] { 81, 100 } }
+        };
+
+        readonly Dictionary<int, int[]> verticalmassspeeds = new Dictionary<int, int[]>() {
+            { 0, new int[2] { 16, 28 } },
+            { 1, new int[2] { 29, 41 } },
+            { 2, new int[2] { 42, 58 } },
+            { 3, new int[2] { 59, 76 } },
+            { 4, new int[2] { 77, 100 } }
+        };
+
+        void ReCalcFreqOptions()
+        {
+
+            if (cbShaker.SelectedIndex == -1) cbShaker.SelectedIndex = 0;
+            if (cbMass.SelectedIndex == -1) cbMass.SelectedIndex = 0;
+
+            cbMass.DataSource = (cbShaker.SelectedIndex == 0) ? pancakemass : verticalmass;
+
+            int[] range;
+
+            if (cbShaker.SelectedIndex == 0)
+                pancakemassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
+            else
+                verticalmassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
+
+            int step = int.Parse((cbxFreqStep.SelectedItem ?? 1).ToString());
+
+            List<int> dsfrom = new List<int>();
+            List<int> dsto = new List<int>();
+            for (int i = range[0]; i <= range[1]; i += step)
+            {
+                dsfrom.Add(i);
+                dsto.Add(i);
+                //TODO: make to >= from
+                //Only add to "to" if it is greater or equal to from 
+                //if (int.Parse(cbxFreqFrom?.SelectedItem.ToString() ?? "0")  <= i)
+                //{
+                //    dsto.Add(i);
+                //}
+            }
+
+            cbxFreqFrom.DataSource = dsfrom;
+            cbxFreqTo.DataSource = dsto;
+
+        }
+        
+        #endregion
+
         void BindTestParameters()
         {
             //TODO: Need to clear before rebinding! Quicker way
-
-            cbMass.DataBindings.Clear();
-            cbMass.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "mass");
-
+            
             chkClips.DataBindings.Clear();
             chkClips.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "clipsOn");
 
@@ -120,21 +179,6 @@ namespace MultiDeviceAIO
 
             nudDuration.DataBindings.Clear();
             nudDuration.DataBindings.Add("Value", PersistentLoggerState.ps.data, "duration");
-
-            cbShaker.DataBindings.Clear();
-            cbShaker.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "shakertype");
-
-            cbPad.DataBindings.Clear();
-            cbPad.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "paddtype");
-
-            cbxFreqFrom.DataBindings.Clear();
-            cbxFreqFrom.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "freq_from");
-
-            cbxFreqTo.DataBindings.Clear();
-            cbxFreqTo.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "freq_to");
-
-            cbxFreqStep.DataBindings.Clear();
-            cbxFreqStep.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "freq_step");
 
             nudInterval.DataBindings.Clear();
             nudInterval.DataBindings.Add("Value", PersistentLoggerState.ps.data, "sample_frequency");
@@ -148,6 +192,39 @@ namespace MultiDeviceAIO
             chkExternalClock.DataBindings.Clear();
             chkExternalClock.DataBindings.Add("Checked", PersistentLoggerState.ps.data, "external_clock");
 
+            cbPad.DataBindings.Clear();
+            cbPad.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "paddtype");
+            
+            //Freq cascade
+            //These are fixed
+            cbShaker.DataBindings.Clear();
+            cbShaker.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "shakertype");
+
+            cbxFreqStep.DataBindings.Clear();
+            cbxFreqStep.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "freq_step");
+            
+            ReCalcFreqOptions();
+            
+            //These are dynamic! Need other bindings first
+            //Mass depends upon Shaker
+            cbMass.DataBindings.Clear();
+            cbMass.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "mass");
+            
+            //Validate
+            //TODO: how is it possible that settings has saved an index that is not possible. State is not being restored correctly!! 
+            //if (PersistentLoggerState.ps.data.freq_from >= cbxFreqFrom.Items.Count)
+            //{
+            //    PersistentLoggerState.ps.data.freq_from = 0;
+            //}
+            PersistentLoggerState.ps.data.freq_from = 0;
+            PersistentLoggerState.ps.data.freq_to = 0;
+
+            cbxFreqFrom.DataBindings.Clear();
+            cbxFreqFrom.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "freq_from");
+
+            cbxFreqTo.DataBindings.Clear();
+            cbxFreqTo.DataBindings.Add("SelectedIndex", PersistentLoggerState.ps.data, "freq_to");
+
         }
 
         void DiscoverDevices()
@@ -160,7 +237,7 @@ namespace MultiDeviceAIO
                 int devices_count = myaio.DiscoverDevices();
                 PersistentLoggerState.ps.data.n_devices = devices_count;
             });
-
+       
             if (task.Wait(TimeSpan.FromSeconds(30)))
             {
                 Cursor = Cursors.Arrow; // change cursor to normal type
@@ -169,7 +246,8 @@ namespace MultiDeviceAIO
                 {
                     if (MessageBox.Show(this, "Not all devices are connected. Try Auto-Reset?", "Device Error", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
-                        myaio.ResetRediscoverDevices();                        
+                        //NEW: Put on main thread
+                        myaio.ResetRediscoverDevices();
                         return;
                     }
                 }
@@ -345,7 +423,8 @@ namespace MultiDeviceAIO
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            appstate.Event(APPEVENT.Stop);
+            //it will stop in any state. Easier to limit this annoyance here than in rules (but should be in rules)
+            if (!appstate.IsState(APPSTATE.Ready)) appstate.Event(APPEVENT.Stop);
         }
 
         string startbuttontext = "Ready";
@@ -479,22 +558,20 @@ namespace MultiDeviceAIO
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("No longer dynamic.");
-            /*
-            int originalTesting = PersistentLoggerState.ps.data.testingmode;
+
+            //int originalTesting = PersistentLoggerState.ps.data.testingmode;
             using (var form = new FmOptions(PersistentLoggerState.ps.data))
             {
                 var res = form.ShowDialog();
                 if (res == DialogResult.OK)
                 {
-                    if (originalTesting != PersistentLoggerState.ps.data.testingmode)
+                /*    if (originalTesting != PersistentLoggerState.ps.data.testingmode)
                     {
                         //change of testing state
                         SetAIO();
                     }
-                }
+                */}
             }
-            */
         }
 
         private void calibrateToolStripMenuItem_Click(object sender, EventArgs e)
@@ -512,7 +589,7 @@ namespace MultiDeviceAIO
             appstate.Event(APPEVENT.Stop);
         }
 
-        float graphrange = 1;
+        float graphrange = 5;
         public void btnIncRange_Click(object sender, EventArgs e)
         {
             graphrange *= 2.0f;
@@ -563,61 +640,6 @@ namespace MultiDeviceAIO
             Dictionary<string, string> dict = LoggerState.MergeDictionary<Attribute>(trigger.mac);
             string text = String.Join("}, {", dict.Keys.ToArray());
             MessageBox.Show("{" + text + "}");
-        }
-
-        readonly string[] pancakemass = new string[5] { "M1", "M2", "M3", "M5", "M7" };
-        readonly string[] verticalmass = new string[5] { "M1", "M2", "M3", "M4", "M5" };
-
-        readonly Dictionary<int, int[]> pancakemassspeeds = new Dictionary<int, int[]>() {
-            { 0, new int[2] { 16, 28 } },
-            { 1, new int[2] { 29, 42 } },
-            { 2, new int[2] { 43, 52 } },
-            { 3, new int[2] { 53, 80 } },
-            { 4, new int[2] { 81, 100 } }
-        };
-
-        readonly Dictionary<int, int[]> verticalmassspeeds = new Dictionary<int, int[]>() {
-            { 0, new int[2] { 16, 28 } },
-            { 1, new int[2] { 29, 41 } },
-            { 2, new int[2] { 42, 58 } },
-            { 3, new int[2] { 59, 76 } },
-            { 4, new int[2] { 77, 100 } }
-        };
-
-        void ReCalcFreqOptions()
-        {
-
-            if (cbShaker.SelectedIndex == -1) cbShaker.SelectedIndex = 0;
-            if (cbMass.SelectedIndex == -1) cbMass.SelectedIndex = 0;
-
-            cbMass.DataSource = (cbShaker.SelectedIndex == 0) ? pancakemass : verticalmass;
-
-            int[] range;
-
-            if (cbShaker.SelectedIndex == 0)
-                pancakemassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
-            else
-                verticalmassspeeds.TryGetValue(cbMass.SelectedIndex, out range);
-
-            int step = int.Parse(cbxFreqStep.SelectedItem.ToString());
-
-            List<int> dsfrom = new List<int>();
-            List<int> dsto = new List<int>();
-            for (int i = range[0]; i <= range[1]; i += step)
-            {
-                dsfrom.Add(i);
-                dsto.Add(i);
-                //TODO: make to >= from
-                //Only add to "to" if it is greater or equal to from 
-                //if (int.Parse(cbxFreqFrom?.SelectedItem.ToString() ?? "0")  <= i)
-                //{
-                //    dsto.Add(i);
-                //}
-            }
-
-            cbxFreqFrom.DataSource = dsfrom;
-            cbxFreqTo.DataSource = dsto;
-
         }
 
         private void cbMass_SelectedIndexChanged(object sender, EventArgs e)

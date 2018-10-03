@@ -54,6 +54,10 @@ namespace MultiDeviceAIO
     {
         //TODO: this will crash if not installed. Check
         public Caio aio;
+
+        //TODO: only allow one thread access to this object at a time. Does this help?
+        bool mutex = false;
+
         /*
         public static readonly Dictionary<CaioConst, string> AIOSTATUS = new Dictionary<CaioConst, string>() {
             {0, "Ready" },
@@ -296,6 +300,7 @@ namespace MultiDeviceAIO
 
         public void GetStatusAll(ref List<int> status)
         {
+
             /*  //Working State
                 AIS_BUSY		Device is running
                 AIS_START_TRG	Wait the start trigger

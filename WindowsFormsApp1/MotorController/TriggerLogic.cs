@@ -71,16 +71,9 @@ namespace MotorController
             mac.Reset();
         }
 
-        public void AddRotorSpeed(float speed)
-        {
-            
-            mac.Add(speed);
-
-            Debug.WriteLine("add: ma=" + mac.MA + ",sd=" + mac.STD);
-        }
-
         #region EVAL TRIGGER 
 
+        //TriggerLogic exposes the change here. Client does the actual trigger
         public bool IsReadyToSample
         {
             get

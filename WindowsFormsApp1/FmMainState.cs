@@ -107,7 +107,11 @@ namespace MultiDeviceAIO
         //At start each run
         void NextFreq(string index)
         {
-            PersistentLoggerState.ps.data.target_speed += float.Parse(cbxFreqStep.SelectedValue.ToString());
+            //TODO: HurryHack - not finding : float.Parse(cbxFreqStep.SelectedValue.ToString())
+            int stepidx = cbxFreqStep.SelectedIndex;
+            int[] stepval = new int[4] { 1, 2, 5, 10 };
+
+            PersistentLoggerState.ps.data.target_speed += stepval[stepidx];
             if (PersistentLoggerState.ps.data.target_speed > float.Parse(cbxFreqTo.SelectedValue.ToString())
                 ||
                 PersistentLoggerState.ps.data.target_speed > MAXROTORSPEEDFAILSAFE

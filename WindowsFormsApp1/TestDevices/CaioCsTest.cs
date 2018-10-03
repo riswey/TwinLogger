@@ -182,6 +182,8 @@ namespace CaioCs
             return ret;
         }
 
+
+
         public override int GetAiStatus(short Id, out int AiStatus)
         {
             AiStatus = (int)devicestate[Id];
